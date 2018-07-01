@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M3DSoftware", "M3DSoftware\M3DSoftware.csproj", "{71D753F0-A213-493B-9479-55CDBA3F8EC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M3DSpooler", "M3DSpooler\M3DSpooler.csproj", "{4A254761-EDFE-4DF9-B648-2845AD29A889}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M3DSpooling", "M3DSpooling\M3DSpooling.csproj", "{81E1F654-1A78-4B8C-95F4-6D84BBCECC40}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71D753F0-A213-493B-9479-55CDBA3F8EC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71D753F0-A213-493B-9479-55CDBA3F8EC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71D753F0-A213-493B-9479-55CDBA3F8EC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71D753F0-A213-493B-9479-55CDBA3F8EC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A254761-EDFE-4DF9-B648-2845AD29A889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A254761-EDFE-4DF9-B648-2845AD29A889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A254761-EDFE-4DF9-B648-2845AD29A889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A254761-EDFE-4DF9-B648-2845AD29A889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81E1F654-1A78-4B8C-95F4-6D84BBCECC40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81E1F654-1A78-4B8C-95F4-6D84BBCECC40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81E1F654-1A78-4B8C-95F4-6D84BBCECC40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81E1F654-1A78-4B8C-95F4-6D84BBCECC40}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F2F33E9-52D4-433C-BAB6-CC92D2E36468}
+	EndGlobalSection
+EndGlobal

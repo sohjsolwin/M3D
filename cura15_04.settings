@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<XMLSetting> 
+    <UserViewableSettings> 
+        <Tab Header="Layer"> 
+            <SlicerSettings> 
+                <Setting Name="layerThickness" Text="Layer Thickness" Suffix="mm" Tooltip=" Sliced layer height "> 
+                    <FloatMM Value="0.350">
+                        <Warning min="0.050" max="0.350" />
+                        <Error min="0.025" max="1.5" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="filamentDiameter" Text="Filament Diameter" Suffix="mm" Tooltip=" Filament diameter "> 
+                    <FloatMM Value="1.75"> 
+                        <Warning min="1.7" max="1.8" /> 
+                        <Error min="1.5" max="2" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="filamentFlow" Text="Filament Flow" Suffix="%" Tooltip=" Flow multiplier "> 
+                    <Integer Value="100">
+                        <Warning min="95" max="110" /> 
+                        <Error min="75" max="125" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="InternalToGUI_Hidden_CustomNozzleAvailable" Text="">
+                    <BoolRPC property="CustomNozzleAvailable" /> 
+                </Setting> 
+                <Setting Name="InternalToGUI_useNozzleSizeForExtrusionWidth" Text="Use Nozzle size for Extrusion Width" Tooltip=" Allow the M3D preprocessors to control fan settings " GroupToggle="InternalToGUI_Hidden_CustomNozzleAvailable">
+                    <BoolRPC property="UsingNozzleSizeForExtrusionWidth" /> 
+                </Setting> 
+                <Setting Name="extrusionWidth" Text="Extrusion Width" Suffix="mm" Tooltip=" Layer extrusion width (Except first layer) " GroupToggle="InternalToGUI_useNozzleSizeForExtrusionWidth" ReverseGroupToggle="true"> 
+                    <FloatMM Value="0.375">
+                      <!-- TO/DONE: should be printer model dependent (see SetProfiles()) -->
+                        <Warning min="0.320" max="2.5" />
+                        <Error min="0.300" max="3.0" />
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="layer0extrusionWidth" Text="Initial Layer Extrusion Width" Suffix="mm" Tooltip=" Extrusion width of first layer "> 
+                    <FloatMM Value="1.5">
+                        <Warning min="0.320" max="1.5" />
+                        <Error min="0.300" max="1.6" />
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="initialLayerThickness" Text="Initial Layer Thickness" Suffix="mm" Tooltip=" Sliced layer height for first layer "> 
+                    <FloatMM Value="0.300">
+                        <Warning min="0.275" max="1.5" /> 
+                        <Error min="0.150" max="1.6" />
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="enableCombing" Text="Enable Combing" Tooltip=" Try to avoid traveling outside the outer (visable) shell "> 
+                    <Bool value="true" /> 
+                </Setting> 
+                <Setting Name="minimalLayerTime" Text="Minimal Layer Time" Suffix="seconds" Tooltip=" Slicer will slow down each layer to obtain this time "> 
+                    <Integer Value="0"> 
+                        <Warning min="0" max="15" /> 
+                        <Error min="0" max="30" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="minimalFeedrate" Text="Minimal Feed Rate" Suffix="mm/s" Tooltip=" Minimal feed rate per layer "> 
+                    <Integer Value="12"> 
+                        <Warning min="10" max="20" /> 
+                        <Error min="0" max="40" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="coolHeadLift" Text="Cool Head Lift" Suffix="mm" Tooltip=" If minimal layer time is not meet, the print will lift this amount "> 
+                    <Seconds Value="0.1"> 
+                        <Warning min="0" max="5" /> 
+                        <Error min="0" max="10" /> 
+                    </Seconds> 
+                </Setting> 
+            </SlicerSettings> 
+        </Tab> 
+        <Tab Header="Shell and Infill"> 
+            <SlicerSettings> 
+                <Setting Name="insetCount" Text="Inset Count" Suffix="shells" Tooltip=" Number times outer edge (shell) will be printed "> 
+                    <Integer Value="3">
+                        <Warning min="1" max="5" /> 
+                        <Error min="1" max="15" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="downSkinCount" Text="Down Skin Count" Suffix="layers" Tooltip=" Number of bottom solid layers "> 
+                    <Integer Value="6"> 
+                        <Warning min="3" max="10" /> 
+                        <Error min="0" max="30" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="upSkinCount" Text="Up Skin Count" Suffix="layers" Tooltip=" Number of top solid layers "> 
+                    <Integer Value="6"> 
+                        <Warning min="3" max="20" /> 
+                        <Error min="0" max="40" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="sparseInfillLineDistance" Text="Sparse Infill Line Distance" Suffix="mm" Tooltip=" Distance beteen lines in lower layer (between raft and model) "> 
+                    <FloatMM Value="5.5"> 
+                        <Warning min="1.5" max="5.5" /> 
+                        <Error min="-1" max="15" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="infillOverlap" Text="Infill Overlap" Suffix="%" Tooltip=" How much should the infill pattern overlap the inner most shell "> 
+                    <Integer Value="0"> 
+                        <Warning min="0" max="15" /> 
+                        <Error min="0" max="100" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="infillPattern" Text="Infill Pattern" Tooltip=" Pattern to print inside model "> 
+                    <FillPatternTypeCura Value="Automatic" /> 
+                </Setting> 
+            </SlicerSettings> 
+        </Tab> 
+        <Tab Header="Support"> 
+            <SlicerSettings>
+                <Setting Name="InternalToGUI_enableSupport" Text="Enable Support" Tooltip=" Add material beneath overhanging features so they are reproduced accurately ">
+                  <BoolRPC property="HasSupport" />
+                </Setting>
+                <Setting Name="supportType" Text="Support Type" Tooltip=" Cross section structure for support " GroupToggle="InternalToGUI_enableSupport"> 
+                    <SupportTypeCura value="Grid" /> 
+                </Setting> 
+                <Setting Name="supportEverywhere" Text="Use on Model Support" Tooltip=" Create support between the model and model " GroupToggle="InternalToGUI_enableSupport">
+                    <Integer Value="-1"> 
+                        <Warning min="0" max="50" /> 
+                        <Error min="0" max="180" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="supportAngle" Text="Support Angle" Tooltip=" Angle, measured from vertical to face of support " GroupToggle="InternalToGUI_enableSupport"> 
+                    <Integer Value="-1"> 
+                        <Warning min="-1" max="50" /> 
+                        <Error min="-1" max="180" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="supportLineDistance" Text="Support Line Distance" Suffix="mm" Tooltip=" Distance between lines of extrusion in the support " GroupToggle="InternalToGUI_enableSupport"> 
+                    <FloatMM Value="1.75"> 
+                        <Warning min="0.5" max="2" /> 
+                        <Error min="0.35" max="5" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="supportXYDistance" Text="Support X/Y Distance" Suffix="mm" Tooltip=" Distance the support should be printed away from the current layer's walls " GroupToggle="InternalToGUI_enableSupport"> 
+                    <FloatMM Value="0.7"> 
+                        <Warning min="0.5" max="1" /> 
+                        <Error min="0" max="3" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="supportZDistance" Text="Support Z Distance" Suffix="mm" Tooltip=" Minimum distance a part can be from the print bed before support is used " GroupToggle="InternalToGUI_enableSupport"> 
+                    <FloatMM Value="0.15"> 
+                        <Warning min="0.1" max="0.2" /> 
+                        <Error min="0" max="1" /> 
+                    </FloatMM> 
+                </Setting> 
+            </SlicerSettings> 
+        </Tab> 
+        <Tab Header="Speed"> 
+            <SlicerSettings> 
+                <Setting Name="initialSpeedupLayers" Text="Initial Speedup Layers" Suffix="layers" Tooltip=" Number of layers before traveling at full speed "> 
+                    <Integer Value="4"> 
+                        <Warning min="1" max="5" /> 
+                        <Error min="1" max="10" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="initialLayerSpeed" Text="Initial Layer Speed" Suffix="mm/s" Tooltip=" Speed of initial layers "> 
+                    <Integer Value="3"> 
+                        <Warning min="4" max="24" /> 
+                        <Error min="1" max="80" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="printSpeed" Text="Print Speed" Suffix="mm/s" Tooltip=" Extrustion speed "> 
+                    <Integer Value="15"> 
+                        <Warning min="5" max="60" /> 
+                        <Error min="1" max="80" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="inset0Speed" Text="Inset 0 Speed" Suffix="mm/s" Tooltip=" Print speed of outer shell "> 
+                    <Integer Value="15"> 
+                        <Warning min="5" max="60" /> 
+                        <Error min="1" max="80" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="insetXSpeed" Text="Inset X Speed" Suffix="mm/s" Tooltip=" Print speed of inner layer "> 
+                    <Integer Value="15"> 
+                        <Warning min="5" max="60" /> 
+                        <Error min="1" max="80" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="moveSpeed" Text="Move Speed" Suffix="mm/s" Tooltip=" Extruder head travel speed "> 
+                    <Integer Value="60"> 
+                        <Warning min="10" max="60" /> 
+                        <Error min="1" max="80" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="infillSpeed" Text="Infill Speed" Suffix="mm/s" Tooltip=" Print speed of infill pattern "> 
+                    <Integer Value="15"> 
+                        <Warning min="5" max="60" /> 
+                        <Error min="1" max="80" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="skinSpeed" Text="Skin Speed" Suffix="mm/s" Tooltip=" Print speed of up and down skins "> 
+                    <Integer Value="15"> 
+                        <Warning min="10" max="60" /> 
+                        <Error min="0" max="80" /> 
+                    </Integer> 
+                </Setting> 
+            </SlicerSettings> 
+        </Tab> 
+        <Tab Header="Raft"> 
+            <SlicerSettings> 
+                <!-- ToDO --> 
+                <Setting Name="InternalToGUI_enableRaft" Text="Enable Raft" Tooltip=" Prints on a foundation wider than the model to help adhesion and stability ">
+                    <BoolRPC property="HasRaftEnabled" /> 
+                </Setting> 
+                <Setting Name="raftMargin" Text="Raft Margin" Suffix="mm" Tooltip=" How far away to print the part " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="5" /> 
+                        <Error min="0" max="10" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftBaseThickness" Text="Base Thickness" Suffix="mm" Tooltip=" Thickness of first raft layer " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="0.4" /> 
+                        <Error min="0" max="0.4" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftBaseLinewidth" Text="Base Line Width" Suffix="mm" Tooltip=" Width of extrusion for first raft layer " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="2.5" /> 
+                        <Error min="0" max="4" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftLineSpacing" Text="Base Line Spacing" Suffix="mm" Tooltip=" Spacing between first layer extrusiions " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="10" /> 
+                        <Error min="0" max="15" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftInterfaceThickness" Text="Interface Thickness" Suffix="mm" Tooltip=" Thickness of raft intermediate layers " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="0.4" /> 
+                        <Error min="0" max="0.4" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftInterfaceLinewidth" Text="Interface Line Width" Suffix="mm" Tooltip=" Line width of raft intermediate layers " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="1" /> 
+                        <Error min="0" max="2.5" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftInterfaceLineSpacing" Text="Interface Line Spacing" Suffix="" Tooltip=" Spacing of extreusion for intermediate layers " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="10" /> 
+                        <Error min="0" max="15" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftSurfaceThickness" Text="Surface Thickness" Suffix="" Tooltip=" Raft surface thickness " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="0.25" /> 
+                        <Error min="0" max="4" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftSurfaceLinewidth" Text="Surface Line Width" Suffix="" Tooltip=" Line width of raft surface " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="0.25" /> 
+                        <Error min="0" max="4" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftSurfaceLineSpacing" Text="Surface Line Spacing" Suffix="" Tooltip=" Line spacing of raft surface " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="0.25" /> 
+                        <Error min="0" max="4" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="raftSurfaceLayers" Text="Raft Surface Layers" Suffix="layers" Tooltip=" Number of top layers for the raft " GroupToggle="InternalToGUI_enableRaft"> 
+                    <Integer Value="0"> 
+                        <Warning min="0" max="5" /> 
+                        <Error min="0" max="8" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="raftBaseSpeed" Text="Raft Base Speed" Suffix="mm/s" Tooltip=" Print speed for raft " GroupToggle="InternalToGUI_enableRaft"> 
+                    <Integer Value="0"> 
+                        <Warning min="0" max="60" /> 
+                        <Error min="0" max="80" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="raftSurfaceSpeed" Text="Surface Speed" Suffix="mm/s" Tooltip=" Print speed of raft surface " GroupToggle="InternalToGUI_enableRaft"> 
+                    <Integer Value="0"> 
+                        <Warning min="0" max="60" /> 
+                        <Error min="0" max="80" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="raftFanSpeed" Text="Raft Fan Speed" Suffix="%" Tooltip=" Fan speed while printing raft " GroupToggle="InternalToGUI_enableRaft"> 
+                    <Integer Value="0"> 
+                        <Warning min="0" max="49" /> 
+                        <Error min="0" max="100" /> 
+                    </Integer> 
+                </Setting> 
+                <!--TODO move this to an equatted hidden variable --> 
+                <Setting Name="raftAirGap" Text="Raft Air Gap" GroupToggle="InternalToGUI_enableRaft"> 
+                    <Bool value="false" /> 
+                </Setting> 
+                <Setting Name="raftAirGapLayer0" Text="Raft Air Gap Layer 0" Suffix="mm" Tooltip=" Amount of air gap between raft and model " GroupToggle="InternalToGUI_enableRaft"> 
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="0.5" /> 
+                        <Error min="0" max="1" /> 
+                    </FloatMM> 
+                </Setting> 
+            </SlicerSettings> 
+        </Tab> 
+        <Tab Header="Retraction, Fan\n    and Skirt"> 
+            <SlicerSettings> 
+                <Setting Name="retractionAmount" Text="Retraction Amount" Suffix="mm" Tooltip=" Amount to retract by ">
+                    <FloatMM Value="1"> 
+                        <Warning min="0" max="2.5" /> 
+                        <Error min="0" max="10" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="retractionSpeed" Text="Retraction Speed" Suffix="mm/s" Tooltip=" Speed of retraction ">
+                    <Integer Value="6"> 
+                        <Warning min="1" max="6" /> 
+                        <Error min="1" max="80" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="retractionAmountPrime" Text="Prime Amount" Suffix="mm" Tooltip=" Amount to re-prime after retraction ">
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="4" /> 
+                        <Error min="0" max="10" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="retractionMinimalDistance"  Text="Minimal Travel Before Retraction" Suffix="" Tooltip=" Low-end cutoff for travel move distance that enforces retraction ">
+                    <FloatMM Value="1.5"> 
+                        <Warning min="0.1" max="3" /> 
+                        <Error min="0" max="4" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="minimalExtrusionBeforeRetraction" Text="Minimal Extrusion Before Retraction" Suffix="mm" Tooltip=" Minimal required forward extrusion before allowing retraction ">
+                    <FloatMM Value="0.1"> 
+                        <Warning min="0" max="0.5" /> 
+                        <Error min="0" max="1" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="retractionZHop" Text="Retraction Z Hop" Suffix="mm" Tooltip=" Amount to raise Z when retracting ">
+                    <FloatMM Value="0.1"> 
+                        <Warning min="0" max="1" /> 
+                        <Error min="0" max="5" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="InternalToGUI_autoFanSettings" Text="Use Automatic Fan Settings" Tooltip=" Allow the M3D preprocessors to control fan settings ">
+                    <BoolRPC property="UsingAutoFanSettings" /> 
+                </Setting> 
+                <Setting Name="fanSpeedMin" Text="Minimum Fan Speed" Suffix="%" Tooltip=" Percent of total fan capacity minimum " GroupToggle="InternalToGUI_autoFanSettings" ReverseGroupToggle="true">
+                    <Integer Value="-1"> 
+                        <Warning min="0" max="100" /> 
+                        <Error min="0" max="100" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="fanSpeedMax" Text="Maximum Fan Speed" Suffix="%" Tooltip=" Percent of total fan capacity maximum " GroupToggle="InternalToGUI_autoFanSettings" ReverseGroupToggle="true">
+                    <Integer Value="-1"> 
+                        <Warning min="0" max="100" /> 
+                        <Error min="0" max="100" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="fanFullOnLayerNr" Text="Fan layer threshold" Tooltip=" Fan slows down for layers below this value " GroupToggle="InternalToGUI_autoFanSettings" ReverseGroupToggle="true">
+                    <Integer Value="-1"> 
+                        <Warning min="1" max="5" /> 
+                        <Error min="1" max="5" /> 
+                    </Integer> 
+                </Setting>
+                <Setting Name="InternalToGUI_enableSkirt" Text="Enable Skirt" Tooltip=" Prime the extruder by means of an outline that does not touch printed parts ">
+                  <BoolRPC property="HasSkirt" />
+                </Setting>
+                <Setting Name="skirtDistance" Text="Skirt Margin" Suffix="mm" Tooltip=" Distance between first layer and skirt " GroupToggle="InternalToGUI_enableSkirt">
+                    <FloatMM Value="0.0"> 
+                        <Warning min="2" max="8" /> 
+                        <Error min="1" max="10" /> 
+                    </FloatMM> 
+                </Setting> 
+                <Setting Name="skirtLineCount" Text="Skirt line count" Tooltip=" Number of times skirt should be extruded around model " GroupToggle="InternalToGUI_enableSkirt">
+                    <Integer Value="0"> 
+                        <Warning min="0" max="1" /> 
+                        <Error min="0" max="3" /> 
+                    </Integer> 
+                </Setting> 
+                <Setting Name="skirtMinLength" Text="Minimal length of skirt extrusion" Tooltip=" Overrides the number of skirts to be extruded around model to achieve this minimal length " GroupToggle="InternalToGUI_enableSkirt">
+                    <FloatMM Value="0"> 
+                        <Warning min="0" max="60" /> 
+                        <Error min="0" max="100" /> 
+                    </FloatMM> 
+                </Setting> 
+            </SlicerSettings> 
+        </Tab> 
+    </UserViewableSettings> 
+    <InvisibleSlicerSettings> 
+        <Setting Name="enableOozeShield"> 
+            <Bool value="false" /> 
+        </Setting> 
+        <Setting Name="wipeTowerSize"> 
+            <Integer Value="0"> 
+                <Warning min="0" max="0" /> 
+                <Error min="0" max="0" /> 
+            </Integer> 
+        </Setting> 
+        <Setting Name="multiVolumeOverlap"> 
+            <Integer Value="0"> 
+                <Warning min="0" max="0" /> 
+                <Error min="0" max="0" /> 
+            </Integer> 
+        </Setting> 
+        <Setting Name="objectSink"> 
+            <FloatMM Value="0"> 
+                <Warning min="0" max="0" /> 
+                <Error min="0" max="0" /> 
+            </FloatMM> 
+        </Setting> 
+        <Setting Name="autoCenter"> 
+            <Bool value="true" /> 
+        </Setting> 
+        <Setting Name="retractionAmountExtruderSwitch"> 
+            <FloatMM Value="14.5"> 
+                <Warning min="0" max="0" /> 
+                <Error min="0" max="0" /> 
+            </FloatMM> 
+        </Setting> 
+        <Setting Name="supportExtruder"> 
+            <Integer Value="-1"> 
+                <Warning min="-1" max="-1" /> 
+                <Error min="-1" max="-1" /> 
+            </Integer> 
+        </Setting> 
+        <Setting Name="fixHorrible"> 
+            <Integer Value="0"> 
+                <Warning min="0" max="0" /> 
+                <Error min="0" max="0" /> 
+            </Integer> 
+        </Setting> 
+        <Setting Name="spiralizeMode"> 
+            <Integer Value="0"> 
+                <Warning min="0" max="0" /> 
+                <Error min="0" max="0" /> 
+            </Integer> 
+        </Setting> 
+        <Setting Name="simpleMode"> 
+            <Integer Value="0"> 
+                <Warning min="0" max="0" /> 
+                <Error min="0" max="0" /> 
+            </Integer> 
+        </Setting> 
+        <Setting Name="gcodeFlavor"> 
+            <GCodeFlavorTypeCura Value="Reprap" /> 
+        </Setting> 
+        <!-- TODO USE THESE OR LOSE THESE, basicly can speed up time to print if this is not done by preprocessor --> 
+        <Setting Name="startCode"> 
+            <String Text="G90\r\n;other\ temp:0\r\n;ideal\ temp:0\r\n" /> 
+        </Setting> 
+        <Setting Name="endCode"> 
+            <String Text="M18\r\n" /> 
+        </Setting> 
+    </InvisibleSlicerSettings> 
+</XMLSetting>

@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: C:\Program Files (x86)\M3D - Software\2017.12.18.1.8.3.0\Resources\Spooler\M3DSpooler.exe-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4A254761-EDFE-4DF9-B648-2845AD29A889}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>M3DSpooler</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>M3D.Spooler</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AfterLockTask.cs" />
+    <Compile Include="HandlerTaskDesc.cs" />
+    <Compile Include="SpoolerMessageHandler.cs" />
+    <Compile Include="PrintOptions.cs" />
+    <Compile Include="ManualPrintOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExceptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BacklashSettingsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RequestedFormTask.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="TrayAppForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.cs" />
+    <Compile Include="Properties\Settings.cs" />
+    <Compile Include="Forms\AdvancedStatistics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PrinterLockWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Core\SpoolerSettings.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BacklashSettingsDialog.resx" />
+    <EmbeddedResource Include="Dialogs\About.resx" />
+    <EmbeddedResource Include="ExceptionForm.resx" />
+    <EmbeddedResource Include="Forms\AdvancedStatistics.resx" />
+    <EmbeddedResource Include="Forms\PrinterLockWarning.resx" />
+    <EmbeddedResource Include="MainForm.resx" />
+    <EmbeddedResource Include="ManualPrintOptions.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\M3DSpooling\M3DSpooling.csproj">
+      <Project>{81e1f654-1a78-4b8c-95f4-6d84bbcecc40}</Project>
+      <Name>M3DSpooling</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

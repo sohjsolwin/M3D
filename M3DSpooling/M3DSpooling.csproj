@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: C:\Program Files (x86)\M3D - Software\2017.12.18.1.8.3.0\M3DSpooling.dll-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{81E1F654-1A78-4B8C-95F4-6D84BBCECC40}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>M3DSpooling</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ISerialPortIo.cs" />
+    <Compile Include="SerialPortConfig.cs" />
+    <Compile Include="SafeSerialPort.cs" />
+    <Compile Include="M3D\Spooling\StayAwakeAndShutdown.cs" />
+    <Compile Include="M3D\Spooling\Version.cs" />
+    <Compile Include="M3D\Spooling\StandardVirtualCodes.cs" />
+    <Compile Include="M3D\Spooling\Preprocessors\BackLashPreprocessor.cs" />
+    <Compile Include="M3D\Spooling\Preprocessors\BedCompensationPreprocessor.cs" />
+    <Compile Include="M3D\Spooling\Preprocessors\BondingPreprocessor.cs" />
+    <Compile Include="M3D\Spooling\Preprocessors\GCodeInitializationPreprocessor.cs" />
+    <Compile Include="M3D\Spooling\Preprocessors\Foundation\JobDetails.cs" />
+    <Compile Include="M3D\Spooling\Preprocessors\Foundation\IPreprocessor.cs" />
+    <Compile Include="M3D\Spooling\Preprocessors\Foundation\Position.cs" />
+    <Compile Include="M3D\Spooling\Preprocessors\Foundation\Vector.cs" />
+    <Compile Include="M3D\Spooling\StayAwakeAndShutdown_\Implementation\IStayAwakeAndShutdown.cs" />
+    <Compile Include="M3D\Spooling\StayAwakeAndShutdown_\Implementation\WinStayAwakeAndShutdown.cs" />
+    <Compile Include="M3D\Spooling\Sockets\IBroadcastServer.cs" />
+    <Compile Include="M3D\Spooling\Sockets\CallBackOnReceivedRawMessage.cs" />
+    <Compile Include="M3D\Spooling\Sockets\SocketClient.cs" />
+    <Compile Include="M3D\Spooling\Sockets\SocketPeer.cs" />
+    <Compile Include="M3D\Spooling\Sockets\SocketServer.cs" />
+    <Compile Include="M3D\Spooling\FirstRunUpdates\FirstRunUpdateDefaultFan.cs" />
+    <Compile Include="M3D\Spooling\FirstRunUpdates\FirstRunUpdateFanValues.cs" />
+    <Compile Include="M3D\Spooling\FirstRunUpdates\FirstRunUpdateResetOffsets.cs" />
+    <Compile Include="M3D\Spooling\FirstRunUpdates\FirstRunUpdateSetBacklash1500.cs" />
+    <Compile Include="M3D\Spooling\FirstRunUpdates\FirstRunUpdateSetBatchto500mA.cs" />
+    <Compile Include="M3D\Spooling\FirstRunUpdates\FirstRunUpdateSetSpeedLimits.cs" />
+    <Compile Include="M3D\Spooling\FirstRunUpdates\IFirstRunUpdater.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\Micro1PrinterSizeProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\Micro1PrinterProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\MicroEEPROMConstants.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\MicroVirtualCodes.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\MicroPlusPrinterProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\MicroPlusEEPROMConstants.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\MicroPlusVirtualCodes.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\MicroPlusScriptsProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\ProPrinterSizeProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\ProScriptsProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\Micro1ScriptsProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\AccessoriesProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\EEPROMProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\FirstRunProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\PrinterPreprocessorProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\PrinterProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\InternalPrinterProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\PrinterProfileDictionary.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\ProPrinterProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\ProEEPROMConstants.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\ProVirtualCodes.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\PrinterSizeProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\ProductProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\SpeedLimitProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\SpoolerOptionsProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\SupportedFeaturesProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\SharedFeatureNames.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\TemperatureProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\VirtualCodeProfile.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\ScriptCallback.cs" />
+    <Compile Include="M3D\Spooling\Printer_Profiles\ScriptsProfile.cs" />
+    <Compile Include="M3D\Spooling\Embedded_Firmware\FirmwareDetails.cs" />
+    <Compile Include="M3D\Spooling\Core\ErrorLogger.cs" />
+    <Compile Include="M3D\Spooling\Core\FanConstValues.cs" />
+    <Compile Include="M3D\Spooling\Core\Paths.cs" />
+    <Compile Include="M3D\Spooling\Core\PublicPrinterConnection.cs" />
+    <Compile Include="M3D\Spooling\Core\EepromAddressInfo.cs" />
+    <Compile Include="M3D\Spooling\Core\Logger.cs" />
+    <Compile Include="M3D\Spooling\Core\EEPROMMapping.cs" />
+    <Compile Include="M3D\Spooling\Core\SerializableEEPROMMapping.cs" />
+    <Compile Include="M3D\Spooling\Core\RequestGCode.cs" />
+    <Compile Include="M3D\Spooling\Core\PrinterConnection.cs" />
+    <Compile Include="M3D\Spooling\Core\SpoolerServer.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\IPublicFirmwareController.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PluginResult.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\IGCodePluginable.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\FirmwareControllerPlugin.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\BootloaderController.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\FirmwareController.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\BaseController.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PrintJobs\FirmwareSDPrintJob.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PrintJobs\AbstractJob.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PrintJobs\CreationParameters.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PrintJobs\AbstractPreprocessedJob.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PrintJobs\JobController.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PrintJobs\ProcessReturn.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PrintJobs\JobCreateResult.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PrintJobs\SaveGCodeToFileJob.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\PrintJobs\SpoolerHostedJob.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\Plugins\PowerRecoveryPlugin.cs" />
+    <Compile Include="M3D\Spooling\Core\Controllers\Plugins\SDCardPlugin.cs" />
+    <Compile Include="M3D\Spooling\ConnectionManager\LinuxUSBPrinterFinder.cs" />
+    <Compile Include="M3D\Spooling\ConnectionManager\MacUSBPrinterFinder.cs" />
+    <Compile Include="M3D\Spooling\ConnectionManager\VID_PID.cs" />
+    <Compile Include="M3D\Spooling\ConnectionManager\PrinterConnectionManager.cs" />
+    <Compile Include="M3D\Spooling\ConnectionManager\PrinterConnEventArgs.cs" />
+    <Compile Include="M3D\Spooling\ConnectionManager\LogMessageEventArgs.cs" />
+    <Compile Include="M3D\Spooling\ConnectionManager\IUSBPrinterFinder.cs" />
+    <Compile Include="M3D\Spooling\ConnectionManager\WinUSBPrinterFinder.cs" />
+    <Compile Include="M3D\Spooling\Common\JobOptions.cs" />
+    <Compile Include="M3D\Spooling\Common\FilamentPreprocessorData.cs" />
+    <Compile Include="M3D\Spooling\Common\InitialPrintPreProcessorData.cs" />
+    <Compile Include="M3D\Spooling\Common\BondingPreprocessorData.cs" />
+    <Compile Include="M3D\Spooling\Common\PersistantJobData.cs" />
+    <Compile Include="M3D\Spooling\Common\SpoolerInfo.cs" />
+    <Compile Include="M3D\Spooling\Common\EmbeddedFirmwareSummary.cs" />
+    <Compile Include="M3D\Spooling\Common\FirmwareBoardVersionKVP.cs" />
+    <Compile Include="M3D\Spooling\Common\SupportedFeatures.cs" />
+    <Compile Include="M3D\Spooling\Common\BoundingBox.cs" />
+    <Compile Include="M3D\Spooling\Common\StackedBoundingBox.cs" />
+    <Compile Include="M3D\Spooling\Common\CircularArray`1.cs" />
+    <Compile Include="M3D\Spooling\Common\Trilean.cs" />
+    <Compile Include="M3D\Spooling\Common\GCodeType.cs" />
+    <Compile Include="M3D\Spooling\Common\JobStatus.cs" />
+    <Compile Include="M3D\Spooling\Common\CommandResult.cs" />
+    <Compile Include="M3D\Spooling\Common\PrinterLockStatus.cs" />
+    <Compile Include="M3D\Spooling\Common\PrinterStatus.cs" />
+    <Compile Include="M3D\Spooling\Common\ResetCauseEnum.cs" />
+    <Compile Include="M3D\Spooling\Common\Vector2D.cs" />
+    <Compile Include="M3D\Spooling\Common\Vector3D.cs" />
+    <Compile Include="M3D\Spooling\Common\Vector3DE.cs" />
+    <Compile Include="M3D\Spooling\Common\Vector4D.cs" />
+    <Compile Include="M3D\Spooling\Common\Vector5D.cs" />
+    <Compile Include="M3D\Spooling\Common\BedOffsets.cs" />
+    <Compile Include="M3D\Spooling\Common\BacklashSettings.cs" />
+    <Compile Include="M3D\Spooling\Common\Range.cs" />
+    <Compile Include="M3D\Spooling\Common\ErrorProcessing.cs" />
+    <Compile Include="M3D\Spooling\Common\Filament.cs" />
+    <Compile Include="M3D\Spooling\Common\FilamentConstants.cs" />
+    <Compile Include="M3D\Spooling\Common\FilamentProfile.cs" />
+    <Compile Include="M3D\Spooling\Common\SlicerProfile.cs" />
+    <Compile Include="M3D\Spooling\Common\ABS_FilamentProfile.cs" />
+    <Compile Include="M3D\Spooling\Common\PLA_FilamentProfile.cs" />
+    <Compile Include="M3D\Spooling\Common\TGH_FilamentProfile.cs" />
+    <Compile Include="M3D\Spooling\Common\ABS_R_FilamentProfile.cs" />
+    <Compile Include="M3D\Spooling\Common\FilamentSpool.cs" />
+    <Compile Include="M3D\Spooling\Common\JobInfo.cs" />
+    <Compile Include="M3D\Spooling\Common\JobParams.cs" />
+    <Compile Include="M3D\Spooling\Common\Synchronization.cs" />
+    <Compile Include="M3D\Spooling\Common\Accessories.cs" />
+    <Compile Include="M3D\Spooling\Common\SDCard.cs" />
+    <Compile Include="M3D\Spooling\Common\HeatedBed.cs" />
+    <Compile Include="M3D\Spooling\Common\PowerRecovery.cs" />
+    <Compile Include="M3D\Spooling\Common\Extruder.cs" />
+    <Compile Include="M3D\Spooling\Common\Hardware.cs" />
+    <Compile Include="M3D\Spooling\Common\Calibration.cs" />
+    <Compile Include="M3D\Spooling\Common\Statistics.cs" />
+    <Compile Include="M3D\Spooling\Common\PrinterInfo.cs" />
+    <Compile Include="M3D\Spooling\Common\SharedShutdownThreadStart.cs" />
+    <Compile Include="M3D\Spooling\Common\SharedShutdownThread.cs" />
+    <Compile Include="M3D\Spooling\Common\ThreadBasedTimer.cs" />
+    <Compile Include="M3D\Spooling\Common\ThreadSafeVariable`1.cs" />
+    <Compile Include="M3D\Spooling\Common\VersionNumber.cs" />
+    <Compile Include="M3D\Spooling\Common\PrinterSerialNumber.cs" />
+    <Compile Include="M3D\Spooling\Common\PersistantData.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\BacklashCalibrationPrint.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\Base64Convert.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\PrinterCompatibleString.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\PrinterCalibration.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\DebugLog.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\DebugLogger.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\CircularBuffer`1.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\GCodeBufferedFileReader.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\IGCodeReader.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\MovementUtility.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\FileUtils.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\SerializableDictionary`2.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\WriteOnce`1.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\SampleSet.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\GCodeFileReader.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\GCodeFileWriter.cs" />
+    <Compile Include="M3D\Spooling\Common\Utils\ConnectionMeter.cs" />
+    <Compile Include="M3D\Spooling\Common\Types\RectCoordinates.cs" />
+    <Compile Include="M3D\Spooling\Client\AsyncCallback.cs" />
+    <Compile Include="M3D\Spooling\Client\AsyncCallObject.cs" />
+    <Compile Include="M3D\Spooling\Client\SimpleAsyncCallResult.cs" />
+    <Compile Include="M3D\Spooling\Client\CallBackType.cs" />
+    <Compile Include="M3D\Spooling\Client\IAsyncCallResult.cs" />
+    <Compile Include="M3D\Spooling\Client\InternalSpoolerConnection.cs" />
+    <Compile Include="M3D\Spooling\Client\EventLockTimeOutCallBack.cs" />
+    <Compile Include="M3D\Spooling\Client\IPrinter.cs" />
+    <Compile Include="M3D\Spooling\Client\IPrinterPlugin.cs" />
+    <Compile Include="M3D\Spooling\Client\SpoolerResult.cs" />
+    <Compile Include="M3D\Spooling\Client\PrinterError.cs" />
+    <Compile Include="M3D\Spooling\Client\OnReceiveXMLFromSpooler.cs" />
+    <Compile Include="M3D\Spooling\Client\ISpoolerConnection.cs" />
+    <Compile Include="M3D\Spooling\Client\OnUpdateDataDel.cs" />
+    <Compile Include="M3D\Spooling\Client\OnProcessSpoolerMessageDel.cs" />
+    <Compile Include="M3D\Spooling\Client\Printer.cs" />
+    <Compile Include="M3D\Spooling\Client\PrinterDecorator.cs" />
+    <Compile Include="M3D\Spooling\Client\OnReceivedPrinterListDel.cs" />
+    <Compile Include="M3D\Spooling\Client\OnReceivedMessageDel.cs" />
+    <Compile Include="M3D\Spooling\Client\SpoolerClient.cs" />
+    <Compile Include="M3D\Spooling\Client\SpoolerClientBuiltIn.cs" />
+    <Compile Include="M3D\Spooling\Client\MessageType.cs" />
+    <Compile Include="M3D\Spooling\Client\SpoolerMessage.cs" />
+    <Compile Include="M3D\Spooling\Client\RPCInvoker.cs" />
+    <Compile Include="M3D\Spooling\Client\RemoteSpoolerConnection.cs" />
+    <Compile Include="M3D\Spooling\Client\Extensions\SDCardExtensions.cs" />
+    <Compile Include="M3D\Spooling\Client\Extensions\TestGeneration.cs" />
+    <Compile Include="M3D\Boot\CRCBytes.cs" />
+    <Compile Include="M3D\Boot\CRC_Type.cs" />
+    <Compile Include="M3D\Boot\Bootloader.cs" />
+    <Compile Include="M3D\Boot\ChipData.cs" />
+    <Compile Include="M3D\Boot\STMChipData.cs" />
+    <Compile Include="M3D\Boot\AVRChipData.cs" />
+    <Compile Include="USBClassLibrary\USBClass.cs" />
+    <Compile Include="SerialPortTester\SerialPortFixer.cs" />
+    <Compile Include="RepetierHost\model\GCode.cs" />
+    <Compile Include="Nito\Deque`1.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="M3D\Spooling\Embedded_Firmware\m3dfirmware-encrypt000001.hex" />
+    <EmbeddedResource Include="M3D\Spooling\Embedded_Firmware\m3dfirmware-encrypt00M24x.hex" />
+    <EmbeddedResource Include="M3D\Spooling\Embedded_Firmware\m3dfirmware-encrypt00M30x.hex" />
+    <EmbeddedResource Include="M3D\Spooling\Embedded_Firmware\m3dfirmware-encrypt00S23x.hex" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

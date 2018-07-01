@@ -1,0 +1,361 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: C:\Program Files (x86)\M3D - Software\2017.12.18.1.8.3.0\M3DSoftware.exe-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{71D753F0-A213-493B-9479-55CDBA3F8EC7}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>M3DGUI</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>M3D</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="OpenTK">
+      <HintPath>lib\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="MIConvexHull">
+      <HintPath>lib\MIConvexHull.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.GLControl">
+      <HintPath>lib\OpenTK.GLControl.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>lib\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="QuickFont">
+      <HintPath>lib\QuickFont.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConfirmShutdownForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SendDebugEmail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilamentDictionary.cs" />
+    <Compile Include="MultiPrinterDialogWidget.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ImageResourceMapping.cs" />
+    <Compile Include="WinFileAssociations.cs" />
+    <Compile Include="WinStopShutdown.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\Range`1.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsGenericBoundedNumber`1.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\IReportFormat.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsItemBoolRPCType.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsItemBoolType.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\FillPaternCura.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsItemFillPatternTypeCura.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsItemFloatMMType.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsItemFloatSecondsType.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\GCodeFlavorCura.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsItemGCodeFlavorTypeCura.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsItemIntType.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsItemStringType.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SupportPatternCura.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SettingsItemSupportPatternTypeCura.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SlicerSettingsItem.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\SlicerSettingsEnumItem.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\XMLTabCollectionSettingsItem.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\XMLSettingsItem.cs" />
+    <Compile Include="SlicerConnectionCura\SlicerSettingsItems\XMLSetting.cs" />
+    <Compile Include="Slicer\General\Matrix4x4.cs" />
+    <Compile Include="Slicer\General\PrintSettings.cs" />
+    <Compile Include="Slicer\General\SlicerConnectionBase.cs" />
+    <Compile Include="Slicer\General\PrintQuality.cs" />
+    <Compile Include="Slicer\General\FillQuality.cs" />
+    <Compile Include="Slicer\General\SupportType.cs" />
+    <Compile Include="Slicer\General\SlicerResult.cs" />
+    <Compile Include="Slicer\General\SettingItemType.cs" />
+    <Compile Include="Slicer\General\SettingReadResult.cs" />
+    <Compile Include="Slicer\General\KeyValuePair`2.cs" />
+    <Compile Include="Slicer\General\SmartSlicerSettingsBase.cs" />
+    <Compile Include="Slicer\General\SmartSlicerSettingsStack.cs" />
+    <Compile Include="Slicer\Cura15_04\SlicerStatus.cs" />
+    <Compile Include="Slicer\Cura15_04\SlicerConnectionCura.cs" />
+    <Compile Include="Slicer\Cura15_04\SmartSlicerSettingsCura15_04.cs" />
+    <Compile Include="Properties\Resources.cs" />
+    <Compile Include="Properties\Settings.cs" />
+    <Compile Include="Model\ModelData.cs" />
+    <Compile Include="Model\ModelSize.cs" />
+    <Compile Include="Model\ModelTransform.cs" />
+    <Compile Include="Model\Utils\ProgressHelper.cs" />
+    <Compile Include="Model\Utils\Vector3.cs" />
+    <Compile Include="Model\FilIO\ModelExporter.cs" />
+    <Compile Include="Model\FilIO\ModelImporterInterface.cs" />
+    <Compile Include="Model\FilIO\ModelM3DExporter.cs" />
+    <Compile Include="Model\FilIO\ModelM3DImporter.cs" />
+    <Compile Include="Model\FilIO\ModelOBJImporter.cs" />
+    <Compile Include="Model\FilIO\ModelSMFImporter.cs" />
+    <Compile Include="Model\FilIO\ModelSTLExporter.cs" />
+    <Compile Include="Model\FilIO\ModelSTLImporter.cs" />
+    <Compile Include="GUI\NewInstanceEvent.cs" />
+    <Compile Include="GUI\FileAssociationSingleInstance.cs" />
+    <Compile Include="GUI\LoadNewModelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Paths.cs" />
+    <Compile Include="GUI\Interfaces\IFileAssociations.cs" />
+    <Compile Include="GUI\Interfaces\IStopShutdown.cs" />
+    <Compile Include="GUI\Views\ControlBarButtons.cs" />
+    <Compile Include="GUI\Views\ControlBar.cs" />
+    <Compile Include="GUI\Views\MessagePopUp.cs" />
+    <Compile Include="GUI\Views\OpenModelFileDialog.cs" />
+    <Compile Include="GUI\Views\SaveModelFileDialog.cs" />
+    <Compile Include="GUI\Views\WelcomeDialog.cs" />
+    <Compile Include="GUI\Views\Printer_View\Colors.cs" />
+    <Compile Include="GUI\Views\Printer_View\EditViewControlBar.cs" />
+    <Compile Include="GUI\Views\Printer_View\ModelAdjustmentsDialog.cs" />
+    <Compile Include="GUI\Views\Printer_View\ModelListToolbox.cs" />
+    <Compile Include="GUI\Views\Printer_View\PrinterStatusDialog.cs" />
+    <Compile Include="GUI\Views\Printer_View\PrinterView.cs" />
+    <Compile Include="GUI\Views\Printer_View\PrinterViewSceneGraph.cs" />
+    <Compile Include="GUI\Views\Printer_View\ToolBar.cs" />
+    <Compile Include="GUI\Views\Printer_View\Specialized_Nodes\GridObjectNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\Specialized_Nodes\Micro1CaseNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\Specialized_Nodes\ProCaseNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\Specialized_Nodes\PrinterCaseNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\Specialized_Nodes\PrinterLogoObjectNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\Specialized_Nodes\PrinterModelNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\AbstractSliceAndPrintFrame.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\AdvancedPrintSettingsFrame.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\PreparingToStartFrame.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\PreSlicingFrame.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\ControlIDs.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\PrintDialogFrame.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\PrintDialogWidgetFrames.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\PrintDialogMainWindow.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\IPrintDialogFrame.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\PrintJobDetails.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\SlicerObjectData.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\PrintingToFileFrame.cs" />
+    <Compile Include="GUI\Views\Printer_View\Print_Dialog_Widget\SlicingFrame.cs" />
+    <Compile Include="GUI\Views\Printer_View\History\PrinterViewHistory.cs" />
+    <Compile Include="GUI\Views\Printer_View\History\Nodes\AddModelFileHistoryNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\History\Nodes\BaseModelFileHistoryNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\History\Nodes\HistoryNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\History\Nodes\RemoveModelFileHistoryNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\History\Nodes\SelectObjectHistoryNode.cs" />
+    <Compile Include="GUI\Views\Printer_View\History\Nodes\TransformObjectHistoryNode.cs" />
+    <Compile Include="GUI\Views\Library_View\ViewState.cs" />
+    <Compile Include="GUI\Views\Library_View\LibraryView.cs" />
+    <Compile Include="GUI\Views\Library_View\LibraryViewTab.cs" />
+    <Compile Include="GUI\Views\Library_View\LibraryRecord.cs" />
+    <Compile Include="GUI\Views\Library_View\QueryResults`1.cs" />
+    <Compile Include="GUI\Views\Library_View\RecentModelHistory.cs" />
+    <Compile Include="GUI\Views\Library_View\RecentModelTab.cs" />
+    <Compile Include="GUI\Views\Library_View\RecentPrintsHistory.cs" />
+    <Compile Include="GUI\Views\Library_View\RecentPrintsTab.cs" />
+    <Compile Include="GUI\Tools\GCodeGeneration.cs" />
+    <Compile Include="GUI\Tools\SplitFileName.cs" />
+    <Compile Include="GUI\SettingsPages\AboutPage.cs" />
+    <Compile Include="GUI\SettingsPages\AddFilamentProfileDialog.cs" />
+    <Compile Include="GUI\SettingsPages\PrinterColors.cs" />
+    <Compile Include="GUI\SettingsPages\ModelColors.cs" />
+    <Compile Include="GUI\SettingsPages\IconColor.cs" />
+    <Compile Include="GUI\SettingsPages\RenderingModes.cs" />
+    <Compile Include="GUI\SettingsPages\AppearancePage.cs" />
+    <Compile Include="GUI\SettingsPages\CalibrationSettingsFrame.cs" />
+    <Compile Include="GUI\SettingsPages\FilamentProfilePage.cs" />
+    <Compile Include="GUI\SettingsPages\SettingsPage.cs" />
+    <Compile Include="GUI\SettingsPages\ManualControlsFrame.cs" />
+    <Compile Include="GUI\SettingsPages\FeaturePanel.cs" />
+    <Compile Include="GUI\SettingsPages\SettingsDialogWidget.cs" />
+    <Compile Include="GUI\SettingsPages\UpdateDownloadingDialog.cs" />
+    <Compile Include="GUI\SettingsPages\Manual_Controls_Tabs\SDCardFrame.cs" />
+    <Compile Include="GUI\SettingsPages\Manual_Controls_Tabs\AdvancedFrame.cs" />
+    <Compile Include="GUI\SettingsPages\Manual_Controls_Tabs\BasicControlsFrame.cs" />
+    <Compile Include="GUI\SettingsPages\Manual_Controls_Tabs\DiagnosticsFrame.cs" />
+    <Compile Include="GUI\SettingsPages\Manual_Controls_Tabs\GCodeFrame.cs" />
+    <Compile Include="GUI\SettingsPages\Calibration_Tabs\AdvancedCalibrationTab.cs" />
+    <Compile Include="GUI\SettingsPages\Calibration_Tabs\CatScreenTab.cs" />
+    <Compile Include="GUI\OpenGL\OpenGLConnection.cs" />
+    <Compile Include="GUI\ManageFilament\Manage3DInkChildWindow.cs" />
+    <Compile Include="GUI\ManageFilament\Manage3DInkMainWindow.cs" />
+    <Compile Include="GUI\ManageFilament\Mangage3DInkStageDetails.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentChangeFilamentDetails.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentCheatCodePage.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentCleanNozzle.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentCloseBedInstructions.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentFilamentColor.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentFilamentLocation.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentFilamentSpoolSize.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentHasFilamentExited.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentHasRetractedFilament.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentHeatingNozzle.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentInsertNewFilament.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentInternalSpoolInstructions.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentIsNewSpoolPage.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentIsThereFilament.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentPrimingNozzle.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentRaisingExtruder.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentRemoveInternalSpoolInstructions.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentRetractingFilament.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentStartupPage.cs" />
+    <Compile Include="GUI\ManageFilament\Child_Frames\FilamentWaitingPage.cs" />
+    <Compile Include="GUI\Forms\ExceptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\Splash\SplashForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Forms\Splash\SplashFormFirstRun.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Dialogs\AssociationsForm.cs" />
+    <Compile Include="GUI\Dialogs\PopupMessageBox.cs" />
+    <Compile Include="GUI\Dialogs\FeaturesDialog.cs" />
+    <Compile Include="GUI\Controller\M3DGlobalization.cs" />
+    <Compile Include="GUI\Controller\ModelLoadingManager.cs" />
+    <Compile Include="GUI\Controller\Package.cs" />
+    <Compile Include="GUI\Controller\PackageManager.cs" />
+    <Compile Include="GUI\Controller\PrinterObject.cs" />
+    <Compile Include="GUI\Controller\PrinterStatusDialogOrganizer.cs" />
+    <Compile Include="GUI\Controller\SoundManager.cs" />
+    <Compile Include="GUI\Controller\SpoolerConnection.cs" />
+    <Compile Include="GUI\Controller\Updater.cs" />
+    <Compile Include="GUI\Controller\Settings\PrintDetails.cs" />
+    <Compile Include="GUI\Controller\Settings\SettingsManager.cs" />
+    <Compile Include="GUI\AccessoriesDialog\CustomNozzleSizeDialog.cs" />
+    <Compile Include="GUI\AccessoriesDialog\MainWindow.cs" />
+    <Compile Include="GUI\AccessoriesDialog\NozzlePage.cs" />
+    <Compile Include="Graphics\DialogRootWidget.cs" />
+    <Compile Include="Graphics\Tooltip.cs" />
+    <Compile Include="Graphics\FontSize.cs" />
+    <Compile Include="Graphics\FontInfo.cs" />
+    <Compile Include="Graphics\GUIHost.cs" />
+    <Compile Include="Graphics\IElement.cs" />
+    <Compile Include="Graphics\KeyboardEventType.cs" />
+    <Compile Include="Graphics\KeyboardCommandKey.cs" />
+    <Compile Include="Graphics\KeyboardEvent.cs" />
+    <Compile Include="Graphics\InputKeyEvent.cs" />
+    <Compile Include="Graphics\CommandKeyEvent.cs" />
+    <Compile Include="Graphics\Simple2DRenderer.cs" />
+    <Compile Include="Graphics\SpriteType.cs" />
+    <Compile Include="Graphics\Sprite.cs" />
+    <Compile Include="Graphics\TextLine.cs" />
+    <Compile Include="Graphics\Texture.cs" />
+    <Compile Include="Graphics\TextLocalization\Locale.cs" />
+    <Compile Include="Graphics\Utils\BoundingBox.cs" />
+    <Compile Include="Graphics\Utils\ImageCapture.cs" />
+    <Compile Include="Graphics\Interfaces\IProcess.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\GenericScrollFrame`1.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\ScrollableVerticalLayout.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\TreeNodeWidget.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\TreeViewWidget.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\Layout.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\BorderedImageFrame.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\Frame.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\GridLayout.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\HorizontalLayout.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\ScrollFrame.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\VerticalLayout.cs" />
+    <Compile Include="Graphics\Frames_and_Layouts\XMLFrame.cs" />
+    <Compile Include="Graphics\Ext3D\ModelTransformPair.cs" />
+    <Compile Include="Graphics\Ext3D\CustomShape.cs" />
+    <Compile Include="Graphics\Ext3D\Element3D.cs" />
+    <Compile Include="Graphics\Ext3D\Frame3DView.cs" />
+    <Compile Include="Graphics\Ext3D\FrontFacingPlaneNode.cs" />
+    <Compile Include="Graphics\Ext3D\LightNode.cs" />
+    <Compile Include="Graphics\Ext3D\Model3DNode.cs" />
+    <Compile Include="Graphics\Ext3D\TexturedFloorNode.cs" />
+    <Compile Include="Graphics\Ext3D\TransformationNode.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\GraphicsModelData.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\Model.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\VertexTNV.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\TriangleFace.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\OpenGLRendererObject.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\OpenGLRender.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\OpenGLRendererVBOs.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\OpenGLRendererARBVBOs.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\OpenGLRendererImmediateMode.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\Ray.cs" />
+    <Compile Include="Graphics\Ext3D\ModelRendering\VertexNormalKey.cs" />
+    <Compile Include="Graphics\Widgets2D\BoundrySurface.cs" />
+    <Compile Include="Graphics\Widgets2D\Element2DList.cs" />
+    <Compile Include="Graphics\Widgets2D\AbstractEditBoxWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\MultiBoxEditBoxWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\IDataAccessable.cs" />
+    <Compile Include="Graphics\Widgets2D\ButtonType.cs" />
+    <Compile Include="Graphics\Widgets2D\ButtonTemplate.cs" />
+    <Compile Include="Graphics\Widgets2D\ButtonCallback.cs" />
+    <Compile Include="Graphics\Widgets2D\ButtonWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\ComboBoxWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\NumFormat.cs" />
+    <Compile Include="Graphics\Widgets2D\EditBoxWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\ElementType.cs" />
+    <Compile Include="Graphics\Widgets2D\ControlMsg.cs" />
+    <Compile Include="Graphics\Widgets2D\State.cs" />
+    <Compile Include="Graphics\Widgets2D\MouseEventType.cs" />
+    <Compile Include="Graphics\Widgets2D\MouseButton.cs" />
+    <Compile Include="Graphics\Widgets2D\MouseEvent.cs" />
+    <Compile Include="Graphics\Widgets2D\Point.cs" />
+    <Compile Include="Graphics\Widgets2D\Dimensions.cs" />
+    <Compile Include="Graphics\Widgets2D\ElementStandardDelegate.cs" />
+    <Compile Include="Graphics\Widgets2D\OnControlMsgDelegate.cs" />
+    <Compile Include="Graphics\Widgets2D\Element2D.cs" />
+    <Compile Include="Graphics\Widgets2D\HorizontalLayoutScrollList.cs" />
+    <Compile Include="Graphics\Widgets2D\HorizontalSliderWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\ImageWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\ListBoxWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\ProgressBarWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\QuadWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\SliderButtonID.cs" />
+    <Compile Include="Graphics\Widgets2D\SliderWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\SpriteAnimationWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\TextVerticalAlignment.cs" />
+    <Compile Include="Graphics\Widgets2D\TextWidget.cs" />
+    <Compile Include="Graphics\Widgets2D\VerticalSliderWidget.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ConfirmShutdownForm.resx" />
+    <EmbeddedResource Include="GUI\Forms\ExceptionForm.resx" />
+    <EmbeddedResource Include="GUI\Forms\Form1.resx" />
+    <EmbeddedResource Include="GUI\Forms\Splash\SplashForm.resx" />
+    <EmbeddedResource Include="GUI\Forms\Splash\SplashFormFirstRun.resx" />
+    <EmbeddedResource Include="GUI\LoadNewModelForm.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx" />
+    <EmbeddedResource Include="SendDebugEmail.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\M3DSpooling\M3DSpooling.csproj">
+      <Project>{81e1f654-1a78-4b8c-95f4-6d84bbcecc40}</Project>
+      <Name>M3DSpooling</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
