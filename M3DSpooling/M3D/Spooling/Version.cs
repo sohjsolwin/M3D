@@ -26,7 +26,7 @@ namespace M3D.Spooling
     {
       get
       {
-        string str = 20171218U.ToString();
+        var str = 20171218U.ToString();
         return str.Substring(0, 4) + "-" + str.Substring(4, 2) + "-" + str.Substring(6, 2) + "-v" + Version.VersionTextNoDate;
       }
     }

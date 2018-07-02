@@ -22,19 +22,25 @@ namespace M3D.GUI.Views.Printer_View.History.Nodes
 
     public override void Undo(PrinterView printerView)
     {
-      ModelTransformPair modelById = printerView.GetModelByID(this.ObjectID);
+      ModelTransformPair modelById = printerView.GetModelByID(ObjectID);
       if (modelById == null)
+      {
         return;
-      modelById.transformNode.TransformData = this.previousTransform;
+      }
+
+      modelById.transformNode.TransformData = previousTransform;
       printerView.PushUpdatedInfomation(modelById);
     }
 
     public override void Redo(PrinterView printerView)
     {
-      ModelTransformPair modelById = printerView.GetModelByID(this.ObjectID);
+      ModelTransformPair modelById = printerView.GetModelByID(ObjectID);
       if (modelById == null)
+      {
         return;
-      modelById.transformNode.TransformData = this.newTransform;
+      }
+
+      modelById.transformNode.TransformData = newTransform;
       printerView.PushUpdatedInfomation(modelById);
     }
   }

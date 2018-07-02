@@ -39,78 +39,93 @@ namespace M3D.GUI.Controller
       this.messagebox = messagebox;
       this.printerView = printerView;
       this.gui_host = gui_host;
-      this.spooler_connection.OnGotNewPrinter += new SpoolerClient.OnGotNewPrinterDel(this.OnGotNewPrinter);
-      this.spooler_connection.OnPrinterDisconnected += new SpoolerClient.OnPrinterDisconnectedDel(this.OnPrinterDisconnected);
-      this.connected_printers = new List<PrinterStatusDialog>();
-      this.InitGUIElement(gui_host, (Element2D) printerView.GetEditFrame());
+      this.spooler_connection.OnGotNewPrinter += new SpoolerClient.OnGotNewPrinterDel(OnGotNewPrinter);
+      this.spooler_connection.OnPrinterDisconnected += new SpoolerClient.OnPrinterDisconnectedDel(OnPrinterDisconnected);
+      connected_printers = new List<PrinterStatusDialog>();
+      InitGUIElement(gui_host, (Element2D) printerView.GetEditFrame());
     }
 
     private void InitGUIElement(GUIHost gui_host, Element2D parent)
     {
-      this.scroll_frame = new ScrollFrame(1234);
-      this.scroll_frame.Init(gui_host);
-      this.scroll_frame.Width = 450;
-      this.scroll_frame.RelativeHeight = -1f;
-      this.scroll_frame.Pane_Width = 400;
-      this.scroll_frame.Pane_Height = 10;
-      this.scroll_frame.X = -this.scroll_frame.Width;
-      this.scroll_frame.Y = 64;
-      ScrollFrame scrollFrame = this.scroll_frame;
-      scrollFrame.OnControlMsgCallback = scrollFrame.OnControlMsgCallback + new OnControlMsgDelegate(this.OnControlMsg);
-      this.layout = new VerticalLayout(12345);
-      this.layout.SetSize(400, 10);
-      this.layout.layoutMode = Layout.LayoutMode.ResizeLayoutToFitChildren;
-      this.scroll_frame.AddChildElement((Element2D) this.layout);
-      this.scroll_frame.Visible = false;
-      parent.ChildList += (Element2D) this.scroll_frame;
+      scroll_frame = new ScrollFrame(1234);
+      scroll_frame.Init(gui_host);
+      scroll_frame.Width = 450;
+      scroll_frame.RelativeHeight = -1f;
+      scroll_frame.Pane_Width = 400;
+      scroll_frame.Pane_Height = 10;
+      scroll_frame.X = -scroll_frame.Width;
+      scroll_frame.Y = 64;
+      ScrollFrame scrollFrame = scroll_frame;
+      scrollFrame.OnControlMsgCallback = scrollFrame.OnControlMsgCallback + new OnControlMsgDelegate(OnControlMsg);
+      layout = new VerticalLayout(12345);
+      layout.SetSize(400, 10);
+      layout.layoutMode = Layout.LayoutMode.ResizeLayoutToFitChildren;
+      scroll_frame.AddChildElement((Element2D)layout);
+      scroll_frame.Visible = false;
+      parent.ChildList += (Element2D)scroll_frame;
     }
 
     private void OnControlMsg(Element2D the_control, ControlMsg msg, float xparam, float yparam)
     {
-      if (the_control.ID != this.layout.ID || msg != ControlMsg.LAYOUT_RESIZED_BY_CHILDREN)
-        return;
-      this.scroll_frame.Pane_Height = this.layout.Height;
-      int num = (int) ((double) this.scroll_frame.Parent.Height * 0.649999976158142);
-      if (this.scroll_frame.Pane_Height > 100)
+      if (the_control.ID != layout.ID || msg != ControlMsg.LAYOUT_RESIZED_BY_CHILDREN)
       {
-        this.scroll_frame.Visible = true;
-        if (this.scroll_frame.Pane_Height < num)
-          this.scroll_frame.Height = this.scroll_frame.Pane_Height;
+        return;
+      }
+
+      scroll_frame.Pane_Height = layout.Height;
+      var num = (int) ((double)scroll_frame.Parent.Height * 0.649999976158142);
+      if (scroll_frame.Pane_Height > 100)
+      {
+        scroll_frame.Visible = true;
+        if (scroll_frame.Pane_Height < num)
+        {
+          scroll_frame.Height = scroll_frame.Pane_Height;
+        }
         else
-          this.scroll_frame.Height = num;
+        {
+          scroll_frame.Height = num;
+        }
       }
       else
-        this.scroll_frame.Visible = false;
-      this.scroll_frame.Refresh();
+      {
+        scroll_frame.Visible = false;
+      }
+
+      scroll_frame.Refresh();
     }
 
     public void OnGotNewPrinter(Printer new_printer)
     {
-      lock (this.connected_printers)
+      lock (connected_printers)
       {
-        this.connected_printers.Add(new PrinterStatusDialog(new_printer, this.gui_host, (Element2D) this.layout, this.messagebox, this.mainform, this.settingsManager));
-        if (new_printer.Info.current_job == null || this.printerView.IsModelLoaded() || (this.modelLoadingManager.LoadingNewModel || this.modelLoadingManager.OptimizingModel))
+        connected_printers.Add(new PrinterStatusDialog(new_printer, gui_host, (Element2D)layout, messagebox, mainform, settingsManager));
+        if (new_printer.Info.current_job == null || printerView.IsModelLoaded() || (modelLoadingManager.LoadingNewModel || modelLoadingManager.OptimizingModel))
+        {
           return;
-        this.spooler_connection.SelectPrinterBySerialNumber(new_printer.Info.serial_number.ToString());
-        PrintDetails.PrintJobObjectViewDetails printerview_settings;
-        if (!SettingsManager.LoadPrinterView(new_printer.Info.current_job.Params.jobGuid, out printerview_settings))
+        }
+
+        spooler_connection.SelectPrinterBySerialNumber(new_printer.Info.serial_number.ToString());
+        if (!SettingsManager.LoadPrinterView(new_printer.Info.current_job.Params.jobGuid, out PrintDetails.PrintJobObjectViewDetails printerview_settings))
+        {
           return;
-        this.modelLoadingManager.LoadPrinterView(printerview_settings);
+        }
+
+        modelLoadingManager.LoadPrinterView(printerview_settings);
       }
     }
 
     public void OnPrinterDisconnected(Printer new_printer)
     {
-      lock (this.connected_printers)
+      lock (connected_printers)
       {
         try
         {
-          for (int index = 0; index < this.connected_printers.Count; ++index)
+          for (var index = 0; index < connected_printers.Count; ++index)
           {
-            if (this.connected_printers[index].Info.hardware.com_port == new_printer.Info.hardware.com_port)
+            if (connected_printers[index].Info.hardware.com_port == new_printer.Info.hardware.com_port)
             {
-              this.connected_printers[index].OnDisconnect();
-              this.connected_printers.RemoveAt(index);
+              connected_printers[index].OnDisconnect();
+              connected_printers.RemoveAt(index);
               break;
             }
           }

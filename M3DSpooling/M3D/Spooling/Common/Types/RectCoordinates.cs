@@ -15,10 +15,10 @@ namespace M3D.Spooling.Common.Types
 
     public RectCoordinates()
     {
-      this.front = 0.0f;
-      this.back = 0.0f;
-      this.left = 0.0f;
-      this.right = 0.0f;
+      front = 0.0f;
+      back = 0.0f;
+      left = 0.0f;
+      right = 0.0f;
     }
 
     public RectCoordinates(float front, float back, float left, float right)
@@ -31,10 +31,10 @@ namespace M3D.Spooling.Common.Types
 
     public RectCoordinates(RectCoordinates other)
     {
-      this.front = other.front;
-      this.back = other.back;
-      this.left = other.left;
-      this.right = other.right;
+      front = other.front;
+      back = other.back;
+      left = other.left;
+      right = other.right;
     }
   }
 }

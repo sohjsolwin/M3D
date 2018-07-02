@@ -50,37 +50,41 @@ namespace M3D.Graphics.Widgets2D
     public ListBoxWidget(int ID)
       : this(ID, (Element2D) null)
     {
-      this.Size = FontSize.Medium;
+      Size = FontSize.Medium;
     }
 
     public ListBoxWidget(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.Items = new List<object>();
-      this.image_widget = new ImageWidget(0);
-      this.image_widget.IgnoreMouse = true;
-      this.scrollbar = new VerticalSliderWidget(1);
-      this.scrollbar.Visible = false;
-      this.scrollbar.RoundingPlace = -1;
-      this.white = new Color4(1f, 1f, 1f, 1f);
-      this.imageHasFocusColor = this.white;
-      this.leftbordersize_pixels = 0;
-      this.rightbordersize_pixels = 0;
-      this.topbordersize_pixels = 0;
-      this.bottombordersize_pixels = 0;
-      this.rowheight = 0;
-      this.start_row = 0;
-      this.item_count = 0;
-      this.Selected = 0;
-      this.highlightmouseover = false;
-      this.mouse_over_row = -1;
-      this.MouseOverHighlight = true;
-      this.color = new Color4(0.15f, 0.15f, 0.15f, 1f);
-      this.color_selected = new Color4(0.7f, 0.7f, 1f, 1f);
-      this.color_highlighted = new Color4(1f, 1f, 0.5f, 1f);
-      this.ChildList = this.ChildList + (Element2D) this.image_widget;
-      this.ChildList = this.ChildList + (Element2D) this.scrollbar;
-      this.onchangecallback = (ListBoxWidget.OnChangeCallback) null;
+      Items = new List<object>();
+      image_widget = new ImageWidget(0)
+      {
+        IgnoreMouse = true
+      };
+      scrollbar = new VerticalSliderWidget(1)
+      {
+        Visible = false,
+        RoundingPlace = -1
+      };
+      white = new Color4(1f, 1f, 1f, 1f);
+      imageHasFocusColor = white;
+      leftbordersize_pixels = 0;
+      rightbordersize_pixels = 0;
+      topbordersize_pixels = 0;
+      bottombordersize_pixels = 0;
+      rowheight = 0;
+      start_row = 0;
+      item_count = 0;
+      Selected = 0;
+      highlightmouseover = false;
+      mouse_over_row = -1;
+      MouseOverHighlight = true;
+      color = new Color4(0.15f, 0.15f, 0.15f, 1f);
+      color_selected = new Color4(0.7f, 0.7f, 1f, 1f);
+      color_highlighted = new Color4(1f, 1f, 0.5f, 1f);
+      ChildList = ChildList + (Element2D)image_widget;
+      ChildList = ChildList + (Element2D)scrollbar;
+      onchangecallback = (ListBoxWidget.OnChangeCallback) null;
     }
 
     public override ElementType GetElementType()
@@ -91,7 +95,7 @@ namespace M3D.Graphics.Widgets2D
     public override void SetSize(int width, int height)
     {
       base.SetSize(width, height);
-      this.Refresh();
+      Refresh();
     }
 
     public override void OnControlMsg(Element2D the_control, ControlMsg msg, float xparam, float yparam)
@@ -99,21 +103,29 @@ namespace M3D.Graphics.Widgets2D
       if (the_control.ID == 1)
       {
         if (msg != ControlMsg.SCROLL_MOVE)
+        {
           return;
-        this.start_row = (int) xparam;
-        if (this.start_row >= 0)
+        }
+
+        start_row = (int) xparam;
+        if (start_row >= 0)
+        {
           return;
-        this.start_row = 0;
+        }
+
+        start_row = 0;
       }
       else
+      {
         base.OnControlMsg(the_control, msg, xparam, yparam);
+      }
     }
 
     public void Init(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, float over_u0, float over_v0, float over_u1, float over_v1, int leftbordersize_pixels, int rightbordersize_pixels, int minimumwidth, int topbordersize_pixels, int bottombordersize_pixels, int minimumheight, int rowheight, int scrollbar_width)
     {
-      this.image_widget.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, normal_u0, normal_v0, normal_u1, normal_v1);
-      this.image_widget.SetGrowableWidth(leftbordersize_pixels, rightbordersize_pixels, minimumwidth);
-      this.image_widget.SetGrowableHeight(topbordersize_pixels, bottombordersize_pixels, minimumheight);
+      image_widget.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, normal_u0, normal_v0, normal_u1, normal_v1);
+      image_widget.SetGrowableWidth(leftbordersize_pixels, rightbordersize_pixels, minimumwidth);
+      image_widget.SetGrowableHeight(topbordersize_pixels, bottombordersize_pixels, minimumheight);
       this.leftbordersize_pixels = leftbordersize_pixels;
       this.rightbordersize_pixels = rightbordersize_pixels;
       this.topbordersize_pixels = topbordersize_pixels;
@@ -124,77 +136,85 @@ namespace M3D.Graphics.Widgets2D
 
     public void Init(GUIHost host)
     {
-      this.Init(host, "guicontrols", 944f, 96f, 959f, 143f, 944f, 96f, 959f, 143f, 4, 4, 16, 4, 4, 48, 24, 24);
-      this.ScrollBar.InitTrack(host, "guicontrols", 809f, 80f, 831f, 87f, 2, 8);
-      this.ScrollBar.InitButton(host, "guicontrols", 1000f, 0.0f, 1023f, 23f, 1000f, 24f, 1023f, 47f, 1000f, 48f, 1023f, 71f, 4, 4, 24);
-      this.ScrollBar.InitMinus(host, "guicontrols", 928f, 48f, 951f, 71f, 952f, 48f, 975f, 71f, 976f, 48f, 999f, 71f);
-      this.ScrollBar.InitPlus(host, "guicontrols", 928f, 72f, 951f, 95f, 952f, 72f, 975f, 95f, 976f, 72f, 999f, 95f);
-      this.ScrollBar.SetButtonSize(24f);
-      this.ScrollBar.ShowPushButtons = true;
-      this.Refresh();
-      this.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      this.tabIndex = 1;
-      this.ImageHasFocusColor = new Color4((byte) 100, (byte) 230, byte.MaxValue, byte.MaxValue);
+      Init(host, "guicontrols", 944f, 96f, 959f, 143f, 944f, 96f, 959f, 143f, 4, 4, 16, 4, 4, 48, 24, 24);
+      ScrollBar.InitTrack(host, "guicontrols", 809f, 80f, 831f, 87f, 2, 8);
+      ScrollBar.InitButton(host, "guicontrols", 1000f, 0.0f, 1023f, 23f, 1000f, 24f, 1023f, 47f, 1000f, 48f, 1023f, 71f, 4, 4, 24);
+      ScrollBar.InitMinus(host, "guicontrols", 928f, 48f, 951f, 71f, 952f, 48f, 975f, 71f, 976f, 48f, 999f, 71f);
+      ScrollBar.InitPlus(host, "guicontrols", 928f, 72f, 951f, 95f, 952f, 72f, 975f, 95f, 976f, 72f, 999f, 95f);
+      ScrollBar.SetButtonSize(24f);
+      ScrollBar.ShowPushButtons = true;
+      Refresh();
+      Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
+      tabIndex = 1;
+      ImageHasFocusColor = new Color4((byte) 100, (byte) 230, byte.MaxValue, byte.MaxValue);
     }
 
     public override void SetVisible(bool bVisible)
     {
       base.SetVisible(bVisible);
-      if (this.Items.Count - this.Selected < this.max_rows_on_screen)
+      if (Items.Count - Selected < max_rows_on_screen)
       {
-        this.start_row = this.Items.Count - this.max_rows_on_screen;
-        if (this.start_row < 0)
-          this.start_row = 0;
+        start_row = Items.Count - max_rows_on_screen;
+        if (start_row < 0)
+        {
+          start_row = 0;
+        }
       }
       else
-        this.start_row = this.Selected;
-      this.mouse_over_row = this.Selected;
+      {
+        start_row = Selected;
+      }
+
+      mouse_over_row = Selected;
     }
 
     public override void OnRender(GUIHost host)
     {
-      if (this.item_count != this.Items.Count)
-        this.Refresh();
+      if (item_count != Items.Count)
+      {
+        Refresh();
+      }
+
       base.OnRender(host);
-      float y = (float) (this.topbordersize_pixels + this.Y_Abs);
-      float x = (float) (this.leftbordersize_pixels + this.X_Abs);
-      host.SetCurFontSize(this.Size);
+      var y = (float) (topbordersize_pixels + Y_Abs);
+      var x = (float) (leftbordersize_pixels + X_Abs);
+      host.SetCurFontSize(Size);
       QFont currentFont = host.GetCurrentFont();
       QFont.Begin();
-      int num = 0;
-      for (int startRow = this.start_row; startRow < this.Items.Count && num < this.max_rows_on_screen; ++startRow)
+      var num = 0;
+      for (var startRow = start_row; startRow < Items.Count && num < max_rows_on_screen; ++startRow)
       {
-        if (startRow == this.mouse_over_row && !this.NoSelect)
+        if (startRow == mouse_over_row && !NoSelect)
         {
           QFont.End();
           Simple2DRenderer simpleRenderer = host.GetSimpleRenderer();
           Simple2DRenderer.Quad quad1;
           quad1.x0 = x;
           quad1.y0 = y;
-          quad1.x1 = x + (float) this.text_region_width;
-          quad1.y1 = y + (float) this.rowheight * 0.75f;
-          quad1.color = this.color_highlighted;
+          quad1.x1 = x + (float)text_region_width;
+          quad1.y1 = y + (float)rowheight * 0.75f;
+          quad1.color = color_highlighted;
           Simple2DRenderer.Quad quad2 = quad1;
           simpleRenderer.DrawQuad(quad2);
           QFont.Begin();
         }
-        if (startRow == this.selected && !this.NoSelect)
+        if (startRow == selected && !NoSelect)
         {
           QFont.End();
           Simple2DRenderer simpleRenderer = host.GetSimpleRenderer();
           Simple2DRenderer.Quad quad1;
           quad1.x0 = x;
           quad1.y0 = y;
-          quad1.x1 = x + (float) this.text_region_width;
-          quad1.y1 = y + (float) this.rowheight * 0.75f;
-          quad1.color = this.color_selected;
+          quad1.x1 = x + (float)text_region_width;
+          quad1.y1 = y + (float)rowheight * 0.75f;
+          quad1.color = color_selected;
           Simple2DRenderer.Quad quad2 = quad1;
           simpleRenderer.DrawQuad(quad2);
           QFont.Begin();
         }
-        currentFont.Options.Colour = this.Color;
-        currentFont.Print(this.Items[startRow].ToString(), (float) this.text_region_width, new Vector2(x, y));
-        y += (float) this.rowheight;
+        currentFont.Options.Colour = Color;
+        currentFont.Print(Items[startRow].ToString(), (float)text_region_width, new Vector2(x, y));
+        y += (float)rowheight;
         ++num;
       }
       QFont.End();
@@ -202,38 +222,48 @@ namespace M3D.Graphics.Widgets2D
 
     public override void OnMouseMove(int x, int y)
     {
-      if (this.Enabled && this.MouseOverHighlight)
+      if (Enabled && MouseOverHighlight)
       {
-        int xAbs = this.X_Abs;
-        int yAbs = this.Y_Abs;
-        int num1 = xAbs + this.text_region_width + this.rightbordersize_pixels;
-        int num2 = yAbs + this.text_region_height;
+        var xAbs = X_Abs;
+        var yAbs = Y_Abs;
+        var num1 = xAbs + text_region_width + rightbordersize_pixels;
+        var num2 = yAbs + text_region_height;
         if (x >= xAbs && x <= num1 && (y >= yAbs && y <= num2))
-          this.mouse_over_row = (y - yAbs) / this.rowheight + this.start_row;
+        {
+          mouse_over_row = (y - yAbs) / rowheight + start_row;
+        }
       }
       else
+      {
         base.OnMouseMove(x, y);
-      this.scrollbar.OnMouseMove(x, y);
+      }
+
+      scrollbar.OnMouseMove(x, y);
     }
 
     public override bool OnMouseCommand(MouseEvent mouseevent)
     {
-      if (this.Enabled && mouseevent.type == MouseEventType.Down && mouseevent.button == MouseButton.Left)
+      if (Enabled && mouseevent.type == MouseEventType.Down && mouseevent.button == MouseButton.Left)
       {
-        int xAbs = this.X_Abs;
-        int yAbs = this.Y_Abs;
-        int num1 = xAbs + this.text_region_width + this.rightbordersize_pixels;
-        int num2 = yAbs + this.text_region_height;
+        var xAbs = X_Abs;
+        var yAbs = Y_Abs;
+        var num1 = xAbs + text_region_width + rightbordersize_pixels;
+        var num2 = yAbs + text_region_height;
         if (mouseevent.pos.x >= xAbs && mouseevent.pos.x <= num1 && (mouseevent.pos.y >= yAbs && mouseevent.pos.y <= num2))
         {
-          int num3 = (mouseevent.pos.y - yAbs) / this.rowheight + this.start_row;
-          if (num3 >= this.Items.Count)
+          var num3 = (mouseevent.pos.y - yAbs) / rowheight + start_row;
+          if (num3 >= Items.Count)
+          {
             num3 = -1;
+          }
+
           if (num3 >= 0)
           {
-            this.Selected = num3;
-            if (this.onchangecallback != null)
-              this.onchangecallback(this);
+            Selected = num3;
+            if (onchangecallback != null)
+            {
+              onchangecallback(this);
+            }
           }
         }
       }
@@ -242,98 +272,123 @@ namespace M3D.Graphics.Widgets2D
 
     public override bool OnKeyboardEvent(KeyboardEvent keyboardevent)
     {
-      if (!this.Enabled || !this.HasFocus)
+      if (!Enabled || !HasFocus)
+      {
         return false;
+      }
+
       if (keyboardevent.type == KeyboardEventType.CommandKey)
       {
-        CommandKeyEvent commandKeyEvent = (CommandKeyEvent) keyboardevent;
+        var commandKeyEvent = (CommandKeyEvent) keyboardevent;
         if (commandKeyEvent.Key == KeyboardCommandKey.Down)
         {
-          if (this.mouse_over_row < this.Items.Count - 1)
-            ++this.mouse_over_row;
-          if (this.mouse_over_row - this.start_row >= this.max_rows_on_screen)
-            this.ScrollBar.MoveSlider(1f);
+          if (mouse_over_row < Items.Count - 1)
+          {
+            ++mouse_over_row;
+          }
+
+          if (mouse_over_row - start_row >= max_rows_on_screen)
+          {
+            ScrollBar.MoveSlider(1f);
+          }
         }
         else if (commandKeyEvent.Key == KeyboardCommandKey.Up)
         {
-          if (this.mouse_over_row > 0)
-            --this.mouse_over_row;
-          if (this.mouse_over_row < this.start_row)
-            this.ScrollBar.MoveSlider(-1f);
+          if (mouse_over_row > 0)
+          {
+            --mouse_over_row;
+          }
+
+          if (mouse_over_row < start_row)
+          {
+            ScrollBar.MoveSlider(-1f);
+          }
         }
       }
       else if (keyboardevent.type == KeyboardEventType.InputKey && ((InputKeyEvent) keyboardevent).Ch == '\r')
-        this.Selected = this.mouse_over_row;
+      {
+        Selected = mouse_over_row;
+      }
+
       return base.OnKeyboardEvent(keyboardevent);
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
-      this.Parent = parent;
-      this.Init(host);
-      lock (this.ChildList)
+      Parent = parent;
+      Init(host);
+      lock (ChildList)
       {
-        foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+        {
           child.InitChildren((Element2D) this, host, MyButtonCallback);
+        }
       }
     }
 
     public void SetOnChangeCallback(ListBoxWidget.OnChangeCallback func)
     {
-      this.onchangecallback = func;
+      onchangecallback = func;
     }
 
     public VerticalSliderWidget ScrollBar
     {
       get
       {
-        return this.scrollbar;
+        return scrollbar;
       }
     }
 
     public override void Refresh()
     {
-      bool flag = false;
-      this.text_region_height = this.Height - (this.topbordersize_pixels + this.bottombordersize_pixels);
-      this.text_region_width = this.Width - (this.leftbordersize_pixels + this.rightbordersize_pixels);
-      this.max_rows_on_screen = this.rowheight > 0 ? (int) Math.Ceiling((double) this.text_region_height / (double) this.rowheight) : 0;
-      this.item_count = this.Items.Count;
-      if (this.ShowScrollbar != ListBoxWidget.ScrollBarState.Off && (this.max_rows_on_screen < this.item_count || this.ShowScrollbar == ListBoxWidget.ScrollBarState.On))
+      var flag = false;
+      text_region_height = Height - (topbordersize_pixels + bottombordersize_pixels);
+      text_region_width = Width - (leftbordersize_pixels + rightbordersize_pixels);
+      max_rows_on_screen = rowheight > 0 ? (int) Math.Ceiling((double)text_region_height / (double)rowheight) : 0;
+      item_count = Items.Count;
+      if (ShowScrollbar != ListBoxWidget.ScrollBarState.Off && (max_rows_on_screen < item_count || ShowScrollbar == ListBoxWidget.ScrollBarState.On))
       {
-        this.image_widget.SetPosition(0, 0);
-        this.image_widget.SetSize(this.Width - this.scrollbar_width, this.Height);
-        this.scrollbar.SetPosition(this.image_widget.Width, 0);
-        this.scrollbar.SetSize(this.scrollbar_width, this.Height);
-        this.text_region_width = this.image_widget.Width - (this.leftbordersize_pixels + this.rightbordersize_pixels);
-        if (this.item_count > this.max_rows_on_screen)
+        image_widget.SetPosition(0, 0);
+        image_widget.SetSize(Width - scrollbar_width, Height);
+        scrollbar.SetPosition(image_widget.Width, 0);
+        scrollbar.SetSize(scrollbar_width, Height);
+        text_region_width = image_widget.Width - (leftbordersize_pixels + rightbordersize_pixels);
+        if (item_count > max_rows_on_screen)
         {
-          this.scrollbar.Enabled = true;
-          this.scrollbar.SetRange(0.0f, (float) (this.item_count - this.max_rows_on_screen), (float) this.Selected);
-          this.scrollbar.PushButtonStep = 1f;
+          scrollbar.Enabled = true;
+          scrollbar.SetRange(0.0f, (float) (item_count - max_rows_on_screen), (float)Selected);
+          scrollbar.PushButtonStep = 1f;
         }
         else
         {
-          this.scrollbar.Enabled = true;
-          this.scrollbar.SetRange(0.0f, 0.0f, (float) this.Selected);
+          scrollbar.Enabled = true;
+          scrollbar.SetRange(0.0f, 0.0f, (float)Selected);
         }
-        this.scrollbar.Visible = true;
+        scrollbar.Visible = true;
         flag = true;
       }
       if (flag)
+      {
         return;
-      this.scrollbar.Enabled = false;
-      this.scrollbar.Visible = false;
-      this.image_widget.SetPosition(0, 0);
-      this.image_widget.SetSize(this.Width, this.Height);
+      }
+
+      scrollbar.Enabled = false;
+      scrollbar.Visible = false;
+      image_widget.SetPosition(0, 0);
+      image_widget.SetSize(Width, Height);
     }
 
     public void SetTrackPositionToEnd()
     {
-      this.max_rows_on_screen = (int) Math.Ceiling((double) this.text_region_height / (double) this.rowheight);
-      if (this.max_rows_on_screen < this.item_count)
-        this.scrollbar.SetTrackPositionToEnd();
+      max_rows_on_screen = (int) Math.Ceiling((double)text_region_height / (double)rowheight);
+      if (max_rows_on_screen < item_count)
+      {
+        scrollbar.SetTrackPositionToEnd();
+      }
       else
-        this.scrollbar.SetTrackPosition(0.0f);
+      {
+        scrollbar.SetTrackPosition(0.0f);
+      }
     }
 
     [XmlAttribute("ShowScrollbar")]
@@ -341,12 +396,12 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this._showScrollbar = value;
-        this.Refresh();
+        _showScrollbar = value;
+        Refresh();
       }
       get
       {
-        return this._showScrollbar;
+        return _showScrollbar;
       }
     }
 
@@ -354,12 +409,12 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.selected;
+        return selected;
       }
       set
       {
-        this.selected = value;
-        base.OnControlMsg((Element2D) this, ControlMsg.SELECTCHANGED, (float) this.selected, (float) this.selected);
+        selected = value;
+        base.OnControlMsg((Element2D) this, ControlMsg.SELECTCHANGED, (float)selected, (float)selected);
       }
     }
 
@@ -367,11 +422,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.color;
+        return color;
       }
       set
       {
-        this.color = value;
+        color = value;
       }
     }
 
@@ -379,11 +434,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.color_highlighted;
+        return color_highlighted;
       }
       set
       {
-        this.color_highlighted = value;
+        color_highlighted = value;
       }
     }
 
@@ -391,11 +446,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.color_selected;
+        return color_selected;
       }
       set
       {
-        this.color_selected = value;
+        color_selected = value;
       }
     }
 
@@ -403,11 +458,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.highlightmouseover;
+        return highlightmouseover;
       }
       set
       {
-        this.highlightmouseover = value;
+        highlightmouseover = value;
       }
     }
 
@@ -420,11 +475,15 @@ namespace M3D.Graphics.Widgets2D
       set
       {
         base.HasFocus = value;
-        this.image_widget.HasFocus = value;
+        image_widget.HasFocus = value;
         if (value)
-          this.image_widget.state = State.Highlighted;
+        {
+          image_widget.state = State.Highlighted;
+        }
         else
-          this.image_widget.state = State.Normal;
+        {
+          image_widget.state = State.Normal;
+        }
       }
     }
 
@@ -432,11 +491,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.imageHasFocusColor;
+        return imageHasFocusColor;
       }
       set
       {
-        this.imageHasFocusColor = value;
+        imageHasFocusColor = value;
       }
     }
 
@@ -445,11 +504,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.size;
+        return size;
       }
       set
       {
-        this.size = value;
+        size = value;
       }
     }
 

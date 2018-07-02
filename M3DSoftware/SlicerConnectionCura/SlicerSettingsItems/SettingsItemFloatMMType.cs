@@ -29,16 +29,18 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     protected override bool SetFromSlicerValue(string val)
     {
-      this.formatError = false;
+      formatError = false;
       try
       {
-        this.value = (float) int.Parse(val) / 1000f;
-        if ((double) this.value < 0.0)
-          this.value = -1f;
+        value = (float) int.Parse(val) / 1000f;
+        if ((double)value < 0.0)
+        {
+          value = -1f;
+        }
       }
       catch (Exception ex)
       {
-        this.formatError = true;
+        formatError = true;
         return false;
       }
       return true;
@@ -51,27 +53,30 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override string TranslateToSlicerValue()
     {
-      int num = -1;
-      if ((double) this.value >= 0.0)
-        num = (int) ((double) this.value * 1000.0);
+      var num = -1;
+      if ((double)value >= 0.0)
+      {
+        num = (int) ((double)value * 1000.0);
+      }
+
       return num.ToString();
     }
 
     public override string TranslateToUserValue()
     {
-      return this.value.ToString("0.000");
+      return value.ToString("0.000");
     }
 
     public override void ParseUserValue(string val)
     {
-      this.formatError = false;
+      formatError = false;
       try
       {
-        this.value = float.Parse(val);
+        value = float.Parse(val);
       }
       catch (Exception ex)
       {
-        this.formatError = true;
+        formatError = true;
       }
     }
 
@@ -79,8 +84,11 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       get
       {
-        if (!this.formatError)
+        if (!formatError)
+        {
           return base.HasError;
+        }
+
         return true;
       }
     }
@@ -89,22 +97,28 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       get
       {
-        if (!this.formatError)
+        if (!formatError)
+        {
           return base.HasWarning;
+        }
+
         return true;
       }
     }
 
     public override string GetErrorMsg()
     {
-      if (this.formatError)
+      if (formatError)
+      {
         return "Not a number";
+      }
+
       return base.GetErrorMsg();
     }
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemFloatMMType(this.value, this.warning_range, this.error_range);
+      return (SlicerSettingsItem) new SettingsItemFloatMMType(value, warning_range, error_range);
     }
 
     [XmlAttribute("Number_Format")]

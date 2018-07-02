@@ -14,16 +14,16 @@ namespace M3D.Spooling.Common
 
     public SDCard()
     {
-      this.IsPrintingFromSD = false;
-      this.SDFilePosition = 0L;
-      this.SDFileLength = 0L;
+      IsPrintingFromSD = false;
+      SDFilePosition = 0L;
+      SDFileLength = 0L;
     }
 
     public SDCard(SDCard other)
     {
-      this.IsPrintingFromSD = other.IsPrintingFromSD;
-      this.SDFilePosition = other.SDFilePosition;
-      this.SDFileLength = other.SDFileLength;
+      IsPrintingFromSD = other.IsPrintingFromSD;
+      SDFilePosition = other.SDFilePosition;
+      SDFileLength = other.SDFileLength;
     }
   }
 }

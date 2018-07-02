@@ -32,76 +32,78 @@ namespace M3D.GUI.Views.Printer_View
 
     public void Init(GUIHost host)
     {
-      this.resetview_button = new ButtonWidget(8002);
-      this.resetview_button.Init(host, "guicontrols", (float) sbyte.MaxValue, 257f, 275f, 340f, (float) sbyte.MaxValue, 342f, 275f, 425f, (float) sbyte.MaxValue, 427f, 275f, 510f, (float) sbyte.MaxValue, 512f, 275f, 595f);
-      this.resetview_button.Text = "";
-      this.resetview_button.Size = FontSize.Medium;
-      this.resetview_button.TextColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.resetview_button.TextDownColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.resetview_button.TextOverColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.resetview_button.Width = 149;
-      this.resetview_button.Height = 84;
-      this.resetview_button.Y = 6;
-      this.resetview_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.resetview_button.DontMove = true;
-      this.resetview_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_RESETVIEW");
-      this.print_button = new ButtonWidget(8003);
-      this.print_button.Init(host, "guicontrols", 1f, 597f, 102f, 694f, 104f, 597f, 205f, 694f, 207f, 597f, 308f, 694f, 310f, 597f, 411f, 694f);
-      this.print_button.Text = "";
-      this.print_button.Size = FontSize.Medium;
-      this.print_button.TextColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.print_button.TextDownColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.print_button.TextOverColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.print_button.Width = 102;
-      this.print_button.Height = 98;
-      this.print_button.Y = 0;
-      this.print_button.X = this.resetview_button.Width;
-      this.print_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.print_button.DontMove = true;
-      this.print_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_PRINT");
-      this.centermodel_button = new ButtonWidget(8004);
-      this.centermodel_button.Init(host, "guicontrols", 277f, 257f, 427f, 340f, 277f, 342f, 427f, 425f, 277f, 427f, 427f, 510f, 277f, 512f, 427f, 595f);
-      this.centermodel_button.Text = "";
-      this.centermodel_button.Size = FontSize.Medium;
-      this.centermodel_button.TextColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.centermodel_button.TextDownColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.centermodel_button.TextOverColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.centermodel_button.Width = 151;
-      this.centermodel_button.Height = 84;
-      this.centermodel_button.Y = 6;
-      this.centermodel_button.X = this.print_button.X + this.print_button.Width;
-      this.centermodel_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.centermodel_button.DontMove = true;
-      this.centermodel_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_CENTERMODEL");
-      Frame frame = new Frame();
-      frame.Width = this.resetview_button.Width + this.print_button.Width + this.centermodel_button.Width;
-      frame.Height = this.print_button.Height;
-      frame.AddChildElement((Element2D) this.resetview_button);
-      frame.AddChildElement((Element2D) this.print_button);
-      frame.AddChildElement((Element2D) this.centermodel_button);
+      resetview_button = new ButtonWidget(8002);
+      resetview_button.Init(host, "guicontrols", (float) sbyte.MaxValue, 257f, 275f, 340f, (float) sbyte.MaxValue, 342f, 275f, 425f, (float) sbyte.MaxValue, 427f, 275f, 510f, (float) sbyte.MaxValue, 512f, 275f, 595f);
+      resetview_button.Text = "";
+      resetview_button.Size = FontSize.Medium;
+      resetview_button.TextColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      resetview_button.TextDownColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      resetview_button.TextOverColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      resetview_button.Width = 149;
+      resetview_button.Height = 84;
+      resetview_button.Y = 6;
+      resetview_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      resetview_button.DontMove = true;
+      resetview_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_RESETVIEW");
+      print_button = new ButtonWidget(8003);
+      print_button.Init(host, "guicontrols", 1f, 597f, 102f, 694f, 104f, 597f, 205f, 694f, 207f, 597f, 308f, 694f, 310f, 597f, 411f, 694f);
+      print_button.Text = "";
+      print_button.Size = FontSize.Medium;
+      print_button.TextColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      print_button.TextDownColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      print_button.TextOverColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      print_button.Width = 102;
+      print_button.Height = 98;
+      print_button.Y = 0;
+      print_button.X = resetview_button.Width;
+      print_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      print_button.DontMove = true;
+      print_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_PRINT");
+      centermodel_button = new ButtonWidget(8004);
+      centermodel_button.Init(host, "guicontrols", 277f, 257f, 427f, 340f, 277f, 342f, 427f, 425f, 277f, 427f, 427f, 510f, 277f, 512f, 427f, 595f);
+      centermodel_button.Text = "";
+      centermodel_button.Size = FontSize.Medium;
+      centermodel_button.TextColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      centermodel_button.TextDownColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      centermodel_button.TextOverColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      centermodel_button.Width = 151;
+      centermodel_button.Height = 84;
+      centermodel_button.Y = 6;
+      centermodel_button.X = print_button.X + print_button.Width;
+      centermodel_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      centermodel_button.DontMove = true;
+      centermodel_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_CENTERMODEL");
+      var frame = new Frame
+      {
+        Width = resetview_button.Width + print_button.Width + centermodel_button.Width,
+        Height = print_button.Height
+      };
+      frame.AddChildElement((Element2D)resetview_button);
+      frame.AddChildElement((Element2D)print_button);
+      frame.AddChildElement((Element2D)centermodel_button);
       frame.Y = 0;
       frame.CenterHorizontallyInParent = true;
-      this.backtolibrary_button = new ButtonWidget(8005);
-      this.backtolibrary_button.Init(host, "guicontrols", 1f, 257f, 125f, 340f, 1f, 342f, 125f, 425f, 1f, 427f, 125f, 510f, 1f, 512f, 125f, 595f);
-      this.backtolibrary_button.Text = "";
-      this.backtolibrary_button.Size = FontSize.Medium;
-      this.backtolibrary_button.TextColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.backtolibrary_button.TextDownColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.backtolibrary_button.TextOverColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.backtolibrary_button.Width = 125;
-      this.backtolibrary_button.Height = 84;
-      this.backtolibrary_button.X = -125;
-      this.backtolibrary_button.Y = 6;
-      this.backtolibrary_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.backtolibrary_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_BACKTOLIBRARY");
+      backtolibrary_button = new ButtonWidget(8005);
+      backtolibrary_button.Init(host, "guicontrols", 1f, 257f, 125f, 340f, 1f, 342f, 125f, 425f, 1f, 427f, 125f, 510f, 1f, 512f, 125f, 595f);
+      backtolibrary_button.Text = "";
+      backtolibrary_button.Size = FontSize.Medium;
+      backtolibrary_button.TextColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      backtolibrary_button.TextDownColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      backtolibrary_button.TextOverColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      backtolibrary_button.Width = 125;
+      backtolibrary_button.Height = 84;
+      backtolibrary_button.X = -125;
+      backtolibrary_button.Y = 6;
+      backtolibrary_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      backtolibrary_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_BACKTOLIBRARY");
       Sprite.pixel_perfect = false;
-      this.AddChildElement((Element2D) frame);
-      this.AddChildElement((Element2D) this.backtolibrary_button);
-      this.X = 0;
-      this.Y = -121;
-      this.Height = frame.Height;
-      this.RelativeWidth = 1f;
-      this.RelativeHeight = -1000f;
+      AddChildElement((Element2D) frame);
+      AddChildElement((Element2D)backtolibrary_button);
+      X = 0;
+      Y = -121;
+      Height = frame.Height;
+      RelativeWidth = 1f;
+      RelativeHeight = -1000f;
     }
 
     public void MyButtonCallback(ButtonWidget button)
@@ -109,34 +111,43 @@ namespace M3D.GUI.Views.Printer_View
       switch (button.ID)
       {
         case 8002:
-          this.printerview.ResetPrinterView();
+          printerview.ResetPrinterView();
           break;
         case 8003:
-          this.printerview.Print();
+          printerview.Print();
           break;
         case 8004:
-          this.printerview.CenterPrinterObject();
+          printerview.CenterPrinterObject();
           break;
         case 8005:
-          this.printerview.GotoLibraryView();
+          printerview.GotoLibraryView();
           break;
       }
     }
 
     public void EnableButtons(bool print, bool center)
     {
-      if (this.print_button != null)
-        this.print_button.Enabled = print;
-      if (this.centermodel_button == null)
+      if (print_button != null)
+      {
+        print_button.Enabled = print;
+      }
+
+      if (centermodel_button == null)
+      {
         return;
-      this.centermodel_button.Enabled = center;
+      }
+
+      centermodel_button.Enabled = center;
     }
 
     public void SetControlStateMaster(bool bShouldDisable)
     {
-      if (this.centermodel_button == null)
+      if (centermodel_button == null)
+      {
         return;
-      this.centermodel_button.Visible = !bShouldDisable;
+      }
+
+      centermodel_button.Visible = !bShouldDisable;
     }
 
     public enum ControlIDs

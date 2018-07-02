@@ -17,12 +17,12 @@ namespace M3D.GUI.Views.Printer_View.History.Nodes
 
     public override void Undo(PrinterView printerView)
     {
-      this.AddModel(printerView);
+      AddModel(printerView);
     }
 
     public override void Redo(PrinterView printerView)
     {
-      this.RemoveModel(printerView);
+      RemoveModel(printerView);
     }
   }
 }

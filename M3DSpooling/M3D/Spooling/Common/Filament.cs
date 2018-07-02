@@ -23,21 +23,21 @@ namespace M3D.Spooling.Common
 
     public Filament(Filament other)
     {
-      this.type = other.type;
-      this.codeStr = other.codeStr;
-      this.color = other.color;
+      type = other.type;
+      codeStr = other.codeStr;
+      color = other.color;
     }
 
     public FilamentSpool ToSpool()
     {
-      return new FilamentSpool() { filament_color_code = (uint) this.color, filament_type = this.type, filament_temperature = FilamentConstants.Temperature.Default(this.type), filament_location = FilamentSpool.Location.External };
+      return new FilamentSpool() { filament_color_code = (uint)color, filament_type = type, filament_temperature = FilamentConstants.Temperature.Default(type), filament_location = FilamentSpool.Location.External };
     }
 
     public FilamentSpool.TypeEnum Type
     {
       get
       {
-        return this.type;
+        return type;
       }
     }
 
@@ -45,7 +45,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return FilamentConstants.TypesToString(this.type);
+        return FilamentConstants.TypesToString(type);
       }
     }
 
@@ -53,7 +53,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.codeStr;
+        return codeStr;
       }
     }
 
@@ -61,7 +61,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.color;
+        return color;
       }
     }
 
@@ -69,7 +69,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return FilamentConstants.ColorsToString(this.color);
+        return FilamentConstants.ColorsToString(color);
       }
     }
 
@@ -77,22 +77,28 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.brand;
+        return brand;
       }
     }
 
     public override bool Equals(object obj)
     {
       if (obj == null)
+      {
         return false;
-      return this.Equals(obj as Filament);
+      }
+
+      return Equals(obj as Filament);
     }
 
     public bool Equals(Filament b)
     {
-      if (b == null || this.type != b.type || this.color != b.color)
+      if (b == null || type != b.type || color != b.color)
+      {
         return false;
-      return this.brand == b.brand;
+      }
+
+      return brand == b.brand;
     }
 
     public override int GetHashCode()

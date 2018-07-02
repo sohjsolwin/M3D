@@ -19,23 +19,26 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     {
       this.vertice = vertice;
       this.normal = normal;
-      this.hash = vertice.x.GetHashCode();
-      this.hash ^= vertice.y.GetHashCode();
-      this.hash ^= vertice.z.GetHashCode();
-      this.hash ^= normal.y.GetHashCode();
-      this.hash ^= normal.z.GetHashCode();
-      this.hash ^= normal.y.GetHashCode();
+      hash = vertice.x.GetHashCode();
+      hash ^= vertice.y.GetHashCode();
+      hash ^= vertice.z.GetHashCode();
+      hash ^= normal.y.GetHashCode();
+      hash ^= normal.z.GetHashCode();
+      hash ^= normal.y.GetHashCode();
     }
 
     public override int GetHashCode()
     {
-      return this.hash;
+      return hash;
     }
 
     public bool Equals(VertexNormalKey other)
     {
-      if (this.vertice == other.vertice)
-        return this.normal == other.normal;
+      if (vertice == other.vertice)
+      {
+        return normal == other.normal;
+      }
+
       return false;
     }
   }

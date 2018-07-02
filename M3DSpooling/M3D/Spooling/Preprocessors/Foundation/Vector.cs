@@ -21,10 +21,10 @@ namespace M3D.Spooling.Preprocessors.Foundation
 
     public Vector(Vector rhs)
     {
-      this.x = rhs.x;
-      this.y = rhs.y;
-      this.z = rhs.z;
-      this.e = rhs.e;
+      x = rhs.x;
+      y = rhs.y;
+      z = rhs.z;
+      e = rhs.e;
     }
 
     public Vector(float x, float y, float z)
@@ -44,15 +44,17 @@ namespace M3D.Spooling.Preprocessors.Foundation
 
     public float GetLength()
     {
-      return (float) Math.Sqrt((double) this.x * (double) this.x + (double) this.y * (double) this.y + (double) this.z * (double) this.z + (double) this.e * (double) this.e);
+      return (float) Math.Sqrt((double)x * (double)x + (double)y * (double)y + (double)z * (double)z + (double)e * (double)e);
     }
 
     public void Normalize()
     {
-      Vector vector1 = new Vector();
-      Vector vector2 = this / this.GetLength();
-      for (int index = 0; index < 4; ++index)
+      var vector1 = new Vector();
+      Vector vector2 = this / GetLength();
+      for (var index = 0; index < 4; ++index)
+      {
         this[index] = vector2[index];
+      }
     }
 
     public float this[int key]
@@ -62,13 +64,13 @@ namespace M3D.Spooling.Preprocessors.Foundation
         switch (key)
         {
           case 0:
-            return this.x;
+            return x;
           case 1:
-            return this.y;
+            return y;
           case 2:
-            return this.z;
+            return z;
           case 3:
-            return this.e;
+            return e;
           default:
             throw new Exception("unexpected index");
         }
@@ -78,16 +80,16 @@ namespace M3D.Spooling.Preprocessors.Foundation
         switch (key)
         {
           case 0:
-            this.x = value;
+            x = value;
             break;
           case 1:
-            this.y = value;
+            y = value;
             break;
           case 2:
-            this.z = value;
+            z = value;
             break;
           case 3:
-            this.e = value;
+            e = value;
             break;
           default:
             throw new Exception("unexpected index");
@@ -97,33 +99,45 @@ namespace M3D.Spooling.Preprocessors.Foundation
 
     public static Vector operator -(Vector v1, Vector v2)
     {
-      Vector vector = new Vector();
-      for (int index = 0; index < 4; ++index)
+      var vector = new Vector();
+      for (var index = 0; index < 4; ++index)
+      {
         vector[index] = v1[index] - v2[index];
+      }
+
       return vector;
     }
 
     public static Vector operator +(Vector v1, Vector v2)
     {
-      Vector vector = new Vector();
-      for (int index = 0; index < 4; ++index)
+      var vector = new Vector();
+      for (var index = 0; index < 4; ++index)
+      {
         vector[index] = v1[index] + v2[index];
+      }
+
       return vector;
     }
 
     public static Vector operator /(Vector v1, float divisor)
     {
-      Vector vector = new Vector();
-      for (int index = 0; index < 4; ++index)
+      var vector = new Vector();
+      for (var index = 0; index < 4; ++index)
+      {
         vector[index] = v1[index] / divisor;
+      }
+
       return vector;
     }
 
     public static Vector operator *(Vector v1, float multiplier)
     {
-      Vector vector = new Vector();
-      for (int index = 0; index < 4; ++index)
+      var vector = new Vector();
+      for (var index = 0; index < 4; ++index)
+      {
         vector[index] = v1[index] * multiplier;
+      }
+
       return vector;
     }
   }

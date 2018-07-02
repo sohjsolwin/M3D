@@ -51,97 +51,102 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
     public AdvancedPrintSettingsFrame(int ID, GUIHost host, PopupMessageBox message_box, SettingsManager settings, PrintDialogMainWindow printDialogWindow)
       : base(ID, printDialogWindow)
     {
-      this.settingsManager = settings;
-      this.messagebox = message_box;
-      this.Init(host);
+      settingsManager = settings;
+      messagebox = message_box;
+      Init(host);
     }
 
     public override void OnActivate(PrintJobDetails details)
     {
-      this.SlicerConnection.SlicerSettingStack.PushSettings();
-      this.globalErrorCount = 0;
-      this.globalWarningCount = 0;
-      this.tabsErrorWarningCount = new Dictionary<string, AdvancedPrintSettingsFrame.TabErrorStateCount>();
-      this.settingErrorWarningState = new Dictionary<string, AdvancedPrintSettingsFrame.ErrorStateEnum>();
-      this.buttonElements = new List<Element2D>();
-      this.GenerateFromSlicerSettings(this.SlicerConnection.SlicerSettings);
-      this.PrintDialogWindow.SetSize(750, 500);
-      this.PrintDialogWindow.Refresh();
-      this.CurrentJobDetails = details;
+      SlicerConnection.SlicerSettingStack.PushSettings();
+      globalErrorCount = 0;
+      globalWarningCount = 0;
+      tabsErrorWarningCount = new Dictionary<string, AdvancedPrintSettingsFrame.TabErrorStateCount>();
+      settingErrorWarningState = new Dictionary<string, AdvancedPrintSettingsFrame.ErrorStateEnum>();
+      buttonElements = new List<Element2D>();
+      GenerateFromSlicerSettings(SlicerConnection.SlicerSettings);
+      PrintDialogWindow.SetSize(750, 500);
+      PrintDialogWindow.Refresh();
+      CurrentJobDetails = details;
     }
 
     public override void OnDeactivate()
     {
-      this.RemoveChildElement((Element2D) this.tab_frame);
-      this.tab_frame = (Frame) null;
-      foreach (Element2D buttonElement in this.buttonElements)
-        this.RemoveChildElement(buttonElement);
-      this.buttonElements = (List<Element2D>) null;
+      RemoveChildElement((Element2D)tab_frame);
+      tab_frame = (Frame) null;
+      foreach (Element2D buttonElement in buttonElements)
+      {
+        RemoveChildElement(buttonElement);
+      }
+
+      buttonElements = (List<Element2D>) null;
     }
 
     public void Init(GUIHost host)
     {
       this.host = host;
-      this.CreateStandardElements();
-      this.CreateErrorWarningMessage();
+      CreateStandardElements();
+      CreateErrorWarningMessage();
       Sprite.pixel_perfect = true;
-      this.Visible = false;
+      Visible = false;
     }
 
     private void CreateStandardElements()
     {
-      this.SetSize(750, 500);
-      BorderedImageFrame borderedImageFrame = new BorderedImageFrame(this.ID, (Element2D) null);
-      borderedImageFrame.Init(this.host, "guicontrols", 640f, 320f, 704f, 383f, 41, 8, 64, 35, 8, 64);
+      SetSize(750, 500);
+      var borderedImageFrame = new BorderedImageFrame(ID, (Element2D) null);
+      borderedImageFrame.Init(host, "guicontrols", 640f, 320f, 704f, 383f, 41, 8, 64, 35, 8, 64);
       borderedImageFrame.SetSize(750, 500);
       borderedImageFrame.CenterHorizontallyInParent = true;
       borderedImageFrame.CenterVerticallyInParent = true;
-      this.AddChildElement((Element2D) borderedImageFrame);
-      this.AutoCenterYOffset = 0;
-      this.CenterHorizontallyInParent = true;
-      this.CenterVerticallyInParent = true;
-      TextWidget textWidget = new TextWidget(600);
+      AddChildElement((Element2D) borderedImageFrame);
+      AutoCenterYOffset = 0;
+      CenterHorizontallyInParent = true;
+      CenterVerticallyInParent = true;
+      var textWidget = new TextWidget(600);
       textWidget.SetPosition(50, 2);
       textWidget.SetSize(500, 35);
       textWidget.Text = "Advanced Print Settings";
       textWidget.Alignment = QFontAlignment.Left;
       textWidget.Size = FontSize.Large;
       textWidget.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      this.AddChildElement((Element2D) textWidget);
-      int x = 10;
-      this.AddChildElement((Element2D) this.CreateUserOptionButton(this.host, "OK", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.OK, x, -42, 100, 32, ""));
+      AddChildElement((Element2D) textWidget);
+      var x = 10;
+      AddChildElement((Element2D)CreateUserOptionButton(host, "OK", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.OK, x, -42, 100, 32, ""));
       int num;
-      this.AddChildElement((Element2D) this.CreateUserOptionButton(this.host, "Cancel", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.Cancel, num = x + 110, -42, 100, 32, ""));
-      this.AddChildElement((Element2D) this.CreateUserOptionButton(this.host, "Reset", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.Reset, -110, -42, 100, 32, ""));
-      this.OK_Button = this.FindChildElement(613) as ButtonWidget;
+      AddChildElement((Element2D)CreateUserOptionButton(host, "Cancel", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.Cancel, num = x + 110, -42, 100, 32, ""));
+      AddChildElement((Element2D)CreateUserOptionButton(host, "Reset", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.Reset, -110, -42, 100, 32, ""));
+      OK_Button = FindChildElement(613) as ButtonWidget;
     }
 
     private void GenerateFromSlicerSettings(SmartSlicerSettingsBase smartSlicerSettings)
     {
       this.smartSlicerSettings = smartSlicerSettings;
-      this.tab_frame = new Frame(608, (Element2D) this);
-      this.tab_frame.X = 180;
-      this.tab_frame.Y = 35;
-      this.tab_frame.HexBorderColor = "#0C0C0C0C";
-      this.AddChildElement((Element2D) this.tab_frame);
-      int YPos = 35;
-      int num = 10000;
-      List<XMLTabCollectionSettingsItem> visualSettings = smartSlicerSettings.VisualSettings;
-      for (int index = 0; index < visualSettings.Count; ++index)
+      tab_frame = new Frame(608, (Element2D)this)
       {
-        this.CreateTabButton(visualSettings[index].Header, ref num, YPos, 181, 64);
+        X = 180,
+        Y = 35,
+        HexBorderColor = "#0C0C0C0C"
+      };
+      AddChildElement((Element2D)tab_frame);
+      var YPos = 35;
+      var num = 10000;
+      List<XMLTabCollectionSettingsItem> visualSettings = smartSlicerSettings.VisualSettings;
+      for (var index = 0; index < visualSettings.Count; ++index)
+      {
+        CreateTabButton(visualSettings[index].Header, ref num, YPos, 181, 64);
         YPos += 64;
       }
-      for (int index1 = 0; index1 < visualSettings.Count; ++index1)
+      for (var index1 = 0; index1 < visualSettings.Count; ++index1)
       {
-        ScrollableVerticalLayout scrollableVerticalLayout = new ScrollableVerticalLayout(num++, (Element2D) this.tab_frame);
-        scrollableVerticalLayout.Init(this.host);
-        scrollableVerticalLayout.tag = this.GetTabFrameTag(visualSettings[index1].Header);
+        var scrollableVerticalLayout = new ScrollableVerticalLayout(num++, (Element2D)tab_frame);
+        scrollableVerticalLayout.Init(host);
+        scrollableVerticalLayout.tag = GetTabFrameTag(visualSettings[index1].Header);
         scrollableVerticalLayout.Visible = false;
         scrollableVerticalLayout.Enabled = false;
         scrollableVerticalLayout.RelativeWidth = 1f;
         scrollableVerticalLayout.RelativeHeight = 1f;
-        for (int index2 = 0; index2 < visualSettings[index1].Items.Count; ++index2)
+        for (var index2 = 0; index2 < visualSettings[index1].Items.Count; ++index2)
         {
           XMLSettingsItem settings = visualSettings[index1].Items[index2];
           if (!settings.Name.StartsWith(XMLSetting.MagicInternalString + "Hidden", StringComparison.InvariantCultureIgnoreCase))
@@ -151,48 +156,51 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
             {
               case SettingItemType.IntType:
               case SettingItemType.FloatMMType:
-                element = this.CreateTextBox((Frame) scrollableVerticalLayout, settings, ref num);
+                element = CreateTextBox((Frame) scrollableVerticalLayout, settings, ref num);
                 break;
               case SettingItemType.BoolType:
-                element = this.CreateCheckBox((Frame) scrollableVerticalLayout, settings, ref num);
+                element = CreateCheckBox((Frame) scrollableVerticalLayout, settings, ref num);
                 break;
               case SettingItemType.FillPatternType:
               case SettingItemType.SupportPatternType:
-                element = this.CreateComboBox((Frame) scrollableVerticalLayout, settings, ref num);
+                element = CreateComboBox((Frame) scrollableVerticalLayout, settings, ref num);
                 break;
               default:
                 throw new NotImplementedException("GenerateAdvancedSettings was given an unknown setting");
             }
             if (element != null)
-              this.ProcessValidity(settings.Name, settings.SlicerSettingsItem, element);
+            {
+              ProcessValidity(settings.Name, settings.SlicerSettingsItem, element);
+            }
           }
         }
-        this.tab_frame.AddChildElement((Element2D) scrollableVerticalLayout);
+        tab_frame.AddChildElement((Element2D) scrollableVerticalLayout);
       }
-      this.Refresh();
+      Refresh();
       if (visualSettings.Count == 0)
+      {
         return;
-      (this.FindChildElement(this.GetTabButtonTag(visualSettings[0].Header)) as ButtonWidget)?.SetChecked(true);
+      } (FindChildElement(GetTabButtonTag(visualSettings[0].Header)) as ButtonWidget)?.SetChecked(true);
     }
 
     private void CreateErrorWarningMessage()
     {
-      this.ErrorWarningMessage = new TextWidget();
-      this.ErrorWarningMessage.SetPosition(300, -45);
-      this.ErrorWarningMessage.SetSize(500, 35);
-      this.ErrorWarningMessage.Text = "Testing one two three";
-      this.ErrorWarningMessage.Alignment = QFontAlignment.Left;
-      this.ErrorWarningMessage.Size = FontSize.Large;
-      this.ErrorWarningMessage.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      this.ErrorWarningMessage.Visible = false;
-      this.AddChildElement((Element2D) this.ErrorWarningMessage);
+      ErrorWarningMessage = new TextWidget();
+      ErrorWarningMessage.SetPosition(300, -45);
+      ErrorWarningMessage.SetSize(500, 35);
+      ErrorWarningMessage.Text = "Testing one two three";
+      ErrorWarningMessage.Alignment = QFontAlignment.Left;
+      ErrorWarningMessage.Size = FontSize.Large;
+      ErrorWarningMessage.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
+      ErrorWarningMessage.Visible = false;
+      AddChildElement((Element2D)ErrorWarningMessage);
     }
 
     private void CreateTabButton(string Header, ref int tagIDBuilder, int YPos, int width, int height)
     {
-      ButtonWidget buttonWidget = new ButtonWidget(tagIDBuilder++);
-      buttonWidget.Init(this.host, "guicontrols", 448f, 256f, 628f, 319f, 448f, 256f, 628f, 319f, 448f, 384f, 628f, 447f);
-      buttonWidget.tag = this.GetTabButtonTag(Header);
+      var buttonWidget = new ButtonWidget(tagIDBuilder++);
+      buttonWidget.Init(host, "guicontrols", 448f, 256f, 628f, 319f, 448f, 256f, 628f, 319f, 448f, 384f, 628f, 447f);
+      buttonWidget.tag = GetTabButtonTag(Header);
       buttonWidget.Text = "  " + Header;
       buttonWidget.SetPosition(0, YPos);
       buttonWidget.SetSize(width, height);
@@ -203,30 +211,34 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       buttonWidget.DontMove = true;
       buttonWidget.ClickType = ButtonType.Checkable;
       buttonWidget.GroupID = 89405;
-      buttonWidget.SetCallback(new ButtonCallback(this.MyTabButtonCallback));
-      this.AddChildElement((Element2D) buttonWidget);
-      this.buttonElements.Add((Element2D) buttonWidget);
-      ImageWidget imageWidget1 = new ImageWidget(tagIDBuilder++);
-      imageWidget1.tag = this.GetWarningImageTag(Header);
-      imageWidget1.Init(this.host, "extendedcontrols", 0.0f, 0.0f, 37f, 30f);
+      buttonWidget.SetCallback(new ButtonCallback(MyTabButtonCallback));
+      AddChildElement((Element2D) buttonWidget);
+      buttonElements.Add((Element2D) buttonWidget);
+      var imageWidget1 = new ImageWidget(tagIDBuilder++)
+      {
+        tag = GetWarningImageTag(Header)
+      };
+      imageWidget1.Init(host, "extendedcontrols", 0.0f, 0.0f, 37f, 30f);
       imageWidget1.SetSize(24, 20);
       imageWidget1.SetPosition(width - (imageWidget1.Width + 10), YPos + 3);
       imageWidget1.Visible = false;
-      this.AddChildElement((Element2D) imageWidget1);
-      this.buttonElements.Add((Element2D) imageWidget1);
-      ImageWidget imageWidget2 = new ImageWidget(tagIDBuilder++);
-      imageWidget2.tag = this.GetErrorImageTag(Header);
-      imageWidget2.Init(this.host, "extendedcontrols", 38f, 0.0f, 72f, 30f);
+      AddChildElement((Element2D) imageWidget1);
+      buttonElements.Add((Element2D) imageWidget1);
+      var imageWidget2 = new ImageWidget(tagIDBuilder++)
+      {
+        tag = GetErrorImageTag(Header)
+      };
+      imageWidget2.Init(host, "extendedcontrols", 38f, 0.0f, 72f, 30f);
       imageWidget2.SetSize(24, 20);
       imageWidget2.SetPosition(width - (imageWidget2.Width + 10), YPos + 3);
       imageWidget2.Visible = false;
-      this.AddChildElement((Element2D) imageWidget2);
-      this.buttonElements.Add((Element2D) imageWidget2);
+      AddChildElement((Element2D) imageWidget2);
+      buttonElements.Add((Element2D) imageWidget2);
     }
 
     private ButtonWidget CreateUserOptionButton(GUIHost host, string content, AdvancedPrintSettingsFrame.AdvanceSettingsButtons id, int x, int y, int width = 100, int height = 32, string tooltip = "")
     {
-      ButtonWidget buttonWidget = new ButtonWidget((int) id);
+      var buttonWidget = new ButtonWidget((int) id);
       buttonWidget.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget.ID = (int) id;
       buttonWidget.SetPosition(x, y);
@@ -235,18 +247,20 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       buttonWidget.Alignment = QFontAlignment.Centre;
       buttonWidget.Size = FontSize.Medium;
       buttonWidget.ToolTipMessage = tooltip;
-      buttonWidget.SetCallback(new ButtonCallback(this.MyTabButtonCallback));
+      buttonWidget.SetCallback(new ButtonCallback(MyTabButtonCallback));
       return buttonWidget;
     }
 
     private Element2D CreateCheckBox(Frame vertLayout, XMLSettingsItem settings, ref int ID_Builder)
     {
-      Frame horzonalFrame = new Frame(ID_Builder++, (Element2D) vertLayout);
-      horzonalFrame.RelativeWidth = 1f;
-      horzonalFrame.Height = 28;
-      this.CreateSettingsTitleElement(horzonalFrame, ID_Builder++, settings.Text);
-      ButtonWidget buttonWidget = new ButtonWidget(ID_Builder++, (Element2D) horzonalFrame);
-      buttonWidget.Init(this.host, ButtonTemplate.CheckBox);
+      var horzonalFrame = new Frame(ID_Builder++, (Element2D)vertLayout)
+      {
+        RelativeWidth = 1f,
+        Height = 28
+      };
+      CreateSettingsTitleElement(horzonalFrame, ID_Builder++, settings.Text);
+      var buttonWidget = new ButtonWidget(ID_Builder++, (Element2D) horzonalFrame);
+      buttonWidget.Init(host, ButtonTemplate.CheckBox);
       buttonWidget.ToolTipMessage = settings.Tooltip;
       buttonWidget.ClickType = ButtonType.Checkable;
       buttonWidget.DontMove = true;
@@ -256,7 +270,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       buttonWidget.X = 245;
       buttonWidget.tag = settings.Name;
       buttonWidget.Checked = bool.Parse(settings.SlicerSettingsItem.TranslateToUserValue());
-      buttonWidget.SetCallback(new ButtonCallback(this.CheckBoxCallback));
+      buttonWidget.SetCallback(new ButtonCallback(CheckBoxCallback));
       buttonWidget.FadeWhenDisabled = true;
       horzonalFrame.AddChildElement((Element2D) buttonWidget);
       vertLayout.AddChildElement((Element2D) horzonalFrame);
@@ -265,16 +279,21 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     private Element2D CreateTextBox(Frame vertLayout, XMLSettingsItem settings, ref int ID_Builder)
     {
-      IReportFormat slicerSettingsItem = settings.SlicerSettingsItem as IReportFormat;
+      var slicerSettingsItem = settings.SlicerSettingsItem as IReportFormat;
       NumFormat numFormat = NumFormat.Thousands;
       if (slicerSettingsItem != null)
+      {
         numFormat = slicerSettingsItem.Format;
-      Frame horzonalFrame = new Frame(ID_Builder++, (Element2D) vertLayout);
-      horzonalFrame.RelativeWidth = 1f;
-      horzonalFrame.Height = 28;
-      this.CreateSettingsTitleElement(horzonalFrame, ID_Builder++, settings.Text);
-      EditBoxWidget editBoxWidget = new EditBoxWidget(ID_Builder++, (Element2D) horzonalFrame);
-      editBoxWidget.Init(this.host, "guicontrols", 898f, 104f, 941f, 135f);
+      }
+
+      var horzonalFrame = new Frame(ID_Builder++, (Element2D)vertLayout)
+      {
+        RelativeWidth = 1f,
+        Height = 28
+      };
+      CreateSettingsTitleElement(horzonalFrame, ID_Builder++, settings.Text);
+      var editBoxWidget = new EditBoxWidget(ID_Builder++, (Element2D) horzonalFrame);
+      editBoxWidget.Init(host, "guicontrols", 898f, 104f, 941f, 135f);
       editBoxWidget.Height = 25;
       editBoxWidget.Width = 75;
       editBoxWidget.MAX_CHARS = 7;
@@ -286,27 +305,31 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       editBoxWidget.Text = settings.SlicerSettingsItem.TranslateToUserValue();
       editBoxWidget.tag = settings.Name;
       editBoxWidget.NumFormat = numFormat;
-      editBoxWidget.SetCallbackOnTextAdded(new EditBoxWidget.EditBoxCallback(this.EditBoxCallback));
-      editBoxWidget.SetCallbackOnBackspace(new EditBoxWidget.EditBoxCallback(this.EditBoxCallback));
+      editBoxWidget.SetCallbackOnTextAdded(new EditBoxWidget.EditBoxCallback(EditBoxCallback));
+      editBoxWidget.SetCallbackOnBackspace(new EditBoxWidget.EditBoxCallback(EditBoxCallback));
       horzonalFrame.AddChildElement((Element2D) editBoxWidget);
-      TextWidget textWidget1 = new TextWidget(ID_Builder++, (Element2D) horzonalFrame);
-      textWidget1.Width = 65;
-      textWidget1.Height = 35;
-      textWidget1.X = 325;
-      textWidget1.Size = FontSize.Medium;
-      textWidget1.HexColor = "#FF7f7f7f";
-      textWidget1.Alignment = QFontAlignment.Left;
-      textWidget1.Text = settings.Suffix;
+      var textWidget1 = new TextWidget(ID_Builder++, (Element2D)horzonalFrame)
+      {
+        Width = 65,
+        Height = 35,
+        X = 325,
+        Size = FontSize.Medium,
+        HexColor = "#FF7f7f7f",
+        Alignment = QFontAlignment.Left,
+        Text = settings.Suffix
+      };
       horzonalFrame.AddChildElement((Element2D) textWidget1);
-      TextWidget textWidget2 = new TextWidget(ID_Builder++, (Element2D) horzonalFrame);
-      textWidget2.Width = 500;
-      textWidget2.Height = 35;
-      textWidget2.X = 395;
-      textWidget2.Size = FontSize.Medium;
-      textWidget2.HexColor = "#FF7f7f7f";
-      textWidget2.Alignment = QFontAlignment.Left;
-      textWidget2.Visible = true;
-      textWidget2.tag = this.GetRangeText(settings.Name);
+      var textWidget2 = new TextWidget(ID_Builder++, (Element2D)horzonalFrame)
+      {
+        Width = 500,
+        Height = 35,
+        X = 395,
+        Size = FontSize.Medium,
+        HexColor = "#FF7f7f7f",
+        Alignment = QFontAlignment.Left,
+        Visible = true,
+        tag = GetRangeText(settings.Name)
+      };
       horzonalFrame.AddChildElement((Element2D) textWidget2);
       vertLayout.AddChildElement((Element2D) horzonalFrame);
       return (Element2D) editBoxWidget;
@@ -314,15 +337,19 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     private Element2D CreateComboBox(Frame vertLayout, XMLSettingsItem settings, ref int ID_Builder)
     {
-      SlicerSettingsEnumItem slicerSettingsItem = settings.SlicerSettingsItem as SlicerSettingsEnumItem;
-      Frame horzonalFrame = new Frame(ID_Builder++, (Element2D) vertLayout);
-      horzonalFrame.RelativeWidth = 1f;
-      horzonalFrame.Height = 28;
-      this.CreateSettingsTitleElement(horzonalFrame, ID_Builder++, settings.Text);
-      ComboBoxWidget comboBoxWidget = new ComboBoxWidget(ID_Builder++, (Element2D) horzonalFrame);
-      comboBoxWidget.Value = (object) slicerSettingsItem.ValueInt;
-      comboBoxWidget.tag = settings.Name;
-      comboBoxWidget.Init(this.host);
+      var slicerSettingsItem = settings.SlicerSettingsItem as SlicerSettingsEnumItem;
+      var horzonalFrame = new Frame(ID_Builder++, (Element2D)vertLayout)
+      {
+        RelativeWidth = 1f,
+        Height = 28
+      };
+      CreateSettingsTitleElement(horzonalFrame, ID_Builder++, settings.Text);
+      var comboBoxWidget = new ComboBoxWidget(ID_Builder++, (Element2D)horzonalFrame)
+      {
+        Value = (object)slicerSettingsItem.ValueInt,
+        tag = settings.Name
+      };
+      comboBoxWidget.Init(host);
       comboBoxWidget.ItemsEnumString = slicerSettingsItem.EnumType.ToString();
       comboBoxWidget.Select = slicerSettingsItem.ValueInt;
       comboBoxWidget.ToolTipMessage = settings.Tooltip;
@@ -331,7 +358,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       comboBoxWidget.X = 245;
       comboBoxWidget.Size = FontSize.Medium;
       comboBoxWidget.HexColor = "#FF808080";
-      comboBoxWidget.TextChangedCallback += new ComboBoxWidget.ComboBoxTextChangedCallback(this.comboBoxChangedCallBack);
+      comboBoxWidget.TextChangedCallback += new ComboBoxWidget.ComboBoxTextChangedCallback(comboBoxChangedCallBack);
       horzonalFrame.AddChildElement((Element2D) comboBoxWidget);
       vertLayout.AddChildElement((Element2D) horzonalFrame);
       return (Element2D) comboBoxWidget;
@@ -339,45 +366,47 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     private void CreateSettingsTitleElement(Frame horzonalFrame, int id, string text)
     {
-      TextWidget textWidget = new TextWidget(id, (Element2D) horzonalFrame);
-      textWidget.Text = text;
-      textWidget.Size = FontSize.Medium;
-      textWidget.HexColor = "#FF7f7f7f";
-      textWidget.Alignment = QFontAlignment.Left;
-      textWidget.CenterVerticallyInParent = true;
-      textWidget.Height = 35;
-      textWidget.Width = 240;
-      textWidget.FadeWhenDisabled = true;
+      var textWidget = new TextWidget(id, (Element2D)horzonalFrame)
+      {
+        Text = text,
+        Size = FontSize.Medium,
+        HexColor = "#FF7f7f7f",
+        Alignment = QFontAlignment.Left,
+        CenterVerticallyInParent = true,
+        Height = 35,
+        Width = 240,
+        FadeWhenDisabled = true
+      };
       horzonalFrame.AddChildElement((Element2D) textWidget);
     }
 
     private string GetTabButtonTag(string tag)
     {
-      tag = this.RemoveOtherElementNameFlag(tag);
+      tag = RemoveOtherElementNameFlag(tag);
       return tag + "_TabButton";
     }
 
     private string GetRangeText(string tag)
     {
-      tag = this.RemoveOtherElementNameFlag(tag);
+      tag = RemoveOtherElementNameFlag(tag);
       return tag + "_RangeText";
     }
 
     private string GetTabFrameTag(string tag)
     {
-      tag = this.RemoveOtherElementNameFlag(tag);
+      tag = RemoveOtherElementNameFlag(tag);
       return tag + "_Frame";
     }
 
     private string GetErrorImageTag(string tag)
     {
-      tag = this.RemoveOtherElementNameFlag(tag);
+      tag = RemoveOtherElementNameFlag(tag);
       return tag + "_ErrorImage";
     }
 
     private string GetWarningImageTag(string tag)
     {
-      tag = this.RemoveOtherElementNameFlag(tag);
+      tag = RemoveOtherElementNameFlag(tag);
       return tag + "_WarningImage";
     }
 
@@ -391,10 +420,12 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         "_ErrorImage",
         "_WarningImage"
       };
-      foreach (string str in strArray)
+      foreach (var str in strArray)
       {
         if (tag.EndsWith(str))
+        {
           return tag.Substring(0, tag.Length - str.Length);
+        }
       }
       return tag;
     }
@@ -404,102 +435,119 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       switch (button.ID)
       {
         case 611:
-          this.SlicerSettings.SetToDefault();
-          this.syncAllSettingWithGUI();
+          SlicerSettings.SetToDefault();
+          syncAllSettingWithGUI();
           break;
         case 612:
-          this.SlicerConnection.SlicerSettingStack.PopSettings();
-          this.PrintDialogWindow.ActivateFrame(PrintDialogWidgetFrames.PrintDialogFrame, this.CurrentJobDetails);
+          SlicerConnection.SlicerSettingStack.PopSettings();
+          PrintDialogWindow.ActivateFrame(PrintDialogWidgetFrames.PrintDialogFrame, CurrentJobDetails);
           break;
         case 613:
-          this.SlicerConnection.SlicerSettingStack.SaveSettingsDown();
-          this.PrintDialogWindow.ActivateFrame(PrintDialogWidgetFrames.PrintDialogFrame, this.CurrentJobDetails);
+          SlicerConnection.SlicerSettingStack.SaveSettingsDown();
+          PrintDialogWindow.ActivateFrame(PrintDialogWidgetFrames.PrintDialogFrame, CurrentJobDetails);
           break;
         default:
-          this.ShowFrame(button.tag);
+          ShowFrame(button.tag);
           break;
       }
     }
 
     private void ShowFrame(string tag)
     {
-      Frame childElement = this.FindChildElement(this.GetTabFrameTag(tag)) as Frame;
+      var childElement = FindChildElement(GetTabFrameTag(tag)) as Frame;
       if (childElement == null)
+      {
         return;
-      this.ActivateFrame(childElement);
+      }
+
+      ActivateFrame(childElement);
     }
 
     private void ActivateFrame(Frame frame)
     {
-      if (this.active_frame != null)
+      if (active_frame != null)
       {
-        this.active_frame.Visible = false;
-        this.active_frame.Enabled = false;
-        this.active_frame = (Frame) null;
+        active_frame.Visible = false;
+        active_frame.Enabled = false;
+        active_frame = (Frame) null;
       }
-      this.active_frame = frame;
-      if (this.active_frame == null)
+      active_frame = frame;
+      if (active_frame == null)
+      {
         return;
-      this.active_frame.Enabled = true;
-      this.active_frame.Visible = true;
+      }
+
+      active_frame.Enabled = true;
+      active_frame.Visible = true;
     }
 
     private void CheckBoxCallback(ButtonWidget button)
     {
-      string tag = button.tag;
+      var tag = button.tag;
       if (tag.StartsWith("InternalToGUI_"))
       {
-        PrinterObject selectedPrinter = this.SelectedPrinter;
-        FilamentSpool filament = (FilamentSpool) null;
+        PrinterObject selectedPrinter = SelectedPrinter;
+        var filament = (FilamentSpool) null;
         if (selectedPrinter != null)
+        {
           filament = selectedPrinter.GetCurrentFilament();
-        this.SlicerConnection.SlicerSettings.SmartCheckBoxCallBack(tag, button.Checked, filament);
-        this.syncAllSettingWithGUI();
+        }
+
+        SlicerConnection.SlicerSettings.SmartCheckBoxCallBack(tag, button.Checked, filament);
+        syncAllSettingWithGUI();
       }
       else
       {
-        SlicerSettingsItem smartSlicerSetting = this.smartSlicerSettings[tag];
+        SlicerSettingsItem smartSlicerSetting = smartSlicerSettings[tag];
         smartSlicerSetting.ParseUserValue(button.Value.ToString());
-        this.ProcessValidity(tag, smartSlicerSetting, (Element2D) button);
+        ProcessValidity(tag, smartSlicerSetting, (Element2D) button);
       }
     }
 
     private void EditBoxCallback(EditBoxWidget edit)
     {
-      string tag = edit.tag;
-      SlicerSettingsItem smartSlicerSetting = this.smartSlicerSettings[tag];
+      var tag = edit.tag;
+      SlicerSettingsItem smartSlicerSetting = smartSlicerSettings[tag];
       smartSlicerSetting.ParseUserValue(edit.Value.ToString());
-      this.ProcessValidity(tag, smartSlicerSetting, (Element2D) edit);
+      ProcessValidity(tag, smartSlicerSetting, (Element2D) edit);
     }
 
     private void comboBoxChangedCallBack(ComboBoxWidget combobox)
     {
-      string tag = combobox.tag;
-      SlicerSettingsItem smartSlicerSetting = this.smartSlicerSettings[tag];
+      var tag = combobox.tag;
+      SlicerSettingsItem smartSlicerSetting = smartSlicerSettings[tag];
       smartSlicerSetting.ParseUserValue(combobox.Value.ToString());
-      this.ProcessValidity(tag, smartSlicerSetting, (Element2D) combobox);
+      ProcessValidity(tag, smartSlicerSetting, (Element2D) combobox);
     }
 
     private void syncAllSettingWithGUI()
     {
-      int count = this.SlicerSettings.Count;
-      foreach (System.Collections.Generic.KeyValuePair<string, SlicerSettingsItem> slicerSetting in this.SlicerSettings)
-        this.UpdateGUIFromSetting(slicerSetting.Key, slicerSetting.Value);
+      var count = SlicerSettings.Count;
+      foreach (System.Collections.Generic.KeyValuePair<string, SlicerSettingsItem> slicerSetting in SlicerSettings)
+      {
+        UpdateGUIFromSetting(slicerSetting.Key, slicerSetting.Value);
+      }
     }
 
     private void UpdateGUIFromSetting(string name, SlicerSettingsItem setting)
     {
-      if (this.tab_frame == null)
+      if (tab_frame == null)
+      {
         return;
-      Element2D childElement = this.tab_frame.FindChildElement(name);
+      }
+
+      Element2D childElement = tab_frame.FindChildElement(name);
       if (childElement == null)
+      {
         return;
-      string userValue = setting.TranslateToUserValue();
+      }
+
+      var userValue = setting.TranslateToUserValue();
       switch (setting.GetItemType())
       {
         case SettingItemType.IntType:
         case SettingItemType.FloatMMType:
-          EditBoxWidget editBoxWidget = childElement as EditBoxWidget;
+          var editBoxWidget = childElement as EditBoxWidget;
           if (editBoxWidget != null)
           {
             editBoxWidget.Text = userValue;
@@ -507,7 +555,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
           }
           break;
         case SettingItemType.BoolType:
-          ButtonWidget buttonWidget = childElement as ButtonWidget;
+          var buttonWidget = childElement as ButtonWidget;
           if (buttonWidget != null)
           {
             buttonWidget.Checked = bool.Parse(userValue);
@@ -516,8 +564,8 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
           break;
         case SettingItemType.FillPatternType:
         case SettingItemType.SupportPatternType:
-          ComboBoxWidget comboBoxWidget = childElement as ComboBoxWidget;
-          SlicerSettingsEnumItem settingsEnumItem = setting as SlicerSettingsEnumItem;
+          var comboBoxWidget = childElement as ComboBoxWidget;
+          var settingsEnumItem = setting as SlicerSettingsEnumItem;
           if (comboBoxWidget != null && settingsEnumItem != null)
           {
             comboBoxWidget.Select = settingsEnumItem.ValueInt;
@@ -527,66 +575,70 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         default:
           throw new NotImplementedException("GenerateAdvancedSettings was given an unknown setting");
       }
-      this.ProcessValidity(name, setting, childElement);
+      ProcessValidity(name, setting, childElement);
     }
 
     private void ProcessValidity(string settingName, SlicerSettingsItem setting, Element2D element)
     {
       Element2D parent = element.Parent;
       while (parent != null && string.IsNullOrEmpty(parent.tag))
+      {
         parent = parent.Parent;
+      }
+
       if (parent == null)
+      {
         return;
-      string tag = parent.tag;
-      AdvancedPrintSettingsFrame.ErrorStateEnum oldState;
-      AdvancedPrintSettingsFrame.ErrorStateEnum currentState;
-      int num = this.GetStateChangeInfo(element, settingName, setting, tag, out oldState, out currentState) ? 1 : 0;
-      Element2D childElement = element.Parent.FindChildElement(this.GetRangeText(settingName));
+      }
+
+      var tag = parent.tag;
+      var num = GetStateChangeInfo(element, settingName, setting, tag, out ErrorStateEnum oldState, out ErrorStateEnum currentState) ? 1 : 0;
+      Element2D childElement = element.Parent.FindChildElement(GetRangeText(settingName));
       if (num != 0)
       {
-        AdvancedPrintSettingsFrame.TabErrorStateCount tabErrorStateCount = this.tabsErrorWarningCount[tag];
+        AdvancedPrintSettingsFrame.TabErrorStateCount tabErrorStateCount = tabsErrorWarningCount[tag];
         switch (oldState)
         {
           case AdvancedPrintSettingsFrame.ErrorStateEnum.Warning:
             --tabErrorStateCount.Warnings;
-            --this.globalWarningCount;
+            --globalWarningCount;
             if (tabErrorStateCount.Warnings == 0)
             {
-              this.image_Helper(this.GetWarningImageTag(tag), false);
+              image_Helper(GetWarningImageTag(tag), false);
               break;
             }
             break;
           case AdvancedPrintSettingsFrame.ErrorStateEnum.Error:
             --tabErrorStateCount.Errors;
-            --this.globalErrorCount;
+            --globalErrorCount;
             if (tabErrorStateCount.Errors == 0)
             {
-              this.image_Helper(this.GetErrorImageTag(tag), false);
+              image_Helper(GetErrorImageTag(tag), false);
               break;
             }
             break;
         }
-        Color4 color4 = this.DEFAULT_COLOR;
-        bool flag = true;
+        Color4 color4 = DEFAULT_COLOR;
+        var flag = true;
         switch (currentState)
         {
           case AdvancedPrintSettingsFrame.ErrorStateEnum.Warning:
-            color4 = this.WARNING_COLOR;
+            color4 = WARNING_COLOR;
             ++tabErrorStateCount.Warnings;
-            ++this.globalWarningCount;
+            ++globalWarningCount;
             if (tabErrorStateCount.Warnings == 1)
             {
-              this.image_Helper(this.GetWarningImageTag(tag), true);
+              image_Helper(GetWarningImageTag(tag), true);
               break;
             }
             break;
           case AdvancedPrintSettingsFrame.ErrorStateEnum.Error:
-            color4 = this.ERROR_COLOR;
+            color4 = ERROR_COLOR;
             ++tabErrorStateCount.Errors;
-            ++this.globalErrorCount;
+            ++globalErrorCount;
             if (tabErrorStateCount.Errors == 1)
             {
-              this.image_Helper(this.GetErrorImageTag(tag), true);
+              image_Helper(GetErrorImageTag(tag), true);
               break;
             }
             break;
@@ -595,110 +647,131 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
             break;
         }
         if (element is EditBoxWidget)
+        {
           (element as EditBoxWidget).Color = color4;
+        }
+
         if (childElement is TextWidget)
         {
-          TextWidget textWidget = childElement as TextWidget;
+          var textWidget = childElement as TextWidget;
           textWidget.Color = color4;
           textWidget.Visible = flag;
         }
-        this.UpdateErrorWarningMessage();
+        UpdateErrorWarningMessage();
       }
       if (!(childElement is TextWidget))
+      {
         return;
-      (childElement as TextWidget).Text = setting.GetErrorMsg();
+      } (childElement as TextWidget).Text = setting.GetErrorMsg();
     }
 
     private void UpdateErrorWarningMessage()
     {
-      bool flag = false;
-      if (this.globalErrorCount == 1)
+      var flag = false;
+      if (globalErrorCount == 1)
       {
-        this.OK_Button.Enabled = false;
-        this.ErrorWarningMessage.Visible = true;
-        this.ErrorWarningMessage.Text = "Error on settings";
-        this.ErrorWarningMessage.Color = this.ERROR_COLOR;
+        OK_Button.Enabled = false;
+        ErrorWarningMessage.Visible = true;
+        ErrorWarningMessage.Text = "Error on settings";
+        ErrorWarningMessage.Color = ERROR_COLOR;
       }
-      else if (this.globalErrorCount == 0)
+      else if (globalErrorCount == 0)
       {
-        this.ErrorWarningMessage.Visible = false;
-        this.OK_Button.Enabled = true;
-        flag = this.globalWarningCount > 1;
+        ErrorWarningMessage.Visible = false;
+        OK_Button.Enabled = true;
+        flag = globalWarningCount > 1;
       }
-      if (this.globalWarningCount == 1 | flag && this.globalErrorCount == 0)
+      if (globalWarningCount == 1 | flag && globalErrorCount == 0)
       {
-        this.ErrorWarningMessage.Visible = true;
-        this.ErrorWarningMessage.Text = "Warning on settings";
-        this.ErrorWarningMessage.Color = this.WARNING_COLOR;
+        ErrorWarningMessage.Visible = true;
+        ErrorWarningMessage.Text = "Warning on settings";
+        ErrorWarningMessage.Color = WARNING_COLOR;
       }
-      if (this.globalWarningCount != 0 || this.globalErrorCount != 0)
+      if (globalWarningCount != 0 || globalErrorCount != 0)
+      {
         return;
-      this.ErrorWarningMessage.Visible = false;
+      }
+
+      ErrorWarningMessage.Visible = false;
     }
 
     private bool GetStateChangeInfo(Element2D element, string settingName, SlicerSettingsItem setting, string parentTag, out AdvancedPrintSettingsFrame.ErrorStateEnum oldState, out AdvancedPrintSettingsFrame.ErrorStateEnum currentState)
     {
-      if (!this.tabsErrorWarningCount.ContainsKey(parentTag))
-        this.tabsErrorWarningCount[parentTag] = new AdvancedPrintSettingsFrame.TabErrorStateCount();
+      if (!tabsErrorWarningCount.ContainsKey(parentTag))
+      {
+        tabsErrorWarningCount[parentTag] = new AdvancedPrintSettingsFrame.TabErrorStateCount();
+      }
+
       oldState = AdvancedPrintSettingsFrame.ErrorStateEnum.AllGood;
-      bool flag = false;
-      if (this.settingErrorWarningState.ContainsKey(settingName))
-        oldState = this.settingErrorWarningState[settingName];
+      var flag = false;
+      if (settingErrorWarningState.ContainsKey(settingName))
+      {
+        oldState = settingErrorWarningState[settingName];
+      }
+
       if (setting.HasError && setting.IsSettingOn)
       {
         currentState = AdvancedPrintSettingsFrame.ErrorStateEnum.Error;
         flag = true;
-        if (!this.settingErrorWarningState.ContainsKey(settingName))
+        if (!settingErrorWarningState.ContainsKey(settingName))
         {
-          this.settingErrorWarningState.Add(settingName, AdvancedPrintSettingsFrame.ErrorStateEnum.Error);
+          settingErrorWarningState.Add(settingName, AdvancedPrintSettingsFrame.ErrorStateEnum.Error);
         }
         else
         {
-          flag = this.settingErrorWarningState[settingName] != AdvancedPrintSettingsFrame.ErrorStateEnum.Error;
-          this.settingErrorWarningState[settingName] = AdvancedPrintSettingsFrame.ErrorStateEnum.Error;
+          flag = settingErrorWarningState[settingName] != AdvancedPrintSettingsFrame.ErrorStateEnum.Error;
+          settingErrorWarningState[settingName] = AdvancedPrintSettingsFrame.ErrorStateEnum.Error;
         }
       }
       else if (setting.HasWarning && setting.IsSettingOn)
       {
         currentState = AdvancedPrintSettingsFrame.ErrorStateEnum.Warning;
         flag = true;
-        if (!this.settingErrorWarningState.ContainsKey(settingName))
+        if (!settingErrorWarningState.ContainsKey(settingName))
         {
-          this.settingErrorWarningState.Add(settingName, AdvancedPrintSettingsFrame.ErrorStateEnum.Warning);
+          settingErrorWarningState.Add(settingName, AdvancedPrintSettingsFrame.ErrorStateEnum.Warning);
         }
         else
         {
-          flag = this.settingErrorWarningState[settingName] != AdvancedPrintSettingsFrame.ErrorStateEnum.Warning;
-          this.settingErrorWarningState[settingName] = AdvancedPrintSettingsFrame.ErrorStateEnum.Warning;
+          flag = settingErrorWarningState[settingName] != AdvancedPrintSettingsFrame.ErrorStateEnum.Warning;
+          settingErrorWarningState[settingName] = AdvancedPrintSettingsFrame.ErrorStateEnum.Warning;
         }
       }
       else
       {
         currentState = AdvancedPrintSettingsFrame.ErrorStateEnum.AllGood;
-        if (this.settingErrorWarningState.ContainsKey(settingName))
+        if (settingErrorWarningState.ContainsKey(settingName))
         {
-          this.settingErrorWarningState.Remove(settingName);
+          settingErrorWarningState.Remove(settingName);
           flag = true;
         }
         element.Enabled = setting.IsSettingOn;
         if (!element.Enabled)
+        {
           flag = true;
+        }
       }
       return flag;
     }
 
     private void image_Helper(string name, bool visibility)
     {
-      ImageWidget childElement = this.FindChildElement(name) as ImageWidget;
+      var childElement = FindChildElement(name) as ImageWidget;
       if (childElement == null)
+      {
         return;
+      }
+
       childElement.Visible = visibility;
     }
 
     public override void OnParentResize()
     {
-      if (this.tab_frame != null)
-        this.tab_frame.SetSize(this.Width - this.tab_frame.X, this.Height - this.tab_frame.Y - 60);
+      if (tab_frame != null)
+      {
+        tab_frame.SetSize(Width - tab_frame.X, Height - tab_frame.Y - 60);
+      }
+
       base.OnParentResize();
     }
 

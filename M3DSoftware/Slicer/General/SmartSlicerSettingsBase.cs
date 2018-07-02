@@ -21,35 +21,35 @@ namespace M3D.Slicer.General
 
     public SmartSlicerSettingsBase()
     {
-      this.ProfileName = "";
-      this.LoadSettingsItemsFromFile();
+      ProfileName = "";
+      LoadSettingsItemsFromFile();
     }
 
     public SmartSlicerSettingsBase(SmartSlicerSettingsBase other)
     {
-      this.ProfileName = other.ProfileName;
-      this.xmlSettings = other.xmlSettings.Clone();
-      this.BuildInternalStructures();
+      ProfileName = other.ProfileName;
+      xmlSettings = other.xmlSettings.Clone();
+      BuildInternalStructures();
     }
 
     public int Count
     {
       get
       {
-        return this.internalSettingsDictionary.Count;
+        return internalSettingsDictionary.Count;
       }
     }
 
     public bool ContainsKey(string key)
     {
-      return this.internalSettingsDictionary.ContainsKey(key);
+      return internalSettingsDictionary.ContainsKey(key);
     }
 
     public SlicerSettingsItem this[string key]
     {
       get
       {
-        return this.internalSettingsDictionary[key];
+        return internalSettingsDictionary[key];
       }
     }
 
@@ -60,28 +60,37 @@ namespace M3D.Slicer.General
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator) this.GetEnumerator();
+      return (IEnumerator)GetEnumerator();
     }
 
     public void LoadSettingsItemsFromFile()
     {
-      this.xmlSettings = XMLSetting.Load((TextReader) new StringReader(this.AdvancedPrintSettingsEmbeddedResource));
-      if (this.xmlSettings == null)
+      xmlSettings = XMLSetting.Load((TextReader) new StringReader(AdvancedPrintSettingsEmbeddedResource));
+      if (xmlSettings == null)
+      {
         throw new Exception("Misbehaving slicer advanced print settings config file");
-      this.BuildInternalStructures();
+      }
+
+      BuildInternalStructures();
     }
 
     private void BuildInternalStructures()
     {
-      this.internalSettingsDictionary = new Dictionary<string, SlicerSettingsItem>((IEqualityComparer<string>) StringComparer.InvariantCultureIgnoreCase);
-      List<XMLSettingsItem> allSettings = this.xmlSettings.GetAllSettings();
+      internalSettingsDictionary = new Dictionary<string, SlicerSettingsItem>((IEqualityComparer<string>) StringComparer.InvariantCultureIgnoreCase);
+      List<XMLSettingsItem> allSettings = xmlSettings.GetAllSettings();
       foreach (XMLSettingsItem xmlSettingsItem1 in allSettings)
       {
         XMLSettingsItem setting = xmlSettingsItem1;
         if (setting.SlicerSettingsItem is SettingsItemBoolRPCType)
+        {
           ((SettingsItemBoolRPCType) setting.SlicerSettingsItem).SetParentSettings(this);
+        }
+
         if (!setting.Name.StartsWith(XMLSetting.MagicInternalString, StringComparison.InvariantCultureIgnoreCase))
-          this.internalSettingsDictionary.Add(setting.Name, setting.SlicerSettingsItem);
+        {
+          internalSettingsDictionary.Add(setting.Name, setting.SlicerSettingsItem);
+        }
+
         if (!string.IsNullOrEmpty(setting.GroupToggle))
         {
           XMLSettingsItem xmlSettingsItem2 = allSettings.Find((Predicate<XMLSettingsItem>) (item => item.Name == setting.GroupToggle));
@@ -164,9 +173,12 @@ namespace M3D.Slicer.General
     {
       get
       {
-        List<XMLTabCollectionSettingsItem> collectionSettingsItemList = new List<XMLTabCollectionSettingsItem>(this.xmlSettings.VisibleSettings.Count);
-        foreach (XMLTabCollectionSettingsItem visibleSetting in this.xmlSettings.VisibleSettings)
+        var collectionSettingsItemList = new List<XMLTabCollectionSettingsItem>(xmlSettings.VisibleSettings.Count);
+        foreach (XMLTabCollectionSettingsItem visibleSetting in xmlSettings.VisibleSettings)
+        {
           collectionSettingsItemList.Add(visibleSetting);
+        }
+
         return collectionSettingsItemList;
       }
     }

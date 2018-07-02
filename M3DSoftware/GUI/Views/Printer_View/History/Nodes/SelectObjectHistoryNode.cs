@@ -18,12 +18,12 @@ namespace M3D.GUI.Views.Printer_View.History.Nodes
 
     public override void Undo(PrinterView printerView)
     {
-      printerView.SelectModelbyID(this.previousObject);
+      printerView.SelectModelbyID(previousObject);
     }
 
     public override void Redo(PrinterView printerView)
     {
-      printerView.SelectModelbyID(this.ObjectID);
+      printerView.SelectModelbyID(ObjectID);
     }
   }
 }

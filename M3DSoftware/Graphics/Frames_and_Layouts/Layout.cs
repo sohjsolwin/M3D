@@ -19,29 +19,35 @@ namespace M3D.Graphics.Frames_and_Layouts
     public Layout(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.border_width = 10;
-      this.border_height = 10;
+      border_width = 10;
+      border_height = 10;
     }
 
     public override void Refresh()
     {
-      this.Recalc();
+      Recalc();
     }
 
     public override void OnParentResize()
     {
       base.OnParentResize();
-      if (this.layoutMode == Layout.LayoutMode.ResizeLayoutToFitChildren)
+      if (layoutMode == Layout.LayoutMode.ResizeLayoutToFitChildren)
+      {
         return;
-      this.Recalc();
+      }
+
+      Recalc();
     }
 
     public override void SetSize(int width, int height)
     {
       base.SetSize(width, height);
-      if (this.layoutMode == Layout.LayoutMode.ResizeLayoutToFitChildren)
+      if (layoutMode == Layout.LayoutMode.ResizeLayoutToFitChildren)
+      {
         return;
-      this.Recalc();
+      }
+
+      Recalc();
     }
 
     [XmlAttribute("border-width")]
@@ -49,14 +55,17 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.border_width;
+        return border_width;
       }
       set
       {
-        this.border_width = value;
-        if (this.border_width >= 0)
+        border_width = value;
+        if (border_width >= 0)
+        {
           return;
-        this.border_width = 0;
+        }
+
+        border_width = 0;
       }
     }
 
@@ -65,28 +74,34 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.border_height;
+        return border_height;
       }
       set
       {
-        this.border_height = value;
-        if (this.border_height >= 0)
+        border_height = value;
+        if (border_height >= 0)
+        {
           return;
-        this.border_height = 0;
+        }
+
+        border_height = 0;
       }
     }
 
     public void Recalc()
     {
-      if (this.layoutMode == Layout.LayoutMode.ResizeChildrenToFitLayout)
+      if (layoutMode == Layout.LayoutMode.ResizeChildrenToFitLayout)
       {
-        this.RecalcChildSizes();
+        RecalcChildSizes();
       }
       else
       {
-        if (this.layoutMode != Layout.LayoutMode.ResizeLayoutToFitChildren)
+        if (layoutMode != Layout.LayoutMode.ResizeLayoutToFitChildren)
+        {
           return;
-        this.ResizeToFitChildren();
+        }
+
+        ResizeToFitChildren();
       }
     }
 

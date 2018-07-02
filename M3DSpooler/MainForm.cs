@@ -187,153 +187,180 @@ namespace M3D.Spooler
 
     public MainForm(SpoolerClientBuiltIn spooler_client)
     {
-      this.m_oPrinterData = new ConcurrentDictionary<PrinterSerialNumber, MainForm.PrinterData>();
-      this.form_task = new ThreadSafeVariable<RequestedFormTask>(RequestedFormTask.None);
-      spooler_client.OnReceivedSpoolerShutdownMessage += new EventHandler<EventArgs>(this.OnReceivedSpoolerShutdownMessage);
-      spooler_client.OnReceivedSpoolerShowMessage += new EventHandler<EventArgs>(this.OnReceivedSpoolerShowMessage);
-      spooler_client.OnReceivedSpoolerHideMessage += new EventHandler<EventArgs>(this.OnReceivedSpoolerHideMessage);
+      m_oPrinterData = new ConcurrentDictionary<PrinterSerialNumber, MainForm.PrinterData>();
+      form_task = new ThreadSafeVariable<RequestedFormTask>(RequestedFormTask.None);
+      spooler_client.OnReceivedSpoolerShutdownMessage += new EventHandler<EventArgs>(OnReceivedSpoolerShutdownMessage);
+      spooler_client.OnReceivedSpoolerShowMessage += new EventHandler<EventArgs>(OnReceivedSpoolerShowMessage);
+      spooler_client.OnReceivedSpoolerHideMessage += new EventHandler<EventArgs>(OnReceivedSpoolerHideMessage);
       SpoolerClientBuiltIn spoolerClientBuiltIn1 = spooler_client;
-      spoolerClientBuiltIn1.OnGotNewPrinter = spoolerClientBuiltIn1.OnGotNewPrinter + new SpoolerClient.OnGotNewPrinterDel(this.OnGotNewPrinter);
+      spoolerClientBuiltIn1.OnGotNewPrinter = spoolerClientBuiltIn1.OnGotNewPrinter + new SpoolerClient.OnGotNewPrinterDel(OnGotNewPrinter);
       SpoolerClientBuiltIn spoolerClientBuiltIn2 = spooler_client;
-      spoolerClientBuiltIn2.OnPrinterDisconnected = spoolerClientBuiltIn2.OnPrinterDisconnected + new SpoolerClient.OnPrinterDisconnectedDel(this.OnPrinterDisconnected);
-      this.stay_awake = new StayAwakeAndShutdown();
-      this.stay_awake.StartUp(this.Handle);
-      this.shared_shutdown = new ThreadSafeVariable<bool>(false);
+      spoolerClientBuiltIn2.OnPrinterDisconnected = spoolerClientBuiltIn2.OnPrinterDisconnected + new SpoolerClient.OnPrinterDisconnectedDel(OnPrinterDisconnected);
+      stay_awake = new StayAwakeAndShutdown();
+      stay_awake.StartUp(Handle);
+      shared_shutdown = new ThreadSafeVariable<bool>(false);
       MainForm.global_form = this;
-      this.InitializeComponent();
-      this.InitializeTimers();
-      this.logToScreen = new ThreadSafeVariable<bool>(false);
-      this.logqueue = new Queue<string>();
-      this.advancedStatisticsDialog = new AdvancedStatistics();
-      this.buttonStandAlone.Visible = false;
-      this.restart_counter = new Stopwatch();
-      this.restart_counter.Reset();
-      this.message_handler = new SpoolerMessageHandler(spooler_client);
+      InitializeComponent();
+      InitializeTimers();
+      logToScreen = new ThreadSafeVariable<bool>(false);
+      logqueue = new Queue<string>();
+      advancedStatisticsDialog = new AdvancedStatistics();
+      buttonStandAlone.Visible = false;
+      restart_counter = new Stopwatch();
+      restart_counter.Reset();
+      message_handler = new SpoolerMessageHandler(spooler_client);
       if (!MainForm.AUTO_SHUTDOWN_IF_ALL_CLIENTS_DISCONNECT)
-        this.m_bDontHideSpoolerJustShutDown = true;
+      {
+        m_bDontHideSpoolerJustShutDown = true;
+      }
+
       this.spooler_client = spooler_client;
     }
 
     private void OnLoad(object sender, EventArgs e)
     {
       SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(MainForm.SystemEvents_PowerModeChanged);
-      this.settings = SpoolerSettings.LoadSettings();
-      if (this.settings == null)
-        this.settings = new SpoolerSettings();
-      SpoolerClientBuiltIn spoolerClient1 = this.spooler_client;
-      spoolerClient1.OnGotNewPrinter = spoolerClient1.OnGotNewPrinter + new SpoolerClient.OnGotNewPrinterDel(this.message_handler.OnGotNewPrinter);
-      SpoolerClientBuiltIn spoolerClient2 = this.spooler_client;
-      spoolerClient2.OnReceivedMessage = spoolerClient2.OnReceivedMessage + new OnReceivedMessageDel(this.message_handler.OnSpoolerMessage);
-      this.spooler_client.ConnectInternalSpoolerToWindow(this.Handle);
-      this.StartTimers();
-      this.checkBoxAutoCheckFirmware.Checked = true;
-      this.checkBoxAutoCheckFirmware.Enabled = false;
-      this.OnAutoCheckFirmwareChanged((object) null, new EventArgs());
-      this.buttonLoadEepromData.Visible = false;
-      this.viewToolStripMenuItem.DropDownItems.Remove((ToolStripItem) this.showAdvancedStatisticsToolStripMenuItem);
-      this.labelSpoolerVersion.Text = "Spooler Version: " + M3D.Spooling.Version.VersionText;
-      this.showAdvancedOptionsAtStartupToolStripMenuItem.Checked = this.settings.StartAdvanced;
-      if (this.settings.StartAdvanced)
+      settings = SpoolerSettings.LoadSettings();
+      if (settings == null)
+      {
+        settings = new SpoolerSettings();
+      }
+
+      SpoolerClientBuiltIn spoolerClient1 = spooler_client;
+      spoolerClient1.OnGotNewPrinter = spoolerClient1.OnGotNewPrinter + new SpoolerClient.OnGotNewPrinterDel(message_handler.OnGotNewPrinter);
+      SpoolerClientBuiltIn spoolerClient2 = spooler_client;
+      spoolerClient2.OnReceivedMessage = spoolerClient2.OnReceivedMessage + new OnReceivedMessageDel(message_handler.OnSpoolerMessage);
+      spooler_client.ConnectInternalSpoolerToWindow(Handle);
+      StartTimers();
+      checkBoxAutoCheckFirmware.Checked = true;
+      checkBoxAutoCheckFirmware.Enabled = false;
+      OnAutoCheckFirmwareChanged((object) null, new EventArgs());
+      buttonLoadEepromData.Visible = false;
+      viewToolStripMenuItem.DropDownItems.Remove((ToolStripItem)showAdvancedStatisticsToolStripMenuItem);
+      labelSpoolerVersion.Text = "Spooler Version: " + M3D.Spooling.Version.VersionText;
+      showAdvancedOptionsAtStartupToolStripMenuItem.Checked = settings.StartAdvanced;
+      if (settings.StartAdvanced)
+      {
         return;
-      this.ClosePrinterControls();
+      }
+
+      ClosePrinterControls();
     }
 
     private void ClosePrinterControls()
     {
-      if (!this.printer_controls_open)
-        return;
-      this.groupBoxPrinterControls.Visible = false;
-      this.groupBoxPrinterList.Location = new Point(1, 22);
-      this.Height = 190;
-      lock (this._myCurrentPrinterObjectSync)
+      if (!printer_controls_open)
       {
-        if (this.MyCurrentPrinterObject != null && this.MyCurrentPrinterObject.HasLock)
-        {
-          int num = (int) this.MyCurrentPrinterObject.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
-        }
-        this.MyCurrentPrinterObject = (Printer) null;
+        return;
       }
-      this.LockChanging.Value = MainForm.PrinterLockChanging.No;
-      this.PrinterLocked.Value = false;
-      this.printer_controls_open = false;
-      this.showAdvancedToolStripMenuItem.Text = "Show Advanced Options";
+
+      groupBoxPrinterControls.Visible = false;
+      groupBoxPrinterList.Location = new Point(1, 22);
+      Height = 190;
+      lock (_myCurrentPrinterObjectSync)
+      {
+        if (MyCurrentPrinterObject != null && MyCurrentPrinterObject.HasLock)
+        {
+          var num = (int)MyCurrentPrinterObject.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+        }
+        MyCurrentPrinterObject = (Printer) null;
+      }
+      LockChanging.Value = MainForm.PrinterLockChanging.No;
+      PrinterLocked.Value = false;
+      printer_controls_open = false;
+      showAdvancedToolStripMenuItem.Text = "Show Advanced Options";
     }
 
     private void OpenPrinterControls()
     {
-      if (this.printer_controls_open)
+      if (printer_controls_open)
+      {
         return;
-      this.Height = 585;
-      this.groupBoxPrinterControls.Visible = true;
-      this.buttonPausePrint.Enabled = false;
-      this.buttonResumePrint.Enabled = false;
-      this.buttonAbortPrint.Enabled = false;
-      this.groupBoxControls.Enabled = false;
-      this.checkBoxLogToScreen.Checked = false;
-      this.groupBoxPrinterList.Location = new Point(1, 420);
-      this.printer_controls_open = true;
-      this.LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
-      this.showAdvancedToolStripMenuItem.Text = "Hide Advanced Options";
+      }
+
+      Height = 585;
+      groupBoxPrinterControls.Visible = true;
+      buttonPausePrint.Enabled = false;
+      buttonResumePrint.Enabled = false;
+      buttonAbortPrint.Enabled = false;
+      groupBoxControls.Enabled = false;
+      checkBoxLogToScreen.Checked = false;
+      groupBoxPrinterList.Location = new Point(1, 420);
+      printer_controls_open = true;
+      LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
+      showAdvancedToolStripMenuItem.Text = "Hide Advanced Options";
     }
 
     private void CheckLockState()
     {
-      if (this.LockChanging.Value == MainForm.PrinterLockChanging.YesToLocked)
+      if (LockChanging.Value == MainForm.PrinterLockChanging.YesToLocked)
       {
-        this.PrinterLocked.Value = true;
-        this.groupBoxControls.Enabled = true;
-        this.buttonLock.Text = "Release Printer";
-        this.buttonLock.Enabled = true;
-        this.LockChanging.Value = MainForm.PrinterLockChanging.No;
+        PrinterLocked.Value = true;
+        groupBoxControls.Enabled = true;
+        buttonLock.Text = "Release Printer";
+        buttonLock.Enabled = true;
+        LockChanging.Value = MainForm.PrinterLockChanging.No;
       }
-      else if (this.LockChanging.Value == MainForm.PrinterLockChanging.YesToUnlocked)
+      else if (LockChanging.Value == MainForm.PrinterLockChanging.YesToUnlocked)
       {
-        this.PrinterLocked.Value = false;
-        this.groupBoxControls.Enabled = false;
-        this.buttonLock.Text = "Control This Printer";
-        this.buttonLock.Enabled = true;
-        this.LockChanging.Value = MainForm.PrinterLockChanging.No;
+        PrinterLocked.Value = false;
+        groupBoxControls.Enabled = false;
+        buttonLock.Text = "Control This Printer";
+        buttonLock.Enabled = true;
+        LockChanging.Value = MainForm.PrinterLockChanging.No;
       }
-      else if (this.LockChanging.Value == MainForm.PrinterLockChanging.NoFailed)
+      else if (LockChanging.Value == MainForm.PrinterLockChanging.NoFailed)
       {
-        this.buttonLock.Enabled = true;
-        this.LockChanging.Value = MainForm.PrinterLockChanging.No;
+        buttonLock.Enabled = true;
+        LockChanging.Value = MainForm.PrinterLockChanging.No;
       }
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
         try
         {
-          if (this.MyCurrentPrinterObject != null)
+          if (MyCurrentPrinterObject != null)
           {
-            if (this.MyCurrentPrinterObject.InBootloaderMode)
+            if (MyCurrentPrinterObject.InBootloaderMode)
             {
-              this.groupBoxFirmwareControls.Visible = false;
-              this.groupBoxPrinting.Visible = false;
-              this.groupBoxBootloaderOptions.Visible = true;
+              groupBoxFirmwareControls.Visible = false;
+              groupBoxPrinting.Visible = false;
+              groupBoxBootloaderOptions.Visible = true;
             }
             else
             {
-              if (this.MyCurrentPrinterObject.MyPrinterProfile.AccessoriesConstants.HeatedBedConstants.HasBuiltinHeatedBed && this.MyCurrentPrinterObject.Info.supportedFeatures.Available("Heated Bed Control", this.MyCurrentPrinterObject.MyPrinterProfile.SupportedFeaturesConstants))
+              if (MyCurrentPrinterObject.MyPrinterProfile.AccessoriesConstants.HeatedBedConstants.HasBuiltinHeatedBed && MyCurrentPrinterObject.Info.supportedFeatures.Available("Heated Bed Control", MyCurrentPrinterObject.MyPrinterProfile.SupportedFeaturesConstants))
               {
-                if (!this.tabControl1.TabPages.Contains(this.tabPageHeatedBedControl))
-                  this.tabControl1.TabPages.Add(this.tabPageHeatedBedControl);
+                if (!tabControl1.TabPages.Contains(tabPageHeatedBedControl))
+                {
+                  tabControl1.TabPages.Add(tabPageHeatedBedControl);
+                }
               }
-              else if (this.tabControl1.TabPages.Contains(this.tabPageHeatedBedControl))
-                this.tabControl1.TabPages.Remove(this.tabPageHeatedBedControl);
-              if (this.MyCurrentPrinterObject.Info.supportedFeatures.UsesSupportedFeatures && this.MyCurrentPrinterObject.Info.supportedFeatures.Available("Untethered Printing", this.MyCurrentPrinterObject.MyPrinterProfile.SupportedFeaturesConstants))
+              else if (tabControl1.TabPages.Contains(tabPageHeatedBedControl))
               {
-                if (!this.tabControl1.TabPages.Contains(this.tabPageSDCard))
-                  this.tabControl1.TabPages.Add(this.tabPageSDCard);
+                tabControl1.TabPages.Remove(tabPageHeatedBedControl);
               }
-              else if (this.tabControl1.TabPages.Contains(this.tabPageSDCard))
-                this.tabControl1.TabPages.Remove(this.tabPageSDCard);
-              this.groupBoxFirmwareControls.Visible = true;
-              this.groupBoxBootloaderOptions.Visible = false;
-              this.groupBoxPrinting.Visible = false;
+
+              if (MyCurrentPrinterObject.Info.supportedFeatures.UsesSupportedFeatures && MyCurrentPrinterObject.Info.supportedFeatures.Available("Untethered Printing", MyCurrentPrinterObject.MyPrinterProfile.SupportedFeaturesConstants))
+              {
+                if (!tabControl1.TabPages.Contains(tabPageSDCard))
+                {
+                  tabControl1.TabPages.Add(tabPageSDCard);
+                }
+              }
+              else if (tabControl1.TabPages.Contains(tabPageSDCard))
+              {
+                tabControl1.TabPages.Remove(tabPageSDCard);
+              }
+
+              groupBoxFirmwareControls.Visible = true;
+              groupBoxBootloaderOptions.Visible = false;
+              groupBoxPrinting.Visible = false;
             }
           }
           else
-            this.groupBoxControls.Enabled = false;
+          {
+            groupBoxControls.Enabled = false;
+          }
         }
         catch (Exception ex)
         {
@@ -343,79 +370,93 @@ namespace M3D.Spooler
 
     private void OnClosing(object sender, FormClosingEventArgs e)
     {
-      if (this.spooler_client == null)
-        return;
-      if (this.m_bShutdownByUser || this.force_shutdown || (e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing) || !this.printer_controls_open && this.m_bDontHideSpoolerJustShutDown)
+      if (spooler_client == null)
       {
-        if (!this.CanShutdownImmediately() && !this.force_shutdown && e.CloseReason != CloseReason.TaskManagerClosing)
+        return;
+      }
+
+      if (m_bShutdownByUser || force_shutdown || (e.CloseReason == CloseReason.WindowsShutDown || e.CloseReason == CloseReason.TaskManagerClosing) || !printer_controls_open && m_bDontHideSpoolerJustShutDown)
+      {
+        if (!CanShutdownImmediately() && !force_shutdown && e.CloseReason != CloseReason.TaskManagerClosing)
         {
-          if ((!this.m_bShutdownByUser || e.CloseReason == CloseReason.WindowsShutDown) && this.spooler_client.ClientCount > 0)
+          if ((!m_bShutdownByUser || e.CloseReason == CloseReason.WindowsShutDown) && spooler_client.ClientCount > 0)
           {
             e.Cancel = true;
             return;
           }
-          int num1 = (int) MessageBox.Show("Shutting down now will stop all print jobs and may cause you printer to lose calibration. Shut down anyway.", "M3D Print Spooler", MessageBoxButtons.YesNo);
-          this.ClearShutdownMessage();
-          int num2 = 7;
+          var num1 = (int) MessageBox.Show("Shutting down now will stop all print jobs and may cause you printer to lose calibration. Shut down anyway.", "M3D Print Spooler", MessageBoxButtons.YesNo);
+          ClearShutdownMessage();
+          var num2 = 7;
           if (num1 == num2)
           {
             e.Cancel = true;
             return;
           }
         }
-        SpoolerSettings.SaveSettings(this.settings, true);
-        this.StopTimers();
+        SpoolerSettings.SaveSettings(settings, true);
+        StopTimers();
         MainForm.global_form = (MainForm) null;
-        this.spooler_client.CloseSession();
-        this.shared_shutdown.Value = true;
-        if (this.stay_awake == null)
+        spooler_client.CloseSession();
+        shared_shutdown.Value = true;
+        if (stay_awake == null)
+        {
           return;
-        this.stay_awake.Shutdown();
+        }
+
+        stay_awake.Shutdown();
       }
-      else if (this.printer_controls_open)
+      else if (printer_controls_open)
       {
-        this.ClosePrinterControls();
+        ClosePrinterControls();
         e.Cancel = true;
       }
       else
       {
-        this.TopMost = false;
-        this.Visible = false;
-        this.ShowInTaskbar = false;
-        this.Hide();
+        TopMost = false;
+        Visible = false;
+        ShowInTaskbar = false;
+        Hide();
         e.Cancel = true;
       }
     }
 
     public bool CanShutdownImmediately()
     {
-      if (this.spooler_client.CanShutdown())
+      if (spooler_client.CanShutdown())
+      {
         return true;
-      this.StayAwakeMethods.CreateShutdownMessage("This app is preventing shutdown because this will cancel print jobs.");
+      }
+
+      StayAwakeMethods.CreateShutdownMessage("This app is preventing shutdown because this will cancel print jobs.");
       return false;
     }
 
     public void ClearShutdownMessage()
     {
-      this.StayAwakeMethods.DestroyShutdownMessage();
+      StayAwakeMethods.DestroyShutdownMessage();
     }
 
     private void RefreshPrinters(bool redo_list = false)
     {
-      ++this.firmwareUpdateStatusIndex;
-      this.firmwareUpdateStatusIndex %= 5;
+      ++firmwareUpdateStatusIndex;
+      firmwareUpdateStatusIndex %= 5;
       try
       {
-        if (this.spooler_client.IsBusy && !this.StayAwakeMethods.InStayAwakeMode())
-          this.StayAwakeMethods.NeverSleep();
-        else if (!this.spooler_client.IsBusy && this.StayAwakeMethods.InStayAwakeMode())
-          this.StayAwakeMethods.AllowSleep();
-        List<PrinterSerialNumber> serialNumbers = this.spooler_client.GetSerialNumbers();
-        bool flag = false;
-        string str = (string) null;
-        int driverInstallCount = this.spooler_client.PrinterDriverInstallCount;
-        int num = driverInstallCount;
-        foreach (ListViewItem listViewItem in this.listViewPrinterInfo.Items)
+        if (spooler_client.IsBusy && !StayAwakeMethods.InStayAwakeMode())
+        {
+          StayAwakeMethods.NeverSleep();
+        }
+        else if (!spooler_client.IsBusy && StayAwakeMethods.InStayAwakeMode())
+        {
+          StayAwakeMethods.AllowSleep();
+        }
+
+        List<PrinterSerialNumber> serialNumbers = spooler_client.GetSerialNumbers();
+        var flag = false;
+        var str = (string) null;
+        var driverInstallCount = spooler_client.PrinterDriverInstallCount;
+        var num = driverInstallCount;
+        foreach (ListViewItem listViewItem in listViewPrinterInfo.Items)
         {
           foreach (PrinterSerialNumber printerSerialNumber in serialNumbers)
           {
@@ -426,65 +467,77 @@ namespace M3D.Spooler
             }
           }
         }
-        if (this.listViewPrinterInfo.SelectedItems.Count > 0)
-          str = this.listViewPrinterInfo.SelectedItems[0].Text;
-        if (num != this.listViewPrinterInfo.Items.Count | redo_list)
+        if (listViewPrinterInfo.SelectedItems.Count > 0)
         {
-          this.listViewPrinterInfo.Items.Clear();
-          this.selectedPrinterComboBox.Items.Clear();
-          this.advancedStatisticsDialog.ClearList();
+          str = listViewPrinterInfo.SelectedItems[0].Text;
+        }
+
+        if (num != listViewPrinterInfo.Items.Count | redo_list)
+        {
+          listViewPrinterInfo.Items.Clear();
+          selectedPrinterComboBox.Items.Clear();
+          advancedStatisticsDialog.ClearList();
           flag = true;
         }
-        List<PrinterInfo> printerInfo = this.spooler_client.GetPrinterInfo();
-        this.AddPrinterInfoToListView(printerInfo, driverInstallCount);
-        this.advancedStatisticsDialog.RefreshList(printerInfo);
-        this.CheckForPrintFailureOnPowerOutage(printerInfo);
+        List<PrinterInfo> printerInfo = spooler_client.GetPrinterInfo();
+        AddPrinterInfoToListView(printerInfo, driverInstallCount);
+        advancedStatisticsDialog.RefreshList(printerInfo);
+        CheckForPrintFailureOnPowerOutage(printerInfo);
         if (!string.IsNullOrEmpty(str) & flag)
         {
-          ListViewItem listViewItem = this.FindItem(this.listViewPrinterInfo, this.Selected_Printer_Serial);
+          ListViewItem listViewItem = FindItem(listViewPrinterInfo, Selected_Printer_Serial);
           if (listViewItem != null && !listViewItem.Selected)
-            listViewItem.Selected = true;
-        }
-        lock (this._myCurrentPrinterObjectSync)
-        {
-          if (string.IsNullOrEmpty(this.Selected_Printer_Serial) && this.selectedPrinterComboBox.Items.Count > 0)
-            this.SetNewPrinter(this.selectedPrinterComboBox.Items[0].ToString());
-          else if (this.MyCurrentPrinterObject == null)
           {
-            string selectedPrinterSerial = this.Selected_Printer_Serial;
-            this.Selected_Printer_Serial = (string) null;
-            this.SetNewPrinter(selectedPrinterSerial);
+            listViewItem.Selected = true;
           }
         }
-        if (this.MyCurrentPrinterObject != null)
+        lock (_myCurrentPrinterObjectSync)
         {
-          if (this.MyCurrentPrinterObject.Info.current_job != null)
-            this.RefreshPrintingTemperatureStats(this.MyCurrentPrinterObject.Info);
+          if (string.IsNullOrEmpty(Selected_Printer_Serial) && selectedPrinterComboBox.Items.Count > 0)
+          {
+            SetNewPrinter(selectedPrinterComboBox.Items[0].ToString());
+          }
+          else if (MyCurrentPrinterObject == null)
+          {
+            var selectedPrinterSerial = Selected_Printer_Serial;
+            Selected_Printer_Serial = (string) null;
+            SetNewPrinter(selectedPrinterSerial);
+          }
+        }
+        if (MyCurrentPrinterObject != null)
+        {
+          if (MyCurrentPrinterObject.Info.current_job != null)
+          {
+            RefreshPrintingTemperatureStats(MyCurrentPrinterObject.Info);
+          }
         }
       }
       catch (Exception ex)
       {
-        int num = (int) MessageBox.Show("MainForm.UpdatePrinters" + ex.Message, "Exception");
-        this.Selected_Printer_Serial = (string) null;
+        var num = (int) MessageBox.Show("MainForm.UpdatePrinters" + ex.Message, "Exception");
+        Selected_Printer_Serial = (string) null;
       }
-      this.RefreshCurrentPrinter();
-      if (MainForm.AUTO_SHUTDOWN_IF_ALL_CLIENTS_DISCONNECT && this.has_had_a_connected_client)
+      RefreshCurrentPrinter();
+      if (MainForm.AUTO_SHUTDOWN_IF_ALL_CLIENTS_DISCONNECT && has_had_a_connected_client)
       {
-        if (this.spooler_client.ClientCount == 0 && !this.spooler_client.IsBusy)
+        if (spooler_client.ClientCount == 0 && !spooler_client.IsBusy)
         {
-          this.force_shutdown = true;
-          this.Close();
+          force_shutdown = true;
+          Close();
         }
       }
-      else if (!MainForm.AUTO_SHUTDOWN_IF_ALL_CLIENTS_DISCONNECT && this.has_had_a_connected_client && this.spooler_client.ClientCount == 0)
+      else if (!MainForm.AUTO_SHUTDOWN_IF_ALL_CLIENTS_DISCONNECT && has_had_a_connected_client && spooler_client.ClientCount == 0)
       {
-        this.has_had_a_connected_client = false;
-        this.m_bDontHideSpoolerJustShutDown = true;
+        has_had_a_connected_client = false;
+        m_bDontHideSpoolerJustShutDown = true;
       }
-      if (this.has_had_a_connected_client || this.spooler_client.ClientCount <= 0)
+      if (has_had_a_connected_client || spooler_client.ClientCount <= 0)
+      {
         return;
-      this.m_bDontHideSpoolerJustShutDown = false;
-      this.has_had_a_connected_client = true;
+      }
+
+      m_bDontHideSpoolerJustShutDown = false;
+      has_had_a_connected_client = true;
     }
 
     private void AddPrinterInfoToListView(List<PrinterInfo> connected_printers, int numPrintersInstalling)
@@ -492,17 +545,20 @@ namespace M3D.Spooler
       foreach (PrinterInfo connectedPrinter in connected_printers)
       {
         PrinterSerialNumber serialNumber = connectedPrinter.serial_number;
-        PrinterProfile printerProfile = this.spooler_client.GetPrinterProfile(connectedPrinter.ProfileName);
+        PrinterProfile printerProfile = spooler_client.GetPrinterProfile(connectedPrinter.ProfileName);
         if (!(serialNumber == PrinterSerialNumber.Undefined))
         {
-          if (!this.selectedPrinterComboBox.Items.Contains((object) serialNumber.ToString()))
-            this.selectedPrinterComboBox.Items.Add((object) serialNumber.ToString());
+          if (!selectedPrinterComboBox.Items.Contains((object) serialNumber.ToString()))
+          {
+            selectedPrinterComboBox.Items.Add((object) serialNumber.ToString());
+          }
+
           if (connectedPrinter != null)
           {
-            ListViewItem listViewItem = this.FindItem(this.listViewPrinterInfo, connectedPrinter.serial_number.ToString());
+            ListViewItem listViewItem = FindItem(listViewPrinterInfo, connectedPrinter.serial_number.ToString());
             if (listViewItem == null)
             {
-              listViewItem = this.listViewPrinterInfo.Items.Add(connectedPrinter.serial_number.ToString());
+              listViewItem = listViewPrinterInfo.Items.Add(connectedPrinter.serial_number.ToString());
               listViewItem.SubItems.Add("?");
               listViewItem.SubItems.Add("?");
               listViewItem.SubItems.Add("?");
@@ -514,27 +570,44 @@ namespace M3D.Spooler
               listViewItem.SubItems.Add(" ");
               listViewItem.SubItems.Add(" ");
             }
-            string profileName = connectedPrinter.ProfileName;
+            var profileName = connectedPrinter.ProfileName;
             if (listViewItem.SubItems[1].Text != profileName)
+            {
               listViewItem.SubItems[1].Text = profileName;
-            string str1 = connectedPrinter.Status.ToString();
+            }
+
+            var str1 = connectedPrinter.Status.ToString();
             if (connectedPrinter.Status == PrinterStatus.Bootloader_UpdatingFirmware)
             {
               str1 += " ";
-              for (int index = 0; index < this.firmwareUpdateStatusIndex; ++index)
+              for (var index = 0; index < firmwareUpdateStatusIndex; ++index)
+              {
                 str1 += "-";
+              }
             }
             if (listViewItem.SubItems[2].Text != str1)
+            {
               listViewItem.SubItems[2].Text = str1;
-            string str2 = (double) connectedPrinter.extruder.Temperature != -1.0 ? ((double) connectedPrinter.extruder.Temperature >= 1.0 ? connectedPrinter.extruder.Temperature.ToString() : "OFF") : "ON";
+            }
+
+            var str2 = (double) connectedPrinter.extruder.Temperature != -1.0 ? ((double) connectedPrinter.extruder.Temperature >= 1.0 ? connectedPrinter.extruder.Temperature.ToString() : "OFF") : "ON";
             if (str2 != listViewItem.SubItems[3].Text)
+            {
               listViewItem.SubItems[3].Text = str2;
-            string str3 = !printerProfile.AccessoriesConstants.HeatedBedConstants.HasBuiltinHeatedBed ? "N/A" : ((double) connectedPrinter.accessories.BedStatus.BedTemperature != -1.0 ? ((double) connectedPrinter.accessories.BedStatus.BedTemperature >= 1.0 ? connectedPrinter.accessories.BedStatus.BedTemperature.ToString() : "OFF") : "ON");
+            }
+
+            var str3 = !printerProfile.AccessoriesConstants.HeatedBedConstants.HasBuiltinHeatedBed ? "N/A" : ((double) connectedPrinter.accessories.BedStatus.BedTemperature != -1.0 ? ((double) connectedPrinter.accessories.BedStatus.BedTemperature >= 1.0 ? connectedPrinter.accessories.BedStatus.BedTemperature.ToString() : "OFF") : "ON");
             if (str3 != listViewItem.SubItems[4].Text)
+            {
               listViewItem.SubItems[4].Text = str3;
-            string str4 = !connectedPrinter.extruder.Z_Valid ? "Invalid" : "Valid";
+            }
+
+            var str4 = !connectedPrinter.extruder.Z_Valid ? "Invalid" : "Valid";
             if (str4 != listViewItem.SubItems[5].Text)
+            {
               listViewItem.SubItems[5].Text = str4;
+            }
+
             JobInfo currentJob = connectedPrinter.current_job;
             string str5;
             string str6;
@@ -544,7 +617,7 @@ namespace M3D.Spooler
             {
               str5 = currentJob.Status.ToString();
               str6 = currentJob.JobName;
-              float f = currentJob.PercentComplete * 100f;
+              var f = currentJob.PercentComplete * 100f;
               str7 = float.IsNaN(f) || (double) f < 0.0 || (double) f > 100.0 ? "Processing" : f.ToString();
               str8 = currentJob.User;
             }
@@ -556,22 +629,33 @@ namespace M3D.Spooler
               str8 = " ";
             }
             if (str5 != listViewItem.SubItems[6].Text)
+            {
               listViewItem.SubItems[6].Text = str5;
+            }
+
             if (listViewItem.SubItems[7].Text != str6)
+            {
               listViewItem.SubItems[7].Text = str6;
+            }
+
             if (listViewItem.SubItems[8].Text != str7)
+            {
               listViewItem.SubItems[8].Text = str7;
+            }
+
             if (listViewItem.SubItems[9].Text != str8)
+            {
               listViewItem.SubItems[9].Text = str8;
+            }
           }
         }
       }
-      for (int index = 0; index < numPrintersInstalling; ++index)
+      for (var index = 0; index < numPrintersInstalling; ++index)
       {
-        PrinterSerialNumber printerSerialNumber = new PrinterSerialNumber(index.ToString("X16"));
-        if (this.FindItem(this.listViewPrinterInfo, printerSerialNumber.ToString()) == null)
+        var printerSerialNumber = new PrinterSerialNumber(index.ToString("X16"));
+        if (FindItem(listViewPrinterInfo, printerSerialNumber.ToString()) == null)
         {
-          ListViewItem listViewItem = this.listViewPrinterInfo.Items.Add(printerSerialNumber.ToString());
+          ListViewItem listViewItem = listViewPrinterInfo.Items.Add(printerSerialNumber.ToString());
           listViewItem.SubItems.Add("Driver Installing");
           listViewItem.SubItems.Add("?");
           listViewItem.SubItems.Add("?");
@@ -592,182 +676,228 @@ namespace M3D.Spooler
       {
         if (connectedPrinter.powerRecovery.bPowerOutageWhilePrinting)
         {
-          bool flag = false;
-          if (this.m_oPrinterData.ContainsKey(connectedPrinter.serial_number))
-            flag = this.m_oPrinterData[connectedPrinter.serial_number].bPowerOutageHandled;
+          var flag = false;
+          if (m_oPrinterData.ContainsKey(connectedPrinter.serial_number))
+          {
+            flag = m_oPrinterData[connectedPrinter.serial_number].bPowerOutageHandled;
+          }
           else
-            this.m_oPrinterData.TryAdd(connectedPrinter.serial_number, new MainForm.PrinterData());
-          this.m_oPrinterData[connectedPrinter.serial_number].bPowerOutageHandled = true;
-          if (!flag && this.message_handler != null)
-            this.message_handler.OnSpoolerMessage(new SpoolerMessage(MessageType.PowerOutageWhilePrinting, connectedPrinter.serial_number, (string) null));
+          {
+            m_oPrinterData.TryAdd(connectedPrinter.serial_number, new MainForm.PrinterData());
+          }
+
+          m_oPrinterData[connectedPrinter.serial_number].bPowerOutageHandled = true;
+          if (!flag && message_handler != null)
+          {
+            message_handler.OnSpoolerMessage(new SpoolerMessage(MessageType.PowerOutageWhilePrinting, connectedPrinter.serial_number, (string) null));
+          }
         }
       }
     }
 
     private void RefreshCurrentPrinter()
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject != null)
+        if (MyCurrentPrinterObject != null)
         {
-          if (!this.MyCurrentPrinterObject.HasLock && this.PrinterLocked.Value)
-            this.LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
-          this.CheckLockState();
-          bool flag1 = true;
-          if (!this.MyCurrentPrinterObject.Connected && !this.MyCurrentPrinterObject.Switching)
-            this.SetNewPrinter((string) null);
+          if (!MyCurrentPrinterObject.HasLock && PrinterLocked.Value)
+          {
+            LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
+          }
+
+          CheckLockState();
+          var flag1 = true;
+          if (!MyCurrentPrinterObject.Connected && !MyCurrentPrinterObject.Switching)
+          {
+            SetNewPrinter((string) null);
+          }
+
           try
           {
-            if (this.MyCurrentPrinterObject.Info != null)
+            if (MyCurrentPrinterObject.Info != null)
             {
-              bool flag2 = this.MyCurrentPrinterObject.Info.current_job != null;
-              bool flag3 = this.MyCurrentPrinterObject.Info.Status == PrinterStatus.Firmware_PrintingPaused;
+              var flag2 = MyCurrentPrinterObject.Info.current_job != null;
+              var flag3 = MyCurrentPrinterObject.Info.Status == PrinterStatus.Firmware_PrintingPaused;
               if (flag2)
               {
-                if (this.MyCurrentPrinterObject.Info.current_job.Status != JobStatus.SavingToSD)
+                if (MyCurrentPrinterObject.Info.current_job.Status != JobStatus.SavingToSD)
                 {
-                  if (this.MyCurrentPrinterObject.Info.Status == PrinterStatus.Firmware_Printing)
+                  if (MyCurrentPrinterObject.Info.Status == PrinterStatus.Firmware_Printing)
                   {
-                    this.buttonResumePrint.Enabled = false;
-                    this.buttonResumePrint.Visible = false;
-                    this.buttonPausePrint.Enabled = true;
-                    this.buttonPausePrint.Visible = true;
+                    buttonResumePrint.Enabled = false;
+                    buttonResumePrint.Visible = false;
+                    buttonPausePrint.Enabled = true;
+                    buttonPausePrint.Visible = true;
                     flag1 = false;
                   }
-                  else if (this.MyCurrentPrinterObject.Info.Status == PrinterStatus.Firmware_PrintingPaused)
+                  else if (MyCurrentPrinterObject.Info.Status == PrinterStatus.Firmware_PrintingPaused)
                   {
-                    if (this.groupBoxControls.Enabled)
-                      this.buttonResumePrint.Enabled = true;
-                    this.buttonResumePrint.Visible = true;
-                    this.buttonPausePrint.Enabled = false;
-                    this.buttonPausePrint.Visible = false;
+                    if (groupBoxControls.Enabled)
+                    {
+                      buttonResumePrint.Enabled = true;
+                    }
+
+                    buttonResumePrint.Visible = true;
+                    buttonPausePrint.Enabled = false;
+                    buttonPausePrint.Visible = false;
                     flag1 = false;
                   }
                 }
-                this.buttonAbortPrint.Enabled = true;
+                buttonAbortPrint.Enabled = true;
               }
               else
-                this.buttonAbortPrint.Enabled = false;
-              bool flag4 = this.MyCurrentPrinterObject.Info.Status == PrinterStatus.Bootloader_UpdatingFirmware;
-              this.ControlsEnable(this.MyCurrentPrinterObject.Connected && !(flag2 | flag4) | flag3);
+              {
+                buttonAbortPrint.Enabled = false;
+              }
+
+              var flag4 = MyCurrentPrinterObject.Info.Status == PrinterStatus.Bootloader_UpdatingFirmware;
+              ControlsEnable(MyCurrentPrinterObject.Connected && !(flag2 | flag4) | flag3);
             }
           }
           catch (Exception ex)
           {
           }
           if (!flag1)
+          {
             return;
-          this.buttonResumePrint.Enabled = false;
-          this.buttonResumePrint.Visible = false;
-          this.buttonPausePrint.Enabled = false;
-          this.buttonPausePrint.Visible = true;
+          }
+
+          buttonResumePrint.Enabled = false;
+          buttonResumePrint.Visible = false;
+          buttonPausePrint.Enabled = false;
+          buttonPausePrint.Visible = true;
         }
         else
-          this.groupBoxControls.Enabled = false;
+        {
+          groupBoxControls.Enabled = false;
+        }
       }
     }
 
     private void RefreshPrintingTemperatureStats(PrinterInfo printerInfo)
     {
-      double num1 = (double) printerInfo.extruder.Temperature > 0.0 ? (double) printerInfo.extruder.Temperature : 0.0;
-      this.m_sampleSetTemperatureSamples.Add(num1);
-      double sampleMean = (double) this.m_sampleSetTemperatureSamples.SampleMean;
-      double num2 = num1 - sampleMean;
+      var num1 = (double) printerInfo.extruder.Temperature > 0.0 ? (double) printerInfo.extruder.Temperature : 0.0;
+      m_sampleSetTemperatureSamples.Add(num1);
+      var sampleMean = (double)m_sampleSetTemperatureSamples.SampleMean;
+      var num2 = num1 - sampleMean;
       byte num3 = 0;
       byte num4 = 0;
       byte num5 = 0;
       if (num2 < 0.0)
       {
         if (num2 < -5.0)
+        {
           num2 = -5.0;
+        }
+
         num4 = (byte) (-num2 * (double) byte.MaxValue / 5.0);
       }
       else if (num2 > 0.0)
       {
         if (num2 > 5.0)
+        {
           num2 = 5.0;
+        }
+
         num3 = (byte) (num2 * (double) byte.MaxValue / 5.0);
       }
       if (num2 > 2.0 || num2 < -2.0 || num1 < 150.0)
       {
-        this.textBoxTempEdit.Enabled = false;
-        this.buttonSetTemp.Enabled = false;
+        textBoxTempEdit.Enabled = false;
+        buttonSetTemp.Enabled = false;
       }
       else
       {
-        this.textBoxTempEdit.Enabled = true;
-        this.buttonSetTemp.Enabled = true;
+        textBoxTempEdit.Enabled = true;
+        buttonSetTemp.Enabled = true;
       }
-      this.textBoxMeanTemperature.ForeColor = System.Drawing.Color.FromArgb((int) num3, (int) num5, (int) num4);
-      this.textBoxMeanTemperature.Text = num1.ToString("0.00");
+      textBoxMeanTemperature.ForeColor = System.Drawing.Color.FromArgb((int) num3, (int) num5, (int) num4);
+      textBoxMeanTemperature.Text = num1.ToString("0.00");
     }
 
     private void ControlsEnable(bool flag)
     {
-      GroupBox boxPrinterControls = this.groupBoxPrinterControls;
-      foreach (Control control in this.GetAll((Control) boxPrinterControls, new HashSet<System.Type>()
+      GroupBox boxPrinterControls = groupBoxPrinterControls;
+      foreach (Control control in GetAll((Control) boxPrinterControls, new HashSet<System.Type>()
       {
         typeof (TextBox),
         typeof (Button)
       }))
       {
         if (!(control.Name == "buttonEmergencyStop") && !(control.Name == "buttonStandAlone") && (!(control.Name == "buttonClearLog") && !(control.Name == "buttonFanOff")) && (!(control.Name == "buttonFanOn") && !(control.Name == "buttonSetClear") && (!(control.Name == "buttonLock") && !(control.Name == "buttonResumePrint"))) && (!(control.Name == "buttonPausePrint") && !(control.Name == "buttonAbortPrint") && (!(control.Name == "textBoxTempEdit") && !(control.Name == "buttonSetTemp"))))
+        {
           control.Enabled = flag;
+        }
       }
     }
 
     public IEnumerable<Control> GetAll(Control control, HashSet<System.Type> types)
     {
       IEnumerable<Control> controls = control.Controls.Cast<Control>();
-      return controls.SelectMany<Control, Control>((Func<Control, IEnumerable<Control>>) (ctrl => this.GetAll(ctrl, types))).Concat<Control>(controls).Where<Control>((Func<Control, bool>) (c => types.Contains(c.GetType())));
+      return controls.SelectMany<Control, Control>((Func<Control, IEnumerable<Control>>) (ctrl => GetAll(ctrl, types))).Concat<Control>(controls).Where<Control>((Func<Control, bool>) (c => types.Contains(c.GetType())));
     }
 
     private Printer SelectedPrinter
     {
       get
       {
-        if (this.spooler_client != null && !string.IsNullOrEmpty(this.Selected_Printer_Serial))
-          return this.spooler_client.GetPrinter(new PrinterSerialNumber(this.Selected_Printer_Serial));
+        if (spooler_client != null && !string.IsNullOrEmpty(Selected_Printer_Serial))
+        {
+          return spooler_client.GetPrinter(new PrinterSerialNumber(Selected_Printer_Serial));
+        }
+
         return (Printer) null;
       }
     }
 
     private void DoUpdates(object sender, EventArgs e)
     {
-      if (this.in_check_printers)
-        return;
-      this.in_check_printers = true;
-      if (this.restart_counter.IsRunning)
+      if (in_check_printers)
       {
-        if (this.restart_counter.ElapsedMilliseconds > 10000L)
+        return;
+      }
+
+      in_check_printers = true;
+      if (restart_counter.IsRunning)
+      {
+        if (restart_counter.ElapsedMilliseconds > 10000L)
         {
-          this.restart_counter.Stop();
-          if (this.job_stopped)
+          restart_counter.Stop();
+          if (job_stopped)
           {
-            this.job_stopped = false;
-            if (this.message_handler != null)
-              this.spooler_client.BroadcastMessage(new SpoolerMessage(MessageType.UserDefined, "Print jobs cancelled because your computer went into sleep mode. Please restart your printer by disconnecting it from power and then reconnecting it to power.").Serialize());
+            job_stopped = false;
+            if (message_handler != null)
+            {
+              spooler_client.BroadcastMessage(new SpoolerMessage(MessageType.UserDefined, "Print jobs cancelled because your computer went into sleep mode. Please restart your printer by disconnecting it from power and then reconnecting it to power.").Serialize());
+            }
           }
-          else if (this.message_handler != null)
-            this.spooler_client.BroadcastMessage(new SpoolerMessage(MessageType.UserDefined, "Your computer went into sleep mode. Please restart your printer by disconnecting it from power and then reconnecting it to power.").Serialize());
+          else if (message_handler != null)
+          {
+            spooler_client.BroadcastMessage(new SpoolerMessage(MessageType.UserDefined, "Your computer went into sleep mode. Please restart your printer by disconnecting it from power and then reconnecting it to power.").Serialize());
+          }
         }
-        else if (this.restart_counter.ElapsedMilliseconds > 5000L)
-          this.spooler_client.DisconnectAllPrinters();
+        else if (restart_counter.ElapsedMilliseconds > 5000L)
+        {
+          spooler_client.DisconnectAllPrinters();
+        }
       }
       else
       {
-        this.DoFormTask();
-        this.RefreshPrinters(false);
+        DoFormTask();
+        RefreshPrinters(false);
       }
-      this.in_check_printers = false;
+      in_check_printers = false;
     }
 
     private ListViewItem FindItem(ListView view, string text)
     {
-      for (int index = 0; index < view.Items.Count; ++index)
+      for (var index = 0; index < view.Items.Count; ++index)
       {
         if (view.Items[index].Text == text)
+        {
           return view.Items[index];
+        }
       }
       return (ListViewItem) null;
     }
@@ -775,10 +905,16 @@ namespace M3D.Spooler
     private static void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
     {
       if (MainForm.global_form == null)
+      {
         return;
+      }
+
       SpoolerClientBuiltIn spoolerClient = MainForm.global_form.spooler_client;
       if (spoolerClient != null)
+      {
         return;
+      }
+
       if (e.Mode == PowerModes.Suspend)
       {
         MainForm.global_form.job_stopped = spoolerClient.IsBusy;
@@ -787,7 +923,10 @@ namespace M3D.Spooler
       else
       {
         if (e.Mode != PowerModes.Resume)
+        {
           return;
+        }
+
         spoolerClient.DisconnectAllPrinters();
         MainForm.global_form.restart_counter.Reset();
         MainForm.global_form.restart_counter.Start();
@@ -796,230 +935,258 @@ namespace M3D.Spooler
 
     protected void ShowSpooler()
     {
-      this.ShowInTaskbar = true;
-      this.WindowState = FormWindowState.Normal;
-      this.ShowInTaskbar = true;
-      this.Show();
-      this.BringToFront();
-      this.Show();
+      ShowInTaskbar = true;
+      WindowState = FormWindowState.Normal;
+      ShowInTaskbar = true;
+      Show();
+      BringToFront();
+      Show();
     }
 
     private void DoFormTask()
     {
-      RequestedFormTask requestedFormTask = this.form_task.Value;
+      RequestedFormTask requestedFormTask = form_task.Value;
       if (requestedFormTask == RequestedFormTask.Shutdown)
       {
-        this.force_shutdown = true;
-        this.Close();
+        force_shutdown = true;
+        Close();
       }
       else if (requestedFormTask == RequestedFormTask.Hide)
       {
         MainForm.AUTO_SHUTDOWN_IF_ALL_CLIENTS_DISCONNECT = true;
-        this.m_bShutdownByUser = false;
-        this.Close();
+        m_bShutdownByUser = false;
+        Close();
       }
       else if (requestedFormTask == RequestedFormTask.Show)
       {
         MainForm.AUTO_SHUTDOWN_IF_ALL_CLIENTS_DISCONNECT = false;
-        this.ShowSpooler();
+        ShowSpooler();
       }
       if (requestedFormTask == RequestedFormTask.None)
+      {
         return;
-      this.form_task.Value = RequestedFormTask.None;
+      }
+
+      form_task.Value = RequestedFormTask.None;
     }
 
     private void OnReceivedSpoolerShutdownMessage(object sender, EventArgs e)
     {
-      this.form_task.Value = RequestedFormTask.Shutdown;
+      form_task.Value = RequestedFormTask.Shutdown;
     }
 
     private void OnReceivedSpoolerShowMessage(object sender, EventArgs e)
     {
-      this.form_task.Value = RequestedFormTask.Show;
+      form_task.Value = RequestedFormTask.Show;
     }
 
     private void OnReceivedSpoolerHideMessage(object sender, EventArgs e)
     {
-      this.form_task.Value = RequestedFormTask.Hide;
+      form_task.Value = RequestedFormTask.Hide;
     }
 
     private void OnGotNewPrinter(Printer new_printer)
     {
       new_printer.RegisterPlugin(SDCardExtensions.ID, (IPrinterPlugin) new SDCardExtensions((IPrinter) new_printer));
-      if (this.m_oPrinterData.ContainsKey(new_printer.Info.serial_number))
+      if (m_oPrinterData.ContainsKey(new_printer.Info.serial_number))
+      {
         return;
-      this.m_oPrinterData.TryAdd(new_printer.Info.serial_number, new MainForm.PrinterData());
+      }
+
+      m_oPrinterData.TryAdd(new_printer.Info.serial_number, new MainForm.PrinterData());
     }
 
     private void OnPrinterDisconnected(Printer new_printer)
     {
-      if (!this.m_oPrinterData.ContainsKey(new_printer.Info.serial_number))
+      if (!m_oPrinterData.ContainsKey(new_printer.Info.serial_number))
+      {
         return;
-      MainForm.PrinterData printerData;
-      this.m_oPrinterData.TryRemove(new_printer.Info.serial_number, out printerData);
+      }
+
+      m_oPrinterData.TryRemove(new_printer.Info.serial_number, out PrinterData printerData);
     }
 
     private void InitializeTimers()
     {
-      this.timerLogger = new Timer(this.components);
-      this.timerLogger.Tick += new EventHandler(this.timerLogger_tick);
+      timerLogger = new Timer(components);
+      timerLogger.Tick += new EventHandler(timerLogger_tick);
     }
 
     private void StartTimers()
     {
-      this.timer1.Start();
-      this.timerLogger.Start();
+      timer1.Start();
+      timerLogger.Start();
     }
 
     private void StopTimers()
     {
-      this.timer1.Stop();
-      this.timerLogger.Stop();
+      timer1.Stop();
+      timerLogger.Stop();
     }
 
     private void OnLog(string message, string printer_serial)
     {
-      lock (this.logqueue)
-        this.logqueue.Enqueue(string.Format("{0}::{1}", (object) printer_serial, (object) message));
+      lock (logqueue)
+      {
+        logqueue.Enqueue(string.Format("{0}::{1}", (object) printer_serial, (object) message));
+      }
     }
 
     private void timerLogger_tick(object sender, EventArgs e)
     {
-      this.timerLogger.Stop();
-      lock (this._myCurrentPrinterObjectSync)
+      timerLogger.Stop();
+      lock (_myCurrentPrinterObjectSync)
       {
-        lock (this.logqueue)
+        lock (logqueue)
         {
-          while (this.logqueue.Count > 0)
-            this.richTextBoxLoggedItems.AppendText(this.logqueue.Dequeue() + "\r\n");
-        }
-        if (this.MyCurrentPrinterObject != null)
-        {
-          if (this.MyCurrentPrinterObject.LogUpdated)
+          while (logqueue.Count > 0)
           {
-            if (this.logToScreen.Value)
+            richTextBoxLoggedItems.AppendText(logqueue.Dequeue() + "\r\n");
+          }
+        }
+        if (MyCurrentPrinterObject != null)
+        {
+          if (MyCurrentPrinterObject.LogUpdated)
+          {
+            if (logToScreen.Value)
             {
-              List<string> nextLogItems = this.MyCurrentPrinterObject.GetNextLogItems();
-              int num = 0;
-              foreach (string str in nextLogItems)
+              List<string> nextLogItems = MyCurrentPrinterObject.GetNextLogItems();
+              var num = 0;
+              foreach (var str in nextLogItems)
               {
-                if (this.logWaitsCheckBox.Checked || !(str == ">> wait"))
+                if (logWaitsCheckBox.Checked || !(str == ">> wait"))
                 {
-                  this.richTextBoxLoggedItems.AppendText(str + "\r\n");
+                  richTextBoxLoggedItems.AppendText(str + "\r\n");
                   ++num;
                 }
               }
               if (num > 0)
               {
-                if (this.checkBoxAutoScroll.Checked)
+                if (checkBoxAutoScroll.Checked)
                 {
-                  this.richTextBoxLoggedItems.SelectionStart = this.richTextBoxLoggedItems.Text.Length;
-                  this.richTextBoxLoggedItems.ScrollToCaret();
+                  richTextBoxLoggedItems.SelectionStart = richTextBoxLoggedItems.Text.Length;
+                  richTextBoxLoggedItems.ScrollToCaret();
                 }
               }
             }
           }
         }
       }
-      if (this.message_handler != null)
-        this.message_handler.ShowMessage();
-      this.timerLogger.Start();
+      if (message_handler != null)
+      {
+        message_handler.ShowMessage();
+      }
+
+      timerLogger.Start();
     }
 
     private void richTextBoxLoggedItems_MouseUp(object sender, MouseEventArgs e)
     {
       if (e.Button != MouseButtons.Right)
+      {
         return;
-      ContextMenu contextMenu = new ContextMenu();
-      MenuItem menuItem1 = new MenuItem("Select All");
-      menuItem1.Click += new EventHandler(this.SelectAllAction);
+      }
+
+      var contextMenu = new ContextMenu();
+      var menuItem1 = new MenuItem("Select All");
+      menuItem1.Click += new EventHandler(SelectAllAction);
       contextMenu.MenuItems.Add(menuItem1);
-      MenuItem menuItem2 = new MenuItem("Copy");
-      menuItem2.Click += new EventHandler(this.CopyAction);
+      var menuItem2 = new MenuItem("Copy");
+      menuItem2.Click += new EventHandler(CopyAction);
       contextMenu.MenuItems.Add(menuItem2);
-      this.richTextBoxLoggedItems.ContextMenu = contextMenu;
+      richTextBoxLoggedItems.ContextMenu = contextMenu;
     }
 
     private void SelectAllAction(object sender, EventArgs e)
     {
-      this.richTextBoxLoggedItems.SelectAll();
+      richTextBoxLoggedItems.SelectAll();
     }
 
     private void CopyAction(object sender, EventArgs e)
     {
-      Clipboard.SetText(this.richTextBoxLoggedItems.SelectedText);
+      Clipboard.SetText(richTextBoxLoggedItems.SelectedText);
     }
 
     public StayAwakeAndShutdown StayAwakeMethods
     {
       get
       {
-        return this.stay_awake;
+        return stay_awake;
       }
     }
 
     private void listViewPrinterInfo_DoubleClick(object sender, EventArgs e)
     {
-      if (this.listViewPrinterInfo.SelectedItems.Count <= 0)
+      if (listViewPrinterInfo.SelectedItems.Count <= 0)
+      {
         return;
-      string text = this.listViewPrinterInfo.SelectedItems[0].Text;
+      }
+
+      var text = listViewPrinterInfo.SelectedItems[0].Text;
       if (text.StartsWith("00"))
+      {
         return;
-      this.SetNewPrinter(text);
-      this.OpenPrinterControls();
+      }
+
+      SetNewPrinter(text);
+      OpenPrinterControls();
     }
 
     private void OnSelectedPrintComboBoxChanged(object sender, EventArgs e)
     {
-      this.SetNewPrinter(this.selectedPrinterComboBox.Text);
+      SetNewPrinter(selectedPrinterComboBox.Text);
     }
 
     private void showAdvancedStripMenuItem_Click(object sender, EventArgs e)
     {
-      if (!this.printer_controls_open)
-        this.OpenPrinterControls();
+      if (!printer_controls_open)
+      {
+        OpenPrinterControls();
+      }
       else
-        this.ClosePrinterControls();
+      {
+        ClosePrinterControls();
+      }
     }
 
     private void SetNewPrinter(string serial_number)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.Selected_Printer_Serial != serial_number)
+        if (Selected_Printer_Serial != serial_number)
         {
-          Printer selectedPrinter1 = this.SelectedPrinter;
+          Printer selectedPrinter1 = SelectedPrinter;
           if (selectedPrinter1 != null)
           {
-            int num1 = (int) selectedPrinter1.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+            var num1 = (int) selectedPrinter1.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
           }
-          this.ResetSDFileList();
-          this.Selected_Printer_Serial = serial_number;
-          Printer selectedPrinter2 = this.SelectedPrinter;
+          ResetSDFileList();
+          Selected_Printer_Serial = serial_number;
+          Printer selectedPrinter2 = SelectedPrinter;
           if (selectedPrinter2 != null)
           {
-            if (this.MyCurrentPrinterObject == null || selectedPrinter2.Info.MySerialNumber != this.MyCurrentPrinterObject.Info.MySerialNumber)
+            if (MyCurrentPrinterObject == null || selectedPrinter2.Info.MySerialNumber != MyCurrentPrinterObject.Info.MySerialNumber)
             {
-              this.groupBoxPrinterControls.Text = selectedPrinter2.Info.MySerialNumber;
-              int num2 = (int) selectedPrinter2.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
-              this.MyCurrentPrinterObject = selectedPrinter2;
-              this.MyCurrentPrinterObject.LockStepMode = false;
-              this.LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
+              groupBoxPrinterControls.Text = selectedPrinter2.Info.MySerialNumber;
+              var num2 = (int) selectedPrinter2.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+              MyCurrentPrinterObject = selectedPrinter2;
+              MyCurrentPrinterObject.LockStepMode = false;
+              LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
             }
-            this.selectedPrinterComboBox.SelectedIndex = this.selectedPrinterComboBox.Items.IndexOf((object) serial_number);
-            this.buttonLock.Enabled = true;
-            this.buttonEmergencyStop.Enabled = true;
+            selectedPrinterComboBox.SelectedIndex = selectedPrinterComboBox.Items.IndexOf((object) serial_number);
+            buttonLock.Enabled = true;
+            buttonEmergencyStop.Enabled = true;
           }
           else
           {
-            this.MyCurrentPrinterObject = (Printer) null;
-            this.groupBoxPrinterControls.Text = "00-00-00-00-00-000-000";
-            this.selectedPrinterComboBox.SelectedIndex = -1;
-            this.buttonLock.Enabled = false;
-            this.buttonEmergencyStop.Enabled = false;
+            MyCurrentPrinterObject = (Printer) null;
+            groupBoxPrinterControls.Text = "00-00-00-00-00-000-000";
+            selectedPrinterComboBox.SelectedIndex = -1;
+            buttonLock.Enabled = false;
+            buttonEmergencyStop.Enabled = false;
           }
         }
-        this.m_sampleSetTemperatureSamples.Clear();
+        m_sampleSetTemperatureSamples.Clear();
       }
     }
 
@@ -1029,71 +1196,88 @@ namespace M3D.Spooler
 
     private void OnAutoCheckFirmwareChanged(object sender, EventArgs e)
     {
-      this.spooler_client.CheckFirmware = this.checkBoxAutoCheckFirmware.Checked;
+      spooler_client.CheckFirmware = checkBoxAutoCheckFirmware.Checked;
     }
 
     private void buttonSetTemp_Click(object sender, EventArgs e)
     {
-      Printer currentPrinterObject = this.MyCurrentPrinterObject;
+      Printer currentPrinterObject = MyCurrentPrinterObject;
       if (currentPrinterObject == null)
-        return;
-      int result;
-      if (int.TryParse(this.textBoxTempEdit.Text, out result))
       {
-        if ((double) Math.Abs((float) result - this.m_sampleSetTemperatureSamples.SampleMean) > 15.0)
+        return;
+      }
+
+      if (int.TryParse(textBoxTempEdit.Text, out var result))
+      {
+        if ((double)Math.Abs((float)result - m_sampleSetTemperatureSamples.SampleMean) > 15.0)
         {
-          int num1 = (int) MessageBox.Show("The new temperature must be with 15 degrees of the current temperature. Please try again");
+          var num1 = (int)MessageBox.Show("The new temperature must be with 15 degrees of the current temperature. Please try again");
         }
         else if (result < 180)
         {
-          int num2 = (int) MessageBox.Show("The new temperature must be over 180 degrees. Please try again");
+          var num2 = (int)MessageBox.Show("The new temperature must be over 180 degrees. Please try again");
         }
         else
         {
-          int num3 = (int) currentPrinterObject.SetTemperatureWhilePrinting(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) currentPrinterObject, result);
+          var num3 = (int)currentPrinterObject.SetTemperatureWhilePrinting(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)currentPrinterObject, result);
         }
       }
       else
       {
-        int num4 = (int) MessageBox.Show("The temperature entered is not an integer. Please try again");
+        var num4 = (int)MessageBox.Show("The temperature entered is not an integer. Please try again");
       }
     }
 
     private void buttonAddJob_Click(object sender, EventArgs e)
     {
-      if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+      if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+      {
         return;
-      this.AddJobFromGCodeFile(false, JobParams.Mode.DirectPrinting);
+      }
+
+      AddJobFromGCodeFile(false, JobParams.Mode.DirectPrinting);
     }
 
     private void AddJobFromGCodeFile(bool allow_untethered, JobParams.Mode jobMode)
     {
-      OpenFileDialog openFileDialog = new OpenFileDialog();
-      openFileDialog.Filter = "G-Code (*.gcode)|*.gcode|Binary G-Code (*.bgcode)|*.bgcode|Text Files (.txt)|*.txt|All Files (*.*)|*.*";
-      openFileDialog.FilterIndex = 1;
-      openFileDialog.Multiselect = false;
-      openFileDialog.CheckFileExists = true;
+      var openFileDialog = new OpenFileDialog
+      {
+        Filter = "G-Code (*.gcode)|*.gcode|Binary G-Code (*.bgcode)|*.bgcode|Text Files (.txt)|*.txt|All Files (*.*)|*.*",
+        FilterIndex = 1,
+        Multiselect = false,
+        CheckFileExists = true
+      };
       if (openFileDialog.ShowDialog() != DialogResult.OK)
+      {
         return;
-      string fileName = openFileDialog.FileName;
-      PrintOptions options = ManualPrintOptions.GetOptions(this.MyCurrentPrinterObject.GetCurrentFilament(), allow_untethered, jobMode);
-      bool flag = !options.use_preprocessors;
-      bool calibrateZ = options.calibrateZ;
+      }
+
+      var fileName = openFileDialog.FileName;
+      PrintOptions options = ManualPrintOptions.GetOptions(MyCurrentPrinterObject.GetCurrentFilament(), allow_untethered, jobMode);
+      var flag = !options.use_preprocessors;
+      var calibrateZ = options.calibrateZ;
       if (options.type == FilamentSpool.TypeEnum.OtherOrUnknown)
+      {
         return;
-      Printer currentPrinterObject = this.MyCurrentPrinterObject;
-      JobParams jobParams = new JobParams(fileName, Path.GetFileNameWithoutExtension(fileName), "null", options.type, 0.0f, 0.0f);
-      jobParams.jobMode = options.jobMode;
+      }
+
+      Printer currentPrinterObject = MyCurrentPrinterObject;
+      var jobParams = new JobParams(fileName, Path.GetFileNameWithoutExtension(fileName), "null", options.type, 0.0f, 0.0f)
+      {
+        jobMode = options.jobMode
+      };
       jobParams.options.autostart_ignorewarnings = true;
       jobParams.options.dont_use_preprocessors = flag;
       jobParams.options.calibrate_before_print = calibrateZ;
       if (calibrateZ)
       {
         jobParams.options.calibrate_before_print_z = 0.4f;
-        if (this.MyCurrentPrinterObject.Info.calibration.UsesCalibrationOffset)
-          jobParams.options.calibrate_before_print_z += this.MyCurrentPrinterObject.Info.calibration.CALIBRATION_OFFSET;
+        if (MyCurrentPrinterObject.Info.calibration.UsesCalibrationOffset)
+        {
+          jobParams.options.calibrate_before_print_z += MyCurrentPrinterObject.Info.calibration.CALIBRATION_OFFSET;
+        }
       }
-      FilamentProfile filamentProfile = FilamentProfile.CreateFilamentProfile(new FilamentSpool()
+      var filamentProfile = FilamentProfile.CreateFilamentProfile(new FilamentSpool()
       {
         filament_type = options.type,
         filament_temperature = options.temperature
@@ -1102,15 +1286,20 @@ namespace M3D.Spooler
       jobParams.filament_temperature = filamentProfile.Temperature;
       if (jobMode == JobParams.Mode.SaveToBinaryGCodeFile)
       {
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
-        saveFileDialog.Filter = "G-Code (*.gcode)|*.gcode|Binary G-Code (*.bgcode)|*.bgcode";
-        saveFileDialog.FilterIndex = 1;
+        var saveFileDialog = new SaveFileDialog
+        {
+          Filter = "G-Code (*.gcode)|*.gcode|Binary G-Code (*.bgcode)|*.bgcode",
+          FilterIndex = 1
+        };
         if (saveFileDialog.ShowDialog() != DialogResult.OK)
+        {
           return;
+        }
+
         jobParams.jobMode = jobMode;
         jobParams.outputfile = saveFileDialog.FileName;
       }
-      int num = (int) this.MyCurrentPrinterObject.PrintModel((M3D.Spooling.Client.AsyncCallback) null, (object) null, jobParams);
+      var num = (int)MyCurrentPrinterObject.PrintModel((M3D.Spooling.Client.AsyncCallback) null, (object) null, jobParams);
     }
 
     private void comboBoxActivePrinter_TextUpdate(object sender, EventArgs e)
@@ -1119,129 +1308,156 @@ namespace M3D.Spooler
 
     private void OnLogToScreenChanged(object sender, EventArgs e)
     {
-      this.logToScreen.Value = this.checkBoxLogToScreen.Checked;
+      logToScreen.Value = checkBoxLogToScreen.Checked;
     }
 
     private void buttonClearLog_Click(object sender, EventArgs e)
     {
-      this.richTextBoxLoggedItems.Clear();
+      richTextBoxLoggedItems.Clear();
     }
 
     private void OnEnterInsertGCode(object sender, EventArgs e)
     {
-      this.AcceptButton = (IButtonControl) this.buttonSendGCode;
+      AcceptButton = (IButtonControl)buttonSendGCode;
     }
 
     private void OnLeaveInsertGCode(object sender, EventArgs e)
     {
-      this.AcceptButton = (IButtonControl) null;
+      AcceptButton = (IButtonControl) null;
     }
 
     private void buttonPreprocess_Click(object sender, EventArgs e)
     {
-      float initial_x = 0.0f;
-      float initial_y = 0.0f;
-      float initial_speed = 0.0f;
-      float default_speed = 0.0f;
-      float max_speed = 0.0f;
-      bool flag = false;
-      lock (this._myCurrentPrinterObjectSync)
+      var initial_x = 0.0f;
+      var initial_y = 0.0f;
+      var initial_speed = 0.0f;
+      var default_speed = 0.0f;
+      var max_speed = 0.0f;
+      var flag = false;
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject != null)
+        if (MyCurrentPrinterObject != null)
         {
-          if (this.MyCurrentPrinterObject.Connected)
+          if (MyCurrentPrinterObject.Connected)
           {
-            initial_x = this.MyCurrentPrinterObject.Info.calibration.BACKLASH_X;
-            initial_y = this.MyCurrentPrinterObject.Info.calibration.BACKLASH_Y;
-            initial_speed = this.MyCurrentPrinterObject.Info.calibration.BACKLASH_SPEED;
-            default_speed = this.MyCurrentPrinterObject.MyPrinterProfile.SpeedLimitConstants.DefaultBacklashSpeed;
-            max_speed = this.MyCurrentPrinterObject.MyPrinterProfile.SpeedLimitConstants.FastestPossible;
+            initial_x = MyCurrentPrinterObject.Info.calibration.BACKLASH_X;
+            initial_y = MyCurrentPrinterObject.Info.calibration.BACKLASH_Y;
+            initial_speed = MyCurrentPrinterObject.Info.calibration.BACKLASH_SPEED;
+            default_speed = MyCurrentPrinterObject.MyPrinterProfile.SpeedLimitConstants.DefaultBacklashSpeed;
+            max_speed = MyCurrentPrinterObject.MyPrinterProfile.SpeedLimitConstants.FastestPossible;
             flag = true;
           }
         }
       }
       if (!flag)
-        return;
-      BacklashSettingsDialog backlashSettingsDialog = new BacklashSettingsDialog(initial_x, initial_y, initial_speed, default_speed, max_speed);
-      int num1 = (int) backlashSettingsDialog.ShowDialog();
-      if (!backlashSettingsDialog.ok)
-        return;
-      lock (this._myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null)
+        return;
+      }
+
+      var backlashSettingsDialog = new BacklashSettingsDialog(initial_x, initial_y, initial_speed, default_speed, max_speed);
+      var num1 = (int) backlashSettingsDialog.ShowDialog();
+      if (!backlashSettingsDialog.ok)
+      {
+        return;
+      }
+
+      lock (_myCurrentPrinterObjectSync)
+      {
+        if (MyCurrentPrinterObject == null)
+        {
           return;
-        if (!this.MyCurrentPrinterObject.HasLock)
-        {
-          int num2 = (int) MessageBox.Show("Unable to send command to the printer because the lock on the printer has timed out.");
         }
-        else if (this.MyCurrentPrinterObject.Connected)
+
+        if (!MyCurrentPrinterObject.HasLock)
         {
-          int num3 = (int) this.MyCurrentPrinterObject.SetBacklash((M3D.Spooling.Client.AsyncCallback) null, (object) null, new BacklashSettings(backlashSettingsDialog.X_BACKLASH, backlashSettingsDialog.Y_BACKLASH, backlashSettingsDialog.BACKLASH_SPEED));
+          var num2 = (int) MessageBox.Show("Unable to send command to the printer because the lock on the printer has timed out.");
+        }
+        else if (MyCurrentPrinterObject.Connected)
+        {
+          var num3 = (int)MyCurrentPrinterObject.SetBacklash((M3D.Spooling.Client.AsyncCallback) null, (object) null, new BacklashSettings(backlashSettingsDialog.X_BACKLASH, backlashSettingsDialog.Y_BACKLASH, backlashSettingsDialog.BACKLASH_SPEED));
         }
         else
         {
-          int num4 = (int) MessageBox.Show("Unable to send command to the printer because the printer has disconnected.");
+          var num4 = (int) MessageBox.Show("Unable to send command to the printer because the printer has disconnected.");
         }
       }
     }
 
     private void buttonPrintToFile_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        this.AddJobFromGCodeFile(false, JobParams.Mode.SaveToBinaryGCodeFile);
+        }
+
+        AddJobFromGCodeFile(false, JobParams.Mode.SaveToBinaryGCodeFile);
       }
     }
 
     private void buttonBacklashPrint_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.PrintBacklashPrint(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject);
+        }
+
+        var num = (int)MyCurrentPrinterObject.PrintBacklashPrint(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject);
       }
     }
 
     private void buttonGoToBootloader_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null)
+        if (MyCurrentPrinterObject == null)
+        {
           return;
-        int num = this.MyCurrentPrinterObject.Connected ? 1 : 0;
+        }
+
+        var num = MyCurrentPrinterObject.Connected ? 1 : 0;
       }
     }
 
     private void buttonQuitBootloader_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode((M3D.Spooling.Client.AsyncCallback) null, (object) null, "Q");
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode((M3D.Spooling.Client.AsyncCallback) null, (object) null, "Q");
       }
     }
 
     private void buttonUpdateFirmware_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        this.LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
-        int num = (int) this.MyCurrentPrinterObject.DoFirmwareUpdate((M3D.Spooling.Client.AsyncCallback) null, (object) null);
-        this.SetNewPrinter((string) null);
+        }
+
+        LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
+        var num = (int)MyCurrentPrinterObject.DoFirmwareUpdate((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+        SetNewPrinter((string) null);
       }
     }
 
     private void ProcessCallErrors(IAsyncCallResult ar)
     {
-      Printer asyncState = ar.AsyncState as Printer;
+      var asyncState = ar.AsyncState as Printer;
       if (asyncState == null)
+      {
         return;
+      }
+
       switch (ar.CallResult)
       {
         case CommandResult.Success:
@@ -1249,347 +1465,416 @@ namespace M3D.Spooler
         case CommandResult.SuccessfullyReceived:
           break;
         case CommandResult.OverridedByNonLockStepCall:
-          if (this.spooler_client.ClientCount != 0)
+          if (spooler_client.ClientCount != 0)
+          {
             break;
-          this.OnLog("The previous command is still running, so your request has been queued.", asyncState.Info.MySerialNumber);
+          }
+
+          OnLog("The previous command is still running, so your request has been queued.", asyncState.Info.MySerialNumber);
           break;
         case CommandResult.Failed_CannotPauseSavingToSD:
-          int num1 = (int) MessageBox.Show("Sorry, but saving to the printer can't be paused.");
+          var num1 = (int) MessageBox.Show("Sorry, but saving to the printer can't be paused.");
           break;
         case CommandResult.Failed_G28_G30_G32_NotAllowedWhilePaused:
-          if (this.spooler_client.ClientCount != 0)
+          if (spooler_client.ClientCount != 0)
+          {
             break;
-          int num2 = (int) MessageBox.Show("Homing and calibration are disabled while paused.");
+          }
+
+          var num2 = (int) MessageBox.Show("Homing and calibration are disabled while paused.");
           break;
         case CommandResult.CommandInterruptedByM0:
-          if (this.spooler_client.ClientCount != 0)
+          if (spooler_client.ClientCount != 0)
+          {
             break;
-          this.OnLog("The previous command was interrupted.", asyncState.Info.MySerialNumber);
+          }
+
+          OnLog("The previous command was interrupted.", asyncState.Info.MySerialNumber);
           break;
         default:
-          this.OnLog(ar.CallResult.ToString(), asyncState.Info.MySerialNumber);
+          OnLog(ar.CallResult.ToString(), asyncState.Info.MySerialNumber);
           break;
       }
     }
 
     private void buttonSendGCode_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected || string.IsNullOrEmpty(this.textBoxManualGCode.Text))
-          return;
-        if (this.textBoxManualGCode.Text.IndexOf("backlash") == 0)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected || string.IsNullOrEmpty(textBoxManualGCode.Text))
         {
-          int num1 = (int) this.MyCurrentPrinterObject.PrintBacklashPrint(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject);
+          return;
+        }
+
+        if (textBoxManualGCode.Text.IndexOf("backlash") == 0)
+        {
+          var num1 = (int)MyCurrentPrinterObject.PrintBacklashPrint(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject);
         }
         else
         {
-          this.checkBoxLogToScreen.Checked = true;
-          this.lastManualCommand = this.textBoxManualGCode.Text;
-          int num2 = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, this.textBoxManualGCode.Text);
-          this.listBoxManualHistory.Items.Add((object) ("(" + this.MyCurrentPrinterObject.Info.MySerialNumber + ")->" + this.textBoxManualGCode.Text));
-          this.textBoxManualGCode.Text = "";
+          checkBoxLogToScreen.Checked = true;
+          lastManualCommand = textBoxManualGCode.Text;
+          var num2 = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, textBoxManualGCode.Text);
+          listBoxManualHistory.Items.Add((object) ("(" + MyCurrentPrinterObject.Info.MySerialNumber + ")->" + textBoxManualGCode.Text));
+          textBoxManualGCode.Text = "";
         }
       }
     }
 
     private void buttonEmergencyStop_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendEmergencyStop(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject);
-        this.listBoxManualHistory.Items.Add((object) ("(" + this.MyCurrentPrinterObject.Info.MySerialNumber + ")->Emergency Stop"));
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendEmergencyStop(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject);
+        listBoxManualHistory.Items.Add((object) ("(" + MyCurrentPrinterObject.Info.MySerialNumber + ")->Emergency Stop"));
       }
     }
 
     private void buttonPausePrint_Click(object sender, EventArgs e)
     {
-      Printer selectedPrinter = this.SelectedPrinter;
+      Printer selectedPrinter = SelectedPrinter;
       if (selectedPrinter == null || !selectedPrinter.Connected)
+      {
         return;
-      int num = (int) selectedPrinter.PausePrint(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject);
-      this.listBoxManualHistory.Items.Add((object) ("(" + selectedPrinter.Info.MySerialNumber + ")->Pause Print"));
+      }
+
+      var num = (int) selectedPrinter.PausePrint(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject);
+      listBoxManualHistory.Items.Add((object) ("(" + selectedPrinter.Info.MySerialNumber + ")->Pause Print"));
     }
 
     private void buttonResumePrint_Click(object sender, EventArgs e)
     {
-      Printer selectedPrinter = this.SelectedPrinter;
+      Printer selectedPrinter = SelectedPrinter;
       if (selectedPrinter == null || !selectedPrinter.Connected)
+      {
         return;
-      int num = (int) selectedPrinter.ContinuePrint(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject);
-      this.listBoxManualHistory.Items.Add((object) ("(" + selectedPrinter.Info.MySerialNumber + ")->Resume Print"));
+      }
+
+      var num = (int) selectedPrinter.ContinuePrint(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject);
+      listBoxManualHistory.Items.Add((object) ("(" + selectedPrinter.Info.MySerialNumber + ")->Resume Print"));
     }
 
     private void buttonAbortPrint_Click(object sender, EventArgs e)
     {
-      Printer selectedPrinter = this.SelectedPrinter;
+      Printer selectedPrinter = SelectedPrinter;
       if (selectedPrinter == null || !selectedPrinter.Connected || MessageBox.Show("Are you sure you want to abort this print?", "M3D Print Spooler", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+      {
         return;
-      int num = (int) selectedPrinter.AbortPrint(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject);
-      this.listBoxManualHistory.Items.Add((object) ("(" + selectedPrinter.Info.MySerialNumber + ")->Abort Print"));
+      }
+
+      var num = (int) selectedPrinter.AbortPrint(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject);
+      listBoxManualHistory.Items.Add((object) ("(" + selectedPrinter.Info.MySerialNumber + ")->Abort Print"));
     }
 
     private void buttonUpZ_Click(object sender, EventArgs e)
     {
-      if (!PrinterCompatibleString.VerifyNumber(this.textBoxZVal.Text))
+      if (!PrinterCompatibleString.VerifyNumber(textBoxZVal.Text))
       {
-        int num1 = (int) MessageBox.Show("Sorry, but the Z value is not a number");
+        var num1 = (int) MessageBox.Show("Sorry, but the Z value is not a number");
       }
       else
       {
-        float floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(this.textBoxZVal.Text);
-        lock (this._myCurrentPrinterObjectSync)
+        var floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(textBoxZVal.Text);
+        lock (_myCurrentPrinterObjectSync)
         {
-          if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+          if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+          {
             return;
-          int num2 = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} Z{1}", (object) 90f, (object) floatCurrentCulture));
+          }
+
+          var num2 = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} Z{1}", (object) 90f, (object) floatCurrentCulture));
         }
       }
     }
 
     private void buttonUpY_Click(object sender, EventArgs e)
     {
-      if (!PrinterCompatibleString.VerifyNumber(this.textBoxYVal.Text))
+      if (!PrinterCompatibleString.VerifyNumber(textBoxYVal.Text))
       {
-        int num1 = (int) MessageBox.Show("Sorry, but the Y value is not a number");
+        var num1 = (int) MessageBox.Show("Sorry, but the Y value is not a number");
       }
       else
       {
-        float floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(this.textBoxYVal.Text);
-        lock (this._myCurrentPrinterObjectSync)
+        var floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(textBoxYVal.Text);
+        lock (_myCurrentPrinterObjectSync)
         {
-          if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+          if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+          {
             return;
-          int num2 = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} Y{1}", (object) 3000f, (object) floatCurrentCulture));
+          }
+
+          var num2 = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} Y{1}", (object) 3000f, (object) floatCurrentCulture));
         }
       }
     }
 
     private void buttonDownX_Click(object sender, EventArgs e)
     {
-      if (!PrinterCompatibleString.VerifyNumber(this.textBoxXVal.Text))
+      if (!PrinterCompatibleString.VerifyNumber(textBoxXVal.Text))
       {
-        int num1 = (int) MessageBox.Show("Sorry, but the X value is not a number");
+        var num1 = (int) MessageBox.Show("Sorry, but the X value is not a number");
       }
       else
       {
-        float floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(this.textBoxXVal.Text);
-        lock (this._myCurrentPrinterObjectSync)
+        var floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(textBoxXVal.Text);
+        lock (_myCurrentPrinterObjectSync)
         {
-          if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+          if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+          {
             return;
-          int num2 = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} X-{1}", (object) 3000f, (object) floatCurrentCulture));
+          }
+
+          var num2 = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} X-{1}", (object) 3000f, (object) floatCurrentCulture));
         }
       }
     }
 
     private void buttonUpX_Click(object sender, EventArgs e)
     {
-      if (!PrinterCompatibleString.VerifyNumber(this.textBoxXVal.Text))
+      if (!PrinterCompatibleString.VerifyNumber(textBoxXVal.Text))
       {
-        int num1 = (int) MessageBox.Show("Sorry, but the X value is not a number");
+        var num1 = (int) MessageBox.Show("Sorry, but the X value is not a number");
       }
       else
       {
-        float floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(this.textBoxXVal.Text);
-        lock (this._myCurrentPrinterObjectSync)
+        var floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(textBoxXVal.Text);
+        lock (_myCurrentPrinterObjectSync)
         {
-          if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+          if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+          {
             return;
-          int num2 = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} X{1}", (object) 3000f, (object) floatCurrentCulture));
+          }
+
+          var num2 = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} X{1}", (object) 3000f, (object) floatCurrentCulture));
         }
       }
     }
 
     private void buttonDownY_Click(object sender, EventArgs e)
     {
-      if (!PrinterCompatibleString.VerifyNumber(this.textBoxYVal.Text))
+      if (!PrinterCompatibleString.VerifyNumber(textBoxYVal.Text))
       {
-        int num1 = (int) MessageBox.Show("Sorry, but the Y value is not a number");
+        var num1 = (int) MessageBox.Show("Sorry, but the Y value is not a number");
       }
       else
       {
-        float floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(this.textBoxYVal.Text);
-        lock (this._myCurrentPrinterObjectSync)
+        var floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(textBoxYVal.Text);
+        lock (_myCurrentPrinterObjectSync)
         {
-          if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+          if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+          {
             return;
-          int num2 = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} Y-{1}", (object) 3000f, (object) floatCurrentCulture));
+          }
+
+          var num2 = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} Y-{1}", (object) 3000f, (object) floatCurrentCulture));
         }
       }
     }
 
     private void buttonDownZ_Click(object sender, EventArgs e)
     {
-      if (!PrinterCompatibleString.VerifyNumber(this.textBoxZVal.Text))
+      if (!PrinterCompatibleString.VerifyNumber(textBoxZVal.Text))
       {
-        int num1 = (int) MessageBox.Show("Sorry, but the Z value is not a number");
+        var num1 = (int) MessageBox.Show("Sorry, but the Z value is not a number");
       }
       else
       {
-        float floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(this.textBoxZVal.Text);
-        lock (this._myCurrentPrinterObjectSync)
+        var floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(textBoxZVal.Text);
+        lock (_myCurrentPrinterObjectSync)
         {
-          if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+          if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+          {
             return;
-          int num2 = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} Z-{1}", (object) 90f, (object) floatCurrentCulture));
+          }
+
+          var num2 = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} Z-{1}", (object) 90f, (object) floatCurrentCulture));
         }
       }
     }
 
     private void buttonDownE_Click(object sender, EventArgs e)
     {
-      if (!PrinterCompatibleString.VerifyNumber(this.textBoxEVal.Text))
+      if (!PrinterCompatibleString.VerifyNumber(textBoxEVal.Text))
       {
-        int num1 = (int) MessageBox.Show("Sorry, but the E value is not a number");
+        var num1 = (int) MessageBox.Show("Sorry, but the E value is not a number");
       }
       else
       {
-        float floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(this.textBoxEVal.Text);
-        lock (this._myCurrentPrinterObjectSync)
+        var floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(textBoxEVal.Text);
+        lock (_myCurrentPrinterObjectSync)
         {
-          if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+          if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+          {
             return;
-          int num2 = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} E-{1}", (object) 345f, (object) floatCurrentCulture));
+          }
+
+          var num2 = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} E-{1}", (object) 345f, (object) floatCurrentCulture));
         }
       }
     }
 
     private void buttonUpE_Click(object sender, EventArgs e)
     {
-      if (!PrinterCompatibleString.VerifyNumber(this.textBoxEVal.Text))
+      if (!PrinterCompatibleString.VerifyNumber(textBoxEVal.Text))
       {
-        int num1 = (int) MessageBox.Show("Sorry, but the E value is not a number");
+        var num1 = (int) MessageBox.Show("Sorry, but the E value is not a number");
       }
       else
       {
-        float floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(this.textBoxEVal.Text);
-        lock (this._myCurrentPrinterObjectSync)
+        var floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(textBoxEVal.Text);
+        lock (_myCurrentPrinterObjectSync)
         {
-          if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+          if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+          {
             return;
-          int num2 = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} E{1}", (object) 345f, (object) floatCurrentCulture));
+          }
+
+          var num2 = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G91", PrinterCompatibleString.Format("G0 F{0} E{1}", (object) 345f, (object) floatCurrentCulture));
         }
       }
     }
 
     private void buttonABSTemp_Click(object sender, EventArgs e)
     {
-      this.SetTemperature(FilamentConstants.Temperature.Default(FilamentSpool.TypeEnum.ABS));
+      SetTemperature(FilamentConstants.Temperature.Default(FilamentSpool.TypeEnum.ABS));
     }
 
     private void buttonTGHTemp_Click(object sender, EventArgs e)
     {
-      this.SetTemperature(FilamentConstants.Temperature.Default(FilamentSpool.TypeEnum.TGH));
+      SetTemperature(FilamentConstants.Temperature.Default(FilamentSpool.TypeEnum.TGH));
     }
 
     private void buttonPLATemp_Click(object sender, EventArgs e)
     {
-      this.SetTemperature(FilamentConstants.Temperature.Default(FilamentSpool.TypeEnum.PLA));
+      SetTemperature(FilamentConstants.Temperature.Default(FilamentSpool.TypeEnum.PLA));
     }
 
     private void buttonHeaterOff_Click(object sender, EventArgs e)
     {
-      this.SetTemperature(0);
+      SetTemperature(0);
     }
 
     private void SetTemperature(int temperature)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, PrinterCompatibleString.Format("M109 S{0}", (object) temperature));
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, PrinterCompatibleString.Format("M109 S{0}", (object) temperature));
       }
     }
 
     private void buttonBedHeatToPLA_Click(object sender, EventArgs e)
     {
-      this.SetBedTemperature(FilamentConstants.Temperature.BedDefault(FilamentSpool.TypeEnum.PLA));
+      SetBedTemperature(FilamentConstants.Temperature.BedDefault(FilamentSpool.TypeEnum.PLA));
     }
 
     private void buttonBedHeatToABS_Click(object sender, EventArgs e)
     {
-      this.SetBedTemperature(FilamentConstants.Temperature.BedDefault(FilamentSpool.TypeEnum.ABS));
+      SetBedTemperature(FilamentConstants.Temperature.BedDefault(FilamentSpool.TypeEnum.ABS));
     }
 
     private void buttonBedHeatToABR_Click(object sender, EventArgs e)
     {
-      this.SetBedTemperature(FilamentConstants.Temperature.BedDefault(FilamentSpool.TypeEnum.ABS_R));
+      SetBedTemperature(FilamentConstants.Temperature.BedDefault(FilamentSpool.TypeEnum.ABS_R));
     }
 
     private void buttonTurnOfHeatedbed_Click(object sender, EventArgs e)
     {
-      this.SetBedTemperature(0);
+      SetBedTemperature(0);
     }
 
     private void SetBedTemperature(int temperature)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, PrinterCompatibleString.Format("M190 S{0}", (object) temperature));
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, PrinterCompatibleString.Format("M190 S{0}", (object) temperature));
       }
     }
 
     private void buttonMotorsOn_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "M17");
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "M17");
       }
     }
 
     private void buttonMotorsOff_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "M18");
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "M18");
       }
     }
 
     private void buttonFanOn_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "M106 S255");
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "M106 S255");
       }
     }
 
     private void buttonFanOff_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "M106 S0");
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "M106 S0");
       }
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G90");
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G90");
       }
     }
 
     private void buttonRepeatLast_Click(object sender, EventArgs e)
     {
-      this.checkBoxLogToScreen.Checked = true;
-      this.textBoxManualGCode.Text = this.lastManualCommand;
-      this.buttonSendGCode_Click(sender, e);
+      checkBoxLogToScreen.Checked = true;
+      textBoxManualGCode.Text = lastManualCommand;
+      buttonSendGCode_Click(sender, e);
     }
 
     private void buttonChangeFilamentInfo_Click(object sender, EventArgs e)
@@ -1606,174 +1891,225 @@ namespace M3D.Spooler
 
     private void button2_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode((M3D.Spooling.Client.AsyncCallback) null, (object) null, "G91");
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode((M3D.Spooling.Client.AsyncCallback) null, (object) null, "G91");
       }
     }
 
     private void buttonXSkipTest_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, TestGeneration.CreateXSkipTestMinus(this.MyCurrentPrinterObject.MyPrinterProfile).ToArray());
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, TestGeneration.CreateXSkipTestMinus(MyCurrentPrinterObject.MyPrinterProfile).ToArray());
       }
     }
 
     private void buttonYSkipTest_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, TestGeneration.CreateYSkipTestMinus(this.MyCurrentPrinterObject.MyPrinterProfile).ToArray());
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, TestGeneration.CreateYSkipTestMinus(MyCurrentPrinterObject.MyPrinterProfile).ToArray());
       }
     }
 
     private void buttonXSkipTestRight_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, TestGeneration.CreateXSkipTestPlus(this.MyCurrentPrinterObject.MyPrinterProfile).ToArray());
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, TestGeneration.CreateXSkipTestPlus(MyCurrentPrinterObject.MyPrinterProfile).ToArray());
       }
     }
 
     private void buttonYSkipTestBack_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, TestGeneration.CreateYSkipTestPlus(this.MyCurrentPrinterObject.MyPrinterProfile).ToArray());
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, TestGeneration.CreateYSkipTestPlus(MyCurrentPrinterObject.MyPrinterProfile).ToArray());
       }
     }
 
     private void buttonXSpeedTest_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, TestGeneration.CreateXSpeedTest(this.MyCurrentPrinterObject.MyPrinterProfile).ToArray());
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, TestGeneration.CreateXSpeedTest(MyCurrentPrinterObject.MyPrinterProfile).ToArray());
       }
     }
 
     private void buttonYSpeedTest_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, TestGeneration.CreateYSpeedTest(this.MyCurrentPrinterObject.MyPrinterProfile).ToArray());
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, TestGeneration.CreateYSpeedTest(MyCurrentPrinterObject.MyPrinterProfile).ToArray());
       }
     }
 
     private void buttonHome_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "G28");
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "G28");
       }
     }
 
     private void buttonReCenter_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, TestGeneration.FastRecenter(this.MyCurrentPrinterObject.MyPrinterProfile).ToArray());
+        }
+
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, TestGeneration.FastRecenter(MyCurrentPrinterObject.MyPrinterProfile).ToArray());
       }
     }
 
     private void OnPrinterLockCallback(IAsyncCallResult ar)
     {
-      bool flag = this.PrinterLocked.Value;
+      var flag = PrinterLocked.Value;
       if (ar.CallResult == CommandResult.Success_LockAcquired && !flag)
       {
-        this.LockChanging.Value = MainForm.PrinterLockChanging.YesToLocked;
-        SDCardExtensions sdPluginExtension = this.GetCurrentSDPluginExtension();
+        LockChanging.Value = MainForm.PrinterLockChanging.YesToLocked;
+        SDCardExtensions sdPluginExtension = GetCurrentSDPluginExtension();
         if (sdPluginExtension == null || !sdPluginExtension.Available)
+        {
           return;
-        sdPluginExtension.OnReceivedFileList = new EventHandler(this.ReceivedUpdatedSDCardList);
-        if (!this.m_bSDTabSelected)
+        }
+
+        sdPluginExtension.OnReceivedFileList = new EventHandler(ReceivedUpdatedSDCardList);
+        if (!m_bSDTabSelected)
+        {
           return;
-        int num = (int) sdPluginExtension.RefreshSDCardList((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+        }
+
+        var num = (int) sdPluginExtension.RefreshSDCardList((M3D.Spooling.Client.AsyncCallback) null, (object) null);
       }
       else if (ar.CallResult == CommandResult.Success_LockReleased & flag)
-        this.LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
+      {
+        LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
+      }
       else if (ar.CallResult == CommandResult.Failed_PrinterDoesNotHaveLock)
       {
         if (!flag)
+        {
           return;
-        this.LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
+        }
+
+        LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
       }
       else if (ar.CallResult == CommandResult.Failed_PrinterAlreadyLocked)
       {
-        int num = (int) MessageBox.Show("Can not lock this printer because it is being used by another program.");
-        this.LockChanging.Value = MainForm.PrinterLockChanging.NoFailed;
+        var num = (int) MessageBox.Show("Can not lock this printer because it is being used by another program.");
+        LockChanging.Value = MainForm.PrinterLockChanging.NoFailed;
       }
       else
       {
         if (ar.CallResult != CommandResult.Failed_CannotLockWhilePrinting)
+        {
           return;
-        int num = (int) MessageBox.Show("Can not lock this printer because it is printing.");
-        this.LockChanging.Value = MainForm.PrinterLockChanging.NoFailed;
+        }
+
+        var num = (int) MessageBox.Show("Can not lock this printer because it is printing.");
+        LockChanging.Value = MainForm.PrinterLockChanging.NoFailed;
       }
     }
 
     private void buttonGetGCode_Click(object sender, EventArgs e)
     {
-      string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "M3D", "Spooler", "queue");
-      string destFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "M3D - Last used G-code.gcode");
+      var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "M3D", "Spooler", "queue");
+      var destFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "M3D - Last used G-code.gcode");
       try
       {
-        DirectoryInfo directoryInfo = new DirectoryInfo(path);
-        FileInfo fileInfo = (FileInfo) null;
-        string searchPattern = "*_processed.gcode";
+        var directoryInfo = new DirectoryInfo(path);
+        var fileInfo = (FileInfo) null;
+        var searchPattern = "*_processed.gcode";
         foreach (FileInfo file in directoryInfo.GetFiles(searchPattern))
         {
           if (fileInfo == null)
+          {
             fileInfo = file;
+          }
           else if (fileInfo.CreationTimeUtc < file.CreationTimeUtc)
+          {
             fileInfo = file;
+          }
         }
         if (fileInfo != null)
         {
           File.Copy(fileInfo.FullName, destFileName, true);
-          int num = (int) MessageBox.Show("Successfully moved \"M3D - Last used G-code.gcode\" to the Desktop", "Info");
+          var num = (int) MessageBox.Show("Successfully moved \"M3D - Last used G-code.gcode\" to the Desktop", "Info");
         }
         else
         {
-          int num1 = (int) MessageBox.Show("Sorry, no gcode files could be found", "Info");
+          var num1 = (int) MessageBox.Show("Sorry, no gcode files could be found", "Info");
         }
       }
       catch (Exception ex)
       {
-        int num = (int) MessageBox.Show("Sorry, there was a problem copying the gcode to the Desktop", "Info");
+        var num = (int) MessageBox.Show("Sorry, there was a problem copying the gcode to the Desktop", "Info");
       }
     }
 
     private void buttonBedPointTest_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        PrinterInfo info = this.MyCurrentPrinterObject.Info;
+        }
+
+        PrinterInfo info = MyCurrentPrinterObject.Info;
         if (info == null)
+        {
           return;
-        BedCompensationPreprocessor compensationPreprocessor = new BedCompensationPreprocessor();
-        compensationPreprocessor.UpdateConfigurations(info.calibration, this.MyCurrentPrinterObject.MyPrinterProfile.PrinterSizeConstants);
-        string selectedItem = (string) this.comboBoxBedTestPoint.SelectedItem;
+        }
+
+        var compensationPreprocessor = new BedCompensationPreprocessor();
+        compensationPreprocessor.UpdateConfigurations(info.calibration, MyCurrentPrinterObject.MyPrinterProfile.PrinterSizeConstants);
+        var selectedItem = (string)comboBoxBedTestPoint.SelectedItem;
         Vector vector;
         if (!(selectedItem == "Center"))
         {
@@ -1784,93 +2120,128 @@ namespace M3D.Spooler
               if (!(selectedItem == "Back Right"))
               {
                 if (!(selectedItem == "Back Left"))
+                {
                   return;
+                }
+
                 vector = compensationPreprocessor.BackLeft;
               }
               else
+              {
                 vector = compensationPreprocessor.BackRight;
+              }
             }
             else
+            {
               vector = compensationPreprocessor.FrontLeft;
+            }
           }
           else
+          {
             vector = compensationPreprocessor.FrontRight;
+          }
         }
         else
+        {
           vector = compensationPreprocessor.Center;
+        }
+
         vector.z = 0.1f + compensationPreprocessor.GetHeightAdjustmentRequired(vector.x, vector.y) + compensationPreprocessor.entire_z_height_offset;
-        int num = (int) this.MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ProcessCallErrors), (object) this.MyCurrentPrinterObject, "M1012", "G91", PrinterCompatibleString.Format("G0 Z{0} F100", (object) 2), "G90", PrinterCompatibleString.Format("G0 X{0} Y{1} Z{2} F3000", (object) vector.x, (object) vector.y, (object) 5f), PrinterCompatibleString.Format("G0 Z{0} F100", (object) vector.z), "M1011");
+        var num = (int)MyCurrentPrinterObject.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ProcessCallErrors), (object)MyCurrentPrinterObject, "M1012", "G91", PrinterCompatibleString.Format("G0 Z{0} F100", (object) 2), "G90", PrinterCompatibleString.Format("G0 X{0} Y{1} Z{2} F3000", (object) vector.x, (object) vector.y, (object) 5f), PrinterCompatibleString.Format("G0 Z{0} F100", (object) vector.z), "M1011");
       }
     }
 
     private void buttonLock_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
-          return;
-        this.buttonLock.Enabled = false;
-        if (!this.PrinterLocked.Value)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
         {
-          this.MyCurrentPrinterObject.LockStepMode = false;
-          int num1 = (int) this.MyCurrentPrinterObject.AcquireLock(new M3D.Spooling.Client.AsyncCallback(this.OnPrinterLockCallback), (object) this.MyCurrentPrinterObject, new EventLockTimeOutCallBack(this.OnLockTimedOut), 120);
-          if (this.settings.DoNotShowPrinterLockOutWarning)
+          return;
+        }
+
+        buttonLock.Enabled = false;
+        if (!PrinterLocked.Value)
+        {
+          MyCurrentPrinterObject.LockStepMode = false;
+          var num1 = (int)MyCurrentPrinterObject.AcquireLock(new M3D.Spooling.Client.AsyncCallback(OnPrinterLockCallback), (object)MyCurrentPrinterObject, new EventLockTimeOutCallBack(OnLockTimedOut), 120);
+          if (settings.DoNotShowPrinterLockOutWarning)
+          {
             return;
-          PrinterLockWarning printerLockWarning = new PrinterLockWarning();
-          int num2 = (int) printerLockWarning.ShowDialog((IWin32Window) this);
-          this.settings.DoNotShowPrinterLockOutWarning = printerLockWarning.DoNotShowAgain;
+          }
+
+          var printerLockWarning = new PrinterLockWarning();
+          var num2 = (int) printerLockWarning.ShowDialog((IWin32Window) this);
+          settings.DoNotShowPrinterLockOutWarning = printerLockWarning.DoNotShowAgain;
           if (!printerLockWarning.DoNotShowAgain)
+          {
             return;
-          SpoolerSettings.SaveSettings(this.settings, this.shared_shutdown.Value);
+          }
+
+          SpoolerSettings.SaveSettings(settings, shared_shutdown.Value);
         }
         else
         {
-          this.MyCurrentPrinterObject.LockStepMode = true;
-          int num = (int) this.MyCurrentPrinterObject.ReleaseLock(new M3D.Spooling.Client.AsyncCallback(this.OnPrinterLockCallback), (object) this.MyCurrentPrinterObject);
+          MyCurrentPrinterObject.LockStepMode = true;
+          var num = (int)MyCurrentPrinterObject.ReleaseLock(new M3D.Spooling.Client.AsyncCallback(OnPrinterLockCallback), (object)MyCurrentPrinterObject);
         }
       }
     }
 
     private void OnLockTimedOut(IPrinter printer)
     {
-      this.OnLog(" >> The lock on the printer has timed out", printer.Info.MySerialNumber);
-      if (!this.PrinterLocked.Value)
+      OnLog(" >> The lock on the printer has timed out", printer.Info.MySerialNumber);
+      if (!PrinterLocked.Value)
+      {
         return;
-      this.LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
+      }
+
+      LockChanging.Value = MainForm.PrinterLockChanging.YesToUnlocked;
     }
 
     private void buttonSaveEepromData_Click(object sender, EventArgs e)
     {
-      lock (this._myCurrentPrinterObjectSync)
+      lock (_myCurrentPrinterObjectSync)
       {
-        if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+        if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+        {
           return;
-        PrinterInfo info = this.MyCurrentPrinterObject.Info;
+        }
+
+        PrinterInfo info = MyCurrentPrinterObject.Info;
         if (info == null)
+        {
           return;
-        PublicPrinterConnection printerConnection = this.spooler_client.UnsafeFindPrinterConnection(info.serial_number);
+        }
+
+        PublicPrinterConnection printerConnection = spooler_client.UnsafeFindPrinterConnection(info.serial_number);
         if (printerConnection == null)
         {
-          int num1 = (int) MessageBox.Show((IWin32Window) this, "Unable to modify PrinterConnection", "M3D Print Spooler");
+          var num1 = (int) MessageBox.Show((IWin32Window) this, "Unable to modify PrinterConnection", "M3D Print Spooler");
         }
         else
         {
-          SaveFileDialog saveFileDialog = new SaveFileDialog();
-          saveFileDialog.Filter = "EEPROM XML Files (.EEPROM.xml)|*.EEPROM.xml|All Files (*.*)|*.*";
-          saveFileDialog.FilterIndex = 1;
-          saveFileDialog.FileName = info.serial_number.ToString() + ".EEPROM.xml";
+          var saveFileDialog = new SaveFileDialog
+          {
+            Filter = "EEPROM XML Files (.EEPROM.xml)|*.EEPROM.xml|All Files (*.*)|*.*",
+            FilterIndex = 1,
+            FileName = info.serial_number.ToString() + ".EEPROM.xml"
+          };
           if (saveFileDialog.ShowDialog() != DialogResult.OK)
+          {
             return;
+          }
+
           switch (printerConnection.SaveEEPROMDataToXMLFile(saveFileDialog.FileName))
           {
             case CommandResult.Success:
-              int num2 = (int) MessageBox.Show("EEPROM Data Saved to XML file.", "M3D Print Spooler", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+              var num2 = (int) MessageBox.Show("EEPROM Data Saved to XML file.", "M3D Print Spooler", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
               break;
             case CommandResult.Failed_NotInFirmware:
-              int num3 = (int) MessageBox.Show("Printer must be in firmware mode", "M3D Print Spooler", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+              var num3 = (int) MessageBox.Show("Printer must be in firmware mode", "M3D Print Spooler", MessageBoxButtons.OK, MessageBoxIcon.Hand);
               break;
             case CommandResult.Failed_Argument:
-              int num4 = (int) MessageBox.Show("Unable to save xml file.", "M3D Print Spooler", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+              var num4 = (int) MessageBox.Show("Unable to save xml file.", "M3D Print Spooler", MessageBoxButtons.OK, MessageBoxIcon.Hand);
               break;
           }
         }
@@ -1883,81 +2254,94 @@ namespace M3D.Spooler
 
     private void buttonSDRefresh_Click(object sender, EventArgs e)
     {
-      SDCardExtensions sdPluginExtension = this.GetCurrentSDPluginExtension();
+      SDCardExtensions sdPluginExtension = GetCurrentSDPluginExtension();
       if (sdPluginExtension == null || !sdPluginExtension.Available)
+      {
         return;
-      sdPluginExtension.OnReceivedFileList = new EventHandler(this.ReceivedUpdatedSDCardList);
-      int num = (int) sdPluginExtension.RefreshSDCardList((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+      }
+
+      sdPluginExtension.OnReceivedFileList = new EventHandler(ReceivedUpdatedSDCardList);
+      var num = (int) sdPluginExtension.RefreshSDCardList((M3D.Spooling.Client.AsyncCallback) null, (object) null);
     }
 
     private void buttonSDSaveGcode_Click(object sender, EventArgs e)
     {
-      if (this.MyCurrentPrinterObject == null || !this.MyCurrentPrinterObject.Connected)
+      if (MyCurrentPrinterObject == null || !MyCurrentPrinterObject.Connected)
+      {
         return;
-      this.AddJobFromGCodeFile(true, JobParams.Mode.SavingToSDCard);
+      }
+
+      AddJobFromGCodeFile(true, JobParams.Mode.SavingToSDCard);
     }
 
     private void buttonSDPrint_Click(object sender, EventArgs e)
     {
-      if (this.listBoxSDFiles.SelectedIndex < 0)
+      if (listBoxSDFiles.SelectedIndex < 0)
       {
-        int num1 = (int) MessageBox.Show("Please select a file on your 3D printer to print.");
+        var num1 = (int) MessageBox.Show("Please select a file on your 3D printer to print.");
       }
       else
       {
         try
         {
-          string gcodefile = this.listBoxSDFiles.Items[this.listBoxSDFiles.SelectedIndex].ToString();
-          if (this.MyCurrentPrinterObject != null && this.MyCurrentPrinterObject.Connected)
+          var gcodefile = listBoxSDFiles.Items[listBoxSDFiles.SelectedIndex].ToString();
+          if (MyCurrentPrinterObject != null && MyCurrentPrinterObject.Connected)
           {
-            Printer currentPrinterObject = this.MyCurrentPrinterObject;
-            JobParams jobParams = new JobParams(gcodefile, "Spooler Inserted Job", "null", FilamentSpool.TypeEnum.OtherOrUnknown, 0.0f, 0.0f);
-            jobParams.jobMode = JobParams.Mode.FirmwarePrintingFromSDCard;
+            Printer currentPrinterObject = MyCurrentPrinterObject;
+            var jobParams = new JobParams(gcodefile, "Spooler Inserted Job", "null", FilamentSpool.TypeEnum.OtherOrUnknown, 0.0f, 0.0f)
+            {
+              jobMode = JobParams.Mode.FirmwarePrintingFromSDCard
+            };
             jobParams.options.autostart_ignorewarnings = true;
             jobParams.options.dont_use_preprocessors = true;
-            if (this.checkBoxCalibrateBeforeSDPrint.Checked)
+            if (checkBoxCalibrateBeforeSDPrint.Checked)
             {
               jobParams.options.calibrate_before_print = true;
               jobParams.options.calibrate_before_print_z = 0.4f;
-              if (this.MyCurrentPrinterObject.Info.calibration.UsesCalibrationOffset)
-                jobParams.options.calibrate_before_print_z += this.MyCurrentPrinterObject.Info.calibration.CALIBRATION_OFFSET;
+              if (MyCurrentPrinterObject.Info.calibration.UsesCalibrationOffset)
+              {
+                jobParams.options.calibrate_before_print_z += MyCurrentPrinterObject.Info.calibration.CALIBRATION_OFFSET;
+              }
             }
-            FilamentSpool filamentSpool = new FilamentSpool()
+            var filamentSpool = new FilamentSpool()
             {
               filament_type = FilamentSpool.TypeEnum.OtherOrUnknown,
               filament_temperature = 0
             };
             jobParams.preprocessor = (FilamentPreprocessorData) null;
             jobParams.filament_temperature = 0;
-            int num2 = (int) this.MyCurrentPrinterObject.PrintModel((M3D.Spooling.Client.AsyncCallback) null, (object) null, jobParams);
+            var num2 = (int)MyCurrentPrinterObject.PrintModel((M3D.Spooling.Client.AsyncCallback) null, (object) null, jobParams);
           }
           else
           {
-            int num3 = (int) MessageBox.Show("Sorry but the printer has disconnected.");
+            var num3 = (int) MessageBox.Show("Sorry but the printer has disconnected.");
           }
         }
         catch (Exception ex)
         {
-          int num2 = (int) MessageBox.Show("There was an error selecting the file. Please try again.");
+          var num2 = (int) MessageBox.Show("There was an error selecting the file. Please try again.");
         }
       }
     }
 
     private void buttonSDDelete_Click(object sender, EventArgs e)
     {
-      if (this.listBoxSDFiles.SelectedIndex < 0)
+      if (listBoxSDFiles.SelectedIndex < 0)
       {
-        int num1 = (int) MessageBox.Show("Please select a file on your 3D printer to print.");
+        var num1 = (int) MessageBox.Show("Please select a file on your 3D printer to print.");
       }
       else
       {
         try
         {
-          string filename = this.listBoxSDFiles.Items[this.listBoxSDFiles.SelectedIndex].ToString();
-          SDCardExtensions sdPluginExtension = this.GetCurrentSDPluginExtension();
+          var filename = listBoxSDFiles.Items[listBoxSDFiles.SelectedIndex].ToString();
+          SDCardExtensions sdPluginExtension = GetCurrentSDPluginExtension();
           if (sdPluginExtension == null || !sdPluginExtension.Available)
+          {
             return;
-          int num2 = (int) sdPluginExtension.DeleteFileFromSDCard(new M3D.Spooling.Client.AsyncCallback(this.RefreshAfterCommand), (object) sdPluginExtension, filename);
+          }
+
+          var num2 = (int) sdPluginExtension.DeleteFileFromSDCard(new M3D.Spooling.Client.AsyncCallback(RefreshAfterCommand), (object) sdPluginExtension, filename);
         }
         catch (Exception ex)
         {
@@ -1968,820 +2352,841 @@ namespace M3D.Spooler
     private void RefreshAfterCommand(IAsyncCallResult ar)
     {
       if (ar.CallResult != CommandResult.Success)
+      {
         return;
-      this.buttonSDRefresh_Click((object) null, (EventArgs) null);
+      }
+
+      buttonSDRefresh_Click((object) null, (EventArgs) null);
     }
 
     private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      int num = (int) new About(this.spooler_client.ConnectedSpoolerInfo).ShowDialog((IWin32Window) this);
+      var num = (int) new About(spooler_client.ConnectedSpoolerInfo).ShowDialog((IWin32Window) this);
     }
 
     private void AdvancedOptionsAtStartup(object sender, EventArgs e)
     {
-      bool flag = !this.showAdvancedOptionsAtStartupToolStripMenuItem.Checked;
-      this.showAdvancedOptionsAtStartupToolStripMenuItem.Checked = flag;
-      this.settings.StartAdvanced = flag;
-      SpoolerSettings.SaveSettings(this.settings, this.shared_shutdown.Value);
+      var flag = !showAdvancedOptionsAtStartupToolStripMenuItem.Checked;
+      showAdvancedOptionsAtStartupToolStripMenuItem.Checked = flag;
+      settings.StartAdvanced = flag;
+      SpoolerSettings.SaveSettings(settings, shared_shutdown.Value);
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (this.tabPageSDCard == this.tabControl1.SelectedTab)
+      if (tabPageSDCard == tabControl1.SelectedTab)
       {
-        this.m_bSDTabSelected = true;
-        Printer currentPrinterObject = this.MyCurrentPrinterObject;
+        m_bSDTabSelected = true;
+        Printer currentPrinterObject = MyCurrentPrinterObject;
         if (currentPrinterObject == null)
+        {
           return;
-        (currentPrinterObject.GetPrinterPlugin(SDCardExtensions.ID) as SDCardExtensions).OnReceivedFileList = new EventHandler(this.ReceivedUpdatedSDCardList);
-        int num = (int) currentPrinterObject.SendManualGCode((M3D.Spooling.Client.AsyncCallback) null, (object) null, "M20");
+        } (currentPrinterObject.GetPrinterPlugin(SDCardExtensions.ID) as SDCardExtensions).OnReceivedFileList = new EventHandler(ReceivedUpdatedSDCardList);
+        var num = (int) currentPrinterObject.SendManualGCode((M3D.Spooling.Client.AsyncCallback) null, (object) null, "M20");
       }
       else
-        this.m_bSDTabSelected = false;
+      {
+        m_bSDTabSelected = false;
+      }
     }
 
     private void ResetSDFileList()
     {
-      this.listBoxSDFiles.Items.Clear();
+      listBoxSDFiles.Items.Clear();
     }
 
     private void ReceivedUpdatedSDCardList(object sender, EventArgs args)
     {
-      SDCardExtensions sdplugin = this.GetCurrentSDPluginExtension();
+      SDCardExtensions sdplugin = GetCurrentSDPluginExtension();
       if (sdplugin == null || sdplugin != sender as SDCardExtensions)
-        return;
-      this.BeginInvoke((Action) (() =>
       {
-        this.listBoxSDFiles.Items.Clear();
-        foreach (object sdCardFile in sdplugin.GetSDCardFileList())
-          this.listBoxSDFiles.Items.Add(sdCardFile);
+        return;
+      }
+
+      BeginInvoke((Action) (() =>
+      {
+        listBoxSDFiles.Items.Clear();
+        foreach (var sdCardFile in sdplugin.GetSDCardFileList())
+        {
+          listBoxSDFiles.Items.Add(sdCardFile);
+        }
       }));
     }
 
     private SDCardExtensions GetCurrentSDPluginExtension()
     {
-      Printer currentPrinterObject = this.MyCurrentPrinterObject;
+      Printer currentPrinterObject = MyCurrentPrinterObject;
       if (currentPrinterObject != null)
+      {
         return currentPrinterObject.GetPrinterPlugin(SDCardExtensions.ID) as SDCardExtensions;
+      }
+
       return (SDCardExtensions) null;
     }
 
     private void showAdvancedStatisticsToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      bool flag = !this.showAdvancedStatisticsToolStripMenuItem.Checked;
-      this.showAdvancedStatisticsToolStripMenuItem.Checked = flag;
+      var flag = !showAdvancedStatisticsToolStripMenuItem.Checked;
+      showAdvancedStatisticsToolStripMenuItem.Checked = flag;
       if (flag)
-        this.advancedStatisticsDialog.Show((IWin32Window) this);
+      {
+        advancedStatisticsDialog.Show((IWin32Window) this);
+      }
       else
-        this.advancedStatisticsDialog.Hide();
+      {
+        advancedStatisticsDialog.Hide();
+      }
     }
 
     protected override void Dispose(bool bIsDisposing)
     {
-      if (bIsDisposing && this.components != null)
-        this.components.Dispose();
+      if (bIsDisposing && components != null)
+      {
+        components.Dispose();
+      }
+
       base.Dispose(bIsDisposing);
     }
 
     private void InitializeComponent()
     {
-      this.components = (IContainer) new Container();
-      ComponentResourceManager componentResourceManager = new ComponentResourceManager(typeof (MainForm));
-      this.timer1 = new Timer(this.components);
-      this.menuStrip1 = new MenuStrip();
-      this.viewToolStripMenuItem = new ToolStripMenuItem();
-      this.showAdvancedToolStripMenuItem = new ToolStripMenuItem();
-      this.showAdvancedStatisticsToolStripMenuItem = new ToolStripMenuItem();
-      this.optionsToolStripMenuItem = new ToolStripMenuItem();
-      this.showAdvancedOptionsAtStartupToolStripMenuItem = new ToolStripMenuItem();
-      this.helpToolStripMenuItem = new ToolStripMenuItem();
-      this.aboutToolStripMenuItem = new ToolStripMenuItem();
-      this.groupBoxPrinterList = new GroupBox();
-      this.buttonStandAlone = new Button();
-      this.checkBoxAutoCheckFirmware = new CheckBox();
-      this.listViewPrinterInfo = new ListView();
-      this.columnSerialNumber = new ColumnHeader();
-      this.columnType = new ColumnHeader();
-      this.columnStatus = new ColumnHeader();
-      this.columnTemp = new ColumnHeader();
-      this.columnBedTemp = new ColumnHeader();
-      this.columnZValid = new ColumnHeader();
-      this.columnJobStatus = new ColumnHeader();
-      this.columnFile = new ColumnHeader();
-      this.columnPerComplete = new ColumnHeader();
-      this.columnUser = new ColumnHeader();
-      this.labelSpoolerVersion = new Label();
-      this.groupBoxPrinterControls = new GroupBox();
-      this.logWaitsCheckBox = new CheckBox();
-      this.buttonAbortPrint = new Button();
-      this.buttonResumePrint = new Button();
-      this.buttonPausePrint = new Button();
-      this.label1 = new Label();
-      this.selectedPrinterComboBox = new ComboBox();
-      this.buttonLock = new Button();
-      this.groupBoxPrinting = new GroupBox();
-      this.groupBox2 = new GroupBox();
-      this.buttonSetTemp = new Button();
-      this.textBoxTempEdit = new TextBox();
-      this.label8 = new Label();
-      this.label7 = new Label();
-      this.groupBox1 = new GroupBox();
-      this.textBoxMeanTemperature = new Label();
-      this.groupBoxControls = new GroupBox();
-      this.groupBoxBootloaderOptions = new GroupBox();
-      this.label2 = new Label();
-      this.buttonQuitBootloader = new Button();
-      this.button3 = new Button();
-      this.groupBoxFirmwareControls = new GroupBox();
-      this.tabControl1 = new TabControl();
-      this.tabPageBasicOptions = new TabPage();
-      this.buttonTGHTemp = new Button();
-      this.buttonHeaterOff = new Button();
-      this.buttonFanOff = new Button();
-      this.buttonFanOn = new Button();
-      this.textBoxEVal = new TextBox();
-      this.buttonPLATemp = new Button();
-      this.buttonDownE = new Button();
-      this.buttonUpE = new Button();
-      this.buttonABSTemp = new Button();
-      this.buttonAddJob = new Button();
-      this.buttonMotorsOff = new Button();
-      this.buttonMotorsOn = new Button();
-      this.textBoxYVal = new TextBox();
-      this.textBoxXVal = new TextBox();
-      this.buttonPrintToFile = new Button();
-      this.textBoxZVal = new TextBox();
-      this.button2 = new Button();
-      this.buttonUpX = new Button();
-      this.button1 = new Button();
-      this.buttonDownX = new Button();
-      this.buttonFilamentInfo = new Button();
-      this.buttonDownZ = new Button();
-      this.buttonDownY = new Button();
-      this.buttonUpZ = new Button();
-      this.buttonUpY = new Button();
-      this.tabPageDiagnostics = new TabPage();
-      this.buttonLoadEepromData = new Button();
-      this.buttonSaveEepromData = new Button();
-      this.buttonUpdateFirmware = new Button();
-      this.buttonPreprocess = new Button();
-      this.groupBox4 = new GroupBox();
-      this.buttonBedPointTest = new Button();
-      this.comboBoxBedTestPoint = new ComboBox();
-      this.buttonBacklashPrint = new Button();
-      this.buttonGetGCode = new Button();
-      this.buttonReCenter = new Button();
-      this.buttonHome = new Button();
-      this.buttonSpeedTest = new Button();
-      this.buttonXSpeedTest = new Button();
-      this.buttonYSkipTestBack = new Button();
-      this.buttonXSkipTestRight = new Button();
-      this.buttonYSkipTest = new Button();
-      this.buttonXSkipTest = new Button();
-      this.tabPageSDCard = new TabPage();
-      this.checkBoxCalibrateBeforeSDPrint = new CheckBox();
-      this.buttonSDDeleteFile = new Button();
-      this.buttonSDPrint = new Button();
-      this.buttonSDSaveGcode = new Button();
-      this.buttonSDRefresh = new Button();
-      this.listBoxSDFiles = new ListBox();
-      this.label6 = new Label();
-      this.tabPageHeatedBedControl = new TabPage();
-      this.buttonTurnOfHeatedbed = new Button();
-      this.buttonBedHeatToABR = new Button();
-      this.buttonBedHeatToABS = new Button();
-      this.buttonBedHeatToPLA = new Button();
-      this.buttonRepeatLast = new Button();
-      this.label3 = new Label();
-      this.textBoxManualGCode = new TextBox();
-      this.buttonSendGCode = new Button();
-      this.buttonClearLog = new Button();
-      this.checkBoxLogToScreen = new CheckBox();
-      this.richTextBoxLoggedItems = new RichTextBox();
-      this.buttonEmergencyStop = new Button();
-      this.label5 = new Label();
-      this.listBoxManualHistory = new ListBox();
-      this.label4 = new Label();
-      this.checkBoxAutoScroll = new CheckBox();
-      this.groupBox3 = new GroupBox();
-      this.menuStrip1.SuspendLayout();
-      this.groupBoxPrinterList.SuspendLayout();
-      this.groupBoxPrinterControls.SuspendLayout();
-      this.groupBoxPrinting.SuspendLayout();
-      this.groupBox2.SuspendLayout();
-      this.groupBox1.SuspendLayout();
-      this.groupBoxControls.SuspendLayout();
-      this.groupBoxBootloaderOptions.SuspendLayout();
-      this.groupBoxFirmwareControls.SuspendLayout();
-      this.tabControl1.SuspendLayout();
-      this.tabPageBasicOptions.SuspendLayout();
-      this.tabPageDiagnostics.SuspendLayout();
-      this.groupBox4.SuspendLayout();
-      this.tabPageSDCard.SuspendLayout();
-      this.tabPageHeatedBedControl.SuspendLayout();
-      this.groupBox3.SuspendLayout();
-      this.SuspendLayout();
-      this.timer1.Interval = 300;
-      this.timer1.Tick += new EventHandler(this.DoUpdates);
-      this.menuStrip1.Items.AddRange(new ToolStripItem[3]
+      components = (IContainer) new Container();
+      var componentResourceManager = new ComponentResourceManager(typeof (MainForm));
+      timer1 = new Timer(components);
+      menuStrip1 = new MenuStrip();
+      viewToolStripMenuItem = new ToolStripMenuItem();
+      showAdvancedToolStripMenuItem = new ToolStripMenuItem();
+      showAdvancedStatisticsToolStripMenuItem = new ToolStripMenuItem();
+      optionsToolStripMenuItem = new ToolStripMenuItem();
+      showAdvancedOptionsAtStartupToolStripMenuItem = new ToolStripMenuItem();
+      helpToolStripMenuItem = new ToolStripMenuItem();
+      aboutToolStripMenuItem = new ToolStripMenuItem();
+      groupBoxPrinterList = new GroupBox();
+      buttonStandAlone = new Button();
+      checkBoxAutoCheckFirmware = new CheckBox();
+      listViewPrinterInfo = new ListView();
+      columnSerialNumber = new ColumnHeader();
+      columnType = new ColumnHeader();
+      columnStatus = new ColumnHeader();
+      columnTemp = new ColumnHeader();
+      columnBedTemp = new ColumnHeader();
+      columnZValid = new ColumnHeader();
+      columnJobStatus = new ColumnHeader();
+      columnFile = new ColumnHeader();
+      columnPerComplete = new ColumnHeader();
+      columnUser = new ColumnHeader();
+      labelSpoolerVersion = new Label();
+      groupBoxPrinterControls = new GroupBox();
+      logWaitsCheckBox = new CheckBox();
+      buttonAbortPrint = new Button();
+      buttonResumePrint = new Button();
+      buttonPausePrint = new Button();
+      label1 = new Label();
+      selectedPrinterComboBox = new ComboBox();
+      buttonLock = new Button();
+      groupBoxPrinting = new GroupBox();
+      groupBox2 = new GroupBox();
+      buttonSetTemp = new Button();
+      textBoxTempEdit = new TextBox();
+      label8 = new Label();
+      label7 = new Label();
+      groupBox1 = new GroupBox();
+      textBoxMeanTemperature = new Label();
+      groupBoxControls = new GroupBox();
+      groupBoxBootloaderOptions = new GroupBox();
+      label2 = new Label();
+      buttonQuitBootloader = new Button();
+      button3 = new Button();
+      groupBoxFirmwareControls = new GroupBox();
+      tabControl1 = new TabControl();
+      tabPageBasicOptions = new TabPage();
+      buttonTGHTemp = new Button();
+      buttonHeaterOff = new Button();
+      buttonFanOff = new Button();
+      buttonFanOn = new Button();
+      textBoxEVal = new TextBox();
+      buttonPLATemp = new Button();
+      buttonDownE = new Button();
+      buttonUpE = new Button();
+      buttonABSTemp = new Button();
+      buttonAddJob = new Button();
+      buttonMotorsOff = new Button();
+      buttonMotorsOn = new Button();
+      textBoxYVal = new TextBox();
+      textBoxXVal = new TextBox();
+      buttonPrintToFile = new Button();
+      textBoxZVal = new TextBox();
+      button2 = new Button();
+      buttonUpX = new Button();
+      button1 = new Button();
+      buttonDownX = new Button();
+      buttonFilamentInfo = new Button();
+      buttonDownZ = new Button();
+      buttonDownY = new Button();
+      buttonUpZ = new Button();
+      buttonUpY = new Button();
+      tabPageDiagnostics = new TabPage();
+      buttonLoadEepromData = new Button();
+      buttonSaveEepromData = new Button();
+      buttonUpdateFirmware = new Button();
+      buttonPreprocess = new Button();
+      groupBox4 = new GroupBox();
+      buttonBedPointTest = new Button();
+      comboBoxBedTestPoint = new ComboBox();
+      buttonBacklashPrint = new Button();
+      buttonGetGCode = new Button();
+      buttonReCenter = new Button();
+      buttonHome = new Button();
+      buttonSpeedTest = new Button();
+      buttonXSpeedTest = new Button();
+      buttonYSkipTestBack = new Button();
+      buttonXSkipTestRight = new Button();
+      buttonYSkipTest = new Button();
+      buttonXSkipTest = new Button();
+      tabPageSDCard = new TabPage();
+      checkBoxCalibrateBeforeSDPrint = new CheckBox();
+      buttonSDDeleteFile = new Button();
+      buttonSDPrint = new Button();
+      buttonSDSaveGcode = new Button();
+      buttonSDRefresh = new Button();
+      listBoxSDFiles = new ListBox();
+      label6 = new Label();
+      tabPageHeatedBedControl = new TabPage();
+      buttonTurnOfHeatedbed = new Button();
+      buttonBedHeatToABR = new Button();
+      buttonBedHeatToABS = new Button();
+      buttonBedHeatToPLA = new Button();
+      buttonRepeatLast = new Button();
+      label3 = new Label();
+      textBoxManualGCode = new TextBox();
+      buttonSendGCode = new Button();
+      buttonClearLog = new Button();
+      checkBoxLogToScreen = new CheckBox();
+      richTextBoxLoggedItems = new RichTextBox();
+      buttonEmergencyStop = new Button();
+      label5 = new Label();
+      listBoxManualHistory = new ListBox();
+      label4 = new Label();
+      checkBoxAutoScroll = new CheckBox();
+      groupBox3 = new GroupBox();
+      menuStrip1.SuspendLayout();
+      groupBoxPrinterList.SuspendLayout();
+      groupBoxPrinterControls.SuspendLayout();
+      groupBoxPrinting.SuspendLayout();
+      groupBox2.SuspendLayout();
+      groupBox1.SuspendLayout();
+      groupBoxControls.SuspendLayout();
+      groupBoxBootloaderOptions.SuspendLayout();
+      groupBoxFirmwareControls.SuspendLayout();
+      tabControl1.SuspendLayout();
+      tabPageBasicOptions.SuspendLayout();
+      tabPageDiagnostics.SuspendLayout();
+      groupBox4.SuspendLayout();
+      tabPageSDCard.SuspendLayout();
+      tabPageHeatedBedControl.SuspendLayout();
+      groupBox3.SuspendLayout();
+      SuspendLayout();
+      timer1.Interval = 300;
+      timer1.Tick += new EventHandler(DoUpdates);
+      menuStrip1.Items.AddRange(new ToolStripItem[3]
       {
-        (ToolStripItem) this.viewToolStripMenuItem,
-        (ToolStripItem) this.optionsToolStripMenuItem,
-        (ToolStripItem) this.helpToolStripMenuItem
+        (ToolStripItem) viewToolStripMenuItem,
+        (ToolStripItem) optionsToolStripMenuItem,
+        (ToolStripItem) helpToolStripMenuItem
       });
-      this.menuStrip1.Location = new Point(0, 0);
-      this.menuStrip1.Name = "menuStrip1";
-      this.menuStrip1.Size = new Size(1040, 24);
-      this.menuStrip1.TabIndex = 49;
-      this.menuStrip1.Text = "menuStrip1";
-      this.viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[2]
+      menuStrip1.Location = new Point(0, 0);
+      menuStrip1.Name = "menuStrip1";
+      menuStrip1.Size = new Size(1040, 24);
+      menuStrip1.TabIndex = 49;
+      menuStrip1.Text = "menuStrip1";
+      viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[2]
       {
-        (ToolStripItem) this.showAdvancedToolStripMenuItem,
-        (ToolStripItem) this.showAdvancedStatisticsToolStripMenuItem
+        (ToolStripItem) showAdvancedToolStripMenuItem,
+        (ToolStripItem) showAdvancedStatisticsToolStripMenuItem
       });
-      this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-      this.viewToolStripMenuItem.Size = new Size(45, 20);
-      this.viewToolStripMenuItem.Text = "View";
-      this.showAdvancedToolStripMenuItem.Name = "showAdvancedToolStripMenuItem";
-      this.showAdvancedToolStripMenuItem.Size = new Size(212, 22);
-      this.showAdvancedToolStripMenuItem.Text = "Show Advanced Options";
-      this.showAdvancedToolStripMenuItem.Click += new EventHandler(this.showAdvancedStripMenuItem_Click);
-      this.showAdvancedStatisticsToolStripMenuItem.Name = "showAdvancedStatisticsToolStripMenuItem";
-      this.showAdvancedStatisticsToolStripMenuItem.Size = new Size(212, 22);
-      this.showAdvancedStatisticsToolStripMenuItem.Text = "Show Advanced Statistics";
-      this.showAdvancedStatisticsToolStripMenuItem.Click += new EventHandler(this.showAdvancedStatisticsToolStripMenuItem_Click);
-      this.optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[1]
+      viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+      viewToolStripMenuItem.Size = new Size(45, 20);
+      viewToolStripMenuItem.Text = "View";
+      showAdvancedToolStripMenuItem.Name = "showAdvancedToolStripMenuItem";
+      showAdvancedToolStripMenuItem.Size = new Size(212, 22);
+      showAdvancedToolStripMenuItem.Text = "Show Advanced Options";
+      showAdvancedToolStripMenuItem.Click += new EventHandler(showAdvancedStripMenuItem_Click);
+      showAdvancedStatisticsToolStripMenuItem.Name = "showAdvancedStatisticsToolStripMenuItem";
+      showAdvancedStatisticsToolStripMenuItem.Size = new Size(212, 22);
+      showAdvancedStatisticsToolStripMenuItem.Text = "Show Advanced Statistics";
+      showAdvancedStatisticsToolStripMenuItem.Click += new EventHandler(showAdvancedStatisticsToolStripMenuItem_Click);
+      optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[1]
       {
-        (ToolStripItem) this.showAdvancedOptionsAtStartupToolStripMenuItem
+        (ToolStripItem) showAdvancedOptionsAtStartupToolStripMenuItem
       });
-      this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-      this.optionsToolStripMenuItem.Size = new Size(61, 20);
-      this.optionsToolStripMenuItem.Text = "Options";
-      this.showAdvancedOptionsAtStartupToolStripMenuItem.Name = "showAdvancedOptionsAtStartupToolStripMenuItem";
-      this.showAdvancedOptionsAtStartupToolStripMenuItem.Size = new Size(264, 22);
-      this.showAdvancedOptionsAtStartupToolStripMenuItem.Text = "Show Advanced Options at Startup";
-      this.showAdvancedOptionsAtStartupToolStripMenuItem.Click += new EventHandler(this.AdvancedOptionsAtStartup);
-      this.helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[1]
+      optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+      optionsToolStripMenuItem.Size = new Size(61, 20);
+      optionsToolStripMenuItem.Text = "Options";
+      showAdvancedOptionsAtStartupToolStripMenuItem.Name = "showAdvancedOptionsAtStartupToolStripMenuItem";
+      showAdvancedOptionsAtStartupToolStripMenuItem.Size = new Size(264, 22);
+      showAdvancedOptionsAtStartupToolStripMenuItem.Text = "Show Advanced Options at Startup";
+      showAdvancedOptionsAtStartupToolStripMenuItem.Click += new EventHandler(AdvancedOptionsAtStartup);
+      helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[1]
       {
-        (ToolStripItem) this.aboutToolStripMenuItem
+        (ToolStripItem) aboutToolStripMenuItem
       });
-      this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-      this.helpToolStripMenuItem.Size = new Size(44, 20);
-      this.helpToolStripMenuItem.Text = "Help";
-      this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-      this.aboutToolStripMenuItem.Size = new Size(107, 22);
-      this.aboutToolStripMenuItem.Text = "About";
-      this.aboutToolStripMenuItem.Click += new EventHandler(this.aboutToolStripMenuItem_Click);
-      this.groupBoxPrinterList.Controls.Add((Control) this.buttonStandAlone);
-      this.groupBoxPrinterList.Controls.Add((Control) this.checkBoxAutoCheckFirmware);
-      this.groupBoxPrinterList.Controls.Add((Control) this.listViewPrinterInfo);
-      this.groupBoxPrinterList.Controls.Add((Control) this.labelSpoolerVersion);
-      this.groupBoxPrinterList.Location = new Point(1, 420);
-      this.groupBoxPrinterList.Name = "groupBoxPrinterList";
-      this.groupBoxPrinterList.Size = new Size(1039, 124);
-      this.groupBoxPrinterList.TabIndex = 50;
-      this.groupBoxPrinterList.TabStop = false;
-      this.buttonStandAlone.Location = new Point(208, 98);
-      this.buttonStandAlone.Name = "buttonStandAlone";
-      this.buttonStandAlone.Size = new Size(153, 18);
-      this.buttonStandAlone.TabIndex = 51;
-      this.buttonStandAlone.Text = "Make Stand-alone";
-      this.buttonStandAlone.UseVisualStyleBackColor = true;
-      this.buttonStandAlone.Click += new EventHandler(this.buttonStandAlone_Click);
-      this.checkBoxAutoCheckFirmware.AutoSize = true;
-      this.checkBoxAutoCheckFirmware.Checked = true;
-      this.checkBoxAutoCheckFirmware.CheckState = CheckState.Checked;
-      this.checkBoxAutoCheckFirmware.Location = new Point(15, 101);
-      this.checkBoxAutoCheckFirmware.Name = "checkBoxAutoCheckFirmware";
-      this.checkBoxAutoCheckFirmware.Size = new Size(146, 16);
-      this.checkBoxAutoCheckFirmware.TabIndex = 50;
-      this.checkBoxAutoCheckFirmware.Text = "Auto-check Firmware";
-      this.checkBoxAutoCheckFirmware.UseVisualStyleBackColor = true;
-      this.checkBoxAutoCheckFirmware.CheckedChanged += new EventHandler(this.OnAutoCheckFirmwareChanged);
-      this.listViewPrinterInfo.Activation = ItemActivation.OneClick;
-      this.listViewPrinterInfo.Columns.AddRange(new ColumnHeader[10]
+      helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+      helpToolStripMenuItem.Size = new Size(44, 20);
+      helpToolStripMenuItem.Text = "Help";
+      aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+      aboutToolStripMenuItem.Size = new Size(107, 22);
+      aboutToolStripMenuItem.Text = "About";
+      aboutToolStripMenuItem.Click += new EventHandler(aboutToolStripMenuItem_Click);
+      groupBoxPrinterList.Controls.Add((Control)buttonStandAlone);
+      groupBoxPrinterList.Controls.Add((Control)checkBoxAutoCheckFirmware);
+      groupBoxPrinterList.Controls.Add((Control)listViewPrinterInfo);
+      groupBoxPrinterList.Controls.Add((Control)labelSpoolerVersion);
+      groupBoxPrinterList.Location = new Point(1, 420);
+      groupBoxPrinterList.Name = "groupBoxPrinterList";
+      groupBoxPrinterList.Size = new Size(1039, 124);
+      groupBoxPrinterList.TabIndex = 50;
+      groupBoxPrinterList.TabStop = false;
+      buttonStandAlone.Location = new Point(208, 98);
+      buttonStandAlone.Name = "buttonStandAlone";
+      buttonStandAlone.Size = new Size(153, 18);
+      buttonStandAlone.TabIndex = 51;
+      buttonStandAlone.Text = "Make Stand-alone";
+      buttonStandAlone.UseVisualStyleBackColor = true;
+      buttonStandAlone.Click += new EventHandler(buttonStandAlone_Click);
+      checkBoxAutoCheckFirmware.AutoSize = true;
+      checkBoxAutoCheckFirmware.Checked = true;
+      checkBoxAutoCheckFirmware.CheckState = CheckState.Checked;
+      checkBoxAutoCheckFirmware.Location = new Point(15, 101);
+      checkBoxAutoCheckFirmware.Name = "checkBoxAutoCheckFirmware";
+      checkBoxAutoCheckFirmware.Size = new Size(146, 16);
+      checkBoxAutoCheckFirmware.TabIndex = 50;
+      checkBoxAutoCheckFirmware.Text = "Auto-check Firmware";
+      checkBoxAutoCheckFirmware.UseVisualStyleBackColor = true;
+      checkBoxAutoCheckFirmware.CheckedChanged += new EventHandler(OnAutoCheckFirmwareChanged);
+      listViewPrinterInfo.Activation = ItemActivation.OneClick;
+      listViewPrinterInfo.Columns.AddRange(new ColumnHeader[10]
       {
-        this.columnSerialNumber,
-        this.columnType,
-        this.columnStatus,
-        this.columnTemp,
-        this.columnBedTemp,
-        this.columnZValid,
-        this.columnJobStatus,
-        this.columnFile,
-        this.columnPerComplete,
-        this.columnUser
+        columnSerialNumber,
+        columnType,
+        columnStatus,
+        columnTemp,
+        columnBedTemp,
+        columnZValid,
+        columnJobStatus,
+        columnFile,
+        columnPerComplete,
+        columnUser
       });
-      this.listViewPrinterInfo.FullRowSelect = true;
-      this.listViewPrinterInfo.HideSelection = false;
-      this.listViewPrinterInfo.LabelWrap = false;
-      this.listViewPrinterInfo.Location = new Point(9, 12);
-      this.listViewPrinterInfo.MultiSelect = false;
-      this.listViewPrinterInfo.Name = "listViewPrinterInfo";
-      this.listViewPrinterInfo.Size = new Size(1018, 80);
-      this.listViewPrinterInfo.TabIndex = 49;
-      this.listViewPrinterInfo.UseCompatibleStateImageBehavior = false;
-      this.listViewPrinterInfo.View = View.Details;
-      this.listViewPrinterInfo.DoubleClick += new EventHandler(this.listViewPrinterInfo_DoubleClick);
-      this.columnSerialNumber.Text = "Serial Number";
-      this.columnSerialNumber.Width = 149;
-      this.columnType.Text = "Type";
-      this.columnStatus.Text = "Status";
-      this.columnStatus.Width = 213;
-      this.columnTemp.Text = "Temp. (C)";
-      this.columnTemp.Width = 72;
-      this.columnBedTemp.Text = "Bed Temp. (C)";
-      this.columnBedTemp.Width = 99;
-      this.columnZValid.Text = "Z Valid";
-      this.columnZValid.Width = 53;
-      this.columnJobStatus.Text = "Job Status";
-      this.columnJobStatus.Width = 81;
-      this.columnFile.Text = "File";
-      this.columnFile.Width = 109;
-      this.columnPerComplete.Text = "% Done";
-      this.columnPerComplete.Width = 58;
-      this.columnUser.Text = "User";
-      this.columnUser.Width = 117;
-      this.labelSpoolerVersion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.labelSpoolerVersion.AutoSize = true;
-      this.labelSpoolerVersion.Location = new Point(731, 96);
-      this.labelSpoolerVersion.Name = "labelSpoolerVersion";
-      this.labelSpoolerVersion.Size = new Size(181, 12);
-      this.labelSpoolerVersion.TabIndex = 53;
-      this.labelSpoolerVersion.Text = "Spooler Version: ????-??-??-??";
-      this.groupBoxPrinterControls.Controls.Add((Control) this.logWaitsCheckBox);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.buttonAbortPrint);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.buttonResumePrint);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.buttonPausePrint);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.label1);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.selectedPrinterComboBox);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.buttonLock);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.groupBoxPrinting);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.groupBoxControls);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.buttonClearLog);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.checkBoxLogToScreen);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.richTextBoxLoggedItems);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.buttonEmergencyStop);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.label5);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.listBoxManualHistory);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.label4);
-      this.groupBoxPrinterControls.Controls.Add((Control) this.checkBoxAutoScroll);
-      this.groupBoxPrinterControls.Location = new Point(10, 25);
-      this.groupBoxPrinterControls.Name = "groupBoxPrinterControls";
-      this.groupBoxPrinterControls.Size = new Size(1018, 393);
-      this.groupBoxPrinterControls.TabIndex = 51;
-      this.groupBoxPrinterControls.TabStop = false;
-      this.groupBoxPrinterControls.Text = "00-00-00-00-00-000-000";
-      this.logWaitsCheckBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.logWaitsCheckBox.AutoSize = true;
-      this.logWaitsCheckBox.Location = new Point(129, 278);
-      this.logWaitsCheckBox.Name = "logWaitsCheckBox";
-      this.logWaitsCheckBox.Size = new Size(79, 16);
-      this.logWaitsCheckBox.TabIndex = 51;
-      this.logWaitsCheckBox.Text = "Log Waits";
-      this.logWaitsCheckBox.UseVisualStyleBackColor = true;
-      this.buttonAbortPrint.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.buttonAbortPrint.BackColor = SystemColors.Control;
-      this.buttonAbortPrint.ForeColor = System.Drawing.Color.Black;
-      this.buttonAbortPrint.Location = new Point(6, 85);
-      this.buttonAbortPrint.Name = "buttonAbortPrint";
-      this.buttonAbortPrint.Size = new Size(184, 30);
-      this.buttonAbortPrint.TabIndex = 50;
-      this.buttonAbortPrint.Text = "Abort Print";
-      this.buttonAbortPrint.UseVisualStyleBackColor = false;
-      this.buttonAbortPrint.Click += new EventHandler(this.buttonAbortPrint_Click);
-      this.buttonResumePrint.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.buttonResumePrint.BackColor = SystemColors.Control;
-      this.buttonResumePrint.ForeColor = SystemColors.ControlText;
-      this.buttonResumePrint.Location = new Point(199, 85);
-      this.buttonResumePrint.Name = "buttonResumePrint";
-      this.buttonResumePrint.Size = new Size(184, 30);
-      this.buttonResumePrint.TabIndex = 49;
-      this.buttonResumePrint.Text = "Resume";
-      this.buttonResumePrint.UseVisualStyleBackColor = false;
-      this.buttonResumePrint.Visible = false;
-      this.buttonResumePrint.Click += new EventHandler(this.buttonResumePrint_Click);
-      this.buttonPausePrint.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.buttonPausePrint.BackColor = SystemColors.Control;
-      this.buttonPausePrint.ForeColor = SystemColors.ControlText;
-      this.buttonPausePrint.Location = new Point(199, 85);
-      this.buttonPausePrint.Name = "buttonPausePrint";
-      this.buttonPausePrint.Size = new Size(184, 30);
-      this.buttonPausePrint.TabIndex = 48;
-      this.buttonPausePrint.Text = "Pause";
-      this.buttonPausePrint.UseVisualStyleBackColor = false;
-      this.buttonPausePrint.Click += new EventHandler(this.buttonPausePrint_Click);
-      this.label1.AutoSize = true;
-      this.label1.Location = new Point(10, 21);
-      this.label1.Name = "label1";
-      this.label1.Size = new Size(90, 12);
-      this.label1.TabIndex = 47;
-      this.label1.Text = "Current Printer:";
-      this.selectedPrinterComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.selectedPrinterComboBox.FormattingEnabled = true;
-      this.selectedPrinterComboBox.Location = new Point(103, 18);
-      this.selectedPrinterComboBox.Name = "selectedPrinterComboBox";
-      this.selectedPrinterComboBox.Size = new Size(280, 20);
-      this.selectedPrinterComboBox.TabIndex = 46;
-      this.selectedPrinterComboBox.SelectedIndexChanged += new EventHandler(this.OnSelectedPrintComboBoxChanged);
-      this.buttonLock.Location = new Point(8, 49);
-      this.buttonLock.Name = "buttonLock";
-      this.buttonLock.Size = new Size(184, 30);
-      this.buttonLock.TabIndex = 45;
-      this.buttonLock.Text = "Control This Printer";
-      this.buttonLock.UseVisualStyleBackColor = true;
-      this.buttonLock.Click += new EventHandler(this.buttonLock_Click);
-      this.groupBoxPrinting.Controls.Add((Control) this.groupBox3);
-      this.groupBoxPrinting.Location = new Point(389, 11);
-      this.groupBoxPrinting.Name = "groupBoxPrinting";
-      this.groupBoxPrinting.Size = new Size(619, 382);
-      this.groupBoxPrinting.TabIndex = 52;
-      this.groupBoxPrinting.TabStop = false;
-      this.groupBoxPrinting.Text = "Now Printing";
-      this.groupBoxPrinting.Visible = false;
-      this.groupBox2.Controls.Add((Control) this.buttonSetTemp);
-      this.groupBox2.Controls.Add((Control) this.textBoxTempEdit);
-      this.groupBox2.Controls.Add((Control) this.label8);
-      this.groupBox2.Location = new Point(4, 90);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new Size(435, 109);
-      this.groupBox2.TabIndex = 3;
-      this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "Tempeature Adjustments";
-      this.buttonSetTemp.Location = new Point(158, 71);
-      this.buttonSetTemp.Name = "buttonSetTemp";
-      this.buttonSetTemp.Size = new Size(124, 24);
-      this.buttonSetTemp.TabIndex = 4;
-      this.buttonSetTemp.Text = "Set Temperature";
-      this.buttonSetTemp.UseVisualStyleBackColor = true;
-      this.buttonSetTemp.Click += new EventHandler(this.buttonSetTemp_Click);
-      this.textBoxTempEdit.Location = new Point(14, 72);
-      this.textBoxTempEdit.Name = "textBoxTempEdit";
-      this.textBoxTempEdit.Size = new Size(131, 21);
-      this.textBoxTempEdit.TabIndex = 3;
-      this.label8.Location = new Point(7, 23);
-      this.label8.Name = "label8";
-      this.label8.Size = new Size(401, 40);
-      this.label8.TabIndex = 2;
-      this.label8.Text = "The current temperature can be set while printing to improve print results. Only temperature values within 15 degees of the current average temperature are allowed.";
-      this.label7.AutoSize = true;
-      this.label7.Location = new Point(95, 40);
-      this.label7.Name = "label7";
-      this.label7.Size = new Size(178, 12);
-      this.label7.TabIndex = 1;
-      this.label7.Text = "Average Extruder Temperature";
-      this.groupBox1.Controls.Add((Control) this.textBoxMeanTemperature);
-      this.groupBox1.Location = new Point(3, 20);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new Size(83, 49);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.textBoxMeanTemperature.AutoSize = true;
-      this.textBoxMeanTemperature.Font = new Font("Gulim", 14.25f, FontStyle.Regular, GraphicsUnit.Point, (byte) 129);
-      this.textBoxMeanTemperature.Location = new Point(8, 18);
-      this.textBoxMeanTemperature.Name = "textBoxMeanTemperature";
-      this.textBoxMeanTemperature.Size = new Size(65, 19);
-      this.textBoxMeanTemperature.TabIndex = 0;
-      this.textBoxMeanTemperature.Text = "000.00";
-      this.groupBoxControls.BackgroundImageLayout = ImageLayout.Center;
-      this.groupBoxControls.Controls.Add((Control) this.groupBoxBootloaderOptions);
-      this.groupBoxControls.Controls.Add((Control) this.groupBoxFirmwareControls);
-      this.groupBoxControls.Location = new Point(389, 8);
-      this.groupBoxControls.Name = "groupBoxControls";
-      this.groupBoxControls.Size = new Size(624, 396);
-      this.groupBoxControls.TabIndex = 43;
-      this.groupBoxControls.TabStop = false;
-      this.groupBoxBootloaderOptions.Controls.Add((Control) this.label2);
-      this.groupBoxBootloaderOptions.Controls.Add((Control) this.buttonQuitBootloader);
-      this.groupBoxBootloaderOptions.Controls.Add((Control) this.button3);
-      this.groupBoxBootloaderOptions.Location = new Point(8, 11);
-      this.groupBoxBootloaderOptions.Name = "groupBoxBootloaderOptions";
-      this.groupBoxBootloaderOptions.Size = new Size(499, 162);
-      this.groupBoxBootloaderOptions.TabIndex = 51;
-      this.groupBoxBootloaderOptions.TabStop = false;
-      this.groupBoxBootloaderOptions.Text = "Printer Boot Options";
-      this.groupBoxBootloaderOptions.Visible = false;
-      this.label2.AutoSize = true;
-      this.label2.Location = new Point(19, 74);
-      this.label2.Name = "label2";
-      this.label2.Size = new Size(241, 12);
-      this.label2.TabIndex = 2;
-      this.label2.Text = "The main printer program has not started.";
-      this.buttonQuitBootloader.Location = new Point(11, 20);
-      this.buttonQuitBootloader.Name = "buttonQuitBootloader";
-      this.buttonQuitBootloader.Size = new Size(200, 36);
-      this.buttonQuitBootloader.TabIndex = 1;
-      this.buttonQuitBootloader.Text = "Start Printer Firmware";
-      this.buttonQuitBootloader.UseVisualStyleBackColor = true;
-      this.buttonQuitBootloader.UseWaitCursor = true;
-      this.buttonQuitBootloader.Click += new EventHandler(this.buttonQuitBootloader_Click);
-      this.button3.Location = new Point(229, 20);
-      this.button3.Name = "button3";
-      this.button3.Size = new Size(200, 36);
-      this.button3.TabIndex = 0;
-      this.button3.Text = "Update Firmware";
-      this.button3.UseVisualStyleBackColor = true;
-      this.button3.Click += new EventHandler(this.buttonUpdateFirmware_Click);
-      this.groupBoxFirmwareControls.Controls.Add((Control) this.tabControl1);
-      this.groupBoxFirmwareControls.Controls.Add((Control) this.buttonRepeatLast);
-      this.groupBoxFirmwareControls.Controls.Add((Control) this.label3);
-      this.groupBoxFirmwareControls.Controls.Add((Control) this.textBoxManualGCode);
-      this.groupBoxFirmwareControls.Controls.Add((Control) this.buttonSendGCode);
-      this.groupBoxFirmwareControls.Location = new Point(8, 11);
-      this.groupBoxFirmwareControls.Name = "groupBoxFirmwareControls";
-      this.groupBoxFirmwareControls.Size = new Size(617, 387);
-      this.groupBoxFirmwareControls.TabIndex = 0;
-      this.groupBoxFirmwareControls.TabStop = false;
-      this.tabControl1.Controls.Add((Control) this.tabPageBasicOptions);
-      this.tabControl1.Controls.Add((Control) this.tabPageDiagnostics);
-      this.tabControl1.Controls.Add((Control) this.tabPageSDCard);
-      this.tabControl1.Controls.Add((Control) this.tabPageHeatedBedControl);
-      this.tabControl1.Location = new Point(4, 49);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new Size(609, 329);
-      this.tabControl1.TabIndex = 50;
-      this.tabControl1.SelectedIndexChanged += new EventHandler(this.tabControl1_SelectedIndexChanged);
-      this.tabPageBasicOptions.BackColor = SystemColors.Control;
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonTGHTemp);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonHeaterOff);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonFanOff);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonFanOn);
-      this.tabPageBasicOptions.Controls.Add((Control) this.textBoxEVal);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonPLATemp);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonDownE);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonUpE);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonABSTemp);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonAddJob);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonMotorsOff);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonMotorsOn);
-      this.tabPageBasicOptions.Controls.Add((Control) this.textBoxYVal);
-      this.tabPageBasicOptions.Controls.Add((Control) this.textBoxXVal);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonPrintToFile);
-      this.tabPageBasicOptions.Controls.Add((Control) this.textBoxZVal);
-      this.tabPageBasicOptions.Controls.Add((Control) this.button2);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonUpX);
-      this.tabPageBasicOptions.Controls.Add((Control) this.button1);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonDownX);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonFilamentInfo);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonDownZ);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonDownY);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonUpZ);
-      this.tabPageBasicOptions.Controls.Add((Control) this.buttonUpY);
-      this.tabPageBasicOptions.Location = new Point(4, 22);
-      this.tabPageBasicOptions.Name = "tabPageBasicOptions";
-      this.tabPageBasicOptions.Padding = new Padding(3);
-      this.tabPageBasicOptions.Size = new Size(601, 303);
-      this.tabPageBasicOptions.TabIndex = 0;
-      this.tabPageBasicOptions.Text = "Basic Options";
-      this.buttonTGHTemp.Location = new Point(13, 177);
-      this.buttonTGHTemp.Name = "buttonTGHTemp";
-      this.buttonTGHTemp.Size = new Size(129, 32);
-      this.buttonTGHTemp.TabIndex = 59;
-      this.buttonTGHTemp.Text = "Heat to TGH Temp";
-      this.buttonTGHTemp.UseVisualStyleBackColor = true;
-      this.buttonTGHTemp.Click += new EventHandler(this.buttonTGHTemp_Click);
-      this.buttonHeaterOff.Location = new Point(149, 178);
-      this.buttonHeaterOff.Name = "buttonHeaterOff";
-      this.buttonHeaterOff.Size = new Size(129, 32);
-      this.buttonHeaterOff.TabIndex = 58;
-      this.buttonHeaterOff.Text = "Heater Off";
-      this.buttonHeaterOff.UseVisualStyleBackColor = true;
-      this.buttonHeaterOff.Click += new EventHandler(this.buttonHeaterOff_Click);
-      this.buttonFanOff.Location = new Point(149, 109);
-      this.buttonFanOff.Name = "buttonFanOff";
-      this.buttonFanOff.Size = new Size(129, 32);
-      this.buttonFanOff.TabIndex = 57;
-      this.buttonFanOff.Text = "Fan Off";
-      this.buttonFanOff.UseVisualStyleBackColor = true;
-      this.buttonFanOff.Click += new EventHandler(this.buttonFanOff_Click);
-      this.buttonFanOn.Location = new Point(13, 109);
-      this.buttonFanOn.Name = "buttonFanOn";
-      this.buttonFanOn.Size = new Size(129, 32);
-      this.buttonFanOn.TabIndex = 56;
-      this.buttonFanOn.Text = "Fan On";
-      this.buttonFanOn.UseVisualStyleBackColor = true;
-      this.buttonFanOn.Click += new EventHandler(this.buttonFanOn_Click);
-      this.textBoxEVal.Location = new Point(408, 251);
-      this.textBoxEVal.Name = "textBoxEVal";
-      this.textBoxEVal.Size = new Size(49, 21);
-      this.textBoxEVal.TabIndex = 53;
-      this.textBoxEVal.Text = "1.0";
-      this.buttonPLATemp.Location = new Point(13, 143);
-      this.buttonPLATemp.Name = "buttonPLATemp";
-      this.buttonPLATemp.Size = new Size(129, 32);
-      this.buttonPLATemp.TabIndex = 55;
-      this.buttonPLATemp.Text = "Heat to PLA Temp";
-      this.buttonPLATemp.UseVisualStyleBackColor = true;
-      this.buttonPLATemp.Click += new EventHandler(this.buttonPLATemp_Click);
-      this.buttonDownE.BackgroundImage = (Image) Resources.arrowsEMinus;
-      this.buttonDownE.BackgroundImageLayout = ImageLayout.Stretch;
-      this.buttonDownE.Location = new Point(285, 223);
-      this.buttonDownE.Name = "buttonDownE";
-      this.buttonDownE.Size = new Size(101, 73);
-      this.buttonDownE.TabIndex = 52;
-      this.buttonDownE.UseVisualStyleBackColor = true;
-      this.buttonDownE.Click += new EventHandler(this.buttonDownE_Click);
-      this.buttonUpE.BackgroundImage = (Image) Resources.arrowsEPlus;
-      this.buttonUpE.BackgroundImageLayout = ImageLayout.Stretch;
-      this.buttonUpE.Location = new Point(477, 223);
-      this.buttonUpE.Name = "buttonUpE";
-      this.buttonUpE.Size = new Size(101, 73);
-      this.buttonUpE.TabIndex = 51;
-      this.buttonUpE.UseVisualStyleBackColor = true;
-      this.buttonUpE.Click += new EventHandler(this.buttonUpE_Click);
-      this.buttonABSTemp.Location = new Point(149, 143);
-      this.buttonABSTemp.Name = "buttonABSTemp";
-      this.buttonABSTemp.Size = new Size(129, 32);
-      this.buttonABSTemp.TabIndex = 54;
-      this.buttonABSTemp.Text = "Heat to ABS Temp";
-      this.buttonABSTemp.UseVisualStyleBackColor = true;
-      this.buttonABSTemp.Click += new EventHandler(this.buttonABSTemp_Click);
-      this.buttonAddJob.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.buttonAddJob.ForeColor = SystemColors.ControlText;
-      this.buttonAddJob.Location = new Point(13, 75);
-      this.buttonAddJob.Name = "buttonAddJob";
-      this.buttonAddJob.Size = new Size(129, 32);
-      this.buttonAddJob.TabIndex = 5;
-      this.buttonAddJob.Text = "Add Print Job";
-      this.buttonAddJob.UseVisualStyleBackColor = true;
-      this.buttonAddJob.Click += new EventHandler(this.buttonAddJob_Click);
-      this.buttonMotorsOff.Location = new Point(149, 6);
-      this.buttonMotorsOff.Name = "buttonMotorsOff";
-      this.buttonMotorsOff.Size = new Size(129, 32);
-      this.buttonMotorsOff.TabIndex = 41;
-      this.buttonMotorsOff.Text = "Motors Off";
-      this.buttonMotorsOff.UseVisualStyleBackColor = true;
-      this.buttonMotorsOff.Click += new EventHandler(this.buttonMotorsOff_Click);
-      this.buttonMotorsOn.Location = new Point(13, 6);
-      this.buttonMotorsOn.Name = "buttonMotorsOn";
-      this.buttonMotorsOn.Size = new Size(129, 32);
-      this.buttonMotorsOn.TabIndex = 40;
-      this.buttonMotorsOn.Text = "Motors On";
-      this.buttonMotorsOn.UseVisualStyleBackColor = true;
-      this.buttonMotorsOn.Click += new EventHandler(this.buttonMotorsOn_Click);
-      this.textBoxYVal.Location = new Point(408, 178);
-      this.textBoxYVal.Name = "textBoxYVal";
-      this.textBoxYVal.Size = new Size(49, 21);
-      this.textBoxYVal.TabIndex = 39;
-      this.textBoxYVal.Text = "10.0";
-      this.textBoxXVal.Location = new Point(408, 105);
-      this.textBoxXVal.Name = "textBoxXVal";
-      this.textBoxXVal.Size = new Size(49, 21);
-      this.textBoxXVal.TabIndex = 38;
-      this.textBoxXVal.Text = "10.0";
-      this.buttonPrintToFile.Location = new Point(149, 75);
-      this.buttonPrintToFile.Name = "buttonPrintToFile";
-      this.buttonPrintToFile.Size = new Size(129, 32);
-      this.buttonPrintToFile.TabIndex = 28;
-      this.buttonPrintToFile.Text = "Print to Binary File";
-      this.buttonPrintToFile.UseVisualStyleBackColor = true;
-      this.buttonPrintToFile.Click += new EventHandler(this.buttonPrintToFile_Click);
-      this.textBoxZVal.Location = new Point(408, 34);
-      this.textBoxZVal.Name = "textBoxZVal";
-      this.textBoxZVal.Size = new Size(49, 21);
-      this.textBoxZVal.TabIndex = 37;
-      this.textBoxZVal.Text = "1.0";
-      this.button2.Location = new Point(13, 41);
-      this.button2.Name = "button2";
-      this.button2.Size = new Size(129, 32);
-      this.button2.TabIndex = 50;
-      this.button2.Text = "Relative Mode";
-      this.button2.UseVisualStyleBackColor = true;
-      this.button2.Click += new EventHandler(this.button2_Click);
-      this.buttonUpX.BackgroundImage = (Image) Resources.arrowsXPlus;
-      this.buttonUpX.BackgroundImageLayout = ImageLayout.Stretch;
-      this.buttonUpX.Location = new Point(477, 78);
-      this.buttonUpX.Name = "buttonUpX";
-      this.buttonUpX.Size = new Size(101, 73);
-      this.buttonUpX.TabIndex = 36;
-      this.buttonUpX.UseVisualStyleBackColor = true;
-      this.buttonUpX.Click += new EventHandler(this.buttonUpX_Click);
-      this.button1.Location = new Point(149, 41);
-      this.button1.Name = "button1";
-      this.button1.Size = new Size(129, 32);
-      this.button1.TabIndex = 42;
-      this.button1.Text = "Absolute Mode";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new EventHandler(this.button1_Click);
-      this.buttonDownX.BackgroundImage = (Image) Resources.arrowsXMinus;
-      this.buttonDownX.BackgroundImageLayout = ImageLayout.Stretch;
-      this.buttonDownX.Location = new Point(285, 78);
-      this.buttonDownX.Name = "buttonDownX";
-      this.buttonDownX.Size = new Size(101, 73);
-      this.buttonDownX.TabIndex = 35;
-      this.buttonDownX.UseVisualStyleBackColor = true;
-      this.buttonDownX.Click += new EventHandler(this.buttonDownX_Click);
-      this.buttonFilamentInfo.ForeColor = SystemColors.ControlText;
-      this.buttonFilamentInfo.Location = new Point(13, 211);
-      this.buttonFilamentInfo.Name = "buttonFilamentInfo";
-      this.buttonFilamentInfo.Size = new Size(129, 32);
-      this.buttonFilamentInfo.TabIndex = 44;
-      this.buttonFilamentInfo.Text = "Set Filament Info";
-      this.buttonFilamentInfo.UseVisualStyleBackColor = true;
-      this.buttonFilamentInfo.Visible = false;
-      this.buttonFilamentInfo.Click += new EventHandler(this.buttonChangeFilamentInfo_Click);
-      this.buttonDownZ.BackgroundImage = (Image) Resources.arrowsZMinus;
-      this.buttonDownZ.BackgroundImageLayout = ImageLayout.Stretch;
-      this.buttonDownZ.Location = new Point(285, 5);
-      this.buttonDownZ.Name = "buttonDownZ";
-      this.buttonDownZ.Size = new Size(101, 73);
-      this.buttonDownZ.TabIndex = 34;
-      this.buttonDownZ.UseVisualStyleBackColor = true;
-      this.buttonDownZ.Click += new EventHandler(this.buttonDownZ_Click);
-      this.buttonDownY.BackgroundImage = (Image) Resources.arrowsYMinus;
-      this.buttonDownY.BackgroundImageLayout = ImageLayout.Stretch;
-      this.buttonDownY.Location = new Point(285, 150);
-      this.buttonDownY.Name = "buttonDownY";
-      this.buttonDownY.Size = new Size(101, 73);
-      this.buttonDownY.TabIndex = 32;
-      this.buttonDownY.UseVisualStyleBackColor = true;
-      this.buttonDownY.Click += new EventHandler(this.buttonDownY_Click);
-      this.buttonUpZ.BackgroundImage = (Image) Resources.arrowsZPlus;
-      this.buttonUpZ.BackgroundImageLayout = ImageLayout.Stretch;
-      this.buttonUpZ.Location = new Point(477, 5);
-      this.buttonUpZ.Name = "buttonUpZ";
-      this.buttonUpZ.Size = new Size(101, 73);
-      this.buttonUpZ.TabIndex = 33;
-      this.buttonUpZ.UseVisualStyleBackColor = true;
-      this.buttonUpZ.Click += new EventHandler(this.buttonUpZ_Click);
-      this.buttonUpY.BackgroundImage = (Image) Resources.arrowsYPlus;
-      this.buttonUpY.BackgroundImageLayout = ImageLayout.Stretch;
-      this.buttonUpY.Location = new Point(477, 150);
-      this.buttonUpY.Name = "buttonUpY";
-      this.buttonUpY.Size = new Size(101, 73);
-      this.buttonUpY.TabIndex = 31;
-      this.buttonUpY.UseVisualStyleBackColor = true;
-      this.buttonUpY.Click += new EventHandler(this.buttonUpY_Click);
-      this.tabPageDiagnostics.BackColor = SystemColors.Control;
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonLoadEepromData);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonSaveEepromData);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonUpdateFirmware);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonPreprocess);
-      this.tabPageDiagnostics.Controls.Add((Control) this.groupBox4);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonBacklashPrint);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonGetGCode);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonReCenter);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonHome);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonSpeedTest);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonXSpeedTest);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonYSkipTestBack);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonXSkipTestRight);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonYSkipTest);
-      this.tabPageDiagnostics.Controls.Add((Control) this.buttonXSkipTest);
-      this.tabPageDiagnostics.Location = new Point(4, 22);
-      this.tabPageDiagnostics.Name = "tabPageDiagnostics";
-      this.tabPageDiagnostics.Padding = new Padding(3);
-      this.tabPageDiagnostics.Size = new Size(601, 303);
-      this.tabPageDiagnostics.TabIndex = 1;
-      this.tabPageDiagnostics.Text = "Diagnostics";
-      this.buttonLoadEepromData.Location = new Point(448, 58);
-      this.buttonLoadEepromData.Name = "buttonLoadEepromData";
-      this.buttonLoadEepromData.Size = new Size(138, 36);
-      this.buttonLoadEepromData.TabIndex = 29;
-      this.buttonLoadEepromData.Text = "Load EEPROM Data";
-      this.buttonLoadEepromData.UseVisualStyleBackColor = true;
-      this.buttonLoadEepromData.Click += new EventHandler(this.buttonLoadEepromData_Click);
-      this.buttonSaveEepromData.Location = new Point(448, 11);
-      this.buttonSaveEepromData.Name = "buttonSaveEepromData";
-      this.buttonSaveEepromData.Size = new Size(138, 36);
-      this.buttonSaveEepromData.TabIndex = 28;
-      this.buttonSaveEepromData.Text = "Save EEPROM Data";
-      this.buttonSaveEepromData.UseVisualStyleBackColor = true;
-      this.buttonSaveEepromData.Click += new EventHandler(this.buttonSaveEepromData_Click);
-      this.buttonUpdateFirmware.Location = new Point(301, 157);
-      this.buttonUpdateFirmware.Name = "buttonUpdateFirmware";
-      this.buttonUpdateFirmware.Size = new Size(138, 36);
-      this.buttonUpdateFirmware.TabIndex = 26;
-      this.buttonUpdateFirmware.Text = "Update Firmware";
-      this.buttonUpdateFirmware.UseVisualStyleBackColor = true;
-      this.buttonUpdateFirmware.Click += new EventHandler(this.buttonUpdateFirmware_Click);
-      this.buttonPreprocess.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.buttonPreprocess.Location = new Point(155, 157);
-      this.buttonPreprocess.Name = "buttonPreprocess";
-      this.buttonPreprocess.Size = new Size(138, 36);
-      this.buttonPreprocess.TabIndex = 27;
-      this.buttonPreprocess.Text = "Backlash Settings";
-      this.buttonPreprocess.UseVisualStyleBackColor = true;
-      this.buttonPreprocess.Click += new EventHandler(this.buttonPreprocess_Click);
-      this.groupBox4.Controls.Add((Control) this.buttonBedPointTest);
-      this.groupBox4.Controls.Add((Control) this.comboBoxBedTestPoint);
-      this.groupBox4.Location = new Point(9, 203);
-      this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new Size(297, 45);
-      this.groupBox4.TabIndex = 10;
-      this.groupBox4.TabStop = false;
-      this.groupBox4.Text = "Bed Point Test";
-      this.buttonBedPointTest.Location = new Point(7, 17);
-      this.buttonBedPointTest.Name = "buttonBedPointTest";
-      this.buttonBedPointTest.Size = new Size(131, 21);
-      this.buttonBedPointTest.TabIndex = 1;
-      this.buttonBedPointTest.Text = "Move to Point";
-      this.buttonBedPointTest.UseVisualStyleBackColor = true;
-      this.buttonBedPointTest.Click += new EventHandler(this.buttonBedPointTest_Click);
-      this.comboBoxBedTestPoint.DropDownStyle = ComboBoxStyle.DropDownList;
-      this.comboBoxBedTestPoint.FormattingEnabled = true;
-      this.comboBoxBedTestPoint.Items.AddRange(new object[5]
+      listViewPrinterInfo.FullRowSelect = true;
+      listViewPrinterInfo.HideSelection = false;
+      listViewPrinterInfo.LabelWrap = false;
+      listViewPrinterInfo.Location = new Point(9, 12);
+      listViewPrinterInfo.MultiSelect = false;
+      listViewPrinterInfo.Name = "listViewPrinterInfo";
+      listViewPrinterInfo.Size = new Size(1018, 80);
+      listViewPrinterInfo.TabIndex = 49;
+      listViewPrinterInfo.UseCompatibleStateImageBehavior = false;
+      listViewPrinterInfo.View = View.Details;
+      listViewPrinterInfo.DoubleClick += new EventHandler(listViewPrinterInfo_DoubleClick);
+      columnSerialNumber.Text = "Serial Number";
+      columnSerialNumber.Width = 149;
+      columnType.Text = "Type";
+      columnStatus.Text = "Status";
+      columnStatus.Width = 213;
+      columnTemp.Text = "Temp. (C)";
+      columnTemp.Width = 72;
+      columnBedTemp.Text = "Bed Temp. (C)";
+      columnBedTemp.Width = 99;
+      columnZValid.Text = "Z Valid";
+      columnZValid.Width = 53;
+      columnJobStatus.Text = "Job Status";
+      columnJobStatus.Width = 81;
+      columnFile.Text = "File";
+      columnFile.Width = 109;
+      columnPerComplete.Text = "% Done";
+      columnPerComplete.Width = 58;
+      columnUser.Text = "User";
+      columnUser.Width = 117;
+      labelSpoolerVersion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      labelSpoolerVersion.AutoSize = true;
+      labelSpoolerVersion.Location = new Point(731, 96);
+      labelSpoolerVersion.Name = "labelSpoolerVersion";
+      labelSpoolerVersion.Size = new Size(181, 12);
+      labelSpoolerVersion.TabIndex = 53;
+      labelSpoolerVersion.Text = "Spooler Version: ????-??-??-??";
+      groupBoxPrinterControls.Controls.Add((Control)logWaitsCheckBox);
+      groupBoxPrinterControls.Controls.Add((Control)buttonAbortPrint);
+      groupBoxPrinterControls.Controls.Add((Control)buttonResumePrint);
+      groupBoxPrinterControls.Controls.Add((Control)buttonPausePrint);
+      groupBoxPrinterControls.Controls.Add((Control)label1);
+      groupBoxPrinterControls.Controls.Add((Control)selectedPrinterComboBox);
+      groupBoxPrinterControls.Controls.Add((Control)buttonLock);
+      groupBoxPrinterControls.Controls.Add((Control)groupBoxPrinting);
+      groupBoxPrinterControls.Controls.Add((Control)groupBoxControls);
+      groupBoxPrinterControls.Controls.Add((Control)buttonClearLog);
+      groupBoxPrinterControls.Controls.Add((Control)checkBoxLogToScreen);
+      groupBoxPrinterControls.Controls.Add((Control)richTextBoxLoggedItems);
+      groupBoxPrinterControls.Controls.Add((Control)buttonEmergencyStop);
+      groupBoxPrinterControls.Controls.Add((Control)label5);
+      groupBoxPrinterControls.Controls.Add((Control)listBoxManualHistory);
+      groupBoxPrinterControls.Controls.Add((Control)label4);
+      groupBoxPrinterControls.Controls.Add((Control)checkBoxAutoScroll);
+      groupBoxPrinterControls.Location = new Point(10, 25);
+      groupBoxPrinterControls.Name = "groupBoxPrinterControls";
+      groupBoxPrinterControls.Size = new Size(1018, 393);
+      groupBoxPrinterControls.TabIndex = 51;
+      groupBoxPrinterControls.TabStop = false;
+      groupBoxPrinterControls.Text = "00-00-00-00-00-000-000";
+      logWaitsCheckBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      logWaitsCheckBox.AutoSize = true;
+      logWaitsCheckBox.Location = new Point(129, 278);
+      logWaitsCheckBox.Name = "logWaitsCheckBox";
+      logWaitsCheckBox.Size = new Size(79, 16);
+      logWaitsCheckBox.TabIndex = 51;
+      logWaitsCheckBox.Text = "Log Waits";
+      logWaitsCheckBox.UseVisualStyleBackColor = true;
+      buttonAbortPrint.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      buttonAbortPrint.BackColor = SystemColors.Control;
+      buttonAbortPrint.ForeColor = System.Drawing.Color.Black;
+      buttonAbortPrint.Location = new Point(6, 85);
+      buttonAbortPrint.Name = "buttonAbortPrint";
+      buttonAbortPrint.Size = new Size(184, 30);
+      buttonAbortPrint.TabIndex = 50;
+      buttonAbortPrint.Text = "Abort Print";
+      buttonAbortPrint.UseVisualStyleBackColor = false;
+      buttonAbortPrint.Click += new EventHandler(buttonAbortPrint_Click);
+      buttonResumePrint.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      buttonResumePrint.BackColor = SystemColors.Control;
+      buttonResumePrint.ForeColor = SystemColors.ControlText;
+      buttonResumePrint.Location = new Point(199, 85);
+      buttonResumePrint.Name = "buttonResumePrint";
+      buttonResumePrint.Size = new Size(184, 30);
+      buttonResumePrint.TabIndex = 49;
+      buttonResumePrint.Text = "Resume";
+      buttonResumePrint.UseVisualStyleBackColor = false;
+      buttonResumePrint.Visible = false;
+      buttonResumePrint.Click += new EventHandler(buttonResumePrint_Click);
+      buttonPausePrint.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      buttonPausePrint.BackColor = SystemColors.Control;
+      buttonPausePrint.ForeColor = SystemColors.ControlText;
+      buttonPausePrint.Location = new Point(199, 85);
+      buttonPausePrint.Name = "buttonPausePrint";
+      buttonPausePrint.Size = new Size(184, 30);
+      buttonPausePrint.TabIndex = 48;
+      buttonPausePrint.Text = "Pause";
+      buttonPausePrint.UseVisualStyleBackColor = false;
+      buttonPausePrint.Click += new EventHandler(buttonPausePrint_Click);
+      label1.AutoSize = true;
+      label1.Location = new Point(10, 21);
+      label1.Name = "label1";
+      label1.Size = new Size(90, 12);
+      label1.TabIndex = 47;
+      label1.Text = "Current Printer:";
+      selectedPrinterComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+      selectedPrinterComboBox.FormattingEnabled = true;
+      selectedPrinterComboBox.Location = new Point(103, 18);
+      selectedPrinterComboBox.Name = "selectedPrinterComboBox";
+      selectedPrinterComboBox.Size = new Size(280, 20);
+      selectedPrinterComboBox.TabIndex = 46;
+      selectedPrinterComboBox.SelectedIndexChanged += new EventHandler(OnSelectedPrintComboBoxChanged);
+      buttonLock.Location = new Point(8, 49);
+      buttonLock.Name = "buttonLock";
+      buttonLock.Size = new Size(184, 30);
+      buttonLock.TabIndex = 45;
+      buttonLock.Text = "Control This Printer";
+      buttonLock.UseVisualStyleBackColor = true;
+      buttonLock.Click += new EventHandler(buttonLock_Click);
+      groupBoxPrinting.Controls.Add((Control)groupBox3);
+      groupBoxPrinting.Location = new Point(389, 11);
+      groupBoxPrinting.Name = "groupBoxPrinting";
+      groupBoxPrinting.Size = new Size(619, 382);
+      groupBoxPrinting.TabIndex = 52;
+      groupBoxPrinting.TabStop = false;
+      groupBoxPrinting.Text = "Now Printing";
+      groupBoxPrinting.Visible = false;
+      groupBox2.Controls.Add((Control)buttonSetTemp);
+      groupBox2.Controls.Add((Control)textBoxTempEdit);
+      groupBox2.Controls.Add((Control)label8);
+      groupBox2.Location = new Point(4, 90);
+      groupBox2.Name = "groupBox2";
+      groupBox2.Size = new Size(435, 109);
+      groupBox2.TabIndex = 3;
+      groupBox2.TabStop = false;
+      groupBox2.Text = "Tempeature Adjustments";
+      buttonSetTemp.Location = new Point(158, 71);
+      buttonSetTemp.Name = "buttonSetTemp";
+      buttonSetTemp.Size = new Size(124, 24);
+      buttonSetTemp.TabIndex = 4;
+      buttonSetTemp.Text = "Set Temperature";
+      buttonSetTemp.UseVisualStyleBackColor = true;
+      buttonSetTemp.Click += new EventHandler(buttonSetTemp_Click);
+      textBoxTempEdit.Location = new Point(14, 72);
+      textBoxTempEdit.Name = "textBoxTempEdit";
+      textBoxTempEdit.Size = new Size(131, 21);
+      textBoxTempEdit.TabIndex = 3;
+      label8.Location = new Point(7, 23);
+      label8.Name = "label8";
+      label8.Size = new Size(401, 40);
+      label8.TabIndex = 2;
+      label8.Text = "The current temperature can be set while printing to improve print results. Only temperature values within 15 degees of the current average temperature are allowed.";
+      label7.AutoSize = true;
+      label7.Location = new Point(95, 40);
+      label7.Name = "label7";
+      label7.Size = new Size(178, 12);
+      label7.TabIndex = 1;
+      label7.Text = "Average Extruder Temperature";
+      groupBox1.Controls.Add((Control)textBoxMeanTemperature);
+      groupBox1.Location = new Point(3, 20);
+      groupBox1.Name = "groupBox1";
+      groupBox1.Size = new Size(83, 49);
+      groupBox1.TabIndex = 0;
+      groupBox1.TabStop = false;
+      textBoxMeanTemperature.AutoSize = true;
+      textBoxMeanTemperature.Font = new Font("Gulim", 14.25f, FontStyle.Regular, GraphicsUnit.Point, (byte) 129);
+      textBoxMeanTemperature.Location = new Point(8, 18);
+      textBoxMeanTemperature.Name = "textBoxMeanTemperature";
+      textBoxMeanTemperature.Size = new Size(65, 19);
+      textBoxMeanTemperature.TabIndex = 0;
+      textBoxMeanTemperature.Text = "000.00";
+      groupBoxControls.BackgroundImageLayout = ImageLayout.Center;
+      groupBoxControls.Controls.Add((Control)groupBoxBootloaderOptions);
+      groupBoxControls.Controls.Add((Control)groupBoxFirmwareControls);
+      groupBoxControls.Location = new Point(389, 8);
+      groupBoxControls.Name = "groupBoxControls";
+      groupBoxControls.Size = new Size(624, 396);
+      groupBoxControls.TabIndex = 43;
+      groupBoxControls.TabStop = false;
+      groupBoxBootloaderOptions.Controls.Add((Control)label2);
+      groupBoxBootloaderOptions.Controls.Add((Control)buttonQuitBootloader);
+      groupBoxBootloaderOptions.Controls.Add((Control)button3);
+      groupBoxBootloaderOptions.Location = new Point(8, 11);
+      groupBoxBootloaderOptions.Name = "groupBoxBootloaderOptions";
+      groupBoxBootloaderOptions.Size = new Size(499, 162);
+      groupBoxBootloaderOptions.TabIndex = 51;
+      groupBoxBootloaderOptions.TabStop = false;
+      groupBoxBootloaderOptions.Text = "Printer Boot Options";
+      groupBoxBootloaderOptions.Visible = false;
+      label2.AutoSize = true;
+      label2.Location = new Point(19, 74);
+      label2.Name = "label2";
+      label2.Size = new Size(241, 12);
+      label2.TabIndex = 2;
+      label2.Text = "The main printer program has not started.";
+      buttonQuitBootloader.Location = new Point(11, 20);
+      buttonQuitBootloader.Name = "buttonQuitBootloader";
+      buttonQuitBootloader.Size = new Size(200, 36);
+      buttonQuitBootloader.TabIndex = 1;
+      buttonQuitBootloader.Text = "Start Printer Firmware";
+      buttonQuitBootloader.UseVisualStyleBackColor = true;
+      buttonQuitBootloader.UseWaitCursor = true;
+      buttonQuitBootloader.Click += new EventHandler(buttonQuitBootloader_Click);
+      button3.Location = new Point(229, 20);
+      button3.Name = "button3";
+      button3.Size = new Size(200, 36);
+      button3.TabIndex = 0;
+      button3.Text = "Update Firmware";
+      button3.UseVisualStyleBackColor = true;
+      button3.Click += new EventHandler(buttonUpdateFirmware_Click);
+      groupBoxFirmwareControls.Controls.Add((Control)tabControl1);
+      groupBoxFirmwareControls.Controls.Add((Control)buttonRepeatLast);
+      groupBoxFirmwareControls.Controls.Add((Control)label3);
+      groupBoxFirmwareControls.Controls.Add((Control)textBoxManualGCode);
+      groupBoxFirmwareControls.Controls.Add((Control)buttonSendGCode);
+      groupBoxFirmwareControls.Location = new Point(8, 11);
+      groupBoxFirmwareControls.Name = "groupBoxFirmwareControls";
+      groupBoxFirmwareControls.Size = new Size(617, 387);
+      groupBoxFirmwareControls.TabIndex = 0;
+      groupBoxFirmwareControls.TabStop = false;
+      tabControl1.Controls.Add((Control)tabPageBasicOptions);
+      tabControl1.Controls.Add((Control)tabPageDiagnostics);
+      tabControl1.Controls.Add((Control)tabPageSDCard);
+      tabControl1.Controls.Add((Control)tabPageHeatedBedControl);
+      tabControl1.Location = new Point(4, 49);
+      tabControl1.Name = "tabControl1";
+      tabControl1.SelectedIndex = 0;
+      tabControl1.Size = new Size(609, 329);
+      tabControl1.TabIndex = 50;
+      tabControl1.SelectedIndexChanged += new EventHandler(tabControl1_SelectedIndexChanged);
+      tabPageBasicOptions.BackColor = SystemColors.Control;
+      tabPageBasicOptions.Controls.Add((Control)buttonTGHTemp);
+      tabPageBasicOptions.Controls.Add((Control)buttonHeaterOff);
+      tabPageBasicOptions.Controls.Add((Control)buttonFanOff);
+      tabPageBasicOptions.Controls.Add((Control)buttonFanOn);
+      tabPageBasicOptions.Controls.Add((Control)textBoxEVal);
+      tabPageBasicOptions.Controls.Add((Control)buttonPLATemp);
+      tabPageBasicOptions.Controls.Add((Control)buttonDownE);
+      tabPageBasicOptions.Controls.Add((Control)buttonUpE);
+      tabPageBasicOptions.Controls.Add((Control)buttonABSTemp);
+      tabPageBasicOptions.Controls.Add((Control)buttonAddJob);
+      tabPageBasicOptions.Controls.Add((Control)buttonMotorsOff);
+      tabPageBasicOptions.Controls.Add((Control)buttonMotorsOn);
+      tabPageBasicOptions.Controls.Add((Control)textBoxYVal);
+      tabPageBasicOptions.Controls.Add((Control)textBoxXVal);
+      tabPageBasicOptions.Controls.Add((Control)buttonPrintToFile);
+      tabPageBasicOptions.Controls.Add((Control)textBoxZVal);
+      tabPageBasicOptions.Controls.Add((Control)button2);
+      tabPageBasicOptions.Controls.Add((Control)buttonUpX);
+      tabPageBasicOptions.Controls.Add((Control)button1);
+      tabPageBasicOptions.Controls.Add((Control)buttonDownX);
+      tabPageBasicOptions.Controls.Add((Control)buttonFilamentInfo);
+      tabPageBasicOptions.Controls.Add((Control)buttonDownZ);
+      tabPageBasicOptions.Controls.Add((Control)buttonDownY);
+      tabPageBasicOptions.Controls.Add((Control)buttonUpZ);
+      tabPageBasicOptions.Controls.Add((Control)buttonUpY);
+      tabPageBasicOptions.Location = new Point(4, 22);
+      tabPageBasicOptions.Name = "tabPageBasicOptions";
+      tabPageBasicOptions.Padding = new Padding(3);
+      tabPageBasicOptions.Size = new Size(601, 303);
+      tabPageBasicOptions.TabIndex = 0;
+      tabPageBasicOptions.Text = "Basic Options";
+      buttonTGHTemp.Location = new Point(13, 177);
+      buttonTGHTemp.Name = "buttonTGHTemp";
+      buttonTGHTemp.Size = new Size(129, 32);
+      buttonTGHTemp.TabIndex = 59;
+      buttonTGHTemp.Text = "Heat to TGH Temp";
+      buttonTGHTemp.UseVisualStyleBackColor = true;
+      buttonTGHTemp.Click += new EventHandler(buttonTGHTemp_Click);
+      buttonHeaterOff.Location = new Point(149, 178);
+      buttonHeaterOff.Name = "buttonHeaterOff";
+      buttonHeaterOff.Size = new Size(129, 32);
+      buttonHeaterOff.TabIndex = 58;
+      buttonHeaterOff.Text = "Heater Off";
+      buttonHeaterOff.UseVisualStyleBackColor = true;
+      buttonHeaterOff.Click += new EventHandler(buttonHeaterOff_Click);
+      buttonFanOff.Location = new Point(149, 109);
+      buttonFanOff.Name = "buttonFanOff";
+      buttonFanOff.Size = new Size(129, 32);
+      buttonFanOff.TabIndex = 57;
+      buttonFanOff.Text = "Fan Off";
+      buttonFanOff.UseVisualStyleBackColor = true;
+      buttonFanOff.Click += new EventHandler(buttonFanOff_Click);
+      buttonFanOn.Location = new Point(13, 109);
+      buttonFanOn.Name = "buttonFanOn";
+      buttonFanOn.Size = new Size(129, 32);
+      buttonFanOn.TabIndex = 56;
+      buttonFanOn.Text = "Fan On";
+      buttonFanOn.UseVisualStyleBackColor = true;
+      buttonFanOn.Click += new EventHandler(buttonFanOn_Click);
+      textBoxEVal.Location = new Point(408, 251);
+      textBoxEVal.Name = "textBoxEVal";
+      textBoxEVal.Size = new Size(49, 21);
+      textBoxEVal.TabIndex = 53;
+      textBoxEVal.Text = "1.0";
+      buttonPLATemp.Location = new Point(13, 143);
+      buttonPLATemp.Name = "buttonPLATemp";
+      buttonPLATemp.Size = new Size(129, 32);
+      buttonPLATemp.TabIndex = 55;
+      buttonPLATemp.Text = "Heat to PLA Temp";
+      buttonPLATemp.UseVisualStyleBackColor = true;
+      buttonPLATemp.Click += new EventHandler(buttonPLATemp_Click);
+      buttonDownE.BackgroundImage = (Image) Resources.arrowsEMinus;
+      buttonDownE.BackgroundImageLayout = ImageLayout.Stretch;
+      buttonDownE.Location = new Point(285, 223);
+      buttonDownE.Name = "buttonDownE";
+      buttonDownE.Size = new Size(101, 73);
+      buttonDownE.TabIndex = 52;
+      buttonDownE.UseVisualStyleBackColor = true;
+      buttonDownE.Click += new EventHandler(buttonDownE_Click);
+      buttonUpE.BackgroundImage = (Image) Resources.arrowsEPlus;
+      buttonUpE.BackgroundImageLayout = ImageLayout.Stretch;
+      buttonUpE.Location = new Point(477, 223);
+      buttonUpE.Name = "buttonUpE";
+      buttonUpE.Size = new Size(101, 73);
+      buttonUpE.TabIndex = 51;
+      buttonUpE.UseVisualStyleBackColor = true;
+      buttonUpE.Click += new EventHandler(buttonUpE_Click);
+      buttonABSTemp.Location = new Point(149, 143);
+      buttonABSTemp.Name = "buttonABSTemp";
+      buttonABSTemp.Size = new Size(129, 32);
+      buttonABSTemp.TabIndex = 54;
+      buttonABSTemp.Text = "Heat to ABS Temp";
+      buttonABSTemp.UseVisualStyleBackColor = true;
+      buttonABSTemp.Click += new EventHandler(buttonABSTemp_Click);
+      buttonAddJob.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      buttonAddJob.ForeColor = SystemColors.ControlText;
+      buttonAddJob.Location = new Point(13, 75);
+      buttonAddJob.Name = "buttonAddJob";
+      buttonAddJob.Size = new Size(129, 32);
+      buttonAddJob.TabIndex = 5;
+      buttonAddJob.Text = "Add Print Job";
+      buttonAddJob.UseVisualStyleBackColor = true;
+      buttonAddJob.Click += new EventHandler(buttonAddJob_Click);
+      buttonMotorsOff.Location = new Point(149, 6);
+      buttonMotorsOff.Name = "buttonMotorsOff";
+      buttonMotorsOff.Size = new Size(129, 32);
+      buttonMotorsOff.TabIndex = 41;
+      buttonMotorsOff.Text = "Motors Off";
+      buttonMotorsOff.UseVisualStyleBackColor = true;
+      buttonMotorsOff.Click += new EventHandler(buttonMotorsOff_Click);
+      buttonMotorsOn.Location = new Point(13, 6);
+      buttonMotorsOn.Name = "buttonMotorsOn";
+      buttonMotorsOn.Size = new Size(129, 32);
+      buttonMotorsOn.TabIndex = 40;
+      buttonMotorsOn.Text = "Motors On";
+      buttonMotorsOn.UseVisualStyleBackColor = true;
+      buttonMotorsOn.Click += new EventHandler(buttonMotorsOn_Click);
+      textBoxYVal.Location = new Point(408, 178);
+      textBoxYVal.Name = "textBoxYVal";
+      textBoxYVal.Size = new Size(49, 21);
+      textBoxYVal.TabIndex = 39;
+      textBoxYVal.Text = "10.0";
+      textBoxXVal.Location = new Point(408, 105);
+      textBoxXVal.Name = "textBoxXVal";
+      textBoxXVal.Size = new Size(49, 21);
+      textBoxXVal.TabIndex = 38;
+      textBoxXVal.Text = "10.0";
+      buttonPrintToFile.Location = new Point(149, 75);
+      buttonPrintToFile.Name = "buttonPrintToFile";
+      buttonPrintToFile.Size = new Size(129, 32);
+      buttonPrintToFile.TabIndex = 28;
+      buttonPrintToFile.Text = "Print to Binary File";
+      buttonPrintToFile.UseVisualStyleBackColor = true;
+      buttonPrintToFile.Click += new EventHandler(buttonPrintToFile_Click);
+      textBoxZVal.Location = new Point(408, 34);
+      textBoxZVal.Name = "textBoxZVal";
+      textBoxZVal.Size = new Size(49, 21);
+      textBoxZVal.TabIndex = 37;
+      textBoxZVal.Text = "1.0";
+      button2.Location = new Point(13, 41);
+      button2.Name = "button2";
+      button2.Size = new Size(129, 32);
+      button2.TabIndex = 50;
+      button2.Text = "Relative Mode";
+      button2.UseVisualStyleBackColor = true;
+      button2.Click += new EventHandler(button2_Click);
+      buttonUpX.BackgroundImage = (Image) Resources.arrowsXPlus;
+      buttonUpX.BackgroundImageLayout = ImageLayout.Stretch;
+      buttonUpX.Location = new Point(477, 78);
+      buttonUpX.Name = "buttonUpX";
+      buttonUpX.Size = new Size(101, 73);
+      buttonUpX.TabIndex = 36;
+      buttonUpX.UseVisualStyleBackColor = true;
+      buttonUpX.Click += new EventHandler(buttonUpX_Click);
+      button1.Location = new Point(149, 41);
+      button1.Name = "button1";
+      button1.Size = new Size(129, 32);
+      button1.TabIndex = 42;
+      button1.Text = "Absolute Mode";
+      button1.UseVisualStyleBackColor = true;
+      button1.Click += new EventHandler(button1_Click);
+      buttonDownX.BackgroundImage = (Image) Resources.arrowsXMinus;
+      buttonDownX.BackgroundImageLayout = ImageLayout.Stretch;
+      buttonDownX.Location = new Point(285, 78);
+      buttonDownX.Name = "buttonDownX";
+      buttonDownX.Size = new Size(101, 73);
+      buttonDownX.TabIndex = 35;
+      buttonDownX.UseVisualStyleBackColor = true;
+      buttonDownX.Click += new EventHandler(buttonDownX_Click);
+      buttonFilamentInfo.ForeColor = SystemColors.ControlText;
+      buttonFilamentInfo.Location = new Point(13, 211);
+      buttonFilamentInfo.Name = "buttonFilamentInfo";
+      buttonFilamentInfo.Size = new Size(129, 32);
+      buttonFilamentInfo.TabIndex = 44;
+      buttonFilamentInfo.Text = "Set Filament Info";
+      buttonFilamentInfo.UseVisualStyleBackColor = true;
+      buttonFilamentInfo.Visible = false;
+      buttonFilamentInfo.Click += new EventHandler(buttonChangeFilamentInfo_Click);
+      buttonDownZ.BackgroundImage = (Image) Resources.arrowsZMinus;
+      buttonDownZ.BackgroundImageLayout = ImageLayout.Stretch;
+      buttonDownZ.Location = new Point(285, 5);
+      buttonDownZ.Name = "buttonDownZ";
+      buttonDownZ.Size = new Size(101, 73);
+      buttonDownZ.TabIndex = 34;
+      buttonDownZ.UseVisualStyleBackColor = true;
+      buttonDownZ.Click += new EventHandler(buttonDownZ_Click);
+      buttonDownY.BackgroundImage = (Image) Resources.arrowsYMinus;
+      buttonDownY.BackgroundImageLayout = ImageLayout.Stretch;
+      buttonDownY.Location = new Point(285, 150);
+      buttonDownY.Name = "buttonDownY";
+      buttonDownY.Size = new Size(101, 73);
+      buttonDownY.TabIndex = 32;
+      buttonDownY.UseVisualStyleBackColor = true;
+      buttonDownY.Click += new EventHandler(buttonDownY_Click);
+      buttonUpZ.BackgroundImage = (Image) Resources.arrowsZPlus;
+      buttonUpZ.BackgroundImageLayout = ImageLayout.Stretch;
+      buttonUpZ.Location = new Point(477, 5);
+      buttonUpZ.Name = "buttonUpZ";
+      buttonUpZ.Size = new Size(101, 73);
+      buttonUpZ.TabIndex = 33;
+      buttonUpZ.UseVisualStyleBackColor = true;
+      buttonUpZ.Click += new EventHandler(buttonUpZ_Click);
+      buttonUpY.BackgroundImage = (Image) Resources.arrowsYPlus;
+      buttonUpY.BackgroundImageLayout = ImageLayout.Stretch;
+      buttonUpY.Location = new Point(477, 150);
+      buttonUpY.Name = "buttonUpY";
+      buttonUpY.Size = new Size(101, 73);
+      buttonUpY.TabIndex = 31;
+      buttonUpY.UseVisualStyleBackColor = true;
+      buttonUpY.Click += new EventHandler(buttonUpY_Click);
+      tabPageDiagnostics.BackColor = SystemColors.Control;
+      tabPageDiagnostics.Controls.Add((Control)buttonLoadEepromData);
+      tabPageDiagnostics.Controls.Add((Control)buttonSaveEepromData);
+      tabPageDiagnostics.Controls.Add((Control)buttonUpdateFirmware);
+      tabPageDiagnostics.Controls.Add((Control)buttonPreprocess);
+      tabPageDiagnostics.Controls.Add((Control)groupBox4);
+      tabPageDiagnostics.Controls.Add((Control)buttonBacklashPrint);
+      tabPageDiagnostics.Controls.Add((Control)buttonGetGCode);
+      tabPageDiagnostics.Controls.Add((Control)buttonReCenter);
+      tabPageDiagnostics.Controls.Add((Control)buttonHome);
+      tabPageDiagnostics.Controls.Add((Control)buttonSpeedTest);
+      tabPageDiagnostics.Controls.Add((Control)buttonXSpeedTest);
+      tabPageDiagnostics.Controls.Add((Control)buttonYSkipTestBack);
+      tabPageDiagnostics.Controls.Add((Control)buttonXSkipTestRight);
+      tabPageDiagnostics.Controls.Add((Control)buttonYSkipTest);
+      tabPageDiagnostics.Controls.Add((Control)buttonXSkipTest);
+      tabPageDiagnostics.Location = new Point(4, 22);
+      tabPageDiagnostics.Name = "tabPageDiagnostics";
+      tabPageDiagnostics.Padding = new Padding(3);
+      tabPageDiagnostics.Size = new Size(601, 303);
+      tabPageDiagnostics.TabIndex = 1;
+      tabPageDiagnostics.Text = "Diagnostics";
+      buttonLoadEepromData.Location = new Point(448, 58);
+      buttonLoadEepromData.Name = "buttonLoadEepromData";
+      buttonLoadEepromData.Size = new Size(138, 36);
+      buttonLoadEepromData.TabIndex = 29;
+      buttonLoadEepromData.Text = "Load EEPROM Data";
+      buttonLoadEepromData.UseVisualStyleBackColor = true;
+      buttonLoadEepromData.Click += new EventHandler(buttonLoadEepromData_Click);
+      buttonSaveEepromData.Location = new Point(448, 11);
+      buttonSaveEepromData.Name = "buttonSaveEepromData";
+      buttonSaveEepromData.Size = new Size(138, 36);
+      buttonSaveEepromData.TabIndex = 28;
+      buttonSaveEepromData.Text = "Save EEPROM Data";
+      buttonSaveEepromData.UseVisualStyleBackColor = true;
+      buttonSaveEepromData.Click += new EventHandler(buttonSaveEepromData_Click);
+      buttonUpdateFirmware.Location = new Point(301, 157);
+      buttonUpdateFirmware.Name = "buttonUpdateFirmware";
+      buttonUpdateFirmware.Size = new Size(138, 36);
+      buttonUpdateFirmware.TabIndex = 26;
+      buttonUpdateFirmware.Text = "Update Firmware";
+      buttonUpdateFirmware.UseVisualStyleBackColor = true;
+      buttonUpdateFirmware.Click += new EventHandler(buttonUpdateFirmware_Click);
+      buttonPreprocess.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      buttonPreprocess.Location = new Point(155, 157);
+      buttonPreprocess.Name = "buttonPreprocess";
+      buttonPreprocess.Size = new Size(138, 36);
+      buttonPreprocess.TabIndex = 27;
+      buttonPreprocess.Text = "Backlash Settings";
+      buttonPreprocess.UseVisualStyleBackColor = true;
+      buttonPreprocess.Click += new EventHandler(buttonPreprocess_Click);
+      groupBox4.Controls.Add((Control)buttonBedPointTest);
+      groupBox4.Controls.Add((Control)comboBoxBedTestPoint);
+      groupBox4.Location = new Point(9, 203);
+      groupBox4.Name = "groupBox4";
+      groupBox4.Size = new Size(297, 45);
+      groupBox4.TabIndex = 10;
+      groupBox4.TabStop = false;
+      groupBox4.Text = "Bed Point Test";
+      buttonBedPointTest.Location = new Point(7, 17);
+      buttonBedPointTest.Name = "buttonBedPointTest";
+      buttonBedPointTest.Size = new Size(131, 21);
+      buttonBedPointTest.TabIndex = 1;
+      buttonBedPointTest.Text = "Move to Point";
+      buttonBedPointTest.UseVisualStyleBackColor = true;
+      buttonBedPointTest.Click += new EventHandler(buttonBedPointTest_Click);
+      comboBoxBedTestPoint.DropDownStyle = ComboBoxStyle.DropDownList;
+      comboBoxBedTestPoint.FormattingEnabled = true;
+      comboBoxBedTestPoint.Items.AddRange(new object[5]
       {
         (object) "Center",
         (object) "Front Right",
@@ -2789,325 +3194,325 @@ namespace M3D.Spooler
         (object) "Back Left",
         (object) "Back Right"
       });
-      this.comboBoxBedTestPoint.Location = new Point(160, 18);
-      this.comboBoxBedTestPoint.Name = "comboBoxBedTestPoint";
-      this.comboBoxBedTestPoint.Size = new Size(129, 20);
-      this.comboBoxBedTestPoint.TabIndex = 0;
-      this.buttonBacklashPrint.Location = new Point(9, 157);
-      this.buttonBacklashPrint.Name = "buttonBacklashPrint";
-      this.buttonBacklashPrint.Size = new Size(138, 36);
-      this.buttonBacklashPrint.TabIndex = 9;
-      this.buttonBacklashPrint.Text = "Start Backlash Print";
-      this.buttonBacklashPrint.UseVisualStyleBackColor = true;
-      this.buttonBacklashPrint.Click += new EventHandler(this.buttonBacklashPrint_Click);
-      this.buttonGetGCode.Location = new Point(301, 106);
-      this.buttonGetGCode.Name = "buttonGetGCode";
-      this.buttonGetGCode.Size = new Size(138, 36);
-      this.buttonGetGCode.TabIndex = 8;
-      this.buttonGetGCode.Text = "Get G-Code";
-      this.buttonGetGCode.UseVisualStyleBackColor = true;
-      this.buttonGetGCode.Click += new EventHandler(this.buttonGetGCode_Click);
-      this.buttonReCenter.Location = new Point(301, 58);
-      this.buttonReCenter.Name = "buttonReCenter";
-      this.buttonReCenter.Size = new Size(138, 36);
-      this.buttonReCenter.TabIndex = 7;
-      this.buttonReCenter.Text = "Fast Re-Center";
-      this.buttonReCenter.UseVisualStyleBackColor = true;
-      this.buttonReCenter.Click += new EventHandler(this.buttonReCenter_Click);
-      this.buttonHome.Location = new Point(301, 11);
-      this.buttonHome.Name = "buttonHome";
-      this.buttonHome.Size = new Size(138, 36);
-      this.buttonHome.TabIndex = 6;
-      this.buttonHome.Text = "Home";
-      this.buttonHome.UseVisualStyleBackColor = true;
-      this.buttonHome.Click += new EventHandler(this.buttonHome_Click);
-      this.buttonSpeedTest.Location = new Point(155, 106);
-      this.buttonSpeedTest.Name = "buttonSpeedTest";
-      this.buttonSpeedTest.Size = new Size(138, 36);
-      this.buttonSpeedTest.TabIndex = 5;
-      this.buttonSpeedTest.Text = "Y Speed Test";
-      this.buttonSpeedTest.UseVisualStyleBackColor = true;
-      this.buttonSpeedTest.Click += new EventHandler(this.buttonYSpeedTest_Click);
-      this.buttonXSpeedTest.Location = new Point(9, 106);
-      this.buttonXSpeedTest.Name = "buttonXSpeedTest";
-      this.buttonXSpeedTest.Size = new Size(138, 36);
-      this.buttonXSpeedTest.TabIndex = 4;
-      this.buttonXSpeedTest.Text = "X Speed Test";
-      this.buttonXSpeedTest.UseVisualStyleBackColor = true;
-      this.buttonXSpeedTest.Click += new EventHandler(this.buttonXSpeedTest_Click);
-      this.buttonYSkipTestBack.Location = new Point(155, 58);
-      this.buttonYSkipTestBack.Name = "buttonYSkipTestBack";
-      this.buttonYSkipTestBack.Size = new Size(138, 36);
-      this.buttonYSkipTestBack.TabIndex = 3;
-      this.buttonYSkipTestBack.Text = "Y Skip Test /\\ (Back)";
-      this.buttonYSkipTestBack.UseVisualStyleBackColor = true;
-      this.buttonYSkipTestBack.Click += new EventHandler(this.buttonYSkipTestBack_Click);
-      this.buttonXSkipTestRight.Location = new Point(9, 58);
-      this.buttonXSkipTestRight.Name = "buttonXSkipTestRight";
-      this.buttonXSkipTestRight.Size = new Size(138, 36);
-      this.buttonXSkipTestRight.TabIndex = 2;
-      this.buttonXSkipTestRight.Text = "X Skip Test -->(Right)";
-      this.buttonXSkipTestRight.UseVisualStyleBackColor = true;
-      this.buttonXSkipTestRight.Click += new EventHandler(this.buttonXSkipTestRight_Click);
-      this.buttonYSkipTest.Location = new Point(155, 10);
-      this.buttonYSkipTest.Name = "buttonYSkipTest";
-      this.buttonYSkipTest.Size = new Size(138, 36);
-      this.buttonYSkipTest.TabIndex = 1;
-      this.buttonYSkipTest.Text = "Y Skip Test \\/ (Front)";
-      this.buttonYSkipTest.UseVisualStyleBackColor = true;
-      this.buttonYSkipTest.Click += new EventHandler(this.buttonYSkipTest_Click);
-      this.buttonXSkipTest.Location = new Point(9, 10);
-      this.buttonXSkipTest.Name = "buttonXSkipTest";
-      this.buttonXSkipTest.Size = new Size(138, 36);
-      this.buttonXSkipTest.TabIndex = 0;
-      this.buttonXSkipTest.Text = "X Skip Test <--  (Left)";
-      this.buttonXSkipTest.UseVisualStyleBackColor = true;
-      this.buttonXSkipTest.Click += new EventHandler(this.buttonXSkipTest_Click);
-      this.tabPageSDCard.BackColor = SystemColors.Control;
-      this.tabPageSDCard.Controls.Add((Control) this.checkBoxCalibrateBeforeSDPrint);
-      this.tabPageSDCard.Controls.Add((Control) this.buttonSDDeleteFile);
-      this.tabPageSDCard.Controls.Add((Control) this.buttonSDPrint);
-      this.tabPageSDCard.Controls.Add((Control) this.buttonSDSaveGcode);
-      this.tabPageSDCard.Controls.Add((Control) this.buttonSDRefresh);
-      this.tabPageSDCard.Controls.Add((Control) this.listBoxSDFiles);
-      this.tabPageSDCard.Controls.Add((Control) this.label6);
-      this.tabPageSDCard.Location = new Point(4, 22);
-      this.tabPageSDCard.Name = "tabPageSDCard";
-      this.tabPageSDCard.Size = new Size(601, 303);
-      this.tabPageSDCard.TabIndex = 3;
-      this.tabPageSDCard.Text = "Untethered Printing";
-      this.checkBoxCalibrateBeforeSDPrint.AutoSize = true;
-      this.checkBoxCalibrateBeforeSDPrint.Location = new Point(20, 217);
-      this.checkBoxCalibrateBeforeSDPrint.Name = "checkBoxCalibrateBeforeSDPrint";
-      this.checkBoxCalibrateBeforeSDPrint.Size = new Size(267, 16);
-      this.checkBoxCalibrateBeforeSDPrint.TabIndex = 11;
-      this.checkBoxCalibrateBeforeSDPrint.Text = "Calibrate printer before printing saved jobs.";
-      this.checkBoxCalibrateBeforeSDPrint.UseVisualStyleBackColor = true;
-      this.buttonSDDeleteFile.Location = new Point(359, 173);
-      this.buttonSDDeleteFile.Name = "buttonSDDeleteFile";
-      this.buttonSDDeleteFile.Size = new Size(138, 36);
-      this.buttonSDDeleteFile.TabIndex = 10;
-      this.buttonSDDeleteFile.Text = "Delete Saved Job";
-      this.buttonSDDeleteFile.UseVisualStyleBackColor = true;
-      this.buttonSDDeleteFile.Click += new EventHandler(this.buttonSDDelete_Click);
-      this.buttonSDPrint.Location = new Point(359, (int) sbyte.MaxValue);
-      this.buttonSDPrint.Name = "buttonSDPrint";
-      this.buttonSDPrint.Size = new Size(138, 36);
-      this.buttonSDPrint.TabIndex = 9;
-      this.buttonSDPrint.Text = "Print Saved Job";
-      this.buttonSDPrint.UseVisualStyleBackColor = true;
-      this.buttonSDPrint.Click += new EventHandler(this.buttonSDPrint_Click);
-      this.buttonSDSaveGcode.Location = new Point(359, 81);
-      this.buttonSDSaveGcode.Name = "buttonSDSaveGcode";
-      this.buttonSDSaveGcode.Size = new Size(138, 36);
-      this.buttonSDSaveGcode.TabIndex = 8;
-      this.buttonSDSaveGcode.Text = "Save Job to Printer";
-      this.buttonSDSaveGcode.UseVisualStyleBackColor = true;
-      this.buttonSDSaveGcode.Click += new EventHandler(this.buttonSDSaveGcode_Click);
-      this.buttonSDRefresh.Location = new Point(359, 35);
-      this.buttonSDRefresh.Name = "buttonSDRefresh";
-      this.buttonSDRefresh.Size = new Size(138, 36);
-      this.buttonSDRefresh.TabIndex = 7;
-      this.buttonSDRefresh.Text = "Refresh";
-      this.buttonSDRefresh.UseVisualStyleBackColor = true;
-      this.buttonSDRefresh.Click += new EventHandler(this.buttonSDRefresh_Click);
-      this.listBoxSDFiles.FormattingEnabled = true;
-      this.listBoxSDFiles.ItemHeight = 12;
-      this.listBoxSDFiles.Location = new Point(15, 35);
-      this.listBoxSDFiles.Name = "listBoxSDFiles";
-      this.listBoxSDFiles.Size = new Size(330, 172);
-      this.listBoxSDFiles.TabIndex = 1;
-      this.label6.AutoSize = true;
-      this.label6.Location = new Point(10, 18);
-      this.label6.Name = "label6";
-      this.label6.Size = new Size(214, 12);
-      this.label6.TabIndex = 0;
-      this.label6.Text = "Print Jobs Saved to Internal Memory:";
-      this.tabPageHeatedBedControl.BackColor = SystemColors.Control;
-      this.tabPageHeatedBedControl.Controls.Add((Control) this.buttonTurnOfHeatedbed);
-      this.tabPageHeatedBedControl.Controls.Add((Control) this.buttonBedHeatToABR);
-      this.tabPageHeatedBedControl.Controls.Add((Control) this.buttonBedHeatToABS);
-      this.tabPageHeatedBedControl.Controls.Add((Control) this.buttonBedHeatToPLA);
-      this.tabPageHeatedBedControl.Location = new Point(4, 22);
-      this.tabPageHeatedBedControl.Name = "tabPageHeatedBedControl";
-      this.tabPageHeatedBedControl.Padding = new Padding(3);
-      this.tabPageHeatedBedControl.Size = new Size(601, 303);
-      this.tabPageHeatedBedControl.TabIndex = 2;
-      this.tabPageHeatedBedControl.Text = "Heated Bed Control";
-      this.buttonTurnOfHeatedbed.Location = new Point(6, 52);
-      this.buttonTurnOfHeatedbed.Name = "buttonTurnOfHeatedbed";
-      this.buttonTurnOfHeatedbed.Size = new Size(141, 32);
-      this.buttonTurnOfHeatedbed.TabIndex = 63;
-      this.buttonTurnOfHeatedbed.Text = "Turn off Heated Bed";
-      this.buttonTurnOfHeatedbed.UseVisualStyleBackColor = true;
-      this.buttonTurnOfHeatedbed.Click += new EventHandler(this.buttonTurnOfHeatedbed_Click);
-      this.buttonBedHeatToABR.Location = new Point(304, 6);
-      this.buttonBedHeatToABR.Name = "buttonBedHeatToABR";
-      this.buttonBedHeatToABR.Size = new Size(141, 32);
-      this.buttonBedHeatToABR.TabIndex = 61;
-      this.buttonBedHeatToABR.Text = "Heat to ABS-R Temp";
-      this.buttonBedHeatToABR.UseVisualStyleBackColor = true;
-      this.buttonBedHeatToABR.Click += new EventHandler(this.buttonBedHeatToABR_Click);
-      this.buttonBedHeatToABS.Location = new Point(155, 6);
-      this.buttonBedHeatToABS.Name = "buttonBedHeatToABS";
-      this.buttonBedHeatToABS.Size = new Size(141, 32);
-      this.buttonBedHeatToABS.TabIndex = 60;
-      this.buttonBedHeatToABS.Text = "Heat to ABS Temp";
-      this.buttonBedHeatToABS.UseVisualStyleBackColor = true;
-      this.buttonBedHeatToABS.Click += new EventHandler(this.buttonBedHeatToABS_Click);
-      this.buttonBedHeatToPLA.Location = new Point(6, 6);
-      this.buttonBedHeatToPLA.Name = "buttonBedHeatToPLA";
-      this.buttonBedHeatToPLA.Size = new Size(141, 32);
-      this.buttonBedHeatToPLA.TabIndex = 59;
-      this.buttonBedHeatToPLA.Text = "Heat to PLA Temp";
-      this.buttonBedHeatToPLA.UseVisualStyleBackColor = true;
-      this.buttonBedHeatToPLA.Click += new EventHandler(this.buttonBedHeatToPLA_Click);
-      this.buttonRepeatLast.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.buttonRepeatLast.Location = new Point(383, 24);
-      this.buttonRepeatLast.Name = "buttonRepeatLast";
-      this.buttonRepeatLast.Size = new Size(78, 18);
-      this.buttonRepeatLast.TabIndex = 43;
-      this.buttonRepeatLast.Text = "Repeat";
-      this.buttonRepeatLast.UseVisualStyleBackColor = true;
-      this.buttonRepeatLast.Click += new EventHandler(this.buttonRepeatLast_Click);
-      this.label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.label3.AutoSize = true;
-      this.label3.Location = new Point(4, 8);
-      this.label3.Name = "label3";
-      this.label3.Size = new Size(131, 12);
-      this.label3.TabIndex = 7;
-      this.label3.Text = "Manual Insert G-Code";
-      this.textBoxManualGCode.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.textBoxManualGCode.Location = new Point(8, 24);
-      this.textBoxManualGCode.Name = "textBoxManualGCode";
-      this.textBoxManualGCode.Size = new Size(278, 21);
-      this.textBoxManualGCode.TabIndex = 8;
-      this.textBoxManualGCode.Enter += new EventHandler(this.OnEnterInsertGCode);
-      this.textBoxManualGCode.Leave += new EventHandler(this.OnLeaveInsertGCode);
-      this.buttonSendGCode.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.buttonSendGCode.Location = new Point(297, 24);
-      this.buttonSendGCode.Name = "buttonSendGCode";
-      this.buttonSendGCode.Size = new Size(78, 18);
-      this.buttonSendGCode.TabIndex = 9;
-      this.buttonSendGCode.Text = "Send";
-      this.buttonSendGCode.UseVisualStyleBackColor = true;
-      this.buttonSendGCode.Click += new EventHandler(this.buttonSendGCode_Click);
-      this.buttonClearLog.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-      this.buttonClearLog.Location = new Point(9, 252);
-      this.buttonClearLog.Name = "buttonClearLog";
-      this.buttonClearLog.Size = new Size(87, 21);
-      this.buttonClearLog.TabIndex = 41;
-      this.buttonClearLog.Text = "Clear Log";
-      this.buttonClearLog.UseVisualStyleBackColor = true;
-      this.buttonClearLog.Click += new EventHandler(this.buttonClearLog_Click);
-      this.checkBoxLogToScreen.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.checkBoxLogToScreen.AutoSize = true;
-      this.checkBoxLogToScreen.Location = new Point(240, 254);
-      this.checkBoxLogToScreen.Name = "checkBoxLogToScreen";
-      this.checkBoxLogToScreen.Size = new Size(103, 16);
-      this.checkBoxLogToScreen.TabIndex = 40;
-      this.checkBoxLogToScreen.Text = "Log to Screen";
-      this.checkBoxLogToScreen.UseVisualStyleBackColor = true;
-      this.checkBoxLogToScreen.CheckedChanged += new EventHandler(this.OnLogToScreenChanged);
-      this.richTextBoxLoggedItems.Location = new Point(8, 144);
-      this.richTextBoxLoggedItems.Name = "richTextBoxLoggedItems";
-      this.richTextBoxLoggedItems.Size = new Size(375, 104);
-      this.richTextBoxLoggedItems.TabIndex = 42;
-      this.richTextBoxLoggedItems.Text = "";
-      this.richTextBoxLoggedItems.MouseUp += new MouseEventHandler(this.richTextBoxLoggedItems_MouseUp);
-      this.buttonEmergencyStop.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.buttonEmergencyStop.BackColor = SystemColors.Control;
-      this.buttonEmergencyStop.ForeColor = System.Drawing.Color.Red;
-      this.buttonEmergencyStop.Location = new Point(200, 49);
-      this.buttonEmergencyStop.Name = "buttonEmergencyStop";
-      this.buttonEmergencyStop.Size = new Size(184, 30);
-      this.buttonEmergencyStop.TabIndex = 0;
-      this.buttonEmergencyStop.Text = "EMERGENCY STOP";
-      this.buttonEmergencyStop.UseVisualStyleBackColor = false;
-      this.buttonEmergencyStop.Click += new EventHandler(this.buttonEmergencyStop_Click);
-      this.label5.AutoSize = true;
-      this.label5.Location = new Point(7, 126);
-      this.label5.Name = "label5";
-      this.label5.Size = new Size(89, 12);
-      this.label5.TabIndex = 39;
-      this.label5.Tag = (object) "";
-      this.label5.Text = "Command Log";
-      this.listBoxManualHistory.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.listBoxManualHistory.FormattingEnabled = true;
-      this.listBoxManualHistory.ItemHeight = 12;
-      this.listBoxManualHistory.Location = new Point(13, 320);
-      this.listBoxManualHistory.Name = "listBoxManualHistory";
-      this.listBoxManualHistory.Size = new Size(370, 64);
-      this.listBoxManualHistory.TabIndex = 38;
-      this.label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.label4.AutoSize = true;
-      this.label4.Location = new Point(10, 304);
-      this.label4.Name = "label4";
-      this.label4.Size = new Size(103, 12);
-      this.label4.TabIndex = 37;
-      this.label4.Text = "Manual G-Codes";
-      this.checkBoxAutoScroll.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-      this.checkBoxAutoScroll.AutoSize = true;
-      this.checkBoxAutoScroll.Checked = true;
-      this.checkBoxAutoScroll.CheckState = CheckState.Checked;
-      this.checkBoxAutoScroll.Location = new Point(129, 254);
-      this.checkBoxAutoScroll.Name = "checkBoxAutoScroll";
-      this.checkBoxAutoScroll.Size = new Size(85, 16);
-      this.checkBoxAutoScroll.TabIndex = 44;
-      this.checkBoxAutoScroll.Text = "Auto Scroll";
-      this.checkBoxAutoScroll.UseVisualStyleBackColor = true;
-      this.groupBox3.Controls.Add((Control) this.groupBox1);
-      this.groupBox3.Controls.Add((Control) this.groupBox2);
-      this.groupBox3.Controls.Add((Control) this.label7);
-      this.groupBox3.Location = new Point(18, 28);
-      this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new Size(461, 226);
-      this.groupBox3.TabIndex = 4;
-      this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Temperature Controls";
-      this.AutoScaleDimensions = new SizeF(7f, 12f);
-      this.AutoScaleMode = AutoScaleMode.Font;
-      this.BackColor = System.Drawing.Color.WhiteSmoke;
-      this.ClientSize = new Size(1040, 547);
-      this.Controls.Add((Control) this.groupBoxPrinterControls);
-      this.Controls.Add((Control) this.groupBoxPrinterList);
-      this.Controls.Add((Control) this.menuStrip1);
-      this.FormBorderStyle = FormBorderStyle.FixedSingle;
-      this.Icon = (Icon) componentResourceManager.GetObject("$this.Icon");
-      this.MainMenuStrip = this.menuStrip1;
-      this.MaximizeBox = false;
-      this.Name = nameof (MainForm);
-      this.Text = "M3D Print Spooler";
-      this.FormClosing += new FormClosingEventHandler(this.OnClosing);
-      this.Load += new EventHandler(this.OnLoad);
-      this.menuStrip1.ResumeLayout(false);
-      this.menuStrip1.PerformLayout();
-      this.groupBoxPrinterList.ResumeLayout(false);
-      this.groupBoxPrinterList.PerformLayout();
-      this.groupBoxPrinterControls.ResumeLayout(false);
-      this.groupBoxPrinterControls.PerformLayout();
-      this.groupBoxPrinting.ResumeLayout(false);
-      this.groupBox2.ResumeLayout(false);
-      this.groupBox2.PerformLayout();
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
-      this.groupBoxControls.ResumeLayout(false);
-      this.groupBoxBootloaderOptions.ResumeLayout(false);
-      this.groupBoxBootloaderOptions.PerformLayout();
-      this.groupBoxFirmwareControls.ResumeLayout(false);
-      this.groupBoxFirmwareControls.PerformLayout();
-      this.tabControl1.ResumeLayout(false);
-      this.tabPageBasicOptions.ResumeLayout(false);
-      this.tabPageBasicOptions.PerformLayout();
-      this.tabPageDiagnostics.ResumeLayout(false);
-      this.groupBox4.ResumeLayout(false);
-      this.tabPageSDCard.ResumeLayout(false);
-      this.tabPageSDCard.PerformLayout();
-      this.tabPageHeatedBedControl.ResumeLayout(false);
-      this.groupBox3.ResumeLayout(false);
-      this.groupBox3.PerformLayout();
-      this.ResumeLayout(false);
-      this.PerformLayout();
+      comboBoxBedTestPoint.Location = new Point(160, 18);
+      comboBoxBedTestPoint.Name = "comboBoxBedTestPoint";
+      comboBoxBedTestPoint.Size = new Size(129, 20);
+      comboBoxBedTestPoint.TabIndex = 0;
+      buttonBacklashPrint.Location = new Point(9, 157);
+      buttonBacklashPrint.Name = "buttonBacklashPrint";
+      buttonBacklashPrint.Size = new Size(138, 36);
+      buttonBacklashPrint.TabIndex = 9;
+      buttonBacklashPrint.Text = "Start Backlash Print";
+      buttonBacklashPrint.UseVisualStyleBackColor = true;
+      buttonBacklashPrint.Click += new EventHandler(buttonBacklashPrint_Click);
+      buttonGetGCode.Location = new Point(301, 106);
+      buttonGetGCode.Name = "buttonGetGCode";
+      buttonGetGCode.Size = new Size(138, 36);
+      buttonGetGCode.TabIndex = 8;
+      buttonGetGCode.Text = "Get G-Code";
+      buttonGetGCode.UseVisualStyleBackColor = true;
+      buttonGetGCode.Click += new EventHandler(buttonGetGCode_Click);
+      buttonReCenter.Location = new Point(301, 58);
+      buttonReCenter.Name = "buttonReCenter";
+      buttonReCenter.Size = new Size(138, 36);
+      buttonReCenter.TabIndex = 7;
+      buttonReCenter.Text = "Fast Re-Center";
+      buttonReCenter.UseVisualStyleBackColor = true;
+      buttonReCenter.Click += new EventHandler(buttonReCenter_Click);
+      buttonHome.Location = new Point(301, 11);
+      buttonHome.Name = "buttonHome";
+      buttonHome.Size = new Size(138, 36);
+      buttonHome.TabIndex = 6;
+      buttonHome.Text = "Home";
+      buttonHome.UseVisualStyleBackColor = true;
+      buttonHome.Click += new EventHandler(buttonHome_Click);
+      buttonSpeedTest.Location = new Point(155, 106);
+      buttonSpeedTest.Name = "buttonSpeedTest";
+      buttonSpeedTest.Size = new Size(138, 36);
+      buttonSpeedTest.TabIndex = 5;
+      buttonSpeedTest.Text = "Y Speed Test";
+      buttonSpeedTest.UseVisualStyleBackColor = true;
+      buttonSpeedTest.Click += new EventHandler(buttonYSpeedTest_Click);
+      buttonXSpeedTest.Location = new Point(9, 106);
+      buttonXSpeedTest.Name = "buttonXSpeedTest";
+      buttonXSpeedTest.Size = new Size(138, 36);
+      buttonXSpeedTest.TabIndex = 4;
+      buttonXSpeedTest.Text = "X Speed Test";
+      buttonXSpeedTest.UseVisualStyleBackColor = true;
+      buttonXSpeedTest.Click += new EventHandler(buttonXSpeedTest_Click);
+      buttonYSkipTestBack.Location = new Point(155, 58);
+      buttonYSkipTestBack.Name = "buttonYSkipTestBack";
+      buttonYSkipTestBack.Size = new Size(138, 36);
+      buttonYSkipTestBack.TabIndex = 3;
+      buttonYSkipTestBack.Text = "Y Skip Test /\\ (Back)";
+      buttonYSkipTestBack.UseVisualStyleBackColor = true;
+      buttonYSkipTestBack.Click += new EventHandler(buttonYSkipTestBack_Click);
+      buttonXSkipTestRight.Location = new Point(9, 58);
+      buttonXSkipTestRight.Name = "buttonXSkipTestRight";
+      buttonXSkipTestRight.Size = new Size(138, 36);
+      buttonXSkipTestRight.TabIndex = 2;
+      buttonXSkipTestRight.Text = "X Skip Test -->(Right)";
+      buttonXSkipTestRight.UseVisualStyleBackColor = true;
+      buttonXSkipTestRight.Click += new EventHandler(buttonXSkipTestRight_Click);
+      buttonYSkipTest.Location = new Point(155, 10);
+      buttonYSkipTest.Name = "buttonYSkipTest";
+      buttonYSkipTest.Size = new Size(138, 36);
+      buttonYSkipTest.TabIndex = 1;
+      buttonYSkipTest.Text = "Y Skip Test \\/ (Front)";
+      buttonYSkipTest.UseVisualStyleBackColor = true;
+      buttonYSkipTest.Click += new EventHandler(buttonYSkipTest_Click);
+      buttonXSkipTest.Location = new Point(9, 10);
+      buttonXSkipTest.Name = "buttonXSkipTest";
+      buttonXSkipTest.Size = new Size(138, 36);
+      buttonXSkipTest.TabIndex = 0;
+      buttonXSkipTest.Text = "X Skip Test <--  (Left)";
+      buttonXSkipTest.UseVisualStyleBackColor = true;
+      buttonXSkipTest.Click += new EventHandler(buttonXSkipTest_Click);
+      tabPageSDCard.BackColor = SystemColors.Control;
+      tabPageSDCard.Controls.Add((Control)checkBoxCalibrateBeforeSDPrint);
+      tabPageSDCard.Controls.Add((Control)buttonSDDeleteFile);
+      tabPageSDCard.Controls.Add((Control)buttonSDPrint);
+      tabPageSDCard.Controls.Add((Control)buttonSDSaveGcode);
+      tabPageSDCard.Controls.Add((Control)buttonSDRefresh);
+      tabPageSDCard.Controls.Add((Control)listBoxSDFiles);
+      tabPageSDCard.Controls.Add((Control)label6);
+      tabPageSDCard.Location = new Point(4, 22);
+      tabPageSDCard.Name = "tabPageSDCard";
+      tabPageSDCard.Size = new Size(601, 303);
+      tabPageSDCard.TabIndex = 3;
+      tabPageSDCard.Text = "Untethered Printing";
+      checkBoxCalibrateBeforeSDPrint.AutoSize = true;
+      checkBoxCalibrateBeforeSDPrint.Location = new Point(20, 217);
+      checkBoxCalibrateBeforeSDPrint.Name = "checkBoxCalibrateBeforeSDPrint";
+      checkBoxCalibrateBeforeSDPrint.Size = new Size(267, 16);
+      checkBoxCalibrateBeforeSDPrint.TabIndex = 11;
+      checkBoxCalibrateBeforeSDPrint.Text = "Calibrate printer before printing saved jobs.";
+      checkBoxCalibrateBeforeSDPrint.UseVisualStyleBackColor = true;
+      buttonSDDeleteFile.Location = new Point(359, 173);
+      buttonSDDeleteFile.Name = "buttonSDDeleteFile";
+      buttonSDDeleteFile.Size = new Size(138, 36);
+      buttonSDDeleteFile.TabIndex = 10;
+      buttonSDDeleteFile.Text = "Delete Saved Job";
+      buttonSDDeleteFile.UseVisualStyleBackColor = true;
+      buttonSDDeleteFile.Click += new EventHandler(buttonSDDelete_Click);
+      buttonSDPrint.Location = new Point(359, (int) sbyte.MaxValue);
+      buttonSDPrint.Name = "buttonSDPrint";
+      buttonSDPrint.Size = new Size(138, 36);
+      buttonSDPrint.TabIndex = 9;
+      buttonSDPrint.Text = "Print Saved Job";
+      buttonSDPrint.UseVisualStyleBackColor = true;
+      buttonSDPrint.Click += new EventHandler(buttonSDPrint_Click);
+      buttonSDSaveGcode.Location = new Point(359, 81);
+      buttonSDSaveGcode.Name = "buttonSDSaveGcode";
+      buttonSDSaveGcode.Size = new Size(138, 36);
+      buttonSDSaveGcode.TabIndex = 8;
+      buttonSDSaveGcode.Text = "Save Job to Printer";
+      buttonSDSaveGcode.UseVisualStyleBackColor = true;
+      buttonSDSaveGcode.Click += new EventHandler(buttonSDSaveGcode_Click);
+      buttonSDRefresh.Location = new Point(359, 35);
+      buttonSDRefresh.Name = "buttonSDRefresh";
+      buttonSDRefresh.Size = new Size(138, 36);
+      buttonSDRefresh.TabIndex = 7;
+      buttonSDRefresh.Text = "Refresh";
+      buttonSDRefresh.UseVisualStyleBackColor = true;
+      buttonSDRefresh.Click += new EventHandler(buttonSDRefresh_Click);
+      listBoxSDFiles.FormattingEnabled = true;
+      listBoxSDFiles.ItemHeight = 12;
+      listBoxSDFiles.Location = new Point(15, 35);
+      listBoxSDFiles.Name = "listBoxSDFiles";
+      listBoxSDFiles.Size = new Size(330, 172);
+      listBoxSDFiles.TabIndex = 1;
+      label6.AutoSize = true;
+      label6.Location = new Point(10, 18);
+      label6.Name = "label6";
+      label6.Size = new Size(214, 12);
+      label6.TabIndex = 0;
+      label6.Text = "Print Jobs Saved to Internal Memory:";
+      tabPageHeatedBedControl.BackColor = SystemColors.Control;
+      tabPageHeatedBedControl.Controls.Add((Control)buttonTurnOfHeatedbed);
+      tabPageHeatedBedControl.Controls.Add((Control)buttonBedHeatToABR);
+      tabPageHeatedBedControl.Controls.Add((Control)buttonBedHeatToABS);
+      tabPageHeatedBedControl.Controls.Add((Control)buttonBedHeatToPLA);
+      tabPageHeatedBedControl.Location = new Point(4, 22);
+      tabPageHeatedBedControl.Name = "tabPageHeatedBedControl";
+      tabPageHeatedBedControl.Padding = new Padding(3);
+      tabPageHeatedBedControl.Size = new Size(601, 303);
+      tabPageHeatedBedControl.TabIndex = 2;
+      tabPageHeatedBedControl.Text = "Heated Bed Control";
+      buttonTurnOfHeatedbed.Location = new Point(6, 52);
+      buttonTurnOfHeatedbed.Name = "buttonTurnOfHeatedbed";
+      buttonTurnOfHeatedbed.Size = new Size(141, 32);
+      buttonTurnOfHeatedbed.TabIndex = 63;
+      buttonTurnOfHeatedbed.Text = "Turn off Heated Bed";
+      buttonTurnOfHeatedbed.UseVisualStyleBackColor = true;
+      buttonTurnOfHeatedbed.Click += new EventHandler(buttonTurnOfHeatedbed_Click);
+      buttonBedHeatToABR.Location = new Point(304, 6);
+      buttonBedHeatToABR.Name = "buttonBedHeatToABR";
+      buttonBedHeatToABR.Size = new Size(141, 32);
+      buttonBedHeatToABR.TabIndex = 61;
+      buttonBedHeatToABR.Text = "Heat to ABS-R Temp";
+      buttonBedHeatToABR.UseVisualStyleBackColor = true;
+      buttonBedHeatToABR.Click += new EventHandler(buttonBedHeatToABR_Click);
+      buttonBedHeatToABS.Location = new Point(155, 6);
+      buttonBedHeatToABS.Name = "buttonBedHeatToABS";
+      buttonBedHeatToABS.Size = new Size(141, 32);
+      buttonBedHeatToABS.TabIndex = 60;
+      buttonBedHeatToABS.Text = "Heat to ABS Temp";
+      buttonBedHeatToABS.UseVisualStyleBackColor = true;
+      buttonBedHeatToABS.Click += new EventHandler(buttonBedHeatToABS_Click);
+      buttonBedHeatToPLA.Location = new Point(6, 6);
+      buttonBedHeatToPLA.Name = "buttonBedHeatToPLA";
+      buttonBedHeatToPLA.Size = new Size(141, 32);
+      buttonBedHeatToPLA.TabIndex = 59;
+      buttonBedHeatToPLA.Text = "Heat to PLA Temp";
+      buttonBedHeatToPLA.UseVisualStyleBackColor = true;
+      buttonBedHeatToPLA.Click += new EventHandler(buttonBedHeatToPLA_Click);
+      buttonRepeatLast.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      buttonRepeatLast.Location = new Point(383, 24);
+      buttonRepeatLast.Name = "buttonRepeatLast";
+      buttonRepeatLast.Size = new Size(78, 18);
+      buttonRepeatLast.TabIndex = 43;
+      buttonRepeatLast.Text = "Repeat";
+      buttonRepeatLast.UseVisualStyleBackColor = true;
+      buttonRepeatLast.Click += new EventHandler(buttonRepeatLast_Click);
+      label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      label3.AutoSize = true;
+      label3.Location = new Point(4, 8);
+      label3.Name = "label3";
+      label3.Size = new Size(131, 12);
+      label3.TabIndex = 7;
+      label3.Text = "Manual Insert G-Code";
+      textBoxManualGCode.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      textBoxManualGCode.Location = new Point(8, 24);
+      textBoxManualGCode.Name = "textBoxManualGCode";
+      textBoxManualGCode.Size = new Size(278, 21);
+      textBoxManualGCode.TabIndex = 8;
+      textBoxManualGCode.Enter += new EventHandler(OnEnterInsertGCode);
+      textBoxManualGCode.Leave += new EventHandler(OnLeaveInsertGCode);
+      buttonSendGCode.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      buttonSendGCode.Location = new Point(297, 24);
+      buttonSendGCode.Name = "buttonSendGCode";
+      buttonSendGCode.Size = new Size(78, 18);
+      buttonSendGCode.TabIndex = 9;
+      buttonSendGCode.Text = "Send";
+      buttonSendGCode.UseVisualStyleBackColor = true;
+      buttonSendGCode.Click += new EventHandler(buttonSendGCode_Click);
+      buttonClearLog.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+      buttonClearLog.Location = new Point(9, 252);
+      buttonClearLog.Name = "buttonClearLog";
+      buttonClearLog.Size = new Size(87, 21);
+      buttonClearLog.TabIndex = 41;
+      buttonClearLog.Text = "Clear Log";
+      buttonClearLog.UseVisualStyleBackColor = true;
+      buttonClearLog.Click += new EventHandler(buttonClearLog_Click);
+      checkBoxLogToScreen.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      checkBoxLogToScreen.AutoSize = true;
+      checkBoxLogToScreen.Location = new Point(240, 254);
+      checkBoxLogToScreen.Name = "checkBoxLogToScreen";
+      checkBoxLogToScreen.Size = new Size(103, 16);
+      checkBoxLogToScreen.TabIndex = 40;
+      checkBoxLogToScreen.Text = "Log to Screen";
+      checkBoxLogToScreen.UseVisualStyleBackColor = true;
+      checkBoxLogToScreen.CheckedChanged += new EventHandler(OnLogToScreenChanged);
+      richTextBoxLoggedItems.Location = new Point(8, 144);
+      richTextBoxLoggedItems.Name = "richTextBoxLoggedItems";
+      richTextBoxLoggedItems.Size = new Size(375, 104);
+      richTextBoxLoggedItems.TabIndex = 42;
+      richTextBoxLoggedItems.Text = "";
+      richTextBoxLoggedItems.MouseUp += new MouseEventHandler(richTextBoxLoggedItems_MouseUp);
+      buttonEmergencyStop.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      buttonEmergencyStop.BackColor = SystemColors.Control;
+      buttonEmergencyStop.ForeColor = System.Drawing.Color.Red;
+      buttonEmergencyStop.Location = new Point(200, 49);
+      buttonEmergencyStop.Name = "buttonEmergencyStop";
+      buttonEmergencyStop.Size = new Size(184, 30);
+      buttonEmergencyStop.TabIndex = 0;
+      buttonEmergencyStop.Text = "EMERGENCY STOP";
+      buttonEmergencyStop.UseVisualStyleBackColor = false;
+      buttonEmergencyStop.Click += new EventHandler(buttonEmergencyStop_Click);
+      label5.AutoSize = true;
+      label5.Location = new Point(7, 126);
+      label5.Name = "label5";
+      label5.Size = new Size(89, 12);
+      label5.TabIndex = 39;
+      label5.Tag = (object) "";
+      label5.Text = "Command Log";
+      listBoxManualHistory.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      listBoxManualHistory.FormattingEnabled = true;
+      listBoxManualHistory.ItemHeight = 12;
+      listBoxManualHistory.Location = new Point(13, 320);
+      listBoxManualHistory.Name = "listBoxManualHistory";
+      listBoxManualHistory.Size = new Size(370, 64);
+      listBoxManualHistory.TabIndex = 38;
+      label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      label4.AutoSize = true;
+      label4.Location = new Point(10, 304);
+      label4.Name = "label4";
+      label4.Size = new Size(103, 12);
+      label4.TabIndex = 37;
+      label4.Text = "Manual G-Codes";
+      checkBoxAutoScroll.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+      checkBoxAutoScroll.AutoSize = true;
+      checkBoxAutoScroll.Checked = true;
+      checkBoxAutoScroll.CheckState = CheckState.Checked;
+      checkBoxAutoScroll.Location = new Point(129, 254);
+      checkBoxAutoScroll.Name = "checkBoxAutoScroll";
+      checkBoxAutoScroll.Size = new Size(85, 16);
+      checkBoxAutoScroll.TabIndex = 44;
+      checkBoxAutoScroll.Text = "Auto Scroll";
+      checkBoxAutoScroll.UseVisualStyleBackColor = true;
+      groupBox3.Controls.Add((Control)groupBox1);
+      groupBox3.Controls.Add((Control)groupBox2);
+      groupBox3.Controls.Add((Control)label7);
+      groupBox3.Location = new Point(18, 28);
+      groupBox3.Name = "groupBox3";
+      groupBox3.Size = new Size(461, 226);
+      groupBox3.TabIndex = 4;
+      groupBox3.TabStop = false;
+      groupBox3.Text = "Temperature Controls";
+      AutoScaleDimensions = new SizeF(7f, 12f);
+      AutoScaleMode = AutoScaleMode.Font;
+      BackColor = System.Drawing.Color.WhiteSmoke;
+      ClientSize = new Size(1040, 547);
+      Controls.Add((Control)groupBoxPrinterControls);
+      Controls.Add((Control)groupBoxPrinterList);
+      Controls.Add((Control)menuStrip1);
+      FormBorderStyle = FormBorderStyle.FixedSingle;
+      Icon = (Icon) componentResourceManager.GetObject("$this.Icon");
+      MainMenuStrip = menuStrip1;
+      MaximizeBox = false;
+      Name = nameof (MainForm);
+      Text = "M3D Print Spooler";
+      FormClosing += new FormClosingEventHandler(OnClosing);
+      Load += new EventHandler(OnLoad);
+      menuStrip1.ResumeLayout(false);
+      menuStrip1.PerformLayout();
+      groupBoxPrinterList.ResumeLayout(false);
+      groupBoxPrinterList.PerformLayout();
+      groupBoxPrinterControls.ResumeLayout(false);
+      groupBoxPrinterControls.PerformLayout();
+      groupBoxPrinting.ResumeLayout(false);
+      groupBox2.ResumeLayout(false);
+      groupBox2.PerformLayout();
+      groupBox1.ResumeLayout(false);
+      groupBox1.PerformLayout();
+      groupBoxControls.ResumeLayout(false);
+      groupBoxBootloaderOptions.ResumeLayout(false);
+      groupBoxBootloaderOptions.PerformLayout();
+      groupBoxFirmwareControls.ResumeLayout(false);
+      groupBoxFirmwareControls.PerformLayout();
+      tabControl1.ResumeLayout(false);
+      tabPageBasicOptions.ResumeLayout(false);
+      tabPageBasicOptions.PerformLayout();
+      tabPageDiagnostics.ResumeLayout(false);
+      groupBox4.ResumeLayout(false);
+      tabPageSDCard.ResumeLayout(false);
+      tabPageSDCard.PerformLayout();
+      tabPageHeatedBedControl.ResumeLayout(false);
+      groupBox3.ResumeLayout(false);
+      groupBox3.PerformLayout();
+      ResumeLayout(false);
+      PerformLayout();
     }
 
     private enum PrinterLockChanging
@@ -3124,7 +3529,7 @@ namespace M3D.Spooler
 
       public PrinterData()
       {
-        this.bPowerOutageHandled = false;
+        bPowerOutageHandled = false;
       }
     }
   }

@@ -21,32 +21,43 @@ namespace SerialPortTester
     public static void Execute(string portName)
     {
       using (new SerialPortFixer(portName))
+      {
         ;
+      }
     }
 
     public void Dispose()
     {
-      if (this.m_Handle == null)
+      if (m_Handle == null)
+      {
         return;
-      this.m_Handle.Close();
-      this.m_Handle = (SafeFileHandle) null;
+      }
+
+      m_Handle.Close();
+      m_Handle = (SafeFileHandle) null;
     }
 
     private SerialPortFixer(string portName)
     {
       if (portName == null || !portName.StartsWith("COM", StringComparison.OrdinalIgnoreCase))
+      {
         throw new ArgumentException("Invalid Serial Port", nameof (portName));
+      }
+
       SafeFileHandle file = SerialPortFixer.CreateFile("\\\\.\\" + portName, -1073741824, 0, IntPtr.Zero, 3, 1073741824, IntPtr.Zero);
       if (file.IsInvalid)
+      {
         SerialPortFixer.WinIoError();
+      }
+
       try
       {
         switch (SerialPortFixer.GetFileType(file))
         {
           case 0:
           case 2:
-            this.m_Handle = file;
-            this.InitializeDcb();
+            m_Handle = file;
+            InitializeDcb();
             break;
           default:
             throw new ArgumentException("Invalid Serial Port", nameof (portName));
@@ -55,7 +66,7 @@ namespace SerialPortTester
       catch
       {
         file.Close();
-        this.m_Handle = (SafeFileHandle) null;
+        m_Handle = (SafeFileHandle) null;
         throw;
       }
     }
@@ -80,17 +91,20 @@ namespace SerialPortTester
 
     private void InitializeDcb()
     {
-      SerialPortFixer.Dcb lpDcb = new SerialPortFixer.Dcb();
-      this.GetCommStateNative(ref lpDcb);
+      var lpDcb = new SerialPortFixer.Dcb();
+      GetCommStateNative(ref lpDcb);
       lpDcb.Flags &= 4294950911U;
-      this.SetCommStateNative(ref lpDcb);
+      SetCommStateNative(ref lpDcb);
     }
 
     private static string GetMessage(int errorCode)
     {
-      StringBuilder lpBuffer = new StringBuilder(512);
+      var lpBuffer = new StringBuilder(512);
       if (SerialPortFixer.FormatMessage(12800, new HandleRef((object) null, IntPtr.Zero), errorCode, 0, lpBuffer, lpBuffer.Capacity, IntPtr.Zero) != 0)
+      {
         return lpBuffer.ToString();
+      }
+
       return "Unknown Error";
     }
 
@@ -101,37 +115,53 @@ namespace SerialPortTester
 
     private static void WinIoError()
     {
-      int lastWin32Error = Marshal.GetLastWin32Error();
+      var lastWin32Error = Marshal.GetLastWin32Error();
       throw new IOException(SerialPortFixer.GetMessage(lastWin32Error), SerialPortFixer.MakeHrFromErrorCode(lastWin32Error));
     }
 
     private void GetCommStateNative(ref SerialPortFixer.Dcb lpDcb)
     {
-      int lpErrors = 0;
-      SerialPortFixer.Comstat lpStat = new SerialPortFixer.Comstat();
-      for (int index = 0; index < 10; ++index)
+      var lpErrors = 0;
+      var lpStat = new SerialPortFixer.Comstat();
+      for (var index = 0; index < 10; ++index)
       {
-        if (!SerialPortFixer.ClearCommError(this.m_Handle, ref lpErrors, ref lpStat))
+        if (!SerialPortFixer.ClearCommError(m_Handle, ref lpErrors, ref lpStat))
+        {
           SerialPortFixer.WinIoError();
-        if (SerialPortFixer.GetCommState(this.m_Handle, ref lpDcb))
+        }
+
+        if (SerialPortFixer.GetCommState(m_Handle, ref lpDcb))
+        {
           break;
+        }
+
         if (index == 9)
+        {
           SerialPortFixer.WinIoError();
+        }
       }
     }
 
     private void SetCommStateNative(ref SerialPortFixer.Dcb lpDcb)
     {
-      int lpErrors = 0;
-      SerialPortFixer.Comstat lpStat = new SerialPortFixer.Comstat();
-      for (int index = 0; index < 10; ++index)
+      var lpErrors = 0;
+      var lpStat = new SerialPortFixer.Comstat();
+      for (var index = 0; index < 10; ++index)
       {
-        if (!SerialPortFixer.ClearCommError(this.m_Handle, ref lpErrors, ref lpStat))
+        if (!SerialPortFixer.ClearCommError(m_Handle, ref lpErrors, ref lpStat))
+        {
           SerialPortFixer.WinIoError();
-        if (SerialPortFixer.SetCommState(this.m_Handle, ref lpDcb))
+        }
+
+        if (SerialPortFixer.SetCommState(m_Handle, ref lpDcb))
+        {
           break;
+        }
+
         if (index == 9)
+        {
           SerialPortFixer.WinIoError();
+        }
       }
     }
 

@@ -14,59 +14,63 @@ namespace M3D.Slicer.General
 
     public Matrix4x4()
     {
-      this.m = new float[4, 4];
+      m = new float[4, 4];
     }
 
     public void RotationX(float angle)
     {
-      this.Identity();
-      this.m[1, 1] = (float) Math.Cos((double) angle);
-      this.m[1, 2] = (float) -Math.Sin((double) angle);
-      this.m[2, 1] = (float) Math.Sin((double) angle);
-      this.m[2, 2] = (float) Math.Cos((double) angle);
+      Identity();
+      m[1, 1] = (float) Math.Cos((double) angle);
+      m[1, 2] = (float) -Math.Sin((double) angle);
+      m[2, 1] = (float) Math.Sin((double) angle);
+      m[2, 2] = (float) Math.Cos((double) angle);
     }
 
     public void RotationY(float angle)
     {
-      this.Identity();
-      this.m[0, 0] = (float) Math.Cos((double) angle);
-      this.m[0, 2] = (float) Math.Sin((double) angle);
-      this.m[2, 0] = (float) -Math.Sin((double) angle);
-      this.m[2, 2] = (float) Math.Cos((double) angle);
+      Identity();
+      m[0, 0] = (float) Math.Cos((double) angle);
+      m[0, 2] = (float) Math.Sin((double) angle);
+      m[2, 0] = (float) -Math.Sin((double) angle);
+      m[2, 2] = (float) Math.Cos((double) angle);
     }
 
     public void RotationZ(float angle)
     {
-      this.Identity();
-      this.m[0, 0] = (float) Math.Cos((double) angle);
-      this.m[0, 1] = (float) -Math.Sin((double) angle);
-      this.m[1, 0] = (float) Math.Sin((double) angle);
-      this.m[1, 1] = (float) Math.Cos((double) angle);
+      Identity();
+      m[0, 0] = (float) Math.Cos((double) angle);
+      m[0, 1] = (float) -Math.Sin((double) angle);
+      m[1, 0] = (float) Math.Sin((double) angle);
+      m[1, 1] = (float) Math.Cos((double) angle);
     }
 
     public void Identity()
     {
-      for (int index1 = 0; index1 < 4; ++index1)
+      for (var index1 = 0; index1 < 4; ++index1)
       {
-        for (int index2 = 0; index2 < 4; ++index2)
-          this.m[index1, index2] = 0.0f;
+        for (var index2 = 0; index2 < 4; ++index2)
+        {
+          m[index1, index2] = 0.0f;
+        }
       }
-      this.m[0, 0] = 1f;
-      this.m[1, 1] = 1f;
-      this.m[2, 2] = 1f;
-      this.m[3, 3] = 1f;
+      m[0, 0] = 1f;
+      m[1, 1] = 1f;
+      m[2, 2] = 1f;
+      m[3, 3] = 1f;
     }
 
     public static Matrix4x4 mul(Matrix4x4 lhs, Matrix4x4 rhs)
     {
-      Matrix4x4 matrix4x4 = new Matrix4x4();
-      for (int index1 = 0; index1 < 4; ++index1)
+      var matrix4x4 = new Matrix4x4();
+      for (var index1 = 0; index1 < 4; ++index1)
       {
-        for (int index2 = 0; index2 < 4; ++index2)
+        for (var index2 = 0; index2 < 4; ++index2)
         {
           matrix4x4.m[index1, index2] = 0.0f;
-          for (int index3 = 0; index3 < 4; ++index3)
+          for (var index3 = 0; index3 < 4; ++index3)
+          {
             matrix4x4.m[index1, index2] += lhs.m[index3, index2] * rhs.m[index1, index3];
+          }
         }
       }
       return matrix4x4;

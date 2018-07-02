@@ -31,36 +31,48 @@ namespace M3D.Spooling.Common.Utils
     public ConnectionMeter(ConnectionMeter.Mode mode, uint firmwareCodeBufferSize)
     {
       this.firmwareCodeBufferSize = firmwareCodeBufferSize;
-      this._delayMode = new ThreadSafeVariable<ConnectionMeter.Mode>(mode);
-      this.OKsBeforeRSSampleData = new SampleSet(20);
-      this.TimeBeforeRSSampleData = new SampleSet(20);
+      _delayMode = new ThreadSafeVariable<ConnectionMeter.Mode>(mode);
+      OKsBeforeRSSampleData = new SampleSet(20);
+      TimeBeforeRSSampleData = new SampleSet(20);
     }
 
     public void StartMetering()
     {
-      this.ResetData();
-      this.isMetering = true;
-      this.oktimer.Restart();
+      ResetData();
+      isMetering = true;
+      oktimer.Restart();
     }
 
     public void StopMetering()
     {
-      this.StopTimers();
-      this.isMetering = false;
+      StopTimers();
+      isMetering = false;
     }
 
     public bool CanSendNextCommand
     {
       get
       {
-        if (this.current_delay <= 0L)
+        if (current_delay <= 0L)
+        {
           return true;
-        if (!this.delaytimer.IsRunning)
-          this.delaytimer.Restart();
-        if (this.delaytimer.ElapsedMilliseconds < this.current_delay)
+        }
+
+        if (!delaytimer.IsRunning)
+        {
+          delaytimer.Restart();
+        }
+
+        if (delaytimer.ElapsedMilliseconds < current_delay)
+        {
           return false;
-        if (this.DelayMode == ConnectionMeter.Mode.DelayWhenBufferIsFull)
-          this.current_delay = 0L;
+        }
+
+        if (DelayMode == ConnectionMeter.Mode.DelayWhenBufferIsFull)
+        {
+          current_delay = 0L;
+        }
+
         return true;
       }
     }
@@ -69,11 +81,11 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return this._delayMode.Value;
+        return _delayMode.Value;
       }
       set
       {
-        this._delayMode.Value = value;
+        _delayMode.Value = value;
       }
     }
 
@@ -81,7 +93,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return this.isMetering;
+        return isMetering;
       }
     }
 
@@ -89,7 +101,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (double) this.OKsBeforeRSSampleData.SampleMean;
+        return (double)OKsBeforeRSSampleData.SampleMean;
       }
     }
 
@@ -97,7 +109,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (double) this.TimeBeforeRSSampleData.SampleMean;
+        return (double)TimeBeforeRSSampleData.SampleMean;
       }
     }
 
@@ -105,96 +117,107 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (double) this.TimeBeforeRSSampleData.SampleStdDev;
+        return (double)TimeBeforeRSSampleData.SampleStdDev;
       }
     }
 
     public void OKReceived()
     {
-      this.oktimer.Restart();
-      ++this.numOKsBeforeRS;
+      oktimer.Restart();
+      ++numOKsBeforeRS;
     }
 
     public void RSReceived()
     {
-      this.oktimer.Stop();
-      double num = (double) this.oktimer.ElapsedMilliseconds / 1000.0;
-      this.OKsBeforeRSSampleData.Add((double) this.numOKsBeforeRS);
-      this.TimeBeforeRSSampleData.Add(num);
-      this.RestartTimers();
-      this.numOKsBeforeRS = 0;
-      this.UpdatePhase();
+      oktimer.Stop();
+      var num = (double)oktimer.ElapsedMilliseconds / 1000.0;
+      OKsBeforeRSSampleData.Add((double)numOKsBeforeRS);
+      TimeBeforeRSSampleData.Add(num);
+      RestartTimers();
+      numOKsBeforeRS = 0;
+      UpdatePhase();
     }
 
     public void WaitReceived()
     {
-      this.ResetData();
+      ResetData();
     }
 
     public void CommandSent()
     {
-      this.RestartTimers();
+      RestartTimers();
     }
 
     private void ResetData()
     {
-      this.StopTimers();
-      this.oktimer.Reset();
-      this.delaytimer.Reset();
-      this.OKsBeforeRSSampleData.Clear();
-      this.TimeBeforeRSSampleData.Clear();
-      this.currentPhase = ConnectionMeter.Phase.FindingSteadyState;
+      StopTimers();
+      oktimer.Reset();
+      delaytimer.Reset();
+      OKsBeforeRSSampleData.Clear();
+      TimeBeforeRSSampleData.Clear();
+      currentPhase = ConnectionMeter.Phase.FindingSteadyState;
     }
 
     private void UpdatePhase()
     {
-      if (this.currentPhase == ConnectionMeter.Phase.FindingSteadyState && this.RSDelayStandardDeviation < 0.2)
+      if (currentPhase == ConnectionMeter.Phase.FindingSteadyState && RSDelayStandardDeviation < 0.2)
       {
-        this.currentPhase = ConnectionMeter.Phase.Metering;
+        currentPhase = ConnectionMeter.Phase.Metering;
       }
       else
       {
-        if (this.currentPhase != ConnectionMeter.Phase.Metering)
-          return;
-        if (this.RSDelayStandardDeviation >= 0.2)
+        if (currentPhase != ConnectionMeter.Phase.Metering)
         {
-          this.currentPhase = ConnectionMeter.Phase.FindingSteadyState;
-          this.current_delay = 0L;
+          return;
+        }
+
+        if (RSDelayStandardDeviation >= 0.2)
+        {
+          currentPhase = ConnectionMeter.Phase.FindingSteadyState;
+          current_delay = 0L;
         }
         else
         {
-          if (this.current_delay != 0L)
+          if (current_delay != 0L)
+          {
             return;
-          if (this.DelayMode == ConnectionMeter.Mode.DelayEveryCommand)
-            this.current_delay = (long) (this.AvgRSDelay * 500.0);
-          else if (this.DelayMode == ConnectionMeter.Mode.DelayWhenBufferIsFull)
-            this.current_delay = (long) (this.AvgRSDelay * 500.0);
-          this.delaytimer.Restart();
+          }
+
+          if (DelayMode == ConnectionMeter.Mode.DelayEveryCommand)
+          {
+            current_delay = (long) (AvgRSDelay * 500.0);
+          }
+          else if (DelayMode == ConnectionMeter.Mode.DelayWhenBufferIsFull)
+          {
+            current_delay = (long) (AvgRSDelay * 500.0);
+          }
+
+          delaytimer.Restart();
         }
       }
     }
 
     private void StopTimers()
     {
-      this.oktimer.Stop();
-      this.delaytimer.Stop();
+      oktimer.Stop();
+      delaytimer.Stop();
     }
 
     private void RestartTimers()
     {
-      this.oktimer.Restart();
+      oktimer.Restart();
     }
 
     private void CalculateRollingAverage(CircularBuffer<double> sampleData, CircularBuffer<double> rollingAvgs)
     {
-      int num1 = 0;
-      double num2 = 0.0;
-      foreach (double num3 in (IEnumerable<double>) sampleData)
+      var num1 = 0;
+      var num2 = 0.0;
+      foreach (var num3 in (IEnumerable<double>) sampleData)
       {
         num2 += num3;
         ++num1;
       }
-      double num4 = num2 / (double) num1;
+      var num4 = num2 / (double) num1;
       rollingAvgs.Add(num4);
     }
 

@@ -23,7 +23,7 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.state;
+        return state;
       }
     }
 
@@ -31,7 +31,7 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.result;
+        return result;
       }
     }
 

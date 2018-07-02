@@ -17,11 +17,13 @@ namespace M3D.Spooling.FirstRunUpdates
     {
       try
       {
-        int uint32 = (int) BitConverter.ToUInt32(eeprom, (int) printerProfile.EEPROMConstants.GetEepromInfo("FirmwareVersion").EepromAddr);
-        float num1 = 1500f;
-        int num2 = 2015080402;
+        var uint32 = (int) BitConverter.ToUInt32(eeprom, (int) printerProfile.EEPROMConstants.GetEepromInfo("FirmwareVersion").EepromAddr);
+        var num1 = 1500f;
+        var num2 = 2015080402;
         if ((uint) uint32 < (uint) num2)
+        {
           bootloader_conn.WriteToEEPROM(printerProfile.EEPROMConstants.GetEepromInfo("BacklashSpeed").EepromAddr, BitConverter.GetBytes(num1));
+        }
       }
       catch (Exception ex)
       {

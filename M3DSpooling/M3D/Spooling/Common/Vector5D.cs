@@ -23,29 +23,29 @@ namespace M3D.Spooling.Common
 
     public Vector5D(Vector5D other)
     {
-      this.X = other.X;
-      this.Y = other.Y;
-      this.Z = other.Z;
-      this.E = other.E;
-      this.F = other.F;
+      X = other.X;
+      Y = other.Y;
+      Z = other.Z;
+      E = other.E;
+      F = other.F;
     }
 
     public Vector5D(float x, float y, float z, float e, float f)
     {
-      this.X = x;
-      this.Y = y;
-      this.Z = z;
-      this.E = e;
-      this.F = f;
+      X = x;
+      Y = y;
+      Z = z;
+      E = e;
+      F = f;
     }
 
     public void Reset()
     {
-      this.X = -1000f;
-      this.Y = -1000f;
-      this.Z = -1000f;
-      this.E = -1000f;
-      this.F = -1000f;
+      X = -1000f;
+      Y = -1000f;
+      Z = -1000f;
+      E = -1000f;
+      F = -1000f;
     }
   }
 }

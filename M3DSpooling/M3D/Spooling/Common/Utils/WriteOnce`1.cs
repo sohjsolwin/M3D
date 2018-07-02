@@ -17,30 +17,35 @@ namespace M3D.Spooling.Common.Utils
     public WriteOnce(T default_val)
       : this()
     {
-      this.__value = default_val;
+      __value = default_val;
     }
 
     public WriteOnce()
     {
-      this.hasBeenSet = false;
-      this.thread_lock = new object();
+      hasBeenSet = false;
+      thread_lock = new object();
     }
 
     public T Value
     {
       get
       {
-        lock (this.thread_lock)
-          return this.__value;
+        lock (thread_lock)
+        {
+          return __value;
+        }
       }
       set
       {
-        lock (this.thread_lock)
+        lock (thread_lock)
         {
-          if (this.hasBeenSet)
+          if (hasBeenSet)
+          {
             throw new InvalidOperationException("Value can only be set once.");
-          this.__value = value;
-          this.hasBeenSet = true;
+          }
+
+          __value = value;
+          hasBeenSet = true;
         }
       }
     }

@@ -18,8 +18,8 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     public OpenGLRendererARBVBOs(GraphicsModelData graphicsModelData)
       : base(graphicsModelData)
     {
-      this.VboId = 0U;
-      this.Numelements = 0;
+      VboId = 0U;
+      Numelements = 0;
     }
 
     public override OpenGLRendererObject.OpenGLRenderMode RenderMode
@@ -32,44 +32,55 @@ namespace M3D.Graphics.Ext3D.ModelRendering
 
     public override void Create()
     {
-      int length = this.graphicsModelData.dataTNV.Length;
-      GL.Arb.GenBuffers(1, out this.VboId);
+      var length = graphicsModelData.dataTNV.Length;
+      GL.Arb.GenBuffers(1, out VboId);
       if (GL.GetError() != ErrorCode.NoError && Enum.GetName(typeof (ErrorCode), (object) GL.GetError()) != "NoError")
+      {
         throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), (object) GL.GetError()));
-      GL.Arb.BindBuffer(BufferTargetArb.ArrayBuffer, this.VboId);
-      GL.Arb.BufferData<VertexTNV>(BufferTargetArb.ArrayBuffer, (IntPtr) (length * (Vector2.SizeInBytes + Vector3.SizeInBytes + Vector3.SizeInBytes)), this.graphicsModelData.dataTNV, BufferUsageArb.StaticDraw);
-      int @params;
-      GL.Arb.GetBufferParameter(BufferTargetArb.ArrayBuffer, BufferParameterNameArb.BufferSize, out @params);
+      }
+
+      GL.Arb.BindBuffer(BufferTargetArb.ArrayBuffer, VboId);
+      GL.Arb.BufferData<VertexTNV>(BufferTargetArb.ArrayBuffer, (IntPtr) (length * (Vector2.SizeInBytes + Vector3.SizeInBytes + Vector3.SizeInBytes)), graphicsModelData.dataTNV, BufferUsageArb.StaticDraw);
+      GL.Arb.GetBufferParameter(BufferTargetArb.ArrayBuffer, BufferParameterNameArb.BufferSize, out var @params);
       if (GL.GetError() != ErrorCode.NoError)
+      {
         throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), (object) GL.GetError()));
+      }
+
       if (length * (Vector2.SizeInBytes + Vector3.SizeInBytes + Vector3.SizeInBytes) != @params)
+      {
         throw new ApplicationException("Error while uploading VERTICES data.");
-      this.Numelements = length;
+      }
+
+      Numelements = length;
     }
 
     public override void Distroy()
     {
-      if (!this.isInitalized())
+      if (!isInitalized())
+      {
         return;
-      GL.Arb.DeleteBuffer(this.VboId);
-      this.VboId = 0U;
-      this.Numelements = 0;
+      }
+
+      GL.Arb.DeleteBuffer(VboId);
+      VboId = 0U;
+      Numelements = 0;
     }
 
     public override unsafe void DrawCallback()
     {
-      GL.Arb.BindBuffer(BufferTargetArb.ArrayBuffer, this.VboId);
+      GL.Arb.BindBuffer(BufferTargetArb.ArrayBuffer, VboId);
       GL.InterleavedArrays(InterleavedArrayFormat.T2fN3fV3f, 0, (IntPtr) ((void*) null));
       GL.Arb.EnableVertexAttribArray(0);
       GL.Arb.VertexAttribPointer(0, 3, VertexAttribPointerTypeArb.Float, true, 32, (IntPtr) 20);
       GL.Arb.EnableVertexAttribArray(1);
       GL.Arb.VertexAttribPointer(1, 3, VertexAttribPointerTypeArb.Float, true, 32, (IntPtr) 8);
-      GL.DrawArrays(PrimitiveType.Triangles, 0, this.Numelements);
+      GL.DrawArrays(PrimitiveType.Triangles, 0, Numelements);
     }
 
     public override bool isInitalized()
     {
-      return this.VboId > 0U;
+      return VboId > 0U;
     }
   }
 }

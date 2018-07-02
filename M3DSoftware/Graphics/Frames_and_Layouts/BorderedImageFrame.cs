@@ -51,35 +51,35 @@ namespace M3D.Graphics.Frames_and_Layouts
 
     public void Init(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, int leftbordersize_pixels, int rightbordersize_pixels, int minimumwidth, int topbordersize_pixels, int bottombordersize_pixels, int minimumheight)
     {
-      ImageWidget imageWidget = new ImageWidget(this.ID);
+      var imageWidget = new ImageWidget(ID);
       imageWidget.SetPosition(0, 0);
       imageWidget.RelativeWidth = 1f;
       imageWidget.RelativeHeight = 1f;
       imageWidget.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1);
       imageWidget.SetGrowableWidth(leftbordersize_pixels, rightbordersize_pixels, minimumwidth);
       imageWidget.SetGrowableHeight(topbordersize_pixels, bottombordersize_pixels, minimumheight);
-      this.AddFirstChild((Element2D) imageWidget);
+      AddFirstChild((Element2D) imageWidget);
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
-      this.Parent = parent;
+      Parent = parent;
       base.InitChildren(parent, host, MyButtonCallback);
-      if ((double) this.u0 == 0.0 && (double) this.v0 == 0.0 && ((double) this.u1 == 0.0 && (double) this.v1 == 0.0))
+      if ((double)u0 == 0.0 && (double)v0 == 0.0 && ((double)u1 == 0.0 && (double)v1 == 0.0))
       {
-        this.texture = "guicontrols";
-        this.u0 = 640f;
-        this.v0 = 320f;
-        this.u1 = 704f;
-        this.v1 = 383f;
-        this.leftbordersize_pixels = 41;
-        this.rightbordersize_pixels = 8;
-        this.minimumwidth = 64;
-        this.topbordersize_pixels = 35;
-        this.bottombordersize_pixels = 8;
-        this.minimumheight = 64;
+        texture = "guicontrols";
+        u0 = 640f;
+        v0 = 320f;
+        u1 = 704f;
+        v1 = 383f;
+        leftbordersize_pixels = 41;
+        rightbordersize_pixels = 8;
+        minimumwidth = 64;
+        topbordersize_pixels = 35;
+        bottombordersize_pixels = 8;
+        minimumheight = 64;
       }
-      this.Init(host, this.texture, this.u0, this.v0, this.u1, this.v1, this.leftbordersize_pixels, this.rightbordersize_pixels, this.minimumwidth, this.topbordersize_pixels, this.bottombordersize_pixels, this.minimumheight);
+      Init(host, texture, u0, v0, u1, v1, leftbordersize_pixels, rightbordersize_pixels, minimumwidth, topbordersize_pixels, bottombordersize_pixels, minimumheight);
     }
   }
 }

@@ -13,12 +13,15 @@ namespace M3D.Spooling.Printer_Profiles
   {
     public override void StartupScript(IPublicFirmwareController connection, PrinterInfo info)
     {
-      int num1 = (int) connection.WriteManualCommands("G91");
+      var num1 = (int) connection.WriteManualCommands("G91");
       connection.RequestEEPROMMapping();
-      int num2 = (int) connection.WriteManualCommands("M576", "M578", "M573", "M572", "M581", "M117", "M114", "M404");
+      var num2 = (int) connection.WriteManualCommands("M576", "M578", "M573", "M572", "M581", "M117", "M114", "M404");
       if (!(info.serial_number.Color.ToLower() == "cl"))
+      {
         return;
-      int num3 = (int) connection.WriteManualCommands("M420 T25");
+      }
+
+      var num3 = (int) connection.WriteManualCommands("M420 T25");
     }
   }
 }

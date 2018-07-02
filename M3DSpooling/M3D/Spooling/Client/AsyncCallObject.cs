@@ -22,8 +22,8 @@ namespace M3D.Spooling.Client
     {
       this.callback = callback;
       this.state = state;
-      this.callbackType = CallBackType.CallID;
-      this.callID = this.GetNextCallID(printer.Info.synchronization.LastCompletedRPCID);
+      callbackType = CallBackType.CallID;
+      callID = GetNextCallID(printer.Info.synchronization.LastCompletedRPCID);
     }
 
     private uint GetNextCallID(uint lastID)
@@ -35,7 +35,7 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.state;
+        return state;
       }
     }
 
@@ -43,7 +43,7 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.callresult;
+        return callresult;
       }
     }
 
@@ -51,7 +51,7 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.idle_callback;
+        return idle_callback;
       }
     }
   }

@@ -26,7 +26,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.ch;
+        return ch;
       }
     }
   }

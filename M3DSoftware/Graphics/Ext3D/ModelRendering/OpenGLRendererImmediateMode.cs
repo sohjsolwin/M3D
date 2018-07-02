@@ -34,11 +34,11 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     public override void DrawCallback()
     {
       GL.Begin(PrimitiveType.Triangles);
-      for (int index = 0; index < this.graphicsModelData.dataTNV.Length; ++index)
+      for (var index = 0; index < graphicsModelData.dataTNV.Length; ++index)
       {
-        GL.TexCoord2(this.graphicsModelData.dataTNV[index].TexCoord.X, this.graphicsModelData.dataTNV[index].TexCoord.Y);
-        GL.Normal3(this.graphicsModelData.dataTNV[index].Normal.X, this.graphicsModelData.dataTNV[index].Normal.Y, this.graphicsModelData.dataTNV[index].Normal.Z);
-        GL.Vertex3(this.graphicsModelData.dataTNV[index].Position.X, this.graphicsModelData.dataTNV[index].Position.Y, this.graphicsModelData.dataTNV[index].Position.Z);
+        GL.TexCoord2(graphicsModelData.dataTNV[index].TexCoord.X, graphicsModelData.dataTNV[index].TexCoord.Y);
+        GL.Normal3(graphicsModelData.dataTNV[index].Normal.X, graphicsModelData.dataTNV[index].Normal.Y, graphicsModelData.dataTNV[index].Normal.Z);
+        GL.Vertex3(graphicsModelData.dataTNV[index].Position.X, graphicsModelData.dataTNV[index].Position.Y, graphicsModelData.dataTNV[index].Position.Z);
       }
       GL.End();
     }

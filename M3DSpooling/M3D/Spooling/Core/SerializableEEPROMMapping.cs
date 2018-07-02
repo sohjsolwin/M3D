@@ -23,7 +23,7 @@ namespace M3D.Spooling.Core
 
     public SerializableEEPROMMapping()
     {
-      this.serializedData = new List<SerializableEEPROMMapping.SerializableData>();
+      serializedData = new List<SerializableEEPROMMapping.SerializableData>();
     }
 
     public struct SerializableData

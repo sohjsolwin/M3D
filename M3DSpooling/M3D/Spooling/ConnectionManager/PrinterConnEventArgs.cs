@@ -19,8 +19,11 @@ namespace M3D.Spooling.ConnectionManager
     {
       this.printer = printer;
       if (printer == null || printer.SerialPort == null)
+      {
         return;
-      this.com_port = printer.ComPort;
+      }
+
+      com_port = printer.ComPort;
     }
 
     public PrinterConnEventArgs(string com_port, VID_PID vid_pid)

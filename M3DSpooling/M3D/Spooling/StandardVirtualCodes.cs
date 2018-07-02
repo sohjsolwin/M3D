@@ -64,9 +64,12 @@ namespace M3D.Spooling
       connection.ProcessBedOffsetDataFromEEPROM();
       connection.ProcessCalibrationOffset();
       Calibration calibrationDetails = connection.CalibrationDetails;
-      string text = string.Format(">> ok BRO:{0} BLO:{1} FRO:{2} FLO:{3} ZO:{4}", (object) calibrationDetails.CORNER_HEIGHT_BACK_RIGHT_OFFSET, (object) calibrationDetails.CORNER_HEIGHT_BACK_LEFT_OFFSET, (object) calibrationDetails.CORNER_HEIGHT_FRONT_RIGHT_OFFSET, (object) calibrationDetails.CORNER_HEIGHT_FRONT_LEFT_OFFSET, (object) calibrationDetails.ENTIRE_Z_HEIGHT_OFFSET);
+      var text = string.Format(">> ok BRO:{0} BLO:{1} FRO:{2} FLO:{3} ZO:{4}", (object) calibrationDetails.CORNER_HEIGHT_BACK_RIGHT_OFFSET, (object) calibrationDetails.CORNER_HEIGHT_BACK_LEFT_OFFSET, (object) calibrationDetails.CORNER_HEIGHT_FRONT_RIGHT_OFFSET, (object) calibrationDetails.CORNER_HEIGHT_FRONT_LEFT_OFFSET, (object) calibrationDetails.ENTIRE_Z_HEIGHT_OFFSET);
       if (calibrationDetails.UsesCalibrationOffset)
+      {
         text = string.Format("{0} CO:{1}", (object) text, (object) calibrationDetails.CALIBRATION_OFFSET);
+      }
+
       connection.WriteLog(text, Logger.TextType.Read);
     }
 
@@ -95,27 +98,29 @@ namespace M3D.Spooling
     {
       connection.SetBacklashSpeed(gcode.X);
       EepromAddressInfo eepromInfo = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("BacklashSpeed");
-      int num = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.X) + " T" + (object) eepromInfo.Size);
+      var num = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.X) + " T" + (object) eepromInfo.Size);
       StandardVirtualCodes.SendOK((BaseController) connection);
     }
 
     public static void M683GetLimitingSpeed(GCode gcode, FirmwareController connection)
     {
-      string text = string.Format(">> ok X:{0} Y:{1} Z:{2} E:{3} R:{4}", (object) connection.FloatFromEEPROM("SpeedLimitX").ToString("0.00"), (object) connection.FloatFromEEPROM("SpeedLimitY").ToString("0.00"), (object) connection.FloatFromEEPROM("SpeedLimitZ").ToString("0.00"), (object) connection.FloatFromEEPROM("SpeedLimitEp").ToString("0.00"), (object) connection.FloatFromEEPROM("SpeedLimitEn").ToString("0.00"));
+      var text = string.Format(">> ok X:{0} Y:{1} Z:{2} E:{3} R:{4}", (object) connection.FloatFromEEPROM("SpeedLimitX").ToString("0.00"), (object) connection.FloatFromEEPROM("SpeedLimitY").ToString("0.00"), (object) connection.FloatFromEEPROM("SpeedLimitZ").ToString("0.00"), (object) connection.FloatFromEEPROM("SpeedLimitEp").ToString("0.00"), (object) connection.FloatFromEEPROM("SpeedLimitEn").ToString("0.00"));
       connection.WriteLog(text, Logger.TextType.Read);
     }
 
     public static void M684PrintAllEepromValues(GCode gcode, FirmwareController connection)
     {
       SortedList<int, EepromAddressInfo> allData = connection.MyPrinterProfile.EEPROMConstants.GetAllData();
-      string text = ">> ok ";
+      var text = ">> ok ";
       foreach (EepromAddressInfo eepromAddressInfo in (IEnumerable<EepromAddressInfo>) allData.Values)
       {
         if (eepromAddressInfo.EepromAddr <= (ushort) 512)
         {
           text = text + eepromAddressInfo.Name + ": ";
           if (eepromAddressInfo.Type.Equals(typeof (float)))
+          {
             text = text + connection.FloatFromEEPROM(eepromAddressInfo.Name).ToString("0.00") + "\n";
+          }
           else if (eepromAddressInfo.Type.Equals(typeof (uint)) || eepromAddressInfo.Type.Equals(typeof (int)) || (eepromAddressInfo.Type.Equals(typeof (ushort)) || eepromAddressInfo.Type.Equals(typeof (short))) || eepromAddressInfo.Type.Equals(typeof (byte)))
           {
             text = text + connection.eeprom_mapping.GetUInt32(eepromAddressInfo.Name).ToString() + "\n";
@@ -123,7 +128,10 @@ namespace M3D.Spooling
           else
           {
             if (!eepromAddressInfo.Type.Equals(typeof (char)))
+            {
               throw new Exception("Unexpected type");
+            }
+
             text = text + connection.eeprom_mapping.GetInt32(eepromAddressInfo.Name).ToString() + "\n";
           }
         }
@@ -140,23 +148,23 @@ namespace M3D.Spooling
       EepromAddressInfo eepromInfo5 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("SpeedLimitEn");
       if (gcode.hasX)
       {
-        int num1 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo1.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.X) + " T" + (object) eepromInfo1.Size);
+        var num1 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo1.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.X) + " T" + (object) eepromInfo1.Size);
       }
       if (gcode.hasY)
       {
-        int num2 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo2.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.Y) + " T" + (object) eepromInfo2.Size);
+        var num2 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo2.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.Y) + " T" + (object) eepromInfo2.Size);
       }
       if (gcode.hasZ)
       {
-        int num3 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo3.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.Z) + " T" + (object) eepromInfo3.Size);
+        var num3 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo3.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.Z) + " T" + (object) eepromInfo3.Size);
       }
       if (gcode.hasE)
       {
-        int num4 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo4.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.E) + " T" + (object) eepromInfo4.Size);
+        var num4 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo4.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.E) + " T" + (object) eepromInfo4.Size);
       }
       if (gcode.hasR)
       {
-        int num5 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo5.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.R) + " T" + (object) eepromInfo5.Size);
+        var num5 = (int) connection.WriteManualCommands("M618 S" + (object) (int) eepromInfo5.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.R) + " T" + (object) eepromInfo5.Size);
       }
       StandardVirtualCodes.SendOK((BaseController) connection);
     }
@@ -166,8 +174,8 @@ namespace M3D.Spooling
       EepromAddressInfo eepromInfo1 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("BacklashX");
       EepromAddressInfo eepromInfo2 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("BacklashY");
       connection.SetBacklash(gcode.X, gcode.Y);
-      int num1 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo1.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.X) + " T" + (object) eepromInfo1.Size);
-      int num2 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo2.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.Y) + " T" + (object) eepromInfo2.Size);
+      var num1 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo1.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.X) + " T" + (object) eepromInfo1.Size);
+      var num2 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo2.EepromAddr + " P" + (object) EEPROMMapping.FloatToBinaryInt(gcode.Y) + " T" + (object) eepromInfo2.Size);
       StandardVirtualCodes.SendOK((BaseController) connection);
     }
 
@@ -177,11 +185,11 @@ namespace M3D.Spooling
       EepromAddressInfo eepromInfo2 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("FilamentTypeID");
       EepromAddressInfo eepromInfo3 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("FilamentTemperature");
       EepromAddressInfo eepromInfo4 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("FilamentAmount");
-      int num1 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo1.EepromAddr + " P" + (object) gcode.S + " T" + (object) eepromInfo1.Size, "M618 S" + (object) eepromInfo2.EepromAddr + " P" + (object) gcode.P + " T" + (object) eepromInfo2.Size, "M618 S" + (object) eepromInfo3.EepromAddr + " P" + (object) gcode.T + " T" + (object) eepromInfo3.Size);
-      int int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.E), 0);
-      int num2 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo4.EepromAddr + " P" + (object) int32 + " T" + (object) eepromInfo4.Size);
+      var num1 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo1.EepromAddr + " P" + (object) gcode.S + " T" + (object) eepromInfo1.Size, "M618 S" + (object) eepromInfo2.EepromAddr + " P" + (object) gcode.P + " T" + (object) eepromInfo2.Size, "M618 S" + (object) eepromInfo3.EepromAddr + " P" + (object) gcode.T + " T" + (object) eepromInfo3.Size);
+      var int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.E), 0);
+      var num2 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo4.EepromAddr + " P" + (object) int32 + " T" + (object) eepromInfo4.Size);
       EepromAddressInfo eepromInfo5 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("FilamentSize");
-      int num3 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo5.EepromAddr + " P" + (object) gcode.I + " T" + (object) eepromInfo5.Size);
+      var num3 = (int) connection.WriteManualCommands("M618 S" + (object) eepromInfo5.EepromAddr + " P" + (object) gcode.I + " T" + (object) eepromInfo5.Size);
       StandardVirtualCodes.SendOK((BaseController) connection);
     }
 
@@ -199,30 +207,30 @@ namespace M3D.Spooling
       EepromAddressInfo eepromInfo3 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("ZCalibrationFRO");
       EepromAddressInfo eepromInfo4 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("ZCalibrationFLO");
       EepromAddressInfo eepromInfo5 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("ZCalibrationZO");
-      List<string> stringList = new List<string>();
+      var stringList = new List<string>();
       if (gcode.hasX && eepromInfo1 != null)
       {
-        int int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.X), 0);
+        var int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.X), 0);
         stringList.Add("M618 S" + (object) eepromInfo1.EepromAddr + " P" + (object) int32 + " T" + (object) eepromInfo1.Size);
       }
       if (gcode.hasY && eepromInfo2 != null)
       {
-        int int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.Y), 0);
+        var int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.Y), 0);
         stringList.Add("M618 S" + (object) eepromInfo2.EepromAddr + " P" + (object) int32 + " T" + (object) eepromInfo2.Size);
       }
       if (gcode.hasZ && eepromInfo3 != null)
       {
-        int int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.Z), 0);
+        var int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.Z), 0);
         stringList.Add("M618 S" + (object) eepromInfo3.EepromAddr + " P" + (object) int32 + " T" + (object) eepromInfo3.Size);
       }
       if (gcode.hasE && eepromInfo4 != null)
       {
-        int int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.E), 0);
+        var int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.E), 0);
         stringList.Add("M618 S" + (object) eepromInfo4.EepromAddr + " P" + (object) int32 + " T" + (object) eepromInfo4.Size);
       }
       if (gcode.hasF && eepromInfo5 != null)
       {
-        int int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.F), 0);
+        var int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.F), 0);
         stringList.Add("M618 S" + (object) eepromInfo5.EepromAddr + " P" + (object) int32 + " T" + (object) eepromInfo5.Size);
       }
       if (connection.CalibrationDetails.UsesCalibrationOffset)
@@ -230,12 +238,15 @@ namespace M3D.Spooling
         EepromAddressInfo eepromInfo6 = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("CalibrationOffset");
         if (gcode.hasI && eepromInfo6 != null)
         {
-          int int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.I), 0);
+          var int32 = BitConverter.ToInt32(BitConverter.GetBytes(gcode.I), 0);
           stringList.Add("M618 S" + (object) eepromInfo6.EepromAddr + " P" + (object) int32 + " T" + (object) eepromInfo6.Size);
         }
       }
       if (stringList.Count > 0)
+      {
         connection.AddManualCommandToFront(stringList.ToArray());
+      }
+
       StandardVirtualCodes.SendOK((BaseController) connection);
     }
 
@@ -243,16 +254,21 @@ namespace M3D.Spooling
     {
       EepromAddressInfo eepromInfo = connection.MyPrinterProfile.EEPROMConstants.GetEepromInfo("NozzleSizeExtrusionWidth");
       if (eepromInfo == null)
+      {
         connection.WriteLog(string.Format(">> Error:Printer doesn't have adjustable nozzle."), Logger.TextType.Read);
+      }
       else
+      {
         connection.AddManualCommandToFront("M618 S" + (object) eepromInfo.EepromAddr + " P" + (object) gcode.S + " T" + (object) eepromInfo.Size);
+      }
+
       StandardVirtualCodes.SendOK((BaseController) connection);
     }
 
     public static void M583GetNozzleWidth(GCode gcode, FirmwareController connection)
     {
       connection.ProcessNozzleSizeExtrusionWidth();
-      int nozzleSizeMicrons = connection.CurrentPrinterInfo.extruder.iNozzleSizeMicrons;
+      var nozzleSizeMicrons = connection.CurrentPrinterInfo.extruder.iNozzleSizeMicrons;
       connection.WriteLog(string.Format(">> ok S:{0}", (object) nozzleSizeMicrons), Logger.TextType.Read);
     }
 
@@ -268,17 +284,21 @@ namespace M3D.Spooling
 
     public static void M1013StopwatchStart(GCode gcode, FirmwareController connection)
     {
-      connection.vStopwatchReset();
+      connection.VStopwatchReset();
       StandardVirtualCodes.SendOK((BaseController) connection);
     }
 
     public static void M1014StopwatchStop(GCode gcode, FirmwareController connection)
     {
-      long num = connection.nStopwatchReturnTime();
+      var num = connection.NStopwatchReturnTime();
       if (0L <= num)
+      {
         connection.WriteLog(string.Format(">> ok M:{0}", (object) num), Logger.TextType.Read);
+      }
       else
+      {
         connection.WriteLog(">> stopwatch not running", Logger.TextType.Read);
+      }
     }
 
     public static void M303SetGantryClipsToOff(GCode gcode, FirmwareController connection)
@@ -295,7 +315,7 @@ namespace M3D.Spooling
 
     public static void M5680GetHoursUsed(GCode gcode, FirmwareController connection)
     {
-      float num = connection.PersistantDetails.hours_used / 6f;
+      var num = connection.PersistantDetails.hours_used / 6f;
       connection.WriteLog(">> ok H:" + num.ToString((IFormatProvider) PrinterCompatibleString.PRINTER_CULTURE), Logger.TextType.Error);
     }
 

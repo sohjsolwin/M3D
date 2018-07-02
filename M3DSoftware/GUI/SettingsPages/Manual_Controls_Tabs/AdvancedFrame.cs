@@ -29,62 +29,80 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     {
       this.messagebox = messagebox;
       this.spooler_connection = spooler_connection;
-      string manualcontrolsframeAdvanced = Resources.manualcontrolsframe_advanced;
-      this.Init(host, manualcontrolsframeAdvanced, new ButtonCallback(this.MyButtonCallback));
-      this.CenterHorizontallyInParent = true;
-      this.RelativeY = 0.1f;
-      this.RelativeWidth = 0.95f;
-      this.RelativeHeight = 0.9f;
-      this.BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
-      this.Visible = false;
-      this.Enabled = false;
-      this.heater_text = (TextWidget) this.FindChildElement(1020);
-      this.heatedbedFrame = (Frame) this.FindChildElement(3000);
+      var manualcontrolsframeAdvanced = Resources.manualcontrolsframe_advanced;
+      Init(host, manualcontrolsframeAdvanced, new ButtonCallback(MyButtonCallback));
+      CenterHorizontallyInParent = true;
+      RelativeY = 0.1f;
+      RelativeWidth = 0.95f;
+      RelativeHeight = 0.9f;
+      BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
+      Visible = false;
+      Enabled = false;
+      heater_text = (TextWidget)FindChildElement(1020);
+      heatedbedFrame = (Frame)FindChildElement(3000);
     }
 
     public override void OnUpdate()
     {
       base.OnUpdate();
-      PrinterObject selectedPrinter = this.spooler_connection.SelectedPrinter;
+      PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
       if (selectedPrinter == null || !selectedPrinter.isConnected() || !selectedPrinter.HasHeatedBed)
       {
-        if (this.heater_text != null)
-          this.heater_text.Text = "OFF";
-        if (this.heatedbedFrame == null)
+        if (heater_text != null)
+        {
+          heater_text.Text = "OFF";
+        }
+
+        if (heatedbedFrame == null)
+        {
           return;
-        this.heatedbedFrame.Enabled = false;
+        }
+
+        heatedbedFrame.Enabled = false;
       }
       else
       {
-        if (this.heatedbedFrame != null)
-          this.heatedbedFrame.Enabled = true;
+        if (heatedbedFrame != null)
+        {
+          heatedbedFrame.Enabled = true;
+        }
+
         if ((double) selectedPrinter.Info.accessories.BedStatus.BedTemperature == -1.0)
-          this.heater_text.Text = "ON";
+        {
+          heater_text.Text = "ON";
+        }
         else if ((double) selectedPrinter.Info.accessories.BedStatus.BedTemperature < 1.0)
-          this.heater_text.Text = "OFF";
+        {
+          heater_text.Text = "OFF";
+        }
         else
-          this.heater_text.Text = selectedPrinter.Info.accessories.BedStatus.BedTemperature.ToString();
+        {
+          heater_text.Text = selectedPrinter.Info.accessories.BedStatus.BedTemperature.ToString();
+        }
       }
     }
 
     public void MyButtonCallback(ButtonWidget button)
     {
-      PrinterObject selectedPrinter = this.spooler_connection.SelectedPrinter;
+      PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
       if (selectedPrinter == null || !selectedPrinter.isConnected())
+      {
         return;
+      }
+
       switch (button.ID)
       {
         case 1000:
-          int num1 = (int) selectedPrinter.SendEmergencyStop((AsyncCallback) null, (object) null);
+          var num1 = (int) selectedPrinter.SendEmergencyStop((AsyncCallback) null, (object) null);
           break;
         case 1014:
           FilamentSpool currentFilament = selectedPrinter.GetCurrentFilament();
           if (currentFilament == (FilamentSpool) null)
           {
-            this.messagebox.AddMessageToQueue("Sorry, but you must insert filament first.");
+            messagebox.AddMessageToQueue("Sorry, but you must insert filament first.");
             break;
           }
-          int num2 = FilamentConstants.Temperature.BedDefault(currentFilament.filament_type);
+          var num2 = FilamentConstants.Temperature.BedDefault(currentFilament.filament_type);
           selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, PrinterCompatibleString.Format("M190 S{0}", (object) num2));
           break;
         case 1015:

@@ -24,16 +24,16 @@ namespace M3D.Model
 
     private ModelData(List<ModelData.FaceIndex> newFaceList, List<M3D.Model.Utils.Vector3> newVerticesList, List<ModelData.VertexIndex> newVertexIndecies)
     {
-      this.FaceIndecies = newFaceList;
-      this.Verticies = newVerticesList;
-      this.VertexIndecies = newVertexIndecies;
+      FaceIndecies = newFaceList;
+      Verticies = newVerticesList;
+      VertexIndecies = newVertexIndecies;
     }
 
     public M3D.Model.Utils.Vector3 this[int index]
     {
       get
       {
-        return new M3D.Model.Utils.Vector3(this.Verticies[index]);
+        return new M3D.Model.Utils.Vector3(Verticies[index]);
       }
     }
 
@@ -45,7 +45,7 @@ namespace M3D.Model
     {
       get
       {
-        return this.Max - this.Min;
+        return Max - Min;
       }
     }
 
@@ -53,44 +53,44 @@ namespace M3D.Model
     {
       get
       {
-        return (this.Max - this.Min) / 2f + this.Min;
+        return (Max - Min) / 2f + Min;
       }
     }
 
     private void ProcessMinMaxBounds()
     {
-      float maxValue1 = float.MaxValue;
-      float maxValue2 = float.MaxValue;
-      float maxValue3 = float.MaxValue;
-      float minValue1 = float.MinValue;
-      float minValue2 = float.MinValue;
-      float minValue3 = float.MinValue;
-      List<M3D.Model.Utils.Vector3> convexHullVertices = this.getAllConvexHullVertices();
-      for (int index = 0; index < convexHullVertices.Count; ++index)
+      var maxValue1 = float.MaxValue;
+      var maxValue2 = float.MaxValue;
+      var maxValue3 = float.MaxValue;
+      var minValue1 = float.MinValue;
+      var minValue2 = float.MinValue;
+      var minValue3 = float.MinValue;
+      List<M3D.Model.Utils.Vector3> convexHullVertices = GetAllConvexHullVertices();
+      for (var index = 0; index < convexHullVertices.Count; ++index)
       {
-        this.MinMaxBounds_Helper(ref maxValue1, ref minValue1, convexHullVertices[index].x);
-        this.MinMaxBounds_Helper(ref maxValue2, ref minValue2, convexHullVertices[index].y);
-        this.MinMaxBounds_Helper(ref maxValue3, ref minValue3, convexHullVertices[index].z);
+        MinMaxBounds_Helper(ref maxValue1, ref minValue1, convexHullVertices[index].x);
+        MinMaxBounds_Helper(ref maxValue2, ref minValue2, convexHullVertices[index].y);
+        MinMaxBounds_Helper(ref maxValue3, ref minValue3, convexHullVertices[index].z);
       }
-      this.Min = new M3D.Model.Utils.Vector3(maxValue1, maxValue2, maxValue3);
-      this.Max = new M3D.Model.Utils.Vector3(minValue1, minValue2, minValue3);
+      Min = new M3D.Model.Utils.Vector3(maxValue1, maxValue2, maxValue3);
+      Max = new M3D.Model.Utils.Vector3(minValue1, minValue2, minValue3);
     }
 
     public void GetMinMaxWithTransform(Matrix4 matrix, out M3D.Model.Utils.Vector3 min, out M3D.Model.Utils.Vector3 max)
     {
-      float maxValue1 = float.MaxValue;
-      float maxValue2 = float.MaxValue;
-      float maxValue3 = float.MaxValue;
-      float minValue1 = float.MinValue;
-      float minValue2 = float.MinValue;
-      float minValue3 = float.MinValue;
-      List<M3D.Model.Utils.Vector3> convexHullVertices = this.getAllConvexHullVertices();
-      for (int index = 0; index < convexHullVertices.Count; ++index)
+      var maxValue1 = float.MaxValue;
+      var maxValue2 = float.MaxValue;
+      var maxValue3 = float.MaxValue;
+      var minValue1 = float.MinValue;
+      var minValue2 = float.MinValue;
+      var minValue3 = float.MinValue;
+      List<M3D.Model.Utils.Vector3> convexHullVertices = GetAllConvexHullVertices();
+      for (var index = 0; index < convexHullVertices.Count; ++index)
       {
-        M3D.Model.Utils.Vector3 vector3 = M3D.Model.Utils.Vector3.MatrixProduct(matrix, convexHullVertices[index]);
-        this.MinMaxBounds_Helper(ref maxValue1, ref minValue1, vector3.x);
-        this.MinMaxBounds_Helper(ref maxValue2, ref minValue2, vector3.y);
-        this.MinMaxBounds_Helper(ref maxValue3, ref minValue3, vector3.z);
+        var vector3 = M3D.Model.Utils.Vector3.MatrixProduct(matrix, convexHullVertices[index]);
+        MinMaxBounds_Helper(ref maxValue1, ref minValue1, vector3.x);
+        MinMaxBounds_Helper(ref maxValue2, ref minValue2, vector3.y);
+        MinMaxBounds_Helper(ref maxValue3, ref minValue3, vector3.z);
       }
       min = new M3D.Model.Utils.Vector3(maxValue1, maxValue2, maxValue3);
       max = new M3D.Model.Utils.Vector3(minValue1, minValue2, minValue3);
@@ -99,130 +99,164 @@ namespace M3D.Model
     private void MinMaxBounds_Helper(ref float min, ref float max, float var)
     {
       if ((double) min > (double) var)
+      {
         min = var;
+      }
+
       if ((double) max >= (double) var)
+      {
         return;
+      }
+
       max = var;
     }
 
     public List<ModelData.Vertex> GetAllVertexs()
     {
-      List<ModelData.Vertex> vertexList = new List<ModelData.Vertex>(this.Verticies.Count<M3D.Model.Utils.Vector3>());
-      for (int index = 0; index < this.Verticies.Count; ++index)
-        vertexList.Add(this.getVertex(index));
+      var vertexList = new List<ModelData.Vertex>(Verticies.Count<M3D.Model.Utils.Vector3>());
+      for (var index = 0; index < Verticies.Count; ++index)
+      {
+        vertexList.Add(GetVertex(index));
+      }
+
       return vertexList;
     }
 
     public List<ModelData.Face> GetAllFaces()
     {
-      List<ModelData.Face> faceList = new List<ModelData.Face>(this.FaceIndecies.Count);
-      for (int index = 0; index < this.FaceIndecies.Count; ++index)
-        faceList.Add(this.getFace(index));
+      var faceList = new List<ModelData.Face>(FaceIndecies.Count);
+      for (var index = 0; index < FaceIndecies.Count; ++index)
+      {
+        faceList.Add(GetFace(index));
+      }
+
       return faceList;
     }
 
-    public ModelData.Vertex getVertex(int index)
+    public ModelData.Vertex GetVertex(int index)
     {
       return new ModelData.Vertex(this, index);
     }
 
-    public ModelData.Face getFace(int index)
+    public ModelData.Face GetFace(int index)
     {
       return new ModelData.Face(this, index);
     }
 
-    public int getVertexCount()
+    public int GetVertexCount()
     {
-      return this.Verticies.Count;
+      return Verticies.Count;
     }
 
-    public int getFaceCount()
+    public int GetFaceCount()
     {
-      return this.FaceIndecies.Count;
+      return FaceIndecies.Count;
     }
 
     public void Translate(M3D.Model.Utils.Vector3 translate)
     {
-      for (int index = 0; index < this.Verticies.Count; ++index)
-        this.Verticies[index] += translate;
-      this.Min += translate;
-      this.Max += translate;
+      for (var index = 0; index < Verticies.Count; ++index)
+      {
+        Verticies[index] += translate;
+      }
+
+      Min += translate;
+      Max += translate;
     }
 
     public void Scale(M3D.Model.Utils.Vector3 scale)
     {
-      for (int index = 0; index < this.Verticies.Count; ++index)
-        this.Verticies[index] *= scale;
-      this.Min *= scale;
-      this.Max *= scale;
+      for (var index = 0; index < Verticies.Count; ++index)
+      {
+        Verticies[index] *= scale;
+      }
+
+      Min *= scale;
+      Max *= scale;
     }
 
     public void Transform(Matrix4 transform)
     {
-      for (int index = 0; index < this.Verticies.Count; ++index)
-        this.Verticies[index].MatrixProduct(transform);
-      this.ProcessMinMaxBounds();
+      for (var index = 0; index < Verticies.Count; ++index)
+      {
+        Verticies[index].MatrixProduct(transform);
+      }
+
+      ProcessMinMaxBounds();
     }
 
     private void Clear()
     {
-      this.FaceIndecies.Clear();
-      this.VertexIndecies.Clear();
-      this.Verticies.Clear();
+      FaceIndecies.Clear();
+      VertexIndecies.Clear();
+      Verticies.Clear();
     }
 
     private void InitalizeConvexHull(List<ModelData.Vertex> points)
     {
-      ConvexHullIndicies = new HashSet<int>(collection: ConvexHull.Create(points.ConvertAll(x => (IVertex)x), null).Points.ToList().ConvertAll(x => ((Vertex)x).Index));
+      ConvexHullIndicies = new HashSet<int>(collection: ConvexHull.Create(points.ConvertAll(x => (IVertex)x)).Points.ToList().ConvertAll(x => ((Vertex)x).Index));
     }
 
-    public List<M3D.Model.Utils.Vector3> getAllConvexHullVertices()
+    public List<M3D.Model.Utils.Vector3> GetAllConvexHullVertices()
     {
-      List<M3D.Model.Utils.Vector3> vector3List = new List<M3D.Model.Utils.Vector3>(this.ConvexHullIndicies.Count);
-      foreach (int convexHullIndicy in this.ConvexHullIndicies)
-        vector3List.Add(this.Verticies[convexHullIndicy]);
+      var vector3List = new List<M3D.Model.Utils.Vector3>(ConvexHullIndicies.Count);
+      foreach (var convexHullIndicy in ConvexHullIndicies)
+      {
+        vector3List.Add(Verticies[convexHullIndicy]);
+      }
+
       return vector3List;
     }
 
     public List<M3D.Model.Utils.Vector3> CalculateHullPointsUsingTransformMatrix(Matrix4 matrix)
     {
-      List<M3D.Model.Utils.Vector3> vector3List = new List<M3D.Model.Utils.Vector3>(this.ConvexHullIndicies.Count);
-      foreach (int convexHullIndicy in this.ConvexHullIndicies)
+      var vector3List = new List<M3D.Model.Utils.Vector3>(ConvexHullIndicies.Count);
+      foreach (var convexHullIndicy in ConvexHullIndicies)
       {
-        M3D.Model.Utils.Vector3 vector3 = new M3D.Model.Utils.Vector3(this.Verticies[convexHullIndicy]);
+        var vector3 = new M3D.Model.Utils.Vector3(Verticies[convexHullIndicy]);
         vector3.MatrixProduct(matrix);
         vector3List.Add(vector3);
       }
       return vector3List;
     }
 
-    public bool isConvexHullPoint(int VertexIndex)
+    public bool IsConvexHullPoint(int VertexIndex)
     {
-      return this.ConvexHullIndicies.Contains(VertexIndex);
+      return ConvexHullIndicies.Contains(VertexIndex);
     }
 
     internal static ModelData Create(LinkedList<M3D.Model.Utils.Vector3> verticies, LinkedList<int[]> triangleIndecies = null, ProgressHelper.PercentageDelagate percentageDeligate = null)
     {
-      Stopwatch stopwatch = new Stopwatch();
+      var stopwatch = new Stopwatch();
       stopwatch.Start();
-      ProgressHelper progressHelper = new ProgressHelper(percentageDeligate, 3);
+      var progressHelper = new ProgressHelper(percentageDeligate, 3);
       if (triangleIndecies != null)
+      {
         ModelData.GenerateOrderedList(ref verticies, triangleIndecies);
+      }
+
       if (verticies.Count % 3 != 0)
+      {
         return (ModelData) null;
+      }
+
       progressHelper.SetStage(verticies.Count<M3D.Model.Utils.Vector3>());
-      List<M3D.Model.Utils.Vector3> newVerticesList;
-      List<ModelData.FaceIndex> newFaceList;
-      if (!ModelData.HashVertexesAndFaces_Helper(verticies, ref progressHelper, out newVerticesList, out newFaceList))
-        return (ModelData) null;
+      if (!ModelData.HashVertexesAndFaces_Helper(verticies, ref progressHelper, out List<Utils.Vector3> newVerticesList, out List<FaceIndex> newFaceList))
+      {
+        return (ModelData)null;
+      }
+
       progressHelper.SetStage(newFaceList.Count<ModelData.FaceIndex>());
       List<ModelData.VertexIndex> faceLinkHelper = ModelData.GenerateFaceLink_Helper(newVerticesList, newFaceList, progressHelper);
-      ModelData modelData = new ModelData(newFaceList, newVerticesList, faceLinkHelper);
+      var modelData = new ModelData(newFaceList, newVerticesList, faceLinkHelper);
       modelData.InitalizeConvexHull(modelData.GetAllVertexs());
       modelData.ProcessMinMaxBounds();
       stopwatch.Stop();
       if (percentageDeligate == null)
+      {
         return modelData;
+      }
+
       percentageDeligate(100);
       return modelData;
     }
@@ -231,7 +265,7 @@ namespace M3D.Model
     {
       M3D.Model.Utils.Vector3[] vector3Array = new M3D.Model.Utils.Vector3[verticesList.Count];
       LinkedListNode<M3D.Model.Utils.Vector3> linkedListNode1 = verticesList.First;
-      for (int index = 0; index < verticesList.Count; ++index)
+      for (var index = 0; index < verticesList.Count; ++index)
       {
         vector3Array[index] = linkedListNode1.Value;
         linkedListNode1 = linkedListNode1.Next;
@@ -247,14 +281,23 @@ namespace M3D.Model
           case 0:
             continue;
           case 3:
-            foreach (int index in numArray)
+            foreach (var index in numArray)
+            {
               verticesList.AddLast(vector3Array[index]);
+            }
+
             continue;
           case 4:
-            for (int index = 0; index < 3; ++index)
+            for (var index = 0; index < 3; ++index)
+            {
               verticesList.AddLast(vector3Array[index]);
-            for (int index = 0; index < 3; ++index)
+            }
+
+            for (var index = 0; index < 3; ++index)
+            {
               verticesList.AddLast(vector3Array[index + 1]);
+            }
+
             continue;
           default:
             throw new Exception(string.Format("ExpandVertices: was give a face with {0} indicies", (object) numArray.Length));
@@ -266,11 +309,11 @@ namespace M3D.Model
     {
       newVerticesList = (List<M3D.Model.Utils.Vector3>) null;
       newFaceList = (List<ModelData.FaceIndex>) null;
-      int num1 = 0;
-      int num2 = 0;
-      Dictionary<M3D.Model.Utils.Vector3, int> source = new Dictionary<M3D.Model.Utils.Vector3, int>();
-      HashSet<ModelData.FaceIndex> faceIndexSet = new HashSet<ModelData.FaceIndex>();
-      bool flag = ModelData.verticiesFlipped(verticies);
+      var num1 = 0;
+      var num2 = 0;
+      var source = new Dictionary<M3D.Model.Utils.Vector3, int>();
+      var faceIndexSet = new HashSet<ModelData.FaceIndex>();
+      var flag = ModelData.VerticiesFlipped(verticies);
       while (verticies.First != null)
       {
         M3D.Model.Utils.Vector3 vector3_1 = verticies.First.Value;
@@ -298,7 +341,7 @@ namespace M3D.Model
             vector3_2,
             vector3_3
           };
-          for (int index = 0; index < 3; ++index)
+          for (var index = 0; index < 3; ++index)
           {
             M3D.Model.Utils.Vector3 key = vector3Array[index];
             int num3;
@@ -313,17 +356,22 @@ namespace M3D.Model
             }
             faceIndicies[index] = num3;
           }
-          for (int index1 = 0; index1 < 3; ++index1)
+          for (var index1 = 0; index1 < 3; ++index1)
           {
-            for (int index2 = index1 + 1; index2 < 3; ++index2)
+            for (var index2 = index1 + 1; index2 < 3; ++index2)
             {
               if (faceIndicies[index1] == faceIndicies[index2])
+              {
                 return false;
+              }
             }
           }
-          ModelData.FaceIndex faceIndex = new ModelData.FaceIndex(faceIndicies, normal);
+          var faceIndex = new FaceIndex(faceIndicies, normal);
           if (!faceIndexSet.Contains(faceIndex))
+          {
             faceIndexSet.Add(faceIndex);
+          }
+
           progressHelper.Process(num2 += 3);
         }
       }
@@ -338,17 +386,25 @@ namespace M3D.Model
     private static void AssertIfNANOrNULL(M3D.Model.Utils.Vector3 p1)
     {
       if (p1 == (M3D.Model.Utils.Vector3) null)
+      {
         throw new NullReferenceException("Null point in loading");
+      }
+
       if (double.IsNaN((double) p1.x) || double.IsNaN((double) p1.y) || double.IsNaN((double) p1.z))
+      {
         throw new Exception("Point contains a NAN");
+      }
     }
 
     private static List<ModelData.VertexIndex> GenerateFaceLink_Helper(List<M3D.Model.Utils.Vector3> newVerticesList, List<ModelData.FaceIndex> newFaceList, ProgressHelper progressHelper = null)
     {
-      List<ModelData.VertexIndex> vertexIndexList = new List<ModelData.VertexIndex>(newFaceList.Count);
+      var vertexIndexList = new List<ModelData.VertexIndex>(newFaceList.Count);
       foreach (M3D.Model.Utils.Vector3 newVertices in newVerticesList)
+      {
         vertexIndexList.Add(new ModelData.VertexIndex(new List<int>()));
-      for (int index = 0; index < newFaceList.Count; ++index)
+      }
+
+      for (var index = 0; index < newFaceList.Count; ++index)
       {
         ModelData.FaceIndex newFace = newFaceList[index];
         vertexIndexList[newFace.P1].Faces.Add(index);
@@ -361,8 +417,8 @@ namespace M3D.Model
 
     private static List<ModelData.EdgeIndex> GenerateEndgeList(List<ModelData.FaceIndex> faceList, ref ProgressHelper progressHelper)
     {
-      Dictionary<ModelData.EdgeIndex, ModelData.EdgeIndex> hashCollection = new Dictionary<ModelData.EdgeIndex, ModelData.EdgeIndex>();
-      for (int index = 0; index < faceList.Count; ++index)
+      var hashCollection = new Dictionary<ModelData.EdgeIndex, ModelData.EdgeIndex>();
+      for (var index = 0; index < faceList.Count; ++index)
       {
         ModelData.FaceIndex face = faceList[index];
         ModelData.AppendEdgeToHash_Helper(ref hashCollection, index, face.P1, face.P2);
@@ -375,7 +431,7 @@ namespace M3D.Model
 
     private static void AppendEdgeToHash_Helper(ref Dictionary<ModelData.EdgeIndex, ModelData.EdgeIndex> hashCollection, int faceId, int P1_ID, int P2_ID)
     {
-      ModelData.EdgeIndex key = new ModelData.EdgeIndex(P1_ID, P2_ID);
+      var key = new ModelData.EdgeIndex(P1_ID, P2_ID);
       if (!hashCollection.ContainsKey(key))
       {
         key.Faces = new List<int>() { faceId };
@@ -385,57 +441,68 @@ namespace M3D.Model
       {
         ModelData.EdgeIndex edgeIndex = hashCollection[key];
         if (edgeIndex.Faces.Contains(faceId))
+        {
           return;
+        }
+
         edgeIndex.Faces.Add(faceId);
       }
     }
 
     private static bool CommonWindingTest_Helper(int[] face1, int[] face2, int[] common)
     {
-      int num1 = 0;
-      int num2 = 0;
-      for (int index = 0; index < 3; ++index)
+      var num1 = 0;
+      var num2 = 0;
+      for (var index = 0; index < 3; ++index)
       {
         if (num1 == 0)
         {
           if (face1[index] == common[0])
+          {
             num1 = -1;
+          }
           else if (face1[index] == common[1])
+          {
             num1 = 1;
+          }
         }
         if (num2 == 0)
         {
           if (face2[index] == common[0])
+          {
             num2 = -1;
+          }
           else if (face2[index] == common[1])
+          {
             num2 = 1;
+          }
         }
       }
       return num1 + num2 == 0;
     }
 
-    private static bool verticiesFlipped(List<ModelData.FaceIndex> faces, List<M3D.Model.Utils.Vector3> vertices)
+    private static bool VerticiesFlipped(List<ModelData.FaceIndex> faces, List<M3D.Model.Utils.Vector3> vertices)
     {
       return ModelData.GenerateSignedVolume(faces, vertices) < 0.0;
     }
 
     private static double GenerateSignedVolume(List<ModelData.FaceIndex> faces, List<M3D.Model.Utils.Vector3> vertices)
     {
-      double num1 = 0.0;
-      for (int index = 0; index < faces.Count; ++index)
+      var num1 = 0.0;
+      for (var index = 0; index < faces.Count; ++index)
       {
         M3D.Model.Utils.Vector3 vertex1 = vertices[faces[index].P1];
         M3D.Model.Utils.Vector3 vertex2 = vertices[faces[index].P2];
         M3D.Model.Utils.Vector3 vertex3 = vertices[faces[index].P3];
-        double num2 = (double) vertex1.x * (double) vertex2.y * (double) vertex3.z + (double) vertex1.y * (double) vertex2.z * (double) vertex3.x + (double) vertex1.z * (double) vertex2.x * (double) vertex3.y - (double) vertex1.z * (double) vertex2.y * (double) vertex3.x - (double) vertex1.y * (double) vertex2.x * (double) vertex3.z - (double) vertex1.x * (double) vertex2.z * (double) vertex3.y;
+        var num2 = vertex1.x * (double) vertex2.y * (double) vertex3.z + (double) vertex1.y * (double) vertex2.z * (double) vertex3.x + (double) vertex1.z * (double) vertex2.x * (double) vertex3.y - (double) vertex1.z * (double) vertex2.y * (double) vertex3.x - (double) vertex1.y * (double) vertex2.x * (double) vertex3.z - (double) vertex1.x * (double) vertex2.z * (double) vertex3.y;
         num1 += num2 / 6.0;
       }
       return num1;
     }
 
-    private static bool verticiesFlipped(LinkedList<M3D.Model.Utils.Vector3> linkedVertex)
+    private static bool VerticiesFlipped(LinkedList<M3D.Model.Utils.Vector3> linkedVertex)
     {
-      double num1 = 0.0;
+      var num1 = 0.0;
       LinkedListNode<M3D.Model.Utils.Vector3> linkedListNode = linkedVertex.First;
       while (linkedListNode != null)
       {
@@ -445,7 +512,7 @@ namespace M3D.Model
         LinkedListNode<M3D.Model.Utils.Vector3> next2 = next1.Next;
         M3D.Model.Utils.Vector3 vector3_3 = next2.Value;
         linkedListNode = next2.Next;
-        double num2 = (double) vector3_1.x * (double) vector3_2.y * (double) vector3_3.z + (double) vector3_1.y * (double) vector3_2.z * (double) vector3_3.x + (double) vector3_1.z * (double) vector3_2.x * (double) vector3_3.y - (double) vector3_1.z * (double) vector3_2.y * (double) vector3_3.x - (double) vector3_1.y * (double) vector3_2.x * (double) vector3_3.z - (double) vector3_1.x * (double) vector3_2.z * (double) vector3_3.y;
+        var num2 = (double) vector3_1.x * (double) vector3_2.y * (double) vector3_3.z + (double) vector3_1.y * (double) vector3_2.z * (double) vector3_3.x + (double) vector3_1.z * (double) vector3_2.x * (double) vector3_3.y - (double) vector3_1.z * (double) vector3_2.y * (double) vector3_3.x - (double) vector3_1.y * (double) vector3_2.x * (double) vector3_3.z - (double) vector3_1.x * (double) vector3_2.z * (double) vector3_3.y;
         num1 += num2 / 6.0;
       }
       return num1 < 0.0;
@@ -453,44 +520,44 @@ namespace M3D.Model
 
     public static M3D.Model.Utils.Vector3 CalcNormal(M3D.Model.Utils.Vector3 _a, M3D.Model.Utils.Vector3 _b, M3D.Model.Utils.Vector3 _c)
     {
-      float num1 = _b.x - _a.x;
-      float num2 = _b.y - _a.y;
-      float num3 = _b.z - _a.z;
-      float num4 = _c.x - _a.x;
-      float num5 = _c.y - _a.y;
-      float num6 = _c.z - _a.z;
-      double num7 = (double) num2 * (double) num6 - (double) num3 * (double) num5;
-      float num8 = (float) ((double) num3 * (double) num4 - (double) num1 * (double) num6);
-      float num9 = (float) ((double) num1 * (double) num5 - (double) num2 * (double) num4);
-      float num10 = (float) Math.Sqrt(num7 * num7 + (double) num8 * (double) num8 + (double) num9 * (double) num9);
+      var num1 = _b.x - _a.x;
+      var num2 = _b.y - _a.y;
+      var num3 = _b.z - _a.z;
+      var num4 = _c.x - _a.x;
+      var num5 = _c.y - _a.y;
+      var num6 = _c.z - _a.z;
+      var num7 = num2 * (double)num6 - (double) num3 * (double) num5;
+      var num8 = (float) ((double) num3 * (double) num4 - (double) num1 * (double) num6);
+      var num9 = (float) ((double) num1 * (double) num5 - (double) num2 * (double) num4);
+      var num10 = (float) Math.Sqrt(num7 * num7 + (double) num8 * (double) num8 + (double) num9 * (double) num9);
       return new M3D.Model.Utils.Vector3((float) num7 / num10, num8 / num10, num9 / num10);
     }
 
     public static ModelData Stitch(List<ModelTransform> modelTransforms)
     {
-      int capacity1 = 0;
-      int capacity2 = 0;
+      var capacity1 = 0;
+      var capacity2 = 0;
       foreach (ModelTransform modelTransform in modelTransforms)
       {
-        capacity1 += modelTransform.data.getFaceCount();
-        capacity2 += modelTransform.data.getVertexCount();
+        capacity1 += modelTransform.data.GetFaceCount();
+        capacity2 += modelTransform.data.GetVertexCount();
       }
-      List<ModelData.FaceIndex> newFaceList = new List<ModelData.FaceIndex>(capacity1);
-      List<M3D.Model.Utils.Vector3> newVerticesList = new List<M3D.Model.Utils.Vector3>(capacity2);
-      int num1 = 0;
-      int num2 = 0;
+      var newFaceList = new List<ModelData.FaceIndex>(capacity1);
+      var newVerticesList = new List<M3D.Model.Utils.Vector3>(capacity2);
+      var num1 = 0;
+      var num2 = 0;
       foreach (ModelTransform modelTransform in modelTransforms)
       {
-        int faceCount = modelTransform.data.getFaceCount();
-        int vertexCount = modelTransform.data.getVertexCount();
-        for (int index = 0; index < faceCount; ++index)
+        var faceCount = modelTransform.data.GetFaceCount();
+        var vertexCount = modelTransform.data.GetVertexCount();
+        for (var index = 0; index < faceCount; ++index)
         {
-          ModelData.Face face = modelTransform.data.getFace(index);
-          newFaceList.Add(new ModelData.FaceIndex(face.index1 + num2, face.index2 + num2, face.index3 + num2, face.Normal));
+          ModelData.Face face = modelTransform.data.GetFace(index);
+          newFaceList.Add(new ModelData.FaceIndex(face.Index1 + num2, face.Index2 + num2, face.Index3 + num2, face.Normal));
         }
-        for (int index = 0; index < vertexCount; ++index)
+        for (var index = 0; index < vertexCount; ++index)
         {
-          M3D.Model.Utils.Vector3 vector3 = M3D.Model.Utils.Vector3.MatrixProduct(modelTransform.transformMatrix, modelTransform.data[index]);
+          var vector3 = Utils.Vector3.MatrixProduct(modelTransform.transformMatrix, modelTransform.data[index]);
           newVerticesList.Add(vector3);
         }
         num1 += faceCount;
@@ -507,33 +574,36 @@ namespace M3D.Model
 
       public bool Equals(ModelData.Edge other)
       {
-        return this.index == other.index;
+        return index == other.index;
       }
 
       private List<ModelData.Face> GetFaces
       {
         get
         {
-          List<ModelData.Face> faceList = new List<ModelData.Face>();
-          foreach (int face in this.model.EdgeIndecies[this.index].Faces)
-            faceList.Add(new ModelData.Face(this.model, face));
+          var faceList = new List<ModelData.Face>();
+          foreach (var face in model.EdgeIndecies[index].Faces)
+          {
+            faceList.Add(new ModelData.Face(model, face));
+          }
+
           return faceList;
         }
       }
 
-      private ModelData.Vertex vertex1
+      private ModelData.Vertex Vertex1
       {
         get
         {
-          return new ModelData.Vertex(this.model, this.model.EdgeIndecies[this.index].index1);
+          return new ModelData.Vertex(model, model.EdgeIndecies[index].Index1);
         }
       }
 
-      private ModelData.Vertex vertex2
+      private ModelData.Vertex Vertex2
       {
         get
         {
-          return new ModelData.Vertex(this.model, this.model.EdgeIndecies[this.index].index2);
+          return new ModelData.Vertex(model, model.EdgeIndecies[index].Index2);
         }
       }
     }
@@ -551,42 +621,48 @@ namespace M3D.Model
 
       public List<int> Faces { get; set; }
 
-      public int index1
+      public int Index1
       {
         get
         {
-          return this.p1_ID;
+          return p1_ID;
         }
       }
 
-      public int index2
+      public int Index2
       {
         get
         {
-          return this.p2_ID;
+          return p2_ID;
         }
       }
 
       public bool Equals(ModelData.EdgeIndex other)
       {
-        if (this.p1_ID == other.p1_ID && this.p2_ID == other.p2_ID)
+        if (p1_ID == other.p1_ID && p2_ID == other.p2_ID)
+        {
           return true;
-        if (this.p1_ID == other.p2_ID)
-          return this.p2_ID == other.p1_ID;
+        }
+
+        if (p1_ID == other.p2_ID)
+        {
+          return p2_ID == other.p1_ID;
+        }
+
         return false;
       }
 
       public override int GetHashCode()
       {
-        return this.p1_ID * this.p2_ID ^ this.p1_ID + this.p2_ID;
+        return p1_ID * p2_ID ^ p1_ID + p2_ID;
       }
 
       private int GetHashCode(List<int> list)
       {
-        int num1 = 0;
-        int num2 = 1;
-        int num3 = 0;
-        for (int index = 0; index < list.Count; ++index)
+        var num1 = 0;
+        var num2 = 1;
+        var num3 = 0;
+        for (var index = 0; index < list.Count; ++index)
         {
           num1 += list[index];
           num2 *= list[index];
@@ -597,18 +673,20 @@ namespace M3D.Model
 
       public override string ToString()
       {
-        string str = string.Format("Edge {2} [{0} - {1}]: ", (object) this.p1_ID, (object) this.p2_ID, (object) this.GetHashCode());
-        if (this.Faces == null)
+        var str = string.Format("Edge {2} [{0} - {1}]: ", p1_ID, (object)p2_ID, (object)GetHashCode());
+        if (Faces == null)
         {
           str += "has no faces";
         }
         else
         {
-          foreach (int face in this.Faces)
+          foreach (var face in Faces)
           {
             str += face.ToString();
-            if (face != this.Faces.Last<int>())
+            if (face != Faces.Last<int>())
+            {
               str += ", ";
+            }
           }
         }
         return str;
@@ -630,11 +708,11 @@ namespace M3D.Model
       {
         get
         {
-          List<ModelData.Vertex> vertexList = new List<ModelData.Vertex>();
-          ModelData.FaceIndex faceIndecy = this.ModelData.FaceIndecies[this.index];
-          vertexList.Add(this.ModelData.getVertex(faceIndecy.P1));
-          vertexList.Add(this.ModelData.getVertex(faceIndecy.P2));
-          vertexList.Add(this.ModelData.getVertex(faceIndecy.P3));
+          var vertexList = new List<ModelData.Vertex>();
+          ModelData.FaceIndex faceIndecy = ModelData.FaceIndecies[index];
+          vertexList.Add(ModelData.GetVertex(faceIndecy.P1));
+          vertexList.Add(ModelData.GetVertex(faceIndecy.P2));
+          vertexList.Add(ModelData.GetVertex(faceIndecy.P3));
           return vertexList;
         }
       }
@@ -643,7 +721,7 @@ namespace M3D.Model
       {
         get
         {
-          ModelData.FaceIndex faceIndecy = this.ModelData.FaceIndecies[this.index];
+          ModelData.FaceIndex faceIndecy = ModelData.FaceIndecies[index];
           return new int[3]
           {
             faceIndecy.P1,
@@ -653,27 +731,27 @@ namespace M3D.Model
         }
       }
 
-      public int index1
+      public int Index1
       {
         get
         {
-          return this.ModelData.FaceIndecies[this.index].P1;
+          return ModelData.FaceIndecies[index].P1;
         }
       }
 
-      public int index2
+      public int Index2
       {
         get
         {
-          return this.ModelData.FaceIndecies[this.index].P2;
+          return ModelData.FaceIndecies[index].P2;
         }
       }
 
-      public int index3
+      public int Index3
       {
         get
         {
-          return this.ModelData.FaceIndecies[this.index].P3;
+          return ModelData.FaceIndecies[index].P3;
         }
       }
 
@@ -681,7 +759,7 @@ namespace M3D.Model
       {
         get
         {
-          return this.ModelData.FaceIndecies[this.index].Normal;
+          return ModelData.FaceIndecies[index].Normal;
         }
       }
 
@@ -689,13 +767,13 @@ namespace M3D.Model
       {
         get
         {
-          return this.index;
+          return index;
         }
       }
 
       public bool Equals(ModelData.Face other)
       {
-        return this.index == other.index;
+        return index == other.index;
       }
     }
 
@@ -711,7 +789,7 @@ namespace M3D.Model
         this.P1 = P1;
         this.P2 = P2;
         this.P3 = P3;
-        this.Normal = normal;
+        Normal = normal;
       }
 
       public M3D.Model.Utils.Vector3 Normal { get; private set; }
@@ -726,9 +804,9 @@ namespace M3D.Model
       {
         int[] numArray1 = new int[3]
         {
-          this.P1,
-          this.P2,
-          this.P3
+          P1,
+          P2,
+          P3
         };
         int[] numArray2 = new int[3]
         {
@@ -736,9 +814,9 @@ namespace M3D.Model
           other.P2,
           other.P3
         };
-        int num1 = 0;
-        int num2 = 0;
-        for (int index = 0; index < 3; ++index)
+        var num1 = 0;
+        var num2 = 0;
+        for (var index = 0; index < 3; ++index)
         {
           num1 ^= numArray1[index];
           num2 ^= numArray2[index];
@@ -762,34 +840,37 @@ namespace M3D.Model
       {
         get
         {
-          List<ModelData.Face> faceList = new List<ModelData.Face>();
-          foreach (int face in this.ModelData.VertexIndecies[this.index].Faces)
-            faceList.Add(this.ModelData.getFace(face));
+          var faceList = new List<ModelData.Face>();
+          foreach (var face in ModelData.VertexIndecies[index].Faces)
+          {
+            faceList.Add(ModelData.GetFace(face));
+          }
+
           return faceList;
         }
       }
 
-      public float x
+      public float X
       {
         get
         {
-          return this.ModelData.Verticies[this.index].x;
+          return ModelData.Verticies[index].x;
         }
       }
 
-      public float y
+      public float Y
       {
         get
         {
-          return this.ModelData.Verticies[this.index].y;
+          return ModelData.Verticies[index].y;
         }
       }
 
-      public float z
+      public float Z
       {
         get
         {
-          return this.ModelData.Verticies[this.index].z;
+          return ModelData.Verticies[index].z;
         }
       }
 
@@ -797,7 +878,7 @@ namespace M3D.Model
       {
         get
         {
-          return this.index;
+          return index;
         }
       }
 
@@ -807,9 +888,9 @@ namespace M3D.Model
         {
           return new double[3]
           {
-            (double) this.x,
-            (double) this.y,
-            (double) this.z
+            (double) X,
+            (double) Y,
+            (double) Z
           };
         }
       }
@@ -821,7 +902,7 @@ namespace M3D.Model
 
       public VertexIndex(List<int> FaceIndecies)
       {
-        this.Faces = new List<int>((IEnumerable<int>) FaceIndecies);
+        Faces = new List<int>((IEnumerable<int>) FaceIndecies);
       }
     }
   }

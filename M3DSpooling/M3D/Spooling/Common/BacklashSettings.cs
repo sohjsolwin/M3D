@@ -19,9 +19,9 @@ namespace M3D.Spooling.Common
 
     public BacklashSettings(BacklashSettings other)
     {
-      this.backlash_x = other.backlash_x;
-      this.backlash_y = other.backlash_y;
-      this.backlash_speed = other.backlash_speed;
+      backlash_x = other.backlash_x;
+      backlash_y = other.backlash_y;
+      backlash_speed = other.backlash_speed;
     }
 
     public BacklashSettings(float backlash_x, float backlash_y, float backlash_speed)

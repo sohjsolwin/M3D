@@ -17,34 +17,34 @@ namespace M3D.Spooling.Common.Utils
     public SampleSet(int capacity)
       : base(capacity)
     {
-      this.m_sum = 0.0;
-      this.m_sumSqrd = 0.0;
-      this.m_lastData = double.NaN;
+      m_sum = 0.0;
+      m_sumSqrd = 0.0;
+      m_lastData = double.NaN;
     }
 
     public override double Add(double newData)
     {
-      this.m_lastData = newData;
-      double num = base.Add(newData);
-      this.m_sum -= num;
-      this.m_sum += newData;
-      this.m_sumSqrd = this.m_sum * this.m_sum;
+      m_lastData = newData;
+      var num = base.Add(newData);
+      m_sum -= num;
+      m_sum += newData;
+      m_sumSqrd = m_sum * m_sum;
       return num;
     }
 
     public override void Clear()
     {
       base.Clear();
-      this.m_sum = 0.0;
-      this.m_sumSqrd = 0.0;
-      this.m_lastData = double.NaN;
+      m_sum = 0.0;
+      m_sumSqrd = 0.0;
+      m_lastData = double.NaN;
     }
 
     public double LastQueuedData
     {
       get
       {
-        return this.m_lastData;
+        return m_lastData;
       }
     }
 
@@ -52,20 +52,20 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return this.Count > 1;
+        return Count > 1;
       }
     }
 
     public bool isWindowFull()
     {
-      return this.Count == this.Capacity;
+      return Count == Capacity;
     }
 
     public float SampleMean
     {
       get
       {
-        return (float) this.m_sum / (float) this.Count;
+        return (float)m_sum / (float)Count;
       }
     }
 
@@ -73,7 +73,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (float) (this.m_sumSqrd - this.m_sum * this.m_sum / (double) this.Count) / (float) (this.Count - 1);
+        return (float) (m_sumSqrd - m_sum * m_sum / (double)Count) / (float) (Count - 1);
       }
     }
 
@@ -81,7 +81,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (float) Math.Sqrt((double) this.SampleVariance);
+        return (float) Math.Sqrt((double)SampleVariance);
       }
     }
   }

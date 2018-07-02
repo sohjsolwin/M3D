@@ -37,23 +37,28 @@ namespace M3D.GUI.Dialogs
     public PopupMessageBox(int ID)
       : base(ID)
     {
-      this.tag = "PopupMessageBox.Frame";
-      this.hasmessage = false;
-      this.standard_queue = new Queue<PopupMessageBox.MessageData>();
-      this.threadsync_standardmsgs = new object();
+      tag = "PopupMessageBox.Frame";
+      hasmessage = false;
+      standard_queue = new Queue<PopupMessageBox.MessageData>();
+      threadsync_standardmsgs = new object();
     }
 
     private PopupMessageBox.MessageData GetCriticalMessage()
     {
-      if (!this.AllowMessages)
+      if (!AllowMessages)
+      {
         return (PopupMessageBox.MessageData) null;
+      }
+
       try
       {
-        PopupMessageBox.MessageData messageData = (PopupMessageBox.MessageData) null;
-        lock (this.threadsync_standardmsgs)
+        var messageData = (PopupMessageBox.MessageData) null;
+        lock (threadsync_standardmsgs)
         {
-          if (this.standard_queue.Count != 0)
-            messageData = this.standard_queue.Dequeue();
+          if (standard_queue.Count != 0)
+          {
+            messageData = standard_queue.Dequeue();
+          }
         }
         return messageData;
       }
@@ -65,12 +70,12 @@ namespace M3D.GUI.Dialogs
 
     public void AddMessageToQueue(string message, string button1_text, string button2_text, PopupMessageBox.OnUserSelectionDel callback)
     {
-      this.AddMessageToQueue(message, button1_text, button2_text, (string) null, callback, (object) null);
+      AddMessageToQueue(message, button1_text, button2_text, (string) null, callback, (object) null);
     }
 
     public void AddMessageToQueue(string message, string button1_text, string button2_text, string button3_text, PopupMessageBox.OnUserSelectionDel callback, object data)
     {
-      this.AddMessageToQueue(new PopupMessageBox.MessageDataStandard(new SpoolerMessage(MessageType.UserDefined, message), PopupMessageBox.MessageBoxButtons.CUSTOM, callback, data)
+      AddMessageToQueue(new PopupMessageBox.MessageDataStandard(new SpoolerMessage(MessageType.UserDefined, message), PopupMessageBox.MessageBoxButtons.CUSTOM, callback, data)
       {
         custom_button1_text = button1_text,
         custom_button2_text = button2_text,
@@ -80,150 +85,181 @@ namespace M3D.GUI.Dialogs
 
     public void AddMessageToQueue(PopupMessageBox.MessageDataStandard message_data)
     {
-      lock (this.threadsync_standardmsgs)
-        this.standard_queue.Enqueue((PopupMessageBox.MessageData) message_data);
+      lock (threadsync_standardmsgs)
+      {
+        standard_queue.Enqueue((PopupMessageBox.MessageData) message_data);
+      }
     }
 
     public void AddMessageToQueue(string message)
     {
-      this.AddMessageToQueue(message, PopupMessageBox.MessageBoxButtons.DEFAULT);
+      AddMessageToQueue(message, PopupMessageBox.MessageBoxButtons.DEFAULT);
     }
 
     public void AddMessageToQueue(string message, PopupMessageBox.MessageBoxButtons buttons)
     {
-      this.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, message), buttons, (PopupMessageBox.OnUserSelectionDel) null);
+      AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, message), buttons, (PopupMessageBox.OnUserSelectionDel) null);
     }
 
     public void AddMessageToQueue(string message, PopupMessageBox.MessageBoxButtons buttons, PopupMessageBox.OnUserSelectionDel callback)
     {
-      this.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, message), buttons, callback);
+      AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, message), buttons, callback);
     }
 
     public void AddMessageToQueue(string message, PopupMessageBox.MessageBoxButtons buttons, PopupMessageBox.OnUserSelectionDel callback, object data)
     {
-      this.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, message), buttons, callback, data);
+      AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, message), buttons, callback, data);
     }
 
     public void AddMessageToQueue(SpoolerMessage message)
     {
-      this.AddMessageToQueue(message, PopupMessageBox.MessageBoxButtons.DEFAULT, (PopupMessageBox.OnUserSelectionDel) null);
+      AddMessageToQueue(message, PopupMessageBox.MessageBoxButtons.DEFAULT, (PopupMessageBox.OnUserSelectionDel) null);
     }
 
     public void AddMessageToQueue(SpoolerMessage message, PopupMessageBox.MessageBoxButtons buttons)
     {
-      this.AddMessageToQueue(message, buttons, (PopupMessageBox.OnUserSelectionDel) null);
+      AddMessageToQueue(message, buttons, (PopupMessageBox.OnUserSelectionDel) null);
     }
 
     public void AddMessageToQueue(SpoolerMessage message, PopupMessageBox.MessageBoxButtons buttons, PopupMessageBox.OnUserSelectionDel callback)
     {
-      this.AddMessageToQueue(message, buttons, callback, (object) null);
+      AddMessageToQueue(message, buttons, callback, (object) null);
     }
 
     public void AddMessageToQueue(string message, string title, PopupMessageBox.MessageBoxButtons buttons, PopupMessageBox.OnUserSelectionDel callback)
     {
-      lock (this.threadsync_standardmsgs)
-        this.standard_queue.Enqueue((PopupMessageBox.MessageData) new PopupMessageBox.MessageDataStandard(new SpoolerMessage(MessageType.UserDefined, message), title, buttons, callback, (object) null));
+      lock (threadsync_standardmsgs)
+      {
+        standard_queue.Enqueue((PopupMessageBox.MessageData) new PopupMessageBox.MessageDataStandard(new SpoolerMessage(MessageType.UserDefined, message), title, buttons, callback, (object) null));
+      }
     }
 
     public void AddMessageToQueue(SpoolerMessage message, PopupMessageBox.MessageBoxButtons buttons, PopupMessageBox.OnUserSelectionDel callback, object data)
     {
-      lock (this.threadsync_standardmsgs)
-        this.standard_queue.Enqueue((PopupMessageBox.MessageData) new PopupMessageBox.MessageDataStandard(message, buttons, callback, data));
+      lock (threadsync_standardmsgs)
+      {
+        standard_queue.Enqueue((PopupMessageBox.MessageData) new PopupMessageBox.MessageDataStandard(message, buttons, callback, data));
+      }
     }
 
     public void AddXMLMessageToQueue(PopupMessageBox.MessageDataXML xmlMessageData)
     {
-      lock (this.threadsync_standardmsgs)
-        this.standard_queue.Enqueue((PopupMessageBox.MessageData) xmlMessageData);
+      lock (threadsync_standardmsgs)
+      {
+        standard_queue.Enqueue((PopupMessageBox.MessageData) xmlMessageData);
+      }
     }
 
     public bool CriticalMessageShowing()
     {
-      return !this.Visible;
+      return !Visible;
     }
 
     public void Init(GUIHost host)
     {
       this.host = host;
-      this.RelativeX = 0.0f;
-      this.RelativeX = 0.0f;
-      this.RelativeWidth = 1f;
-      this.RelativeHeight = 1f;
-      this.child_frame = new XMLFrame(0);
-      this.child_frame.CenterHorizontallyInParent = true;
-      this.child_frame.CenterVerticallyInParent = true;
-      this.child_frame.RelativeWidth = 1f;
-      this.child_frame.RelativeHeight = 1f;
-      this.child_frame.AutoCenterYOffset = 50;
-      this.AddChildElement((Element2D) this.child_frame);
-      this.Visible = false;
+      RelativeX = 0.0f;
+      RelativeX = 0.0f;
+      RelativeWidth = 1f;
+      RelativeHeight = 1f;
+      child_frame = new XMLFrame(0)
+      {
+        CenterHorizontallyInParent = true,
+        CenterVerticallyInParent = true,
+        RelativeWidth = 1f,
+        RelativeHeight = 1f,
+        AutoCenterYOffset = 50
+      };
+      AddChildElement((Element2D)child_frame);
+      Visible = false;
       host.AddProcess((IProcess) this);
     }
 
     public void CheckCriticalMessages()
     {
-      if (this.Visible || this.hasmessage)
+      if (Visible || hasmessage)
+      {
         return;
-      PopupMessageBox.MessageData criticalMessage = this.GetCriticalMessage();
+      }
+
+      PopupMessageBox.MessageData criticalMessage = GetCriticalMessage();
       if (criticalMessage == null)
+      {
         return;
+      }
+
       if (criticalMessage.GetMessageType() == PopupMessageBox.MessageBoxType.Critical)
       {
-        PopupMessageBox.MessageDataStandard message_details = (PopupMessageBox.MessageDataStandard) criticalMessage;
-        this.MessageCallback = message_details.OnSelection;
-        this.MessageUserData = message_details.data;
-        this.MessageText = this.TranslateSpoolerMessage(message_details.message);
-        this.SetMessageStandard(message_details);
-        this.hasmessage = true;
-        this.Visible = true;
+        var message_details = (PopupMessageBox.MessageDataStandard) criticalMessage;
+        MessageCallback = message_details.OnSelection;
+        MessageUserData = message_details.data;
+        MessageText = TranslateSpoolerMessage(message_details.message);
+        SetMessageStandard(message_details);
+        hasmessage = true;
+        Visible = true;
       }
       else if (criticalMessage.GetMessageType() == PopupMessageBox.MessageBoxType.XML)
       {
-        PopupMessageBox.MessageDataXML messageDataXml = (PopupMessageBox.MessageDataXML) criticalMessage;
-        this.MessageUserData = messageDataXml.data;
-        this.XMLMessageCallback = messageDataXml.buttonCallback;
-        this.XMLOnUpdateCallback = messageDataXml.onUpdateCallback;
-        this.SetMessageXML(messageDataXml.message, messageDataXml.xmlsource);
+        var messageDataXml = (PopupMessageBox.MessageDataXML) criticalMessage;
+        MessageUserData = messageDataXml.data;
+        XMLMessageCallback = messageDataXml.buttonCallback;
+        XMLOnUpdateCallback = messageDataXml.onUpdateCallback;
+        SetMessageXML(messageDataXml.message, messageDataXml.xmlsource);
         if (messageDataXml.onShowCallback != null)
-          messageDataXml.onShowCallback(this, this.child_frame, this.host, messageDataXml.data);
-        this.hasmessage = true;
-        this.Visible = true;
+        {
+          messageDataXml.onShowCallback(this, child_frame, host, messageDataXml.data);
+        }
+
+        hasmessage = true;
+        Visible = true;
       }
-      this.Refresh();
+      Refresh();
     }
 
     public void Process()
     {
-      if (!this.result_processed)
+      if (!result_processed)
       {
-        this.result_processed = true;
-        if (this.MessageCallback != null)
+        result_processed = true;
+        if (MessageCallback != null)
         {
-          this.MessageCallback(this.popup_result, this.message.Type, this.message.SerialNumber, this.MessageUserData);
+          MessageCallback(popup_result, message.Type, message.SerialNumber, MessageUserData);
         }
         else
         {
-          if (this.OnUserSelection == null)
+          if (OnUserSelection == null)
+          {
             return;
-          this.OnUserSelection(this.popup_result, this.message.Type, this.message.SerialNumber, this.MessageUserData);
+          }
+
+          OnUserSelection(popup_result, message.Type, message.SerialNumber, MessageUserData);
         }
       }
       else
       {
-        if (this.Visible || !this.AllowMessages)
+        if (Visible || !AllowMessages)
+        {
           return;
-        this.CheckCriticalMessages();
+        }
+
+        CheckCriticalMessages();
       }
     }
 
     public void CloseCurrent()
     {
-      if (!this.Visible)
+      if (!Visible)
+      {
         return;
-      this.Visible = false;
-      if (this.child_frame == null)
+      }
+
+      Visible = false;
+      if (child_frame == null)
+      {
         return;
-      this.child_frame.DoOnUpdate = (ElementStandardDelegate) null;
+      }
+
+      child_frame.DoOnUpdate = (ElementStandardDelegate) null;
     }
 
     public override void OnRender(GUIHost host)
@@ -235,10 +271,10 @@ namespace M3D.GUI.Dialogs
     {
       Sprite.pixel_perfect = true;
       this.message = message;
-      this.child_frame.Init(this.host, message_box_xml, new ButtonCallback(this.XMLFormButtonCallback));
-      this.child_frame.DoOnUpdate = this.XMLOnUpdateCallback;
-      this.child_frame.Refresh();
-      this.host.SetFocus((Element2D) this.child_frame);
+      child_frame.Init(host, message_box_xml, new ButtonCallback(XMLFormButtonCallback));
+      child_frame.DoOnUpdate = XMLOnUpdateCallback;
+      child_frame.Refresh();
+      host.SetFocus((Element2D)child_frame);
       Sprite.pixel_perfect = false;
     }
 
@@ -262,19 +298,19 @@ namespace M3D.GUI.Dialogs
     private void SetMessageStandard(PopupMessageBox.MessageDataStandard message_details)
     {
       Sprite.pixel_perfect = true;
-      this.child_frame.Init(this.host, "<?xml version=\"1.0\" encoding=\"utf-16\"?><XMLFrame id=\"1000\" width=\"400\" height=\"200\" center-vertically=\"1\" center-horizontally=\"1\"><ImageWidget id=\"1001\" x=\"0\" y=\"0\" relative-width=\"1.0\" relative-height=\"1.0\" src=\"guicontrols\" texture-u0=\"640\" texture-v0=\"320\" texture-u1=\"704\" texture-v1=\"383\" center-vertically=\"1\" center-horizontally=\"1\" leftbordersize-pixels=\"41\" rightbordersize-pixels=\"8\" minimumwidth=\"64\" topbordersize-pixels=\"35\" bottombordersize-pixels=\"8\" minimumheight=\"64\"></ImageWidget><TextWidget id=\"1002\" x=\"50\" y=\"2\" width=\"298\" height=\"35\" font-size=\"Large\" font-color=\"#FF808080\" alignment=\"Left\">Printer Message</TextWidget><TextWidget id=\"1003\" x=\"14\" y=\"14\" width=\"372\" height=\"150\" font-size=\"Medium\" font-color=\"#FF404040\" alignment=\"Centre\">Warning! Please make sure the print bed is clear. We wouldn't want any accidents.</TextWidget><ButtonWidget id=\"101\" x=\"92\" y=\"-50\" width=\"100\" height=\"32\" font-size=\"Medium\" alignment=\"Centre\" has_focus=\"1\">OK</ButtonWidget><ButtonWidget id=\"102\" x=\"208\" y=\"-50\" width=\"100\" height=\"32\" font-size=\"Medium\" alignment=\"Centre\">Cancel</ButtonWidget><ButtonWidget id=\"103\" x=\"208\" y=\"-50\" width=\"100\" height=\"32\" font-size=\"Medium\" alignment=\"Centre\" visible=\"0\" enabled=\"0\">Custom</ButtonWidget></XMLFrame>", new ButtonCallback(this.MyButtonCallback));
-      this.child_frame.Refresh();
+      child_frame.Init(host, "<?xml version=\"1.0\" encoding=\"utf-16\"?><XMLFrame id=\"1000\" width=\"400\" height=\"200\" center-vertically=\"1\" center-horizontally=\"1\"><ImageWidget id=\"1001\" x=\"0\" y=\"0\" relative-width=\"1.0\" relative-height=\"1.0\" src=\"guicontrols\" texture-u0=\"640\" texture-v0=\"320\" texture-u1=\"704\" texture-v1=\"383\" center-vertically=\"1\" center-horizontally=\"1\" leftbordersize-pixels=\"41\" rightbordersize-pixels=\"8\" minimumwidth=\"64\" topbordersize-pixels=\"35\" bottombordersize-pixels=\"8\" minimumheight=\"64\"></ImageWidget><TextWidget id=\"1002\" x=\"50\" y=\"2\" width=\"298\" height=\"35\" font-size=\"Large\" font-color=\"#FF808080\" alignment=\"Left\">Printer Message</TextWidget><TextWidget id=\"1003\" x=\"14\" y=\"14\" width=\"372\" height=\"150\" font-size=\"Medium\" font-color=\"#FF404040\" alignment=\"Centre\">Warning! Please make sure the print bed is clear. We wouldn't want any accidents.</TextWidget><ButtonWidget id=\"101\" x=\"92\" y=\"-50\" width=\"100\" height=\"32\" font-size=\"Medium\" alignment=\"Centre\" has_focus=\"1\">OK</ButtonWidget><ButtonWidget id=\"102\" x=\"208\" y=\"-50\" width=\"100\" height=\"32\" font-size=\"Medium\" alignment=\"Centre\">Cancel</ButtonWidget><ButtonWidget id=\"103\" x=\"208\" y=\"-50\" width=\"100\" height=\"32\" font-size=\"Medium\" alignment=\"Centre\" visible=\"0\" enabled=\"0\">Custom</ButtonWidget></XMLFrame>", new ButtonCallback(MyButtonCallback));
+      child_frame.Refresh();
       Sprite.pixel_perfect = false;
-      TextWidget childElement1 = (TextWidget) this.FindChildElement(1003);
-      ButtonWidget childElement2 = (ButtonWidget) this.FindChildElement(101);
-      ButtonWidget childElement3 = (ButtonWidget) this.FindChildElement(102);
-      ButtonWidget childElement4 = (ButtonWidget) this.FindChildElement(103);
-      ((TextWidget) this.FindChildElement(1002)).Text = message_details.title;
-      Frame childElement5 = (Frame) this.FindChildElement(1000);
-      this.message = message_details.message;
+      var childElement1 = (TextWidget)FindChildElement(1003);
+      var childElement2 = (ButtonWidget)FindChildElement(101);
+      var childElement3 = (ButtonWidget)FindChildElement(102);
+      var childElement4 = (ButtonWidget)FindChildElement(103);
+      ((TextWidget)FindChildElement(1002)).Text = message_details.title;
+      var childElement5 = (Frame)FindChildElement(1000);
+      message = message_details.message;
       if (message_details.buttons == PopupMessageBox.MessageBoxButtons.DEFAULT)
       {
-        switch (this.message.Type)
+        switch (message.Type)
         {
           case MessageType.PrinterConnected:
           case MessageType.JobComplete:
@@ -391,8 +427,8 @@ namespace M3D.GUI.Dialogs
           childElement2.Enabled = true;
         }
       }
-      this.host.SetFocus((Element2D) childElement2);
-      childElement1.Text = this.MessageText;
+      host.SetFocus((Element2D) childElement2);
+      childElement1.Text = MessageText;
     }
 
     public void MyButtonCallback(ButtonWidget button)
@@ -400,59 +436,74 @@ namespace M3D.GUI.Dialogs
       switch (button.ID)
       {
         case 101:
-          this.hasmessage = false;
-          this.Visible = false;
-          this.popup_result = PopupMessageBox.PopupResult.Button1_YesOK;
-          this.result_processed = false;
+          hasmessage = false;
+          Visible = false;
+          popup_result = PopupMessageBox.PopupResult.Button1_YesOK;
+          result_processed = false;
           break;
         case 102:
-          this.hasmessage = false;
-          this.Visible = false;
-          this.popup_result = PopupMessageBox.PopupResult.Button2_NoCancel;
-          this.result_processed = false;
+          hasmessage = false;
+          Visible = false;
+          popup_result = PopupMessageBox.PopupResult.Button2_NoCancel;
+          result_processed = false;
           break;
         case 103:
-          this.hasmessage = false;
-          this.Visible = false;
-          this.popup_result = PopupMessageBox.PopupResult.Button3_Custom;
-          this.result_processed = false;
+          hasmessage = false;
+          Visible = false;
+          popup_result = PopupMessageBox.PopupResult.Button3_Custom;
+          result_processed = false;
           break;
       }
     }
 
     private void XMLFormButtonCallback(ButtonWidget button)
     {
-      if (this.XMLMessageCallback == null)
+      if (XMLMessageCallback == null)
+      {
         return;
-      this.XMLMessageCallback(button, this.message, this, this.child_frame, this.MessageUserData);
+      }
+
+      XMLMessageCallback(button, message, this, child_frame, MessageUserData);
     }
 
     public override void SetVisible(bool bVisible)
     {
-      if (this.Visible)
+      if (Visible)
       {
         if (bVisible)
+        {
           return;
-        this.hasmessage = false;
-        if (this.host.HasChildDialog)
-          this.host.GlobalChildDialog -= (Element2D) this;
+        }
+
+        hasmessage = false;
+        if (host.HasChildDialog)
+        {
+          host.GlobalChildDialog -= (Element2D) this;
+        }
+
         base.SetVisible(bVisible);
       }
       else
       {
         if (!bVisible)
+        {
           return;
-        this.host.GlobalChildDialog += (Element2D) this;
+        }
+
+        host.GlobalChildDialog += (Element2D) this;
         base.SetVisible(bVisible);
       }
     }
 
     public override void OnParentMove()
     {
-      if (this.Parent == null)
+      if (Parent == null)
+      {
         return;
-      this.X = (this.Parent.Width - this.Width) / 2;
-      this.Y = (this.Parent.Height - this.Height) / 2;
+      }
+
+      X = (Parent.Width - Width) / 2;
+      Y = (Parent.Height - Height) / 2;
       base.OnParentMove();
     }
 
@@ -518,12 +569,12 @@ namespace M3D.GUI.Dialogs
       {
         this.message = message;
         this.buttons = buttons;
-        this.OnSelection = OnSelectionCallback;
+        OnSelection = OnSelectionCallback;
         this.data = data;
         this.title = title;
-        this.custom_button1_text = (string) null;
-        this.custom_button2_text = (string) null;
-        this.custom_button3_text = (string) null;
+        custom_button1_text = (string) null;
+        custom_button2_text = (string) null;
+        custom_button3_text = (string) null;
       }
 
       public override PopupMessageBox.MessageBoxType GetMessageType()

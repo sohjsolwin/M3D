@@ -21,46 +21,56 @@ namespace M3D.Spooling.Printer_Profiles
 
     public EEPROMProfile(string profileName, int printerReadyIndex, ushort endOfBootloaderReadableEEPROM, ushort endOfFirmwareReadableEEPROM, int bytesPerEEPROMAddress)
     {
-      this.BytesPerEEPROMAddress = bytesPerEEPROMAddress;
-      this.EndOfBootloaderReadableEEPROM = endOfBootloaderReadableEEPROM;
-      this.EndOfFirmwareReadableEEPROM = endOfFirmwareReadableEEPROM;
-      this.PrinterReadyIndex = printerReadyIndex;
-      this.ProfileName = profileName;
+      BytesPerEEPROMAddress = bytesPerEEPROMAddress;
+      EndOfBootloaderReadableEEPROM = endOfBootloaderReadableEEPROM;
+      EndOfFirmwareReadableEEPROM = endOfFirmwareReadableEEPROM;
+      PrinterReadyIndex = printerReadyIndex;
+      ProfileName = profileName;
     }
 
     public EepromAddressInfo GetEepromInfoFromLocation(int address)
     {
-      foreach (EepromAddressInfo address1 in this.addressList)
+      foreach (EepromAddressInfo address1 in addressList)
       {
         if ((int) address1.EepromAddr == address)
+        {
           return address1;
+        }
       }
       if (Debugger.IsAttached)
+      {
         Debugger.Break();
+      }
+
       return (EepromAddressInfo) null;
     }
 
     public EepromAddressInfo GetEepromInfo(string name)
     {
-      foreach (EepromAddressInfo address in this.addressList)
+      foreach (EepromAddressInfo address in addressList)
       {
         if (address.Name == name)
+        {
           return address;
+        }
       }
       return (EepromAddressInfo) null;
     }
 
     public SortedList<int, EepromAddressInfo> GetAllData()
     {
-      SortedList<int, EepromAddressInfo> sortedList = new SortedList<int, EepromAddressInfo>();
-      foreach (EepromAddressInfo address in this.addressList)
+      var sortedList = new SortedList<int, EepromAddressInfo>();
+      foreach (EepromAddressInfo address in addressList)
+      {
         sortedList.Add((int) address.EepromAddr, address);
+      }
+
       return sortedList;
     }
 
     protected void AddEepromAddressInfo(EepromAddressInfo eepromInfo)
     {
-      this.addressList.Add(eepromInfo);
+      addressList.Add(eepromInfo);
     }
   }
 }

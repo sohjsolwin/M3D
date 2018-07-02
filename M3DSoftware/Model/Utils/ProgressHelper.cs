@@ -16,26 +16,32 @@ namespace M3D.Model.Utils
 
     public ProgressHelper(ProgressHelper.PercentageDelagate perDel, int StageCount)
     {
-      this.m_percentageDelagate = perDel;
-      this.m_percentIndex = 0;
-      this.m_stageCount = StageCount;
+      m_percentageDelagate = perDel;
+      m_percentIndex = 0;
+      m_stageCount = StageCount;
     }
 
     public void SetStage(int StageIndexSize)
     {
-      this.m_inc = StageIndexSize / (100 / this.m_stageCount);
-      this.m_index = this.m_inc;
+      m_inc = StageIndexSize / (100 / m_stageCount);
+      m_index = m_inc;
     }
 
     public void Process(int index)
     {
-      if (index < this.m_index)
+      if (index < m_index)
+      {
         return;
-      this.m_index += this.m_inc;
-      ProgressHelper.PercentageDelagate percentageDelagate = this.m_percentageDelagate;
+      }
+
+      m_index += m_inc;
+      ProgressHelper.PercentageDelagate percentageDelagate = m_percentageDelagate;
       if (percentageDelagate == null)
+      {
         return;
-      percentageDelagate(++this.m_percentIndex);
+      }
+
+      percentageDelagate(++m_percentIndex);
     }
 
     public delegate void PercentageDelagate(int percentage);

@@ -23,76 +23,98 @@ namespace M3D.Spooling.Common.Utils
 
     public GCodeFileReader(string gcodefilename)
     {
-      FileStream readstream = (FileStream) null;
+      var readstream = (FileStream) null;
       try
       {
         readstream = new FileStream(gcodefilename, FileMode.Open, FileAccess.Read);
         if (new BinaryReader((Stream) readstream).PeekChar() > (int) sbyte.MaxValue)
-          this.isbinary = true;
+        {
+          isbinary = true;
+        }
       }
       catch (Exception ex)
       {
         ErrorLogger.LogErrorMsg("Exception in GCodeReader.GCodeReader" + ex.Message, "Exception");
-        this.m_bOpen.Value = false;
+        m_bOpen.Value = false;
         return;
       }
       finally
       {
         if (readstream != null)
         {
-          this.maxlines = !this.isbinary ? this.GetLineCountAscii(readstream, false) : this.GetLineCountBinary(readstream);
+          maxlines = !isbinary ? GetLineCountAscii(readstream, false) : GetLineCountBinary(readstream);
           readstream.Close();
         }
       }
-      this.StartReading(gcodefilename);
-      this.m_bOpen.Value = true;
+      StartReading(gcodefilename);
+      m_bOpen.Value = true;
     }
 
     public void Dispose()
     {
-      if (this.readBinary != null)
-        this.readBinary.Dispose();
-      else if (this.readascii != null)
+      if (readBinary != null)
       {
-        this.readascii.Dispose();
+        readBinary.Dispose();
+      }
+      else if (readascii != null)
+      {
+        readascii.Dispose();
       }
       else
       {
-        if (this.readstream == null)
+        if (readstream == null)
+        {
           return;
-        this.readstream.Dispose();
+        }
+
+        readstream.Dispose();
       }
     }
 
     public long GetFileSizeBytes()
     {
-      if (this.readstream != null)
-        return this.readstream.Length;
+      if (readstream != null)
+      {
+        return readstream.Length;
+      }
+
       return 0;
     }
 
     public long GetFilePositionBytes()
     {
-      if (this.readstream != null)
-        return this.readstream.Position;
+      if (readstream != null)
+      {
+        return readstream.Position;
+      }
+
       return 0;
     }
 
     public void Close()
     {
-      if (this.readstream == null)
+      if (readstream == null)
+      {
         return;
-      this.readstream.Close();
+      }
+
+      readstream.Close();
     }
 
     public GCode GetNextLine(bool excludeComments)
     {
-      if (this.endreached)
+      if (endreached)
+      {
         return (GCode) null;
-      GCode gcode = this.isbinary ? this.ReadGCodeLineBinary(this.readBinary) : this.ReadGCodeLineAscii(this.readascii, excludeComments);
+      }
+
+      GCode gcode = isbinary ? ReadGCodeLineBinary(readBinary) : ReadGCodeLineAscii(readascii, excludeComments);
       if (gcode != null)
+      {
         return gcode;
-      this.endreached = true;
+      }
+
+      endreached = true;
       return gcode;
     }
 
@@ -100,7 +122,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return this.maxlines;
+        return maxlines;
       }
     }
 
@@ -108,7 +130,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return this.m_bOpen.Value;
+        return m_bOpen.Value;
       }
     }
 
@@ -116,40 +138,50 @@ namespace M3D.Spooling.Common.Utils
     {
       try
       {
-        this.readstream = new FileStream(gcodefilename, FileMode.Open, FileAccess.Read);
-        if (this.isbinary)
-          this.readBinary = new BinaryReader((Stream) this.readstream);
+        readstream = new FileStream(gcodefilename, FileMode.Open, FileAccess.Read);
+        if (isbinary)
+        {
+          readBinary = new BinaryReader((Stream)readstream);
+        }
         else
-          this.readascii = new StreamReader((Stream) this.readstream);
+        {
+          readascii = new StreamReader((Stream)readstream);
+        }
       }
       catch (Exception ex)
       {
         ErrorLogger.LogErrorMsg("Exception in GCodeReader.StartReading " + ex.Message, "Exception");
-        this.endreached = true;
+        endreached = true;
       }
     }
 
     private long GetLineCountBinary(FileStream readstream)
     {
-      BinaryReader readBinary = new BinaryReader((Stream) readstream);
-      int num = 0;
-      while (this.ReadGCodeLineBinary(readBinary) != null)
+      var readBinary = new BinaryReader((Stream) readstream);
+      var num = 0;
+      while (ReadGCodeLineBinary(readBinary) != null)
+      {
         ++num;
+      }
+
       return (long) num;
     }
 
     private long GetLineCountAscii(FileStream readstream, bool excludeComments)
     {
-      StreamReader readascii = new StreamReader((Stream) readstream);
-      int num = 0;
-      while (this.ReadGCodeLineAscii(readascii, excludeComments) != null)
+      var readascii = new StreamReader((Stream) readstream);
+      var num = 0;
+      while (ReadGCodeLineAscii(readascii, excludeComments) != null)
+      {
         ++num;
+      }
+
       return (long) num;
     }
 
     private GCode ReadGCodeLineAscii(StreamReader readascii, bool excludeComments)
     {
-      GCode gcode = new GCode();
+      var gcode = new GCode();
       do
       {
         string line;
@@ -163,7 +195,10 @@ namespace M3D.Spooling.Common.Utils
           return (GCode) null;
         }
         if (line == null)
+        {
           return (GCode) null;
+        }
+
         gcode.Parse(line);
       }
       while (gcode.comment & excludeComments);
@@ -172,58 +207,104 @@ namespace M3D.Spooling.Common.Utils
 
     private GCode ReadGCodeLineBinary(BinaryReader readBinary)
     {
-      GCode gcode = new GCode();
+      var gcode = new GCode();
       try
       {
-        int num1 = (int) readBinary.ReadUInt16();
+        var num1 = (int) readBinary.ReadUInt16();
         ushort num2 = 0;
-        bool flag1 = false;
-        bool flag2 = (uint) (num1 & 32768) > 0U;
-        int num3 = 0;
+        var flag1 = false;
+        var flag2 = (uint) (num1 & 32768) > 0U;
+        var num3 = 0;
         if ((num1 & 4096) != 0)
         {
           flag1 = true;
           num2 = readBinary.ReadUInt16();
           if (flag2)
+          {
             num3 = (int) readBinary.ReadByte();
+          }
         }
         if ((num1 & 1) != 0)
+        {
           gcode.N = (int) readBinary.ReadUInt16();
+        }
+
         if ((num1 & 2) != 0)
+        {
           gcode.M = flag1 ? readBinary.ReadUInt16() : (ushort) readBinary.ReadByte();
+        }
+
         if ((num1 & 4) != 0)
+        {
           gcode.G = flag1 ? readBinary.ReadUInt16() : (ushort) readBinary.ReadByte();
+        }
+
         if ((num1 & 8) != 0)
+        {
           gcode.X = readBinary.ReadSingle();
+        }
+
         if ((num1 & 16) != 0)
+        {
           gcode.Y = readBinary.ReadSingle();
+        }
+
         if ((num1 & 32) != 0)
+        {
           gcode.Z = readBinary.ReadSingle();
+        }
+
         if ((num1 & 64) != 0)
+        {
           gcode.E = readBinary.ReadSingle();
+        }
+
         if ((num1 & 256) != 0)
+        {
           gcode.F = readBinary.ReadSingle();
+        }
+
         if ((num1 & 512) != 0)
+        {
           gcode.T = readBinary.ReadByte();
+        }
+
         if ((num1 & 1024) != 0)
+        {
           gcode.S = readBinary.ReadInt32();
+        }
+
         if ((num1 & 2048) != 0)
+        {
           gcode.P = readBinary.ReadInt32();
+        }
+
         if (flag1 && ((int) num2 & 1) != 0)
+        {
           gcode.I = readBinary.ReadSingle();
+        }
+
         if (flag1 && ((int) num2 & 2) != 0)
+        {
           gcode.J = readBinary.ReadSingle();
+        }
+
         if (flag1 && ((int) num2 & 4) != 0)
+        {
           gcode.R = readBinary.ReadSingle();
+        }
+
         if (flag2)
         {
-          string str = "";
-          int num4 = flag1 ? 1 : 0;
-          for (int index = 0; index < num3; ++index)
+          var str = "";
+          var num4 = flag1 ? 1 : 0;
+          for (var index = 0; index < num3; ++index)
+          {
             str += ((char) readBinary.ReadByte()).ToString();
+          }
         }
-        int num5 = (int) readBinary.ReadByte();
-        int num6 = (int) readBinary.ReadByte();
+        var num5 = (int) readBinary.ReadByte();
+        var num6 = (int) readBinary.ReadByte();
       }
       catch (EndOfStreamException ex)
       {

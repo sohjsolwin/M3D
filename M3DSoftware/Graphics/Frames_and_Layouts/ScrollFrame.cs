@@ -32,7 +32,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     public override void OnParentResize()
     {
       base.OnParentResize();
-      this.UpdatePaneSize();
+      UpdatePaneSize();
     }
 
     [XmlAttribute("Pane-Width")]
@@ -40,15 +40,18 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.scrollframe_width;
+        return scrollframe_width;
       }
       set
       {
-        this.scrollframe_width = value;
-        if (this.ScollableChildframe == null)
+        scrollframe_width = value;
+        if (ScollableChildframe == null)
+        {
           return;
-        this.ScollableChildframe.RelativeWidth = -1f;
-        this.UpdatePaneSize();
+        }
+
+        ScollableChildframe.RelativeWidth = -1f;
+        UpdatePaneSize();
       }
     }
 
@@ -57,38 +60,54 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.scrollframe_height;
+        return scrollframe_height;
       }
       set
       {
-        this.scrollframe_height = value;
-        if (this.ScollableChildframe == null)
+        scrollframe_height = value;
+        if (ScollableChildframe == null)
+        {
           return;
-        this.ScollableChildframe.RelativeHeight = -1f;
-        this.UpdatePaneSize();
+        }
+
+        ScollableChildframe.RelativeHeight = -1f;
+        UpdatePaneSize();
       }
     }
 
     public void UpdatePaneSize()
     {
-      if (this.scrollframe_width < 1)
-        this.ScollableChildframe.Width = this.Width - 32;
+      if (scrollframe_width < 1)
+      {
+        ScollableChildframe.Width = Width - 32;
+      }
       else
-        this.ScollableChildframe.Width = this.scrollframe_width;
-      if (this.scrollframe_height < 1)
-        this.ScollableChildframe.Height = this.Height - 32;
+      {
+        ScollableChildframe.Width = scrollframe_width;
+      }
+
+      if (scrollframe_height < 1)
+      {
+        ScollableChildframe.Height = Height - 32;
+      }
       else
-        this.ScollableChildframe.Height = this.scrollframe_height;
-      this.Refresh();
+      {
+        ScollableChildframe.Height = scrollframe_height;
+      }
+
+      Refresh();
     }
 
     public void SetPaneSize(int width, int height)
     {
-      this.scrollframe_width = width;
-      this.scrollframe_height = height;
-      if (this.ScollableChildframe == null)
+      scrollframe_width = width;
+      scrollframe_height = height;
+      if (ScollableChildframe == null)
+      {
         return;
-      this.UpdatePaneSize();
+      }
+
+      UpdatePaneSize();
     }
   }
 }

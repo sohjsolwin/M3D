@@ -17,8 +17,8 @@ namespace M3D.Spooling.FirstRunUpdates
     {
       try
       {
-        byte num = eeprom[(int) printerProfile.EEPROMConstants.GetEepromInfo("FANTYPE").EepromAddr];
-        bool flag = false;
+        var num = eeprom[(int) printerProfile.EEPROMConstants.GetEepromInfo("FANTYPE").EepromAddr];
+        var flag = false;
         FanConstValues.FanType index;
         FanConstValues.FanValues fanConstant;
         if (Enum.IsDefined(typeof (FanConstValues.FanType), (object) (int) num))
@@ -31,13 +31,21 @@ namespace M3D.Spooling.FirstRunUpdates
           index = FanConstValues.FanType.None;
           fanConstant = FanConstValues.FanConstants[FanConstValues.FanType.HengLiXin];
         }
-        FanConstValues.FanValues fanValues = new FanConstValues.FanValues();
-        fanValues.Scale = BitConverter.ToSingle(eeprom, (int) printerProfile.EEPROMConstants.GetEepromInfo("FANSCALE").EepromAddr);
-        fanValues.Offset = (int) eeprom[(int) printerProfile.EEPROMConstants.GetEepromInfo("FANOFFSET").EepromAddr];
+        var fanValues = new FanConstValues.FanValues
+        {
+          Scale = BitConverter.ToSingle(eeprom, (int)printerProfile.EEPROMConstants.GetEepromInfo("FANSCALE").EepromAddr),
+          Offset = (int)eeprom[(int)printerProfile.EEPROMConstants.GetEepromInfo("FANOFFSET").EepromAddr]
+        };
         if (Math.Abs(fanValues.Offset - fanConstant.Offset) >= 1)
+        {
           flag = true;
+        }
+
         if ((double) Math.Abs(fanValues.Scale - fanConstant.Scale) >= 1.40129846432482E-45)
+        {
           flag = true;
+        }
+
         if (flag)
         {
           bootloader_conn.WriteToEEPROM(printerProfile.EEPROMConstants.GetEepromInfo("FANTYPE").EepromAddr, BitConverter.GetBytes((short) (byte) index));

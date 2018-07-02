@@ -13,17 +13,17 @@ namespace M3D.Model.FilIO
   {
     public void Save(ModelData modelData, string filename)
     {
-      using (FileStream fileStream = new FileStream(filename, FileMode.Create))
+      using (var fileStream = new FileStream(filename, FileMode.Create))
       {
-        using (BinaryWriter binaryWriter = new BinaryWriter((Stream) fileStream))
+        using (var binaryWriter = new BinaryWriter((Stream) fileStream))
         {
-          int vertexCount = modelData.getVertexCount();
+          var vertexCount = modelData.GetVertexCount();
           binaryWriter.Write(vertexCount);
           foreach (ModelData.Vertex vertex in modelData.GetAllVertexs())
           {
-            float num = -vertex.x;
-            float y = vertex.y;
-            float z = vertex.z;
+            var num = -vertex.X;
+            var y = vertex.Y;
+            var z = vertex.Z;
             binaryWriter.Write(y);
             binaryWriter.Write(num);
             binaryWriter.Write(z);
@@ -31,20 +31,20 @@ namespace M3D.Model.FilIO
           binaryWriter.Write(vertexCount);
           foreach (ModelData.Vertex vertex in modelData.GetAllVertexs())
           {
-            float num1 = 0.0f;
-            float num2 = 1f;
-            float num3 = 0.0f;
+            var num1 = 0.0f;
+            var num2 = 1f;
+            var num3 = 0.0f;
             binaryWriter.Write(num2);
             binaryWriter.Write(num1);
             binaryWriter.Write(num3);
           }
-          int faceCount = modelData.getFaceCount();
+          var faceCount = modelData.GetFaceCount();
           binaryWriter.Write(faceCount);
           foreach (ModelData.Face allFace in modelData.GetAllFaces())
           {
-            binaryWriter.Write(allFace.index1);
-            binaryWriter.Write(allFace.index2);
-            binaryWriter.Write(allFace.index3);
+            binaryWriter.Write(allFace.Index1);
+            binaryWriter.Write(allFace.Index2);
+            binaryWriter.Write(allFace.Index3);
             binaryWriter.Write(0);
             binaryWriter.Write(0);
             binaryWriter.Write(0);

@@ -26,27 +26,33 @@ namespace M3D.GUI.Views.Library_View
 
     public RecentPrintsHistory()
     {
-      this.LoadStartedPrints();
-      this.CleanupStartedPrints();
+      LoadStartedPrints();
+      CleanupStartedPrints();
     }
 
     public void RefreshListChanged()
     {
-      if (this.OnStartedPrintListChanged == null)
+      if (OnStartedPrintListChanged == null)
+      {
         return;
-      this.OnStartedPrintListChanged(new List<RecentPrintsHistory.PrintHistory>((IEnumerable<RecentPrintsHistory.PrintHistory>) this.startedPrintList));
+      }
+
+      OnStartedPrintListChanged(new List<RecentPrintsHistory.PrintHistory>((IEnumerable<RecentPrintsHistory.PrintHistory>)startedPrintList));
     }
 
     public QueryResults<RecentPrintsHistory.PrintHistory> QuereyRecords(string filter)
     {
-      if (this.startedPrintList.Count < 1)
-        return (QueryResults<RecentPrintsHistory.PrintHistory>) null;
-      QueryResults<RecentPrintsHistory.PrintHistory> queryResults = new QueryResults<RecentPrintsHistory.PrintHistory>();
-      foreach (RecentPrintsHistory.PrintHistory startedPrint in this.startedPrintList)
+      if (startedPrintList.Count < 1)
       {
-        if (string.IsNullOrEmpty(filter) || this.Matches(startedPrint.cachefilename, filter))
+        return (QueryResults<RecentPrintsHistory.PrintHistory>) null;
+      }
+
+      var queryResults = new QueryResults<RecentPrintsHistory.PrintHistory>();
+      foreach (RecentPrintsHistory.PrintHistory startedPrint in startedPrintList)
+      {
+        if (string.IsNullOrEmpty(filter) || Matches(startedPrint.cachefilename, filter))
         {
-          RecentPrintsHistory.PrintHistory printHistory = new RecentPrintsHistory.PrintHistory(startedPrint);
+          var printHistory = new RecentPrintsHistory.PrintHistory(startedPrint);
           queryResults.records.Add(printHistory);
         }
       }
@@ -55,23 +61,24 @@ namespace M3D.GUI.Views.Library_View
 
     private bool Matches(string word, string filter)
     {
-      string str1 = filter;
+      var str1 = filter;
       char[] chArray = new char[1]{ ' ' };
-      foreach (string str2 in str1.Split(chArray))
+      foreach (var str2 in str1.Split(chArray))
       {
         if (word.IndexOf(str2, 0, StringComparison.OrdinalIgnoreCase) >= 0)
+        {
           return true;
+        }
       }
       return false;
     }
 
     public void AddRecentPrintHistory(JobParams printerJob, PrinterObject printer, string slicerProfileName, List<Slicer.General.KeyValuePair<string, string>> complete_slicer_settings, List<PrintDetails.ObjectDetails> original_objectList)
     {
-      RecentPrintsHistory.PrintHistory cph;
-      RecentPrintsHistory.CreatePrintHistoryFolder(printerJob, printer, slicerProfileName, complete_slicer_settings, original_objectList, out cph);
-      this.startedPrintList.Insert(0, cph);
-      this.RefreshListChanged();
-      this.SaveStartedPrints();
+      RecentPrintsHistory.CreatePrintHistoryFolder(printerJob, printer, slicerProfileName, complete_slicer_settings, original_objectList, out PrintHistory cph);
+      startedPrintList.Insert(0, cph);
+      RefreshListChanged();
+      SaveStartedPrints();
     }
 
     public static bool SavePrintHistoryToZip(string filename, RecentPrintsHistory.PrintHistory printHistory)
@@ -85,12 +92,15 @@ namespace M3D.GUI.Views.Library_View
       {
         return false;
       }
-      bool flag = true;
+      var flag = true;
       try
       {
         zipFile.BeginUpdate();
-        foreach (string file in Directory.GetFiles(printHistory.folder))
+        foreach (var file in Directory.GetFiles(printHistory.folder))
+        {
           zipFile.Add(file, Path.GetFileName(file));
+        }
+
         zipFile.CommitUpdate();
       }
       catch (Exception ex)
@@ -112,20 +122,22 @@ namespace M3D.GUI.Views.Library_View
     {
       cph = new RecentPrintsHistory.PrintHistory(printerJob.jobname, printerJob.jobGuid, DateTime.Now);
       cph.iconfilename = Path.Combine(cph.folder, "previewimage.jpg");
-      string printerViewFile = Path.Combine(cph.folder, "printerview.xml");
-      string printerSettingsFile = Path.Combine(cph.folder, "printersettings.xml");
+      var printerViewFile = Path.Combine(cph.folder, "printerview.xml");
+      var printerSettingsFile = Path.Combine(cph.folder, "printersettings.xml");
       try
       {
         Directory.CreateDirectory(cph.folder);
-        List<PrintDetails.ObjectDetails> objectList = new List<PrintDetails.ObjectDetails>();
+        var objectList = new List<PrintDetails.ObjectDetails>();
         foreach (PrintDetails.ObjectDetails originalObject in original_objectList)
         {
-          string filename = originalObject.filename;
-          PrintDetails.ObjectDetails objectDetails = new PrintDetails.ObjectDetails(originalObject);
-          objectDetails.printerSettingsXMLFile = "printersettings.xml";
-          objectDetails.printerViewXMLFile = "printerview.xml";
-          objectDetails.zipFileName = "";
-          objectDetails.filename = Path.GetFileName(filename);
+          var filename = originalObject.filename;
+          var objectDetails = new PrintDetails.ObjectDetails(originalObject)
+          {
+            printerSettingsXMLFile = "printersettings.xml",
+            printerViewXMLFile = "printerview.xml",
+            zipFileName = "",
+            filename = Path.GetFileName(filename)
+          };
           objectList.Add(objectDetails);
           File.Copy(filename, Path.Combine(cph.folder, objectDetails.filename), true);
         }
@@ -143,15 +155,17 @@ namespace M3D.GUI.Views.Library_View
     {
       try
       {
-        using (StreamReader streamReader = new StreamReader(Paths.PrintHistoryPath))
+        using (var streamReader = new StreamReader(Paths.PrintHistoryPath))
         {
-          using (XmlReader xmlReader = XmlReader.Create((TextReader) streamReader))
-            this.startedPrintList = (List<RecentPrintsHistory.PrintHistory>) new XmlSerializer(typeof (List<RecentPrintsHistory.PrintHistory>), new XmlRootAttribute(nameof (RecentPrintsHistory))).Deserialize(xmlReader);
+          using (var xmlReader = XmlReader.Create((TextReader) streamReader))
+          {
+            startedPrintList = (List<RecentPrintsHistory.PrintHistory>) new XmlSerializer(typeof (List<RecentPrintsHistory.PrintHistory>), new XmlRootAttribute(nameof (RecentPrintsHistory))).Deserialize(xmlReader);
+          }
         }
       }
       catch (Exception ex)
       {
-        this.startedPrintList = new List<RecentPrintsHistory.PrintHistory>();
+        startedPrintList = new List<RecentPrintsHistory.PrintHistory>();
       }
     }
 
@@ -159,10 +173,10 @@ namespace M3D.GUI.Views.Library_View
     {
       try
       {
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<RecentPrintsHistory.PrintHistory>), new XmlRootAttribute(nameof (RecentPrintsHistory)));
-        XmlSerializerNamespaces serializerNamespaces = new XmlSerializerNamespaces();
+        var xmlSerializer = new XmlSerializer(typeof (List<RecentPrintsHistory.PrintHistory>), new XmlRootAttribute(nameof (RecentPrintsHistory)));
+        var serializerNamespaces = new XmlSerializerNamespaces();
         serializerNamespaces.Add("", "");
-        StreamWriter streamWriter1 = new StreamWriter(Paths.PrintHistoryPath);
+        var streamWriter1 = new StreamWriter(Paths.PrintHistoryPath);
         StreamWriter streamWriter2 = streamWriter1;
         List<RecentPrintsHistory.PrintHistory> startedPrintList = this.startedPrintList;
         XmlSerializerNamespaces namespaces = serializerNamespaces;
@@ -182,13 +196,15 @@ namespace M3D.GUI.Views.Library_View
     private void CleanupStartedPrints()
     {
       DateTime t2 = DateTime.Now.AddDays(-7.0);
-      foreach (RecentPrintsHistory.PrintHistory record in new List<RecentPrintsHistory.PrintHistory>((IEnumerable<RecentPrintsHistory.PrintHistory>) this.startedPrintList))
+      foreach (RecentPrintsHistory.PrintHistory record in new List<RecentPrintsHistory.PrintHistory>((IEnumerable<RecentPrintsHistory.PrintHistory>)startedPrintList))
       {
         if (DateTime.Compare(record.begin, t2) < 0)
-          this.RemoveRecord(record);
+        {
+          RemoveRecord(record);
+        }
       }
-      this.SaveStartedPrints();
-      List<string> stringList = new List<string>();
+      SaveStartedPrints();
+      var stringList = new List<string>();
       try
       {
         stringList.AddRange((IEnumerable<string>) Directory.GetDirectories(Path.Combine(Paths.PublicDataFolder, "MyLibrary", "Prints")));
@@ -197,8 +213,11 @@ namespace M3D.GUI.Views.Library_View
       {
       }
       if (stringList.Count == 0)
+      {
         return;
-      foreach (string path in stringList)
+      }
+
+      foreach (var path in stringList)
       {
         if (DateTime.Compare(File.GetLastAccessTime(path), t2) < 0)
         {
@@ -215,11 +234,11 @@ namespace M3D.GUI.Views.Library_View
 
     public void RemoveRecord(RecentPrintsHistory.PrintHistory record)
     {
-      for (int index = 0; index < this.startedPrintList.Count; ++index)
+      for (var index = 0; index < startedPrintList.Count; ++index)
       {
-        if (record.folder == this.startedPrintList[index].folder)
+        if (record.folder == startedPrintList[index].folder)
         {
-          this.RemoveRecord(index);
+          RemoveRecord(index);
           break;
         }
       }
@@ -227,7 +246,7 @@ namespace M3D.GUI.Views.Library_View
 
     private void RemoveRecord(int index)
     {
-      RecentPrintsHistory.PrintHistory startedPrint = this.startedPrintList[index];
+      RecentPrintsHistory.PrintHistory startedPrint = startedPrintList[index];
       try
       {
         Directory.Delete(startedPrint.folder, true);
@@ -235,8 +254,8 @@ namespace M3D.GUI.Views.Library_View
       catch (Exception ex)
       {
       }
-      this.startedPrintList.Remove(startedPrint);
-      this.SaveStartedPrints();
+      startedPrintList.Remove(startedPrint);
+      SaveStartedPrints();
     }
 
     public delegate void StartedPrintListChanged(List<RecentPrintsHistory.PrintHistory> StartedPrints);
@@ -257,24 +276,24 @@ namespace M3D.GUI.Views.Library_View
       public PrintHistory(RecentPrintsHistory.PrintHistory other)
         : base((LibraryRecord) other)
       {
-        this.cachefilename = other.cachefilename;
-        this.jobGuid = other.jobGuid;
-        this.folder = other.folder;
-        this.begin = other.begin;
-        this.iconfilename = other.iconfilename;
+        cachefilename = other.cachefilename;
+        jobGuid = other.jobGuid;
+        folder = other.folder;
+        begin = other.begin;
+        iconfilename = other.iconfilename;
       }
 
       public PrintHistory(string filename, string guid, DateTime time)
       {
-        this.cachefilename = filename;
-        this.jobGuid = guid;
-        this.begin = time;
-        this.folder = Path.Combine(Paths.PublicDataFolder, "MyLibrary", "Prints", Path.GetFileNameWithoutExtension(this.cachefilename) + (this.begin.Ticks / 10000L).ToString());
+        cachefilename = filename;
+        jobGuid = guid;
+        begin = time;
+        folder = Path.Combine(Paths.PublicDataFolder, "MyLibrary", "Prints", Path.GetFileNameWithoutExtension(cachefilename) + (begin.Ticks / 10000L).ToString());
       }
 
       public override string ToString()
       {
-        return Path.GetFileNameWithoutExtension(this.cachefilename) + this.begin.ToString(" MM\\/dd\\/yyyy h\\:mm tt", (IFormatProvider) new CultureInfo("en-US"));
+        return Path.GetFileNameWithoutExtension(cachefilename) + begin.ToString(" MM\\/dd\\/yyyy h\\:mm tt", (IFormatProvider) new CultureInfo("en-US"));
       }
     }
   }

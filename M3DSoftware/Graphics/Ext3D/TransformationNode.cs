@@ -17,23 +17,23 @@ namespace M3D.Graphics.Ext3D
     public TransformationNode(int ID, Element3D parent)
       : base(ID, parent)
     {
-      this.Rotation = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 0.0f);
-      this.Scale = new M3D.Model.Utils.Vector3(1f, 1f, 1f);
-      this.Translation = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 0.0f);
+      Rotation = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 0.0f);
+      Scale = new M3D.Model.Utils.Vector3(1f, 1f, 1f);
+      Translation = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 0.0f);
     }
 
     public TransformationNode(M3D.Model.Utils.Vector3 translate, M3D.Model.Utils.Vector3 scale, M3D.Model.Utils.Vector3 rotate)
       : base(0, (Element3D) null)
     {
-      this.Rotation = new M3D.Model.Utils.Vector3(rotate);
-      this.Scale = new M3D.Model.Utils.Vector3(scale);
-      this.Translation = new M3D.Model.Utils.Vector3(translate);
+      Rotation = new M3D.Model.Utils.Vector3(rotate);
+      Scale = new M3D.Model.Utils.Vector3(scale);
+      Translation = new M3D.Model.Utils.Vector3(translate);
     }
 
     public override void Render3D()
     {
       GL.PushMatrix();
-      Matrix4 transformationMatrix = this.GetTransformationMatrix();
+      Matrix4 transformationMatrix = GetTransformationMatrix();
       GL.MultMatrix(ref transformationMatrix);
       base.Render3D();
       GL.PopMatrix();
@@ -41,9 +41,9 @@ namespace M3D.Graphics.Ext3D
 
     public Matrix4 GetTransformationMatrix()
     {
-      Matrix4 scale = Matrix4.CreateScale(this._transform.scaling.x, this._transform.scaling.y, this._transform.scaling.z);
-      Matrix4 matrix4_1 = Matrix4.CreateRotationY(this._transform.rotation.y * ((float) Math.PI / 180f)) * Matrix4.CreateRotationX(this._transform.rotation.x * ((float) Math.PI / 180f)) * Matrix4.CreateRotationZ(this._transform.rotation.z * ((float) Math.PI / 180f));
-      Matrix4 translation = Matrix4.CreateTranslation(this._transform.translation.x, this._transform.translation.y, this._transform.translation.z);
+      var scale = Matrix4.CreateScale(_transform.scaling.x, _transform.scaling.y, _transform.scaling.z);
+      Matrix4 matrix4_1 = Matrix4.CreateRotationY(_transform.rotation.y * ((float) Math.PI / 180f)) * Matrix4.CreateRotationX(_transform.rotation.x * ((float) Math.PI / 180f)) * Matrix4.CreateRotationZ(_transform.rotation.z * ((float) Math.PI / 180f));
+      var translation = Matrix4.CreateTranslation(_transform.translation.x, _transform.translation.y, _transform.translation.z);
       Matrix4 matrix4_2 = matrix4_1;
       return scale * matrix4_2 * translation;
     }
@@ -52,11 +52,11 @@ namespace M3D.Graphics.Ext3D
     {
       get
       {
-        return this._transform.rotation;
+        return _transform.rotation;
       }
       set
       {
-        this._transform.rotation = value;
+        _transform.rotation = value;
       }
     }
 
@@ -64,11 +64,11 @@ namespace M3D.Graphics.Ext3D
     {
       get
       {
-        return this._transform.scaling;
+        return _transform.scaling;
       }
       set
       {
-        this._transform.scaling = value;
+        _transform.scaling = value;
       }
     }
 
@@ -76,11 +76,11 @@ namespace M3D.Graphics.Ext3D
     {
       get
       {
-        return this._transform.translation;
+        return _transform.translation;
       }
       set
       {
-        this._transform.translation = value;
+        _transform.translation = value;
       }
     }
 
@@ -88,11 +88,11 @@ namespace M3D.Graphics.Ext3D
     {
       get
       {
-        return this._transform;
+        return _transform;
       }
       set
       {
-        this._transform = value;
+        _transform = value;
       }
     }
 
@@ -100,11 +100,11 @@ namespace M3D.Graphics.Ext3D
     {
       get
       {
-        return new TransformationNode.Transform(this._transform);
+        return new TransformationNode.Transform(_transform);
       }
       set
       {
-        this._transform = value;
+        _transform = value;
       }
     }
 
@@ -128,8 +128,11 @@ namespace M3D.Graphics.Ext3D
 
       public bool Equals(ref TransformationNode.Transform transform)
       {
-        if (this.rotation == transform.rotation && this.scaling == transform.scaling && (double) this.translation.x == (double) transform.translation.x)
-          return (double) this.translation.y == (double) transform.translation.y;
+        if (rotation == transform.rotation && scaling == transform.scaling && (double)translation.x == (double) transform.translation.x)
+        {
+          return (double)translation.y == (double) transform.translation.y;
+        }
+
         return false;
       }
     }

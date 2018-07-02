@@ -28,26 +28,26 @@ namespace M3D.Graphics.Frames_and_Layouts
     public HorizontalLayout(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.use_fixed_column_width = false;
-      this.info_list = new List<HorizontalLayout.ColumnInfo>();
-      this.border_width = 10;
-      this.border_height = 10;
+      use_fixed_column_width = false;
+      info_list = new List<HorizontalLayout.ColumnInfo>();
+      border_width = 10;
+      border_height = 10;
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
       base.InitChildren(parent, host, MyButtonCallback);
-      int index = 0;
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      var index = 0;
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         HorizontalLayout.ColumnInfo columnInfo;
         columnInfo.element = child;
         columnInfo.ispercent = false;
         columnInfo.prefered_size = child.Width;
-        this.info_list.Insert(index, columnInfo);
+        info_list.Insert(index, columnInfo);
         ++index;
       }
-      this.RecalcChildSizes();
+      RecalcChildSizes();
     }
 
     public override void OnParentResize()
@@ -58,18 +58,18 @@ namespace M3D.Graphics.Frames_and_Layouts
     public override void SetSize(int width, int height)
     {
       base.SetSize(width, height);
-      this.RecalcChildSizes();
+      RecalcChildSizes();
     }
 
     public override void RemoveChildElement(Element2D child)
     {
-      for (int index = 0; index < this.info_list.Count; ++index)
+      for (var index = 0; index < info_list.Count; ++index)
       {
-        if (this.info_list[index].element == child)
+        if (info_list[index].element == child)
         {
-          this.info_list.RemoveAt(index);
+          info_list.RemoveAt(index);
           base.RemoveChildElement(child);
-          this.RecalcChildSizes();
+          RecalcChildSizes();
           break;
         }
       }
@@ -77,32 +77,37 @@ namespace M3D.Graphics.Frames_and_Layouts
 
     public override void AddChildElement(Element2D child)
     {
-      this.AddChildElement(child, this.info_list.Count);
+      AddChildElement(child, info_list.Count);
     }
 
     public void AddChildElement(Element2D child, int column_index)
     {
-      this.AddChildElement(child, column_index, 0, false);
+      AddChildElement(child, column_index, 0, false);
     }
 
     public void AddChildElement(Element2D child, int column_index, int size)
     {
-      this.AddChildElement(child, column_index, size, false);
+      AddChildElement(child, column_index, size, false);
     }
 
     public void AddChildElement(Element2D child, int column_index, int size, bool sizeisprecent)
     {
-      if (column_index > this.info_list.Count)
-        column_index = this.info_list.Count;
+      if (column_index > info_list.Count)
+      {
+        column_index = info_list.Count;
+      }
       else if (column_index < 0)
+      {
         column_index = 0;
+      }
+
       HorizontalLayout.ColumnInfo columnInfo;
       columnInfo.element = child;
       columnInfo.ispercent = sizeisprecent;
       columnInfo.prefered_size = size;
-      this.info_list.Insert(column_index, columnInfo);
+      info_list.Insert(column_index, columnInfo);
       base.AddChildElement(child);
-      this.RecalcChildSizes();
+      RecalcChildSizes();
     }
 
     [XmlAttribute("fixed-column-width")]
@@ -110,60 +115,71 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.use_fixed_column_width;
+        return use_fixed_column_width;
       }
       set
       {
-        this.use_fixed_column_width = value;
+        use_fixed_column_width = value;
       }
     }
 
     protected override void ResizeToFitChildren()
     {
-      int borderHeight = this.border_height;
-      int borderWidth = this.border_width;
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      var borderHeight = border_height;
+      var borderWidth = border_width;
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         if (child.SelfIsVisible)
         {
           child.SetPosition(borderWidth, borderHeight);
-          borderWidth += this.border_width + child.Width;
+          borderWidth += border_width + child.Width;
         }
       }
-      this.Width = borderWidth;
-      this.OnControlMsg((Element2D) this, ControlMsg.LAYOUT_RESIZED_BY_CHILDREN, 0.0f, 0.0f);
+      Width = borderWidth;
+      OnControlMsg((Element2D) this, ControlMsg.LAYOUT_RESIZED_BY_CHILDREN, 0.0f, 0.0f);
     }
 
     protected override void RecalcChildSizes()
     {
-      if (this.info_list.Count <= 0)
-        return;
-      int num1 = this.Width - this.border_width;
-      int num2 = num1 / this.info_list.Count;
-      float num3 = 1f;
-      if (!this.use_fixed_column_width)
+      if (info_list.Count <= 0)
       {
-        int num4 = 0;
-        foreach (HorizontalLayout.ColumnInfo info in this.info_list)
+        return;
+      }
+
+      var num1 = Width - border_width;
+      var num2 = num1 / info_list.Count;
+      var num3 = 1f;
+      if (!use_fixed_column_width)
+      {
+        var num4 = 0;
+        foreach (HorizontalLayout.ColumnInfo info in info_list)
         {
           if (info.prefered_size == 0)
+          {
             num4 += num2;
+          }
           else if (info.prefered_size < 0)
+          {
             num4 += num1 - num4;
+          }
           else if (info.ispercent)
+          {
             num4 += num1 * info.prefered_size;
+          }
           else
+          {
             num4 += info.prefered_size;
+          }
         }
         num3 = (float) num1 / (float) num4;
       }
-      int borderWidth = this.border_width;
-      foreach (HorizontalLayout.ColumnInfo info in this.info_list)
+      var borderWidth = border_width;
+      foreach (HorizontalLayout.ColumnInfo info in info_list)
       {
-        int width = this.use_fixed_column_width || info.prefered_size == 0 ? num2 - this.border_width : (info.prefered_size > 0 ? (!info.ispercent ? (int) ((double) num3 * (double) info.prefered_size) : (int) ((double) num3 * (double) info.prefered_size * (double) num1)) - this.border_width : num1 - borderWidth - this.border_height);
-        info.element.SetPosition(borderWidth, this.border_height);
-        info.element.SetSize(width, this.Height - this.border_height * 2);
-        borderWidth += width + this.border_width;
+        var width = use_fixed_column_width || info.prefered_size == 0 ? num2 - border_width : (info.prefered_size > 0 ? (!info.ispercent ? (int) ((double) num3 * (double) info.prefered_size) : (int) ((double) num3 * (double) info.prefered_size * (double) num1)) - border_width : num1 - borderWidth - border_height);
+        info.element.SetPosition(borderWidth, border_height);
+        info.element.SetSize(width, Height - border_height * 2);
+        borderWidth += width + border_width;
       }
     }
 

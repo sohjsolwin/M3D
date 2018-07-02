@@ -39,13 +39,13 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       return new XMLSettingsItem()
       {
-        Name = this.Name,
-        Text = this.Text,
-        Suffix = this.Suffix,
-        Tooltip = this.Tooltip,
-        GroupToggle = this.GroupToggle,
-        ReverseGroupToggle = this.ReverseGroupToggle,
-        SlicerSettingsItem = this.SlicerSettingsItem.Clone()
+        Name = Name,
+        Text = Text,
+        Suffix = Suffix,
+        Tooltip = Tooltip,
+        GroupToggle = GroupToggle,
+        ReverseGroupToggle = ReverseGroupToggle,
+        SlicerSettingsItem = SlicerSettingsItem.Clone()
       };
     }
   }

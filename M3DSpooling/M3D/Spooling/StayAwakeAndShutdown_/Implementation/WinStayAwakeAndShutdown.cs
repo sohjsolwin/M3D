@@ -26,32 +26,38 @@ namespace M3D.Spooling.StayAwakeAndShutdown_.Implementation
 
     public bool NeverSleep()
     {
-      if (!this.in_stay_awake_mode)
+      if (!in_stay_awake_mode)
       {
-        this.fPreviousExecutionState = WinStayAwakeAndShutdown.NativeMethods.SetThreadExecutionState(2147483649U);
-        if (this.fPreviousExecutionState == 0U)
+        fPreviousExecutionState = WinStayAwakeAndShutdown.NativeMethods.SetThreadExecutionState(2147483649U);
+        if (fPreviousExecutionState == 0U)
+        {
           return false;
-        this.in_stay_awake_mode = true;
+        }
+
+        in_stay_awake_mode = true;
       }
       return true;
     }
 
     public void AllowSleep()
     {
-      if (!this.in_stay_awake_mode)
+      if (!in_stay_awake_mode)
+      {
         return;
-      int num = (int) WinStayAwakeAndShutdown.NativeMethods.SetThreadExecutionState(this.fPreviousExecutionState);
-      this.in_stay_awake_mode = false;
+      }
+
+      var num = (int) WinStayAwakeAndShutdown.NativeMethods.SetThreadExecutionState(fPreviousExecutionState);
+      in_stay_awake_mode = false;
     }
 
     public void CreateShutdownMessage(string msg)
     {
-      WinStayAwakeAndShutdown.NativeMethods.ShutdownBlockReasonCreate(this.hWnd, msg);
+      WinStayAwakeAndShutdown.NativeMethods.ShutdownBlockReasonCreate(hWnd, msg);
     }
 
     public void DestroyShutdownMessage()
     {
-      WinStayAwakeAndShutdown.NativeMethods.ShutdownBlockReasonDestroy(this.hWnd);
+      WinStayAwakeAndShutdown.NativeMethods.ShutdownBlockReasonDestroy(hWnd);
     }
 
     internal static class NativeMethods

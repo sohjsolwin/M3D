@@ -17,28 +17,28 @@ namespace M3D.Model.FilIO
     {
       try
       {
-        LinkedList<Vector3> verticies = new LinkedList<Vector3>();
-        LinkedList<int[]> triangleIndecies = new LinkedList<int[]>();
-        using (FileStream fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+        var verticies = new LinkedList<Vector3>();
+        var triangleIndecies = new LinkedList<int[]>();
+        using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
         {
-          using (BinaryReader binaryReader = new BinaryReader((Stream) fileStream))
+          using (var binaryReader = new BinaryReader((Stream) fileStream))
           {
-            int num1 = binaryReader.ReadInt32();
-            for (int index = 0; index < num1; ++index)
+            var num1 = binaryReader.ReadInt32();
+            for (var index = 0; index < num1; ++index)
             {
-              float y = binaryReader.ReadSingle();
-              float x = -binaryReader.ReadSingle();
-              float z = binaryReader.ReadSingle();
+              var y = binaryReader.ReadSingle();
+              var x = -binaryReader.ReadSingle();
+              var z = binaryReader.ReadSingle();
               verticies.AddLast(new Vector3(x, y, z));
             }
-            int num2 = binaryReader.ReadInt32();
+            var num2 = binaryReader.ReadInt32();
             binaryReader.BaseStream.Seek((long) (12 * num2), SeekOrigin.Current);
-            int num3 = binaryReader.ReadInt32();
-            for (int index = 0; index < num3; ++index)
+            var num3 = binaryReader.ReadInt32();
+            for (var index = 0; index < num3; ++index)
             {
-              int num4 = binaryReader.ReadInt32();
-              int num5 = binaryReader.ReadInt32();
-              int num6 = binaryReader.ReadInt32();
+              var num4 = binaryReader.ReadInt32();
+              var num5 = binaryReader.ReadInt32();
+              var num6 = binaryReader.ReadInt32();
               triangleIndecies.AddLast(new int[3]
               {
                 num4,

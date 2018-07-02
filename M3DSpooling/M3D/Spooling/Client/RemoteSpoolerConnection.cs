@@ -30,75 +30,107 @@ namespace M3D.Spooling.Client
 
     public RemoteSpoolerConnection(string executable, string working_path, string spooler_arguments)
     {
-      this.StartUpDelay = 2000;
-      this.Executable = executable;
-      this.WorkingPath = working_path;
-      this.SpoolerArguments = spooler_arguments;
-      this.available_lock = new object();
-      this.socket_client = new SocketClient();
-      this.socket_client.OnReceivedRawMessage = new CallBackOnReceivedRawMessage(((ISpoolerConnection) this).OnRawMessage);
+      StartUpDelay = 2000;
+      Executable = executable;
+      WorkingPath = working_path;
+      SpoolerArguments = spooler_arguments;
+      available_lock = new object();
+      socket_client = new SocketClient
+      {
+        OnReceivedRawMessage = new CallBackOnReceivedRawMessage(((ISpoolerConnection)this).OnRawMessage)
+      };
     }
 
     ~RemoteSpoolerConnection()
     {
-      this.socket_client.Shutdown();
+      socket_client.Shutdown();
     }
 
     public override void ShutdownConnection()
     {
-      if (!this.UseNoSpoolerMode && this.__started)
-        this.socket_client.SendMessage("<CloseConnection/>", 500);
-      this.socket_client.Shutdown();
+      if (!UseNoSpoolerMode && __started)
+      {
+        socket_client.SendMessage("<CloseConnection/>", 500);
+      }
+
+      socket_client.Shutdown();
     }
 
     public override SpoolerResult SendSpoolerMessageInternal(string message)
     {
-      if (this.UseNoSpoolerMode)
-        return SpoolerResult.OK;
-      this.__started = true;
-      string xml_message = (string) null;
-      lock (this.available_lock)
-        xml_message = this.socket_client.SendMessage(message);
-      if ((string.IsNullOrEmpty(xml_message) || xml_message.StartsWith("FAIL:")) && !string.IsNullOrEmpty(this.Executable))
+      if (UseNoSpoolerMode)
       {
-        if (!this.StartSpooler(message))
+        return SpoolerResult.OK;
+      }
+
+      __started = true;
+      var xml_message = (string) null;
+      lock (available_lock)
+      {
+        xml_message = socket_client.SendMessage(message);
+      }
+
+      if ((string.IsNullOrEmpty(xml_message) || xml_message.StartsWith("FAIL:")) && !string.IsNullOrEmpty(Executable))
+      {
+        if (!StartSpooler(message))
+        {
           return SpoolerResult.Fail;
+        }
       }
       else
       {
         if (xml_message.StartsWith("FAIL"))
+        {
           return SpoolerResult.Fail;
+        }
+
         if (xml_message == "ERROR")
+        {
           return SpoolerResult.Error;
-        if (this.XMLProcessor != null)
-          this.XMLProcessor(xml_message);
+        }
+
+        if (XMLProcessor != null)
+        {
+          XMLProcessor(xml_message);
+        }
       }
       return SpoolerResult.OK;
     }
 
     private bool StartSpooler(string message)
     {
-      this.__started = true;
-      if (this.UseNoSpoolerMode)
+      __started = true;
+      if (UseNoSpoolerMode)
+      {
         return true;
+      }
+
       bool flag;
       try
       {
-        Process process = new Process();
-        process.StartInfo.FileName = this.Executable;
-        process.StartInfo.Arguments = this.SpoolerArguments;
+        var process = new Process();
+        process.StartInfo.FileName = Executable;
+        process.StartInfo.Arguments = SpoolerArguments;
         process.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
         process.StartInfo.RedirectStandardOutput = false;
         process.StartInfo.RedirectStandardError = false;
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.CreateNoWindow = false;
-        if (!string.IsNullOrEmpty(this.WorkingPath))
-          process.StartInfo.WorkingDirectory = this.WorkingPath;
+        if (!string.IsNullOrEmpty(WorkingPath))
+        {
+          process.StartInfo.WorkingDirectory = WorkingPath;
+        }
+
         flag = process.Start();
         if (flag && process.HasExited)
+        {
           flag = false;
+        }
+
         if (!flag)
+        {
           flag = process.Start();
+        }
       }
       catch (Exception ex)
       {
@@ -107,29 +139,34 @@ namespace M3D.Spooling.Client
       }
       if (flag)
       {
-        Thread.Sleep(this.StartUpDelay);
-        if (this.SendSpoolerMessageInternal(message) == SpoolerResult.OK)
+        Thread.Sleep(StartUpDelay);
+        if (SendSpoolerMessageInternal(message) == SpoolerResult.OK)
+        {
           return true;
+        }
       }
       return false;
     }
 
     public int StartUp(int serverport)
     {
-      return this.socket_client.StartUp(serverport);
+      return socket_client.StartUp(serverport);
     }
 
     public override bool UseNoSpoolerMode
     {
       get
       {
-        return this.__use_no_spooler_mode;
+        return __use_no_spooler_mode;
       }
       set
       {
-        if (this.__started)
+        if (__started)
+        {
           throw new Exception("Spooler Already Started");
-        this.__use_no_spooler_mode = value;
+        }
+
+        __use_no_spooler_mode = value;
       }
     }
   }

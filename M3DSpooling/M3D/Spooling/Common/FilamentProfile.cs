@@ -17,8 +17,8 @@ namespace M3D.Spooling.Common
 
     public FilamentProfile(FilamentSpool spool)
     {
-      this.filament = spool;
-      this.preprocessor.initialPrint.BedTemperature = FilamentConstants.Temperature.BedDefault(spool.filament_type);
+      filament = spool;
+      preprocessor.initialPrint.BedTemperature = FilamentConstants.Temperature.BedDefault(spool.filament_type);
     }
 
     public abstract bool TestSizeWarning(float minX, float maxX, float minY, float maxY, float minZ, float maxZ);
@@ -47,7 +47,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.Type.ToString() + " " + this.Color.ToString();
+        return Type.ToString() + " " + Color.ToString();
       }
     }
 
@@ -55,7 +55,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.filament.filament_type;
+        return filament.filament_type;
       }
     }
 
@@ -63,7 +63,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), this.filament.filament_color_code);
+        return (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), filament.filament_color_code);
       }
     }
 
@@ -71,7 +71,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.filament.filament_temperature;
+        return filament.filament_temperature;
       }
     }
 
@@ -79,7 +79,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.filament;
+        return filament;
       }
     }
 
@@ -87,15 +87,18 @@ namespace M3D.Spooling.Common
 
     public static string GenerateSpoolName(FilamentSpool spool, bool location)
     {
-      FilamentConstants.ColorsEnum color = (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), spool.filament_color_code);
+      var color = (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), spool.filament_color_code);
       if (location)
+      {
         return "My " + FilamentConstants.ColorsToString(color) + " Filament (" + spool.filament_type.ToString() + ") " + spool.filament_location.ToString();
+      }
+
       return "My " + FilamentConstants.ColorsToString(color) + " Filament (" + spool.filament_type.ToString() + ") ";
     }
 
     public override string ToString()
     {
-      return this.Name;
+      return Name;
     }
 
     public struct TypeColorKey
@@ -105,8 +108,8 @@ namespace M3D.Spooling.Common
 
       public TypeColorKey(FilamentProfile.TypeColorKey other)
       {
-        this.type = other.type;
-        this.color = other.color;
+        type = other.type;
+        color = other.color;
       }
 
       public TypeColorKey(FilamentSpool.TypeEnum type, FilamentConstants.ColorsEnum color)
@@ -117,29 +120,41 @@ namespace M3D.Spooling.Common
 
       public override int GetHashCode()
       {
-        return 13 * (13 * 27 + this.type.GetHashCode()) + this.color.GetHashCode();
+        return 13 * (13 * 27 + type.GetHashCode()) + color.GetHashCode();
       }
 
       public override bool Equals(object b)
       {
         if (b is FilamentProfile.TypeColorKey)
-          return this.Equals((FilamentProfile.TypeColorKey) b);
+        {
+          return Equals((FilamentProfile.TypeColorKey) b);
+        }
+
         return false;
       }
 
       public bool Equals(FilamentProfile.TypeColorKey b)
       {
-        if ((ValueType) b == null || this.type != b.type)
+        if ((ValueType) b == null || type != b.type)
+        {
           return false;
-        return this.color == b.color;
+        }
+
+        return color == b.color;
       }
 
       public static bool operator ==(FilamentProfile.TypeColorKey a, FilamentProfile.TypeColorKey b)
       {
         if ((ValueType) a == (ValueType) b)
+        {
           return true;
+        }
+
         if ((ValueType) a == null || (ValueType) b == null || a.type != b.type)
+        {
           return false;
+        }
+
         return a.color == b.color;
       }
 

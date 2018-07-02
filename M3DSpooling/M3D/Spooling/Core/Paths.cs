@@ -17,11 +17,13 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         try
         {
           if (Directory.Exists(folderPath + Paths.fs.ToString() + "com.M3D.software"))
+          {
             Directory.Delete(folderPath + Paths.fs.ToString() + "com.M3D.software", true);
+          }
         }
         catch (Exception ex)
         {

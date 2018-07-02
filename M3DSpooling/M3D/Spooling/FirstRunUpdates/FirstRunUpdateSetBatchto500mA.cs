@@ -17,12 +17,14 @@ namespace M3D.Spooling.FirstRunUpdates
     {
       try
       {
-        string str = serial_number.Substring(0, 13);
-        int eepromAddr = (int) printerProfile.EEPROMConstants.GetEepromInfo("ExtruderCurrent").EepromAddr;
+        var str = serial_number.Substring(0, 13);
+        var eepromAddr = (int) printerProfile.EEPROMConstants.GetEepromInfo("ExtruderCurrent").EepromAddr;
         if (!(str == "BK15033001100") && !(str == "BK15040201050") && (!(str == "BK15040301050") && !(str == "BK15040602050")) && (!(str == "BK15040801050") && !(str == "BK15040802100") && (!(str == "GR15032702100") && !(str == "GR15033101100"))) && (!(str == "GR15040601100") && !(str == "GR15040701100") && !(str == "OR15032701100")))
         {
           if (!(str == "SL15032601050"))
+          {
             goto label_7;
+          }
         }
         if (BitConverter.ToUInt16(eeprom, eepromAddr) != (ushort) 500)
         {

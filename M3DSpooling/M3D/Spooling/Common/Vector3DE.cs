@@ -17,26 +17,26 @@ namespace M3D.Spooling.Common
 
     public Vector3DE(Vector3DE other)
     {
-      this.pos.x = other.pos.x;
-      this.pos.y = other.pos.y;
-      this.pos.z = other.pos.z;
-      this.e = other.e;
+      pos.x = other.pos.x;
+      pos.y = other.pos.y;
+      pos.z = other.pos.z;
+      e = other.e;
     }
 
     public Vector3DE(float x, float y, float z, float e)
     {
-      this.pos.x = x;
-      this.pos.y = y;
-      this.pos.z = z;
+      pos.x = x;
+      pos.y = y;
+      pos.z = z;
       this.e = e;
     }
 
     public void Reset()
     {
-      this.pos.x = 0.0f;
-      this.pos.y = 0.0f;
-      this.pos.z = 0.0f;
-      this.e = 0.0f;
+      pos.x = 0.0f;
+      pos.y = 0.0f;
+      pos.z = 0.0f;
+      e = 0.0f;
     }
   }
 }

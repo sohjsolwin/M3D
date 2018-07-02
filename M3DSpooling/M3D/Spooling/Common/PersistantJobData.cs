@@ -13,8 +13,8 @@ namespace M3D.Spooling.Common
 
     public PersistantJobData()
     {
-      this.Params = new JobParams();
-      this.CurrentLineNumber = 0UL;
+      Params = new JobParams();
+      CurrentLineNumber = 0UL;
     }
 
     public PersistantJobData(ulong CurrentLineNumber, JobParams Params)
@@ -25,8 +25,8 @@ namespace M3D.Spooling.Common
 
     public PersistantJobData(PersistantJobData other)
     {
-      this.Params = new JobParams(other.Params);
-      this.CurrentLineNumber = other.CurrentLineNumber;
+      Params = new JobParams(other.Params);
+      CurrentLineNumber = other.CurrentLineNumber;
     }
   }
 }

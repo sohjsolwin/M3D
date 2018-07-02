@@ -23,9 +23,9 @@ namespace M3D.Spooling.Printer_Profiles
     {
       this.PID = PID;
       this.VID = VID;
-      this.m_uFirmwareMaxSizeBytes = uFirmwareMaxSizeBytes;
-      this.m_yPaddingByte = yPaddingByte;
-      this._firmwareList = firmwareList;
+      m_uFirmwareMaxSizeBytes = uFirmwareMaxSizeBytes;
+      m_yPaddingByte = yPaddingByte;
+      _firmwareList = firmwareList;
       this.chipData = chipData;
     }
 
@@ -33,7 +33,7 @@ namespace M3D.Spooling.Printer_Profiles
     {
       get
       {
-        return this._firmwareList;
+        return _firmwareList;
       }
     }
   }

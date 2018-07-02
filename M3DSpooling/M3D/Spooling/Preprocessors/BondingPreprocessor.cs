@@ -30,18 +30,18 @@ namespace M3D.Spooling.Preprocessors
 
     internal override bool ProcessGCode(GCodeFileReader input_reader, GCodeFileWriter output_writer, Calibration calibration, JobDetails jobdetails, InternalPrinterProfile printerProfile)
     {
-      int wave_step = 0;
-      int num1 = 0;
-      bool flag1 = true;
-      bool flag2 = true;
-      bool flag3 = false;
-      int num2 = 0;
-      double num3 = 0.0;
-      Position position = new Position();
-      float num4 = (float) num3;
-      float num5 = 0.0f;
-      int firstLayerTemp = jobdetails.jobParams.preprocessor.bonding.FirstLayerTemp;
-      int secondLayerTemp = jobdetails.jobParams.preprocessor.bonding.SecondLayerTemp;
+      var wave_step = 0;
+      var num1 = 0;
+      var flag1 = true;
+      var flag2 = true;
+      var flag3 = false;
+      var num2 = 0;
+      var num3 = 0.0;
+      var position = new Position();
+      var num4 = (float) num3;
+      var num5 = 0.0f;
+      var firstLayerTemp = jobdetails.jobParams.preprocessor.bonding.FirstLayerTemp;
+      var secondLayerTemp = jobdetails.jobParams.preprocessor.bonding.SecondLayerTemp;
       while (true)
       {
         GCode nextLine = input_reader.GetNextLine(false);
@@ -66,17 +66,23 @@ namespace M3D.Spooling.Preprocessors
                 ErrorLogger.LogException("Exception in BondingPreProcessor.ProcessGcode " + ex.Message, ex);
               }
               if (num6 < num1)
+              {
                 num1 = num6;
+              }
+
               flag2 = num6 == num1;
             }
             if (nextLine.hasG && (nextLine.G == (ushort) 0 || nextLine.G == (ushort) 1) && !flag1)
             {
               if (nextLine.hasX || nextLine.hasY)
+              {
                 flag3 = true;
-              float num6 = !nextLine.hasX ? 0.0f : nextLine.X - position.relativeX;
-              float num7 = !nextLine.hasY ? 0.0f : nextLine.Y - position.relativeY;
-              float num8 = !nextLine.hasZ ? 0.0f : nextLine.Z - position.relativeZ;
-              float num9 = !nextLine.hasE ? 0.0f : nextLine.E - position.relativeE;
+              }
+
+              var num6 = !nextLine.hasX ? 0.0f : nextLine.X - position.relativeX;
+              var num7 = !nextLine.hasY ? 0.0f : nextLine.Y - position.relativeY;
+              var num8 = !nextLine.hasZ ? 0.0f : nextLine.Z - position.relativeZ;
+              var num9 = !nextLine.hasE ? 0.0f : nextLine.E - position.relativeE;
               position.absoluteX += num6;
               position.absoluteY += num7;
               position.absoluteZ += num8;
@@ -86,24 +92,30 @@ namespace M3D.Spooling.Preprocessors
               position.relativeZ += num8;
               position.relativeE += num9;
               if (nextLine.hasF)
+              {
                 position.F = nextLine.F;
-              float num10 = (float) Math.Sqrt((double) num6 * (double) num6 + (double) num7 * (double) num7);
-              int num11 = 1;
+              }
+
+              var num10 = (float) Math.Sqrt((double) num6 * (double) num6 + (double) num7 * (double) num7);
+              var num11 = 1;
               if ((double) num10 > 1.25)
+              {
                 num11 = (int) ((double) num10 / 1.25);
-              float num12 = position.absoluteX - num6;
-              float num13 = position.absoluteY - num7;
-              float num14 = position.relativeX - num6;
-              float num15 = position.relativeY - num7;
-              float num16 = position.relativeZ - num8;
-              float num17 = position.relativeE - num9;
-              float num18 = num6 / num10;
-              float num19 = num7 / num10;
-              float num20 = num8 / num10;
-              float num21 = num9 / num10;
+              }
+
+              var num12 = position.absoluteX - num6;
+              var num13 = position.absoluteY - num7;
+              var num14 = position.relativeX - num6;
+              var num15 = position.relativeY - num7;
+              var num16 = position.relativeZ - num8;
+              var num17 = position.relativeE - num9;
+              var num18 = num6 / num10;
+              var num19 = num7 / num10;
+              var num20 = num8 / num10;
+              var num21 = num9 / num10;
               if (flag2 && (double) num9 > 0.0)
               {
-                for (int index = 1; index < num11 + 1; ++index)
+                for (var index = 1; index < num11 + 1; ++index)
                 {
                   float num22;
                   float num23;
@@ -111,8 +123,8 @@ namespace M3D.Spooling.Preprocessors
                   float num25;
                   if (index == num11)
                   {
-                    double absoluteX = (double) position.absoluteX;
-                    double absoluteY = (double) position.absoluteY;
+                    var absoluteX = (double) position.absoluteX;
+                    var absoluteY = (double) position.absoluteY;
                     num22 = position.relativeX;
                     num23 = position.relativeY;
                     num24 = position.relativeZ;
@@ -125,21 +137,37 @@ namespace M3D.Spooling.Preprocessors
                     num24 = num16 + (float) index * 1.25f * num20;
                     num25 = num17 + (float) index * 1.25f * num21;
                   }
-                  double num26 = (double) num25 - (double) num5;
+                  var num26 = (double) num25 - (double) num5;
                   if (index != num11)
                   {
-                    GCode code = new GCode();
-                    code.G = nextLine.G;
+                    var code = new GCode
+                    {
+                      G = nextLine.G
+                    };
                     if (nextLine.hasX)
+                    {
                       code.X = (float) ((double) position.relativeX - (double) num6 + ((double) num22 - (double) num14));
+                    }
+
                     if (nextLine.hasY)
+                    {
                       code.Y = (float) ((double) position.relativeY - (double) num7 + ((double) num23 - (double) num15));
+                    }
+
                     if (nextLine.hasF && index == 1)
+                    {
                       code.F = nextLine.F;
+                    }
+
                     if (flag3)
-                      code.Z = (float) ((double) position.relativeZ - (double) num8 + ((double) num24 - (double) num16)) + this.CurrentAdjustmentsZ(ref wave_step);
+                    {
+                      code.Z = (float) ((double) position.relativeZ - (double) num8 + ((double) num24 - (double) num16)) + CurrentAdjustmentsZ(ref wave_step);
+                    }
                     else if (nextLine.hasZ && ((double) num8 > 1.40129846432482E-45 || (double) num8 < -1.40129846432482E-45))
+                    {
                       code.Z = (float) ((double) position.relativeZ - (double) num8 + ((double) num24 - (double) num16));
+                    }
+
                     code.E = (float) ((double) position.relativeE - (double) num9 + ((double) num25 - (double) num17)) + num4;
                     output_writer.Write(code);
                   }
@@ -148,9 +176,13 @@ namespace M3D.Spooling.Preprocessors
                     if (flag3)
                     {
                       if (nextLine.hasZ)
-                        nextLine.Z += this.CurrentAdjustmentsZ(ref wave_step);
+                      {
+                        nextLine.Z += CurrentAdjustmentsZ(ref wave_step);
+                      }
                       else
-                        nextLine.Z = num16 + num8 + this.CurrentAdjustmentsZ(ref wave_step);
+                      {
+                        nextLine.Z = num16 + num8 + CurrentAdjustmentsZ(ref wave_step);
+                      }
                     }
                     nextLine.E += num4;
                   }
@@ -161,15 +193,26 @@ namespace M3D.Spooling.Preprocessors
             else if (nextLine.hasG && nextLine.G == (ushort) 92)
             {
               if (nextLine.hasE)
+              {
                 position.relativeE = nextLine.E;
+              }
+
               if (printerProfile.OptionsConstants.G92WorksOnAllAxes)
               {
                 if (nextLine.hasX)
+                {
                   position.relativeX = nextLine.X;
+                }
+
                 if (nextLine.hasY)
+                {
                   position.relativeY = nextLine.Y;
+                }
+
                 if (nextLine.hasZ)
+                {
                   position.relativeZ = nextLine.Z;
+                }
               }
               if (!nextLine.hasE && !nextLine.hasX && (!nextLine.hasY && !nextLine.hasZ))
               {
@@ -183,24 +226,31 @@ namespace M3D.Spooling.Preprocessors
               }
             }
             else if (nextLine.hasG && nextLine.G == (ushort) 90)
+            {
               flag1 = false;
+            }
             else if (nextLine.hasG && nextLine.G == (ushort) 91)
+            {
               flag1 = true;
+            }
+
             output_writer.Write(nextLine);
             ++num2;
           }
         }
         else
+        {
           break;
+        }
       }
       return true;
     }
 
     private float CurrentAdjustmentsZ(ref int wave_step)
     {
-      double num1 = wave_step != 0 ? (wave_step != 2 ? 0.0 : -1.5) : 1.0;
+      var num1 = wave_step != 0 ? (wave_step != 2 ? 0.0 : -1.5) : 1.0;
       wave_step = (wave_step + 1) % 4;
-      double num2 = 0.150000005960464;
+      var num2 = 0.150000005960464;
       return (float) (num1 * num2);
     }
 
@@ -208,18 +258,27 @@ namespace M3D.Spooling.Preprocessors
     {
       if (cornercount <= 1)
       {
-        if (!this.isSharpCorner(currLine, prevLine))
+        if (!isSharpCorner(currLine, prevLine))
+        {
           return;
+        }
+
         if (Last_Tack_Point == null)
-          this.doTackPoint(currLine, prevLine, output_writer);
+        {
+          doTackPoint(currLine, prevLine, output_writer);
+        }
+
         Last_Tack_Point = currLine;
         ++cornercount;
       }
       else
       {
-        if (cornercount < 1 || !this.isSharpCorner(currLine, Last_Tack_Point))
+        if (cornercount < 1 || !isSharpCorner(currLine, Last_Tack_Point))
+        {
           return;
-        this.doTackPoint(currLine, Last_Tack_Point, output_writer);
+        }
+
+        doTackPoint(currLine, Last_Tack_Point, output_writer);
         Last_Tack_Point = currLine;
       }
     }
@@ -231,22 +290,28 @@ namespace M3D.Spooling.Preprocessors
 
     public bool isSharpCorner(GCode currLine, GCode prevLine)
     {
-      bool flag = false;
-      BondingPreprocessor.Vector2 dot1 = new BondingPreprocessor.Vector2(currLine);
-      BondingPreprocessor.Vector2 dot2 = new BondingPreprocessor.Vector2(prevLine);
-      double num1 = Math.Pow((double) dot1.Dot(dot1), 2.0);
-      double num2 = Math.Pow((double) dot2.Dot(dot2), 2.0);
-      double num3 = Math.Acos((double) dot1.Dot(dot2) / (num1 * num2));
+      var flag = false;
+      var dot1 = new BondingPreprocessor.Vector2(currLine);
+      var dot2 = new BondingPreprocessor.Vector2(prevLine);
+      var num1 = Math.Pow((double) dot1.Dot(dot1), 2.0);
+      var num2 = Math.Pow((double) dot2.Dot(dot2), 2.0);
+      var num3 = Math.Acos((double) dot1.Dot(dot2) / (num1 * num2));
       if (num3 > 0.0 && num3 < 1.57079633)
+      {
         flag = true;
+      }
+
       return flag;
     }
 
     public void doTackPoint(GCode currLine, GCode Last_Tack_Point, GCodeFileWriter output_writer)
     {
-      int num = (int) Math.Ceiling(this.distance(new BondingPreprocessor.Vector2(currLine), new BondingPreprocessor.Vector2(Last_Tack_Point)));
+      var num = (int) Math.Ceiling(distance(new BondingPreprocessor.Vector2(currLine), new BondingPreprocessor.Vector2(Last_Tack_Point)));
       if (num <= 5)
+      {
         return;
+      }
+
       output_writer.Write(new GCode("G4 P" + num.ToString()));
     }
 
@@ -257,13 +322,13 @@ namespace M3D.Spooling.Preprocessors
 
       public Vector2(GCode G)
       {
-        this.x = G.X;
-        this.y = G.Y;
+        x = G.X;
+        y = G.Y;
       }
 
       public float Dot(BondingPreprocessor.Vector2 dot)
       {
-        return this.x * dot.x + this.y + dot.y;
+        return x * dot.x + y + dot.y;
       }
     }
   }

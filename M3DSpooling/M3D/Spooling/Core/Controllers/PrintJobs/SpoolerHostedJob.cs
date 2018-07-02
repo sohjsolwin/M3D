@@ -29,13 +29,16 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     public SpoolerHostedJob(JobParams jobParams, string user, InternalPrinterProfile printerProfile, bool sdOnly, ulong ulFastForward)
       : base(jobParams, user, printerProfile)
     {
-      this.aborted = false;
-      this.m_bSDOnly = sdOnly;
-      this.m_ulFastForward = ulFastForward;
-      if (this.m_ulFastForward == 0UL)
+      aborted = false;
+      m_bSDOnly = sdOnly;
+      m_ulFastForward = ulFastForward;
+      if (m_ulFastForward == 0UL)
+      {
         return;
-      this.Details.jobParams.options.dont_use_preprocessors = true;
-      this.Details.jobParams.options.dont_use_copy_to_spooler = true;
+      }
+
+      Details.jobParams.options.dont_use_preprocessors = true;
+      Details.jobParams.options.dont_use_copy_to_spooler = true;
     }
 
     public override void Update(PrinterInfo printerInfo)
@@ -45,9 +48,9 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     public override bool Pause(out List<string> pause_gcode, FilamentSpool spool)
     {
       pause_gcode = (List<string>) null;
-      this.Status = JobStatus.Paused;
-      this.ExtrusionAtPause = this.CurrentPrintJobExtrusion;
-      this.CurrentPrintJobExtrusion = 0.0f;
+      Status = JobStatus.Paused;
+      ExtrusionAtPause = CurrentPrintJobExtrusion;
+      CurrentPrintJobExtrusion = 0.0f;
       return true;
     }
 
@@ -55,75 +58,100 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       resume_gcode = (List<string>) null;
       if (spool == (FilamentSpool) null)
-        spool = this.InitialSpoolUsed;
-      if (spool == (FilamentSpool) null)
-        return JobController.Result.FAILED_NoFilament;
-      if (this.Status != JobStatus.Paused)
-        return JobController.Result.FAILED_NotPaused;
-      if (!this.m_bSDOnly)
       {
-        this.CurrentPrintJobExtrusion = this.ExtrusionAtPause;
-        this.Status = JobStatus.Heating;
+        spool = InitialSpoolUsed;
+      }
+
+      if (spool == (FilamentSpool) null)
+      {
+        return JobController.Result.FAILED_NoFilament;
+      }
+
+      if (Status != JobStatus.Paused)
+      {
+        return JobController.Result.FAILED_NotPaused;
+      }
+
+      if (!m_bSDOnly)
+      {
+        CurrentPrintJobExtrusion = ExtrusionAtPause;
+        Status = JobStatus.Heating;
       }
       return JobController.Result.Success;
     }
 
     public override bool Start(out List<string> start_gcode)
     {
-      float fEStartingLocation;
-      this.m_oGCodeReader = (IGCodeReader) new GCodeBufferedFileReader(this.GCodeFilename, this.m_ulFastForward, out fEStartingLocation);
+      m_oGCodeReader = (IGCodeReader)new GCodeBufferedFileReader(GCodeFilename, m_ulFastForward, out var fEStartingLocation);
       start_gcode = (List<string>) null;
-      if (!this.m_oGCodeReader.IsOpen)
+      if (!m_oGCodeReader.IsOpen)
+      {
         return false;
+      }
+
       try
       {
-        this.MaxLines = this.m_oGCodeReader.MaxLines;
-        if (this.m_bSDOnly)
-          this.Details.jobParams.estimatedTime = (float) this.MaxLines / 50f;
+        MaxLines = m_oGCodeReader.MaxLines;
+        if (m_bSDOnly)
+        {
+          Details.jobParams.estimatedTime = (float)MaxLines / 50f;
+        }
       }
       catch (NotImplementedException ex)
       {
-        this.MaxLines = 0L;
+        MaxLines = 0L;
       }
-      this.JobBeginTimer.Stop();
-      this.JobBeginTimer.Reset();
-      this.Status = JobStatus.Printing;
-      this.CurrentLineNumber = this.m_ulFastForward;
+      JobBeginTimer.Stop();
+      JobBeginTimer.Reset();
+      Status = JobStatus.Printing;
+      CurrentLineNumber = m_ulFastForward;
       start_gcode = new List<string>()
       {
-        string.Format("N{0} M110", (object) (this.CurrentLineNumber % 65536UL))
+        string.Format("N{0} M110", (object) (CurrentLineNumber % 65536UL))
       };
-      if (this.m_ulFastForward != 0UL)
+      if (m_ulFastForward != 0UL)
+      {
         start_gcode.Insert(0, string.Format("G92 E{0}", (object) fEStartingLocation));
+      }
+
       return true;
     }
 
     public override void Stop()
     {
-      this.JobBeginTimer.Stop();
-      if (this.m_oGCodeReader != null)
-        this.m_oGCodeReader.Close();
-      this.aborted = true;
+      JobBeginTimer.Stop();
+      if (m_oGCodeReader != null)
+      {
+        m_oGCodeReader.Close();
+      }
+
+      aborted = true;
     }
 
     public override GCode GetNextCommand()
     {
-      this.OnGetNextCommand();
-      if (this.Status != JobStatus.Cancelled && this.m_oGCodeReader != null && this.m_oGCodeReader.IsOpen)
+      OnGetNextCommand();
+      if (Status != JobStatus.Cancelled && m_oGCodeReader != null && m_oGCodeReader.IsOpen)
       {
-        this.Status = JobStatus.Printing;
-        GCode nextLine = this.m_oGCodeReader.GetNextLine(true);
+        Status = JobStatus.Printing;
+        GCode nextLine = m_oGCodeReader.GetNextLine(true);
         if (nextLine != null)
         {
           if (nextLine.hasM && nextLine.M == (ushort) 109 || nextLine.M == (ushort) 116 || nextLine.hasG && nextLine.G == (ushort) 4)
-            this.Status = JobStatus.Heating;
+          {
+            Status = JobStatus.Heating;
+          }
+
           if (nextLine.hasG && (nextLine.G == (ushort) 0 || nextLine.G == (ushort) 1) && nextLine.hasE)
-            this.CurrentPrintJobExtrusion = nextLine.E;
-          ++this.CurrentLineNumber;
-          nextLine.N = (int) (this.CurrentLineNumber % 65536UL);
+          {
+            CurrentPrintJobExtrusion = nextLine.E;
+          }
+
+          ++CurrentLineNumber;
+          nextLine.N = (int) (CurrentLineNumber % 65536UL);
           return nextLine;
         }
-        this.endreadched.Value = true;
+        endreadched.Value = true;
       }
       return (GCode) null;
     }
@@ -132,8 +160,11 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        if (this.MaxLines > 0L)
-          return (float) this.CurrentLineNumber / (float) this.MaxLines;
+        if (MaxLines > 0L)
+        {
+          return (float)CurrentLineNumber / (float)MaxLines;
+        }
+
         return 0.0f;
       }
     }
@@ -150,11 +181,11 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return this.currentline.Value;
+        return currentline.Value;
       }
       private set
       {
-        this.currentline.Value = value;
+        currentline.Value = value;
       }
     }
 
@@ -162,7 +193,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return this.aborted;
+        return aborted;
       }
     }
 
@@ -170,8 +201,11 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        if (this.Status != JobStatus.Queued)
-          return this.endreadched.Value;
+        if (Status != JobStatus.Queued)
+        {
+          return endreadched.Value;
+        }
+
         return false;
       }
     }
@@ -180,7 +214,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return new JobParams(this.Details.jobParams);
+        return new JobParams(Details.jobParams);
       }
     }
 
@@ -188,8 +222,11 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        if ((double) this.CurrentPrintJobExtrusion > 0.0)
-          return !this.m_bSDOnly;
+        if ((double)CurrentPrintJobExtrusion > 0.0)
+        {
+          return !m_bSDOnly;
+        }
+
         return false;
       }
     }
@@ -198,7 +235,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return this.CurrentLineNumber;
+        return CurrentLineNumber;
       }
     }
   }

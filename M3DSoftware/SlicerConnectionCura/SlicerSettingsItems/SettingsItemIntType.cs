@@ -28,7 +28,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       try
       {
-        this.value = int.Parse(val);
+        value = int.Parse(val);
       }
       catch (Exception ex)
       {
@@ -44,7 +44,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override string TranslateToSlicerValue()
     {
-      return this.value.ToString();
+      return value.ToString();
     }
 
     public override bool HasError
@@ -70,7 +70,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemIntType(this.value, this.warning_range, this.error_range);
+      return (SlicerSettingsItem) new SettingsItemIntType(value, warning_range, error_range);
     }
 
     [XmlIgnore]

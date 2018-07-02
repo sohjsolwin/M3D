@@ -26,35 +26,38 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
       : base(ID)
     {
       this.spooler_connection = spooler_connection;
-      string manualcontrolsframeDiagnostics = Resources.manualcontrolsframe_diagnostics;
-      this.Init(host, manualcontrolsframeDiagnostics, new ButtonCallback(this.diagnosticsFrameButtonCallback));
-      this.CenterHorizontallyInParent = true;
-      this.RelativeY = 0.1f;
-      this.RelativeWidth = 0.95f;
-      this.RelativeHeight = 0.9f;
-      this.BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
-      this.Visible = false;
-      this.Enabled = false;
+      var manualcontrolsframeDiagnostics = Resources.manualcontrolsframe_diagnostics;
+      Init(host, manualcontrolsframeDiagnostics, new ButtonCallback(diagnosticsFrameButtonCallback));
+      CenterHorizontallyInParent = true;
+      RelativeY = 0.1f;
+      RelativeWidth = 0.95f;
+      RelativeHeight = 0.9f;
+      BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
+      Visible = false;
+      Enabled = false;
     }
 
     public void diagnosticsFrameButtonCallback(ButtonWidget button)
     {
-      PrinterObject selectedPrinter = this.spooler_connection.SelectedPrinter;
+      PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
       if (selectedPrinter == null || !selectedPrinter.isConnected())
+      {
         return;
+      }
+
       switch (button.ID)
       {
         case 1000:
-          int num1 = (int) selectedPrinter.SendEmergencyStop((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+          var num1 = (int) selectedPrinter.SendEmergencyStop((M3D.Spooling.Client.AsyncCallback) null, (object) null);
           break;
         case 1020:
-          int num2 = (int) selectedPrinter.DoFirmwareUpdate();
+          var num2 = (int) selectedPrinter.DoFirmwareUpdate();
           break;
         case 1021:
           selectedPrinter.SendCommandAutoLockRelease(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, "G28");
           break;
         case 1022:
-          int num3 = (int) selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(this.FastRecenterOnLock), (object) selectedPrinter);
+          var num3 = (int) selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(FastRecenterOnLock), (object) selectedPrinter);
           break;
         case 1023:
           List<string> xspeedTest = TestGeneration.CreateXSpeedTest(selectedPrinter.MyPrinterProfile);
@@ -65,7 +68,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
           selectedPrinter.SendCommandAutoLockRelease(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, yspeedTest.ToArray());
           break;
         case 1025:
-          int num4 = (int) selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(this.DoBacklashPrintOnLock), (object) selectedPrinter);
+          var num4 = (int) selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoBacklashPrintOnLock), (object) selectedPrinter);
           break;
         case 1026:
           List<string> xskipTestMinus = TestGeneration.CreateXSkipTestMinus(selectedPrinter.MyPrinterProfile);
@@ -88,45 +91,58 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
 
     private void DoBacklashPrintOnLock(IAsyncCallResult ar)
     {
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
+      var asyncState = ar.AsyncState as PrinterObject;
       if (asyncState == null)
+      {
         throw new Exception("Big bad C# exception");
+      }
+
       if (ar.CallResult == CommandResult.Success_LockAcquired)
       {
-        int num = (int) asyncState.PrintBacklashPrint(new M3D.Spooling.Client.AsyncCallback(asyncState.ShowLockError), (object) asyncState);
+        var num = (int) asyncState.PrintBacklashPrint(new M3D.Spooling.Client.AsyncCallback(asyncState.ShowLockError), (object) asyncState);
       }
       else
+      {
         asyncState.ShowLockError(ar);
+      }
     }
 
     private void FastRecenterOnLock(IAsyncCallResult ar)
     {
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
+      var asyncState = ar.AsyncState as PrinterObject;
       if (asyncState == null)
+      {
         throw new Exception("Big bad C# exception");
+      }
+
       if (ar.CallResult == CommandResult.Success_LockAcquired)
       {
         if (asyncState.Info.extruder.ishomed == Trilean.True)
         {
           List<string> stringList = TestGeneration.FastRecenter(asyncState.MyPrinterProfile);
-          int num = (int) asyncState.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ReleaseAfterCommand), (object) asyncState, stringList.ToArray());
+          var num = (int) asyncState.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ReleaseAfterCommand), (object) asyncState, stringList.ToArray());
         }
         else
         {
-          int num1 = (int) asyncState.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.ReleaseAfterCommand), (object) asyncState, "G28");
+          var num1 = (int) asyncState.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(ReleaseAfterCommand), (object) asyncState, "G28");
         }
       }
       else
+      {
         asyncState.ShowLockError(ar);
+      }
     }
 
     private void ReleaseAfterCommand(IAsyncCallResult ar)
     {
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
+      var asyncState = ar.AsyncState as PrinterObject;
       if (asyncState == null)
+      {
         throw new Exception("Big bad C# exception");
+      }
+
       asyncState.ShowLockError(ar);
-      int num = (int) asyncState.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+      var num = (int) asyncState.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
     }
 
     private enum DiagnosticsID

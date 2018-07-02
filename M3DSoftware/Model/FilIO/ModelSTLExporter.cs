@@ -16,18 +16,18 @@ namespace M3D.Model.FilIO
     {
       byte[] buffer = new byte[80];
       short num = 0;
-      using (FileStream fileStream = new FileStream(filename, FileMode.Create))
+      using (var fileStream = new FileStream(filename, FileMode.Create))
       {
-        using (BinaryWriter binaryWriter = new BinaryWriter((Stream) fileStream))
+        using (var binaryWriter = new BinaryWriter((Stream) fileStream))
         {
           binaryWriter.Write(buffer, 0, 80);
-          int faceCount = modelData.getFaceCount();
+          var faceCount = modelData.GetFaceCount();
           binaryWriter.Write(faceCount);
-          for (int index = 0; index < faceCount; ++index)
+          for (var index = 0; index < faceCount; ++index)
           {
-            Vector3 _a = modelData[modelData.getFace(index).index1];
-            Vector3 _b = modelData[modelData.getFace(index).index2];
-            Vector3 _c = modelData[modelData.getFace(index).index3];
+            Vector3 _a = modelData[modelData.GetFace(index).Index1];
+            Vector3 _b = modelData[modelData.GetFace(index).Index2];
+            Vector3 _c = modelData[modelData.GetFace(index).Index3];
             Vector3 vector3 = ModelData.CalcNormal(_a, _b, _c);
             binaryWriter.Write(vector3.x);
             binaryWriter.Write(vector3.y);

@@ -26,27 +26,31 @@ namespace M3D.Graphics.Frames_and_Layouts
     public ScrollableVerticalLayout(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.ScollableChildframe.layoutMode = Layout.LayoutMode.ResizeLayoutToFitChildren;
+      ScollableChildframe.layoutMode = Layout.LayoutMode.ResizeLayoutToFitChildren;
     }
 
     public override void OnControlMsg(Element2D the_control, ControlMsg msg, float xparam, float yparam)
     {
       if (msg == ControlMsg.LAYOUT_RESIZED_BY_CHILDREN)
-        this.Refresh();
+      {
+        Refresh();
+      }
       else
+      {
         base.OnControlMsg(the_control, msg, xparam, yparam);
+      }
     }
 
     public new void Init(GUIHost host)
     {
-      this.InitChildren(this.Parent, host, (ButtonCallback) null);
+      InitChildren(Parent, host, (ButtonCallback) null);
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
       base.InitChildren(parent, host, MyButtonCallback);
-      this.ScollableChildframe.RelativeWidth = -1f;
-      this.ScollableChildframe.RelativeHeight = -1f;
+      ScollableChildframe.RelativeWidth = -1f;
+      ScollableChildframe.RelativeHeight = -1f;
     }
 
     [XmlAttribute("border-width")]
@@ -54,11 +58,11 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.ScollableChildframe.BorderWidth;
+        return ScollableChildframe.BorderWidth;
       }
       set
       {
-        this.ScollableChildframe.BorderWidth = value;
+        ScollableChildframe.BorderWidth = value;
       }
     }
 
@@ -67,11 +71,11 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.ScollableChildframe.BorderHeight;
+        return ScollableChildframe.BorderHeight;
       }
       set
       {
-        this.ScollableChildframe.BorderHeight = value;
+        ScollableChildframe.BorderHeight = value;
       }
     }
 
@@ -80,17 +84,17 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.ScollableChildframe.layoutMode;
+        return ScollableChildframe.layoutMode;
       }
       set
       {
-        this.ScollableChildframe.layoutMode = value;
+        ScollableChildframe.layoutMode = value;
       }
     }
 
     public override void OnParentResize()
     {
-      this.ScollableChildframe.Width = this.Width - 32;
+      ScollableChildframe.Width = Width - 32;
       base.OnParentResize();
     }
   }

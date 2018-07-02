@@ -22,41 +22,49 @@ namespace M3D.Spooling.Common
 
     public ThreadBasedTimer(IContainer not_used, ThreadSafeVariable<bool> shared_shutdown)
     {
-      this.thread_sync = new object();
-      this._interval = 100;
-      this._isRunning = false;
-      this.Tick = (EventHandler) null;
+      thread_sync = new object();
+      _interval = 100;
+      _isRunning = false;
+      Tick = (EventHandler) null;
       this.shared_shutdown = shared_shutdown;
     }
 
     public void Start()
     {
-      this.Start(false);
+      Start(false);
     }
 
     public void Start(bool isbackground)
     {
-      lock (this.thread_sync)
+      lock (thread_sync)
       {
-        if (this._isRunning)
+        if (_isRunning)
+        {
           return;
-        this._isRunning = true;
-        this.runThread = new Thread(new ThreadStart(this.RunThread));
-        this.runThread.Name = "thread based timer";
-        this.runThread.IsBackground = isbackground;
-        this.runThread.Start();
+        }
+
+        _isRunning = true;
+        runThread = new Thread(new ThreadStart(RunThread))
+        {
+          Name = "thread based timer",
+          IsBackground = isbackground
+        };
+        runThread.Start();
       }
     }
 
     public void Stop()
     {
-      lock (this.thread_sync)
+      lock (thread_sync)
       {
-        if (!this._isRunning)
+        if (!_isRunning)
+        {
           return;
-        this._isRunning = false;
-        this.runThread.Abort();
-        this.runThread = (Thread) null;
+        }
+
+        _isRunning = false;
+        runThread.Abort();
+        runThread = (Thread) null;
       }
     }
 
@@ -64,13 +72,17 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        lock (this.thread_sync)
-          return this._interval;
+        lock (thread_sync)
+        {
+          return _interval;
+        }
       }
       set
       {
-        lock (this.thread_sync)
-          this._interval = value;
+        lock (thread_sync)
+        {
+          _interval = value;
+        }
       }
     }
 
@@ -78,11 +90,13 @@ namespace M3D.Spooling.Common
     {
       try
       {
-        while (!this.shared_shutdown.Value)
+        while (!shared_shutdown.Value)
         {
-          Thread.Sleep(this.Interval);
-          if (this.Tick != null)
-            this.Tick((object) null, (EventArgs) null);
+          Thread.Sleep(Interval);
+          if (Tick != null)
+          {
+            Tick((object) null, (EventArgs) null);
+          }
         }
       }
       catch (ThreadAbortException ex)
@@ -99,8 +113,10 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        lock (this.thread_sync)
-          return this._isRunning;
+        lock (thread_sync)
+        {
+          return _isRunning;
+        }
       }
     }
   }

@@ -24,37 +24,48 @@ namespace M3D.Spooling.Preprocessors
 
     internal override bool ProcessGCode(GCodeFileReader input_reader, GCodeFileWriter output_writer, Calibration calibration, JobDetails jobdetails, InternalPrinterProfile printerProfile)
     {
-      float backlashX = calibration.BACKLASH_X;
-      float backlashY = calibration.BACKLASH_Y;
-      bool flag = true;
-      Position position = new Position();
-      float num1 = 1000f;
+      var backlashX = calibration.BACKLASH_X;
+      var backlashY = calibration.BACKLASH_Y;
+      var flag = true;
+      var position = new Position();
+      var num1 = 1000f;
       BackLashPreprocessor.Direction direction1 = BackLashPreprocessor.Direction.Neither;
       BackLashPreprocessor.Direction direction2 = BackLashPreprocessor.Direction.Neither;
-      float num2 = 0.0f;
-      float num3 = 0.0f;
+      var num2 = 0.0f;
+      var num3 = 0.0f;
       for (GCode nextLine = input_reader.GetNextLine(false); nextLine != null; nextLine = input_reader.GetNextLine(false))
       {
         if (nextLine.hasG && (nextLine.G == (ushort) 0 || nextLine.G == (ushort) 1) && !flag)
         {
           if (nextLine.hasF)
+          {
             num1 = nextLine.F;
-          float num4 = !nextLine.hasX ? 0.0f : nextLine.X - position.relativeX;
-          float num5 = !nextLine.hasY ? 0.0f : nextLine.Y - position.relativeY;
-          float num6 = !nextLine.hasZ ? 0.0f : nextLine.Z - position.relativeZ;
-          float num7 = !nextLine.hasE ? 0.0f : nextLine.E - position.relativeE;
+          }
+
+          var num4 = !nextLine.hasX ? 0.0f : nextLine.X - position.relativeX;
+          var num5 = !nextLine.hasY ? 0.0f : nextLine.Y - position.relativeY;
+          var num6 = !nextLine.hasZ ? 0.0f : nextLine.Z - position.relativeZ;
+          var num7 = !nextLine.hasE ? 0.0f : nextLine.E - position.relativeE;
           BackLashPreprocessor.Direction direction3 = (double) num4 <= 1.40129846432482E-45 ? ((double) num4 >= -1.40129846432482E-45 ? direction1 : BackLashPreprocessor.Direction.Negative) : BackLashPreprocessor.Direction.Positive;
           BackLashPreprocessor.Direction direction4 = (double) num5 <= 1.40129846432482E-45 ? ((double) num5 >= -1.40129846432482E-45 ? direction2 : BackLashPreprocessor.Direction.Negative) : BackLashPreprocessor.Direction.Positive;
-          GCode code = new GCode();
-          code.G = nextLine.G;
+          var code = new GCode
+          {
+            G = nextLine.G
+          };
           if (direction3 != direction1 && direction1 != BackLashPreprocessor.Direction.Neither || direction4 != direction2 && direction2 != BackLashPreprocessor.Direction.Neither)
           {
             if (direction3 != direction1 && direction1 != BackLashPreprocessor.Direction.Neither)
+            {
               num2 += direction3 == BackLashPreprocessor.Direction.Positive ? backlashX : -backlashX;
+            }
+
             if (direction4 != direction2 && direction2 != BackLashPreprocessor.Direction.Neither)
+            {
               num3 += direction4 == BackLashPreprocessor.Direction.Positive ? backlashY : -backlashY;
-            float num8 = position.relativeX + num2;
-            float num9 = position.relativeY + num3;
+            }
+
+            var num8 = position.relativeX + num2;
+            var num9 = position.relativeY + num3;
             code.X = num8;
             code.Y = num9;
             code.F = calibration.BACKLASH_SPEED;
@@ -62,15 +73,24 @@ namespace M3D.Spooling.Preprocessors
             nextLine.F = num1;
           }
           if (nextLine.hasX)
+          {
             nextLine.X += num2;
+          }
+
           if (nextLine.hasY)
+          {
             nextLine.Y += num3;
+          }
+
           position.relativeX += num4;
           position.relativeY += num5;
           position.relativeZ += num6;
           position.relativeE += num7;
           if (nextLine.hasF)
+          {
             position.F = nextLine.F;
+          }
+
           position.absoluteX += num4;
           position.absoluteY += num5;
           position.absoluteZ += num6;
@@ -81,15 +101,26 @@ namespace M3D.Spooling.Preprocessors
         else if (nextLine.hasG && nextLine.G == (ushort) 92)
         {
           if (nextLine.hasE)
+          {
             position.relativeE = nextLine.E;
+          }
+
           if (printerProfile.OptionsConstants.G92WorksOnAllAxes)
           {
             if (nextLine.hasX)
+            {
               position.relativeX = nextLine.X;
+            }
+
             if (nextLine.hasY)
+            {
               position.relativeY = nextLine.Y;
+            }
+
             if (nextLine.hasZ)
+            {
               position.relativeZ = nextLine.Z;
+            }
           }
           if (!nextLine.hasE && !nextLine.hasX && (!nextLine.hasY && !nextLine.hasZ))
           {
@@ -103,9 +134,13 @@ namespace M3D.Spooling.Preprocessors
           }
         }
         else if (nextLine.hasG && nextLine.G == (ushort) 90)
+        {
           flag = false;
+        }
         else if (nextLine.hasG && nextLine.G == (ushort) 91)
+        {
           flag = true;
+        }
         else if (nextLine.hasG && nextLine.G == (ushort) 28)
         {
           position.relativeX = position.absoluteX = 54f;

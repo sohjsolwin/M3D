@@ -23,34 +23,37 @@ namespace M3D.GUI.Dialogs
 
     public AssociationsForm(SettingsManager settings, PopupMessageBox messagebox, IFileAssociations FileAssociations, string ExecutablePath, string IconPath)
     {
-      this.allow_messages = messagebox.AllowMessages;
+      allow_messages = messagebox.AllowMessages;
       this.settings = settings;
       this.FileAssociations = FileAssociations;
       this.ExecutablePath = ExecutablePath;
       this.IconPath = IconPath;
       messagebox.AllowMessages = true;
-      string associationsDialog = Resources.fileAssociationsDialog;
-      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), associationsDialog, new PopupMessageBox.XMLButtonCallback(this.XMLButtonCallback), (object) null));
+      var associationsDialog = Resources.fileAssociationsDialog;
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), associationsDialog, new PopupMessageBox.XMLButtonCallback(XMLButtonCallback), (object) null));
     }
 
     private void XMLButtonCallback(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)
     {
-      ButtonWidget childElement = (ButtonWidget) childFrame.FindChildElement(301);
+      var childElement = (ButtonWidget) childFrame.FindChildElement(301);
       if (button.ID == 301)
+      {
         return;
-      this.settings.Settings.miscSettings.FileAssociations.ShowFileAssociationsDialog = !childElement.Checked;
+      }
+
+      settings.Settings.miscSettings.FileAssociations.ShowFileAssociationsDialog = !childElement.Checked;
       switch (button.ID)
       {
         case 101:
-          this.FileAssociations.Set3DFileAssociation(".stl", "STL_M3D_Printer_GUI_file", this.ExecutablePath, "M3D file (.stl)", this.IconPath);
-          this.FileAssociations.Set3DFileAssociation(".obj", "OBJ_M3D_Printer_GUI_file", this.ExecutablePath, "M3D file (.obj)", this.IconPath);
+          FileAssociations.Set3DFileAssociation(".stl", "STL_M3D_Printer_GUI_file", ExecutablePath, "M3D file (.stl)", IconPath);
+          FileAssociations.Set3DFileAssociation(".obj", "OBJ_M3D_Printer_GUI_file", ExecutablePath, "M3D file (.obj)", IconPath);
           break;
         case 102:
-          this.FileAssociations.Delete3DFileAssociation(".stl", "STL_M3D_Printer_GUI_file");
-          this.FileAssociations.Delete3DFileAssociation(".obj", "OBJ_M3D_Printer_GUI_file");
+          FileAssociations.Delete3DFileAssociation(".stl", "STL_M3D_Printer_GUI_file");
+          FileAssociations.Delete3DFileAssociation(".obj", "OBJ_M3D_Printer_GUI_file");
           break;
       }
-      parentFrame.AllowMessages = this.allow_messages;
+      parentFrame.AllowMessages = allow_messages;
       parentFrame.CloseCurrent();
     }
 

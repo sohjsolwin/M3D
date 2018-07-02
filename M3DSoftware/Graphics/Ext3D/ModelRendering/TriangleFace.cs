@@ -17,9 +17,9 @@ namespace M3D.Graphics.Ext3D.ModelRendering
 
     public TriangleFace(uint v1Index, uint v2Index, uint v3Index)
     {
-      this.index1 = v1Index;
-      this.index2 = v2Index;
-      this.index3 = v3Index;
+      index1 = v1Index;
+      index2 = v2Index;
+      index3 = v3Index;
     }
   }
 }

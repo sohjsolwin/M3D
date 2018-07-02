@@ -27,14 +27,14 @@ namespace M3D.GUI.Controller.Settings
     public SettingsManager(IFileAssociations fileAssociations)
     {
       this.fileAssociations = fileAssociations;
-      this.LoadSettings();
+      LoadSettings();
     }
 
     public SettingsManager.M3DSettings Settings
     {
       get
       {
-        return this.m3dsettings;
+        return m3dsettings;
       }
     }
 
@@ -42,7 +42,7 @@ namespace M3D.GUI.Controller.Settings
     {
       get
       {
-        return this.Settings.appearanceSettings;
+        return Settings.appearanceSettings;
       }
     }
 
@@ -50,7 +50,7 @@ namespace M3D.GUI.Controller.Settings
     {
       get
       {
-        return this.Settings.miscSettings;
+        return Settings.miscSettings;
       }
     }
 
@@ -58,7 +58,7 @@ namespace M3D.GUI.Controller.Settings
     {
       get
       {
-        return this.Settings.filamentSettings;
+        return Settings.filamentSettings;
       }
     }
 
@@ -66,7 +66,7 @@ namespace M3D.GUI.Controller.Settings
     {
       get
       {
-        return this.fileAssociations;
+        return fileAssociations;
       }
     }
 
@@ -74,11 +74,11 @@ namespace M3D.GUI.Controller.Settings
     {
       get
       {
-        return this.CurrentAppearanceSettings.ShowAllWarnings;
+        return CurrentAppearanceSettings.ShowAllWarnings;
       }
       set
       {
-        this.CurrentAppearanceSettings.ShowAllWarnings = value;
+        CurrentAppearanceSettings.ShowAllWarnings = value;
       }
     }
 
@@ -86,7 +86,7 @@ namespace M3D.GUI.Controller.Settings
     {
       get
       {
-        return this.filamentDictionary;
+        return filamentDictionary;
       }
     }
 
@@ -94,27 +94,27 @@ namespace M3D.GUI.Controller.Settings
     {
       try
       {
-        TextReader textReader = (TextReader) new StreamReader(M3D.GUI.Paths.SettingsPath);
-        this.m3dsettings = (SettingsManager.M3DSettings) SettingsManager.M3DSettings.ClassSerializer.Deserialize(textReader);
+        var textReader = (TextReader) new StreamReader(M3D.GUI.Paths.SettingsPath);
+        m3dsettings = (SettingsManager.M3DSettings) SettingsManager.M3DSettings.ClassSerializer.Deserialize(textReader);
         textReader.Close();
-        this.Settings.customFilamentProfiles.PushDataToDictionary(this.FilamentDictionary);
+        Settings.customFilamentProfiles.PushDataToDictionary(FilamentDictionary);
       }
       catch (Exception ex)
       {
-        this.m3dsettings = new SettingsManager.M3DSettings();
-        this.SaveSettings();
+        m3dsettings = new SettingsManager.M3DSettings();
+        SaveSettings();
       }
     }
 
     public void SaveSettings()
     {
-      this.Settings.customFilamentProfiles.PullDataFromDictionary(this.FilamentDictionary);
+      Settings.customFilamentProfiles.PullDataFromDictionary(FilamentDictionary);
       try
       {
-        TextWriter textWriter = (TextWriter) new StreamWriter(M3D.GUI.Paths.SettingsPath);
-        XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+        var textWriter = (TextWriter) new StreamWriter(M3D.GUI.Paths.SettingsPath);
+        var namespaces = new XmlSerializerNamespaces();
         namespaces.Add(string.Empty, string.Empty);
-        SettingsManager.M3DSettings.ClassSerializer.Serialize(textWriter, (object) this.Settings, namespaces);
+        SettingsManager.M3DSettings.ClassSerializer.Serialize(textWriter, (object)Settings, namespaces);
         textWriter.Close();
       }
       catch (Exception ex)
@@ -127,68 +127,88 @@ namespace M3D.GUI.Controller.Settings
       foreach (var customValue in filamentDictionary.CustomValues)
       {
         if (customValue.Key.type == type && customValue.Key.color == colors)
+        {
           return customValue.Value.temperature;
+        }
       }
       return FilamentConstants.Temperature.Default(type);
     }
 
     public FilamentSpool FindMatchingUsedSpool(FilamentSpool spool)
     {
-      return this.CurrentFilamentSettings.usedFilamentSpools.filament.Find((Predicate<FilamentSpool>) (x => x.Matches(spool)));
+      return CurrentFilamentSettings.usedFilamentSpools.filament.Find((Predicate<FilamentSpool>) (x => x.Matches(spool)));
     }
 
     public void AssociateFilamentToPrinter(PrinterSerialNumber printer, FilamentSpool spool)
     {
-      this.DisassociateFilamentFromPrinter(printer);
+      DisassociateFilamentFromPrinter(printer);
       if (!(spool != (FilamentSpool) null))
-        return;
-      this.DisassociateFilamentFromPrinter(spool.filament_uid);
-      if (spool.filament_uid == 0U)
-        return;
-      this.CurrentFilamentSettings.printerFilamentAssociations.Add(printer, spool.filament_uid);
-      for (int index = 0; index < this.CurrentFilamentSettings.usedFilamentSpools.filament.Count; ++index)
       {
-        FilamentSpool other = this.CurrentFilamentSettings.usedFilamentSpools.filament[index];
-        if (spool.Matches(other) && (int) other.filament_uid != (int) spool.filament_uid && this.FindAssociatedPrinter(other.filament_uid) == PrinterSerialNumber.Undefined)
+        return;
+      }
+
+      DisassociateFilamentFromPrinter(spool.filament_uid);
+      if (spool.filament_uid == 0U)
+      {
+        return;
+      }
+
+      CurrentFilamentSettings.printerFilamentAssociations.Add(printer, spool.filament_uid);
+      for (var index = 0; index < CurrentFilamentSettings.usedFilamentSpools.filament.Count; ++index)
+      {
+        FilamentSpool other = CurrentFilamentSettings.usedFilamentSpools.filament[index];
+        if (spool.Matches(other) && (int) other.filament_uid != (int) spool.filament_uid && FindAssociatedPrinter(other.filament_uid) == PrinterSerialNumber.Undefined)
         {
-          this.CurrentFilamentSettings.usedFilamentSpools.filament.RemoveAt(index);
+          CurrentFilamentSettings.usedFilamentSpools.filament.RemoveAt(index);
           --index;
         }
       }
-      this.UpdateUsedFilamentSpool(spool);
-      this.SaveSettings();
+      UpdateUsedFilamentSpool(spool);
+      SaveSettings();
     }
 
     public void UpdateUsedFilamentSpool(FilamentSpool spool)
     {
       if (!(spool != (FilamentSpool) null))
+      {
         return;
-      FilamentSpool usedSpool = this.FindUsedSpool(spool.filament_uid);
+      }
+
+      FilamentSpool usedSpool = FindUsedSpool(spool.filament_uid);
       if (usedSpool == (FilamentSpool) null)
       {
-        this.CurrentFilamentSettings.usedFilamentSpools.filament.Add(spool);
+        CurrentFilamentSettings.usedFilamentSpools.filament.Add(spool);
       }
       else
       {
         if ((double) spool.estimated_filament_length_printed <= (double) usedSpool.estimated_filament_length_printed)
+        {
           return;
+        }
+
         usedSpool.estimated_filament_length_printed = spool.estimated_filament_length_printed;
       }
     }
 
     public void DisassociateFilamentFromPrinter(PrinterSerialNumber printer)
     {
-      if (!this.CurrentFilamentSettings.printerFilamentAssociations.ContainsKey(printer))
+      if (!CurrentFilamentSettings.printerFilamentAssociations.ContainsKey(printer))
+      {
         return;
-      this.CurrentFilamentSettings.printerFilamentAssociations.Remove(printer);
+      }
+
+      CurrentFilamentSettings.printerFilamentAssociations.Remove(printer);
     }
 
     private void DisassociateFilamentFromPrinter(uint filamentUID)
     {
-      PrinterSerialNumber associatedPrinter = this.FindAssociatedPrinter(filamentUID);
+      PrinterSerialNumber associatedPrinter = FindAssociatedPrinter(filamentUID);
       if (!(associatedPrinter != PrinterSerialNumber.Undefined))
+      {
         return;
-      this.DisassociateFilamentFromPrinter(associatedPrinter);
+      }
+
+      DisassociateFilamentFromPrinter(associatedPrinter);
     }
 
     private PrinterSerialNumber FindAssociatedPrinter(uint filamentUID)
@@ -197,19 +217,21 @@ namespace M3D.GUI.Controller.Settings
       foreach (var filamentAssociation in CurrentFilamentSettings.printerFilamentAssociations)
       {
         if ((int) filamentAssociation.Value == (int) filamentUID)
+        {
           printerSerialNumber = filamentAssociation.Key;
+        }
       }
       return printerSerialNumber;
     }
 
     public FilamentSpool FindUsedSpool(uint filament_uid)
     {
-      return this.CurrentFilamentSettings.usedFilamentSpools.filament.Find((Predicate<FilamentSpool>) (x => (int) x.filament_uid == (int) filament_uid));
+      return CurrentFilamentSettings.usedFilamentSpools.filament.Find((Predicate<FilamentSpool>) (x => (int) x.filament_uid == (int) filament_uid));
     }
 
     public void OnShutdown()
     {
-      this.SaveSettings();
+      SaveSettings();
     }
 
     public static bool SavePrintingObjectsDetails(JobParams jobParams, List<PrintDetails.ObjectDetails> objectList)
@@ -219,11 +241,11 @@ namespace M3D.GUI.Controller.Settings
 
     public static bool SavePrintingObjectsDetails(string printerViewFile, List<PrintDetails.ObjectDetails> objectList)
     {
-      PrintDetails.PrintJobObjectViewDetails objectViewDetails = new PrintDetails.PrintJobObjectViewDetails(objectList);
+      var objectViewDetails = new PrintDetails.PrintJobObjectViewDetails(objectList);
       try
       {
-        TextWriter textWriter = (TextWriter) new StreamWriter(printerViewFile);
-        XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+        var textWriter = (TextWriter) new StreamWriter(printerViewFile);
+        var namespaces = new XmlSerializerNamespaces();
         namespaces.Add(string.Empty, string.Empty);
         PrintDetails.PrintJobObjectViewDetails.ClassSerializer.Serialize(textWriter, (object) objectViewDetails, namespaces);
         textWriter.Close();
@@ -244,7 +266,7 @@ namespace M3D.GUI.Controller.Settings
     {
       try
       {
-        TextReader textReader = (TextReader) new StreamReader(filename);
+        var textReader = (TextReader) new StreamReader(filename);
         XmlSerializer classSerializer = PrintDetails.PrintJobObjectViewDetails.ClassSerializer;
         printerview_settings = (PrintDetails.PrintJobObjectViewDetails) classSerializer.Deserialize(textReader);
         textReader.Close();
@@ -264,11 +286,11 @@ namespace M3D.GUI.Controller.Settings
 
     public static bool SavePrintJobInfo(string printerSettingsFile, JobParams jobParams, PrinterObject printer, string slicerProfileName, List<Slicer.General.KeyValuePair<string, string>> userKeyValuePairList)
     {
-      PrintDetails.M3DSettings m3Dsettings = new PrintDetails.M3DSettings(jobParams, printer, slicerProfileName, userKeyValuePairList);
+      var m3Dsettings = new PrintDetails.M3DSettings(jobParams, printer, slicerProfileName, userKeyValuePairList);
       try
       {
-        TextWriter textWriter = (TextWriter) new StreamWriter(printerSettingsFile);
-        XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+        var textWriter = (TextWriter) new StreamWriter(printerSettingsFile);
+        var namespaces = new XmlSerializerNamespaces();
         namespaces.Add(string.Empty, string.Empty);
         PrintDetails.M3DSettings.ClassSerializer.Serialize(textWriter, (object) m3Dsettings, namespaces);
         textWriter.Close();
@@ -284,7 +306,10 @@ namespace M3D.GUI.Controller.Settings
     {
       PrintDetails.M3DSettings? nullable = SettingsManager.LoadPrintJobInfoFile(Path.Combine(M3D.Spooling.Core.Paths.QueuePath, jobGuid) + "_printersettings.xml");
       if (!nullable.HasValue)
+      {
         return nullable;
+      }
+
       PrintDetails.M3DSettings m3Dsettings = nullable.Value;
       m3Dsettings.jobGuid = jobGuid;
       return new PrintDetails.M3DSettings?(m3Dsettings);
@@ -294,11 +319,14 @@ namespace M3D.GUI.Controller.Settings
     {
       try
       {
-        TextReader textReader = (TextReader) new StreamReader(printerSettingsFile);
-        PrintDetails.M3DSettings m3Dsettings = (PrintDetails.M3DSettings) PrintDetails.M3DSettings.ClassSerializer.Deserialize(textReader);
+        var textReader = (TextReader) new StreamReader(printerSettingsFile);
+        var m3Dsettings = (PrintDetails.M3DSettings) PrintDetails.M3DSettings.ClassSerializer.Deserialize(textReader);
         textReader.Close();
         if (string.IsNullOrEmpty(m3Dsettings.profileName))
+        {
           m3Dsettings.profileName = "Micro";
+        }
+
         return new PrintDetails.M3DSettings?(m3Dsettings);
       }
       catch (Exception ex)
@@ -329,18 +357,21 @@ namespace M3D.GUI.Controller.Settings
 
       public M3DSettings()
       {
-        this.printSettings = new SerializableDictionary<string, SettingsManager.PrintSettings>();
-        this.customFilamentProfiles = new SettingsManager.CustomFilamentProfiles();
-        this.appearanceSettings = new SettingsManager.AppearanceSettings();
-        this.miscSettings = new SettingsManager.MiscSettings();
-        this.filamentSettings = new SettingsManager.FilamentSettings();
+        printSettings = new SerializableDictionary<string, SettingsManager.PrintSettings>();
+        customFilamentProfiles = new SettingsManager.CustomFilamentProfiles();
+        appearanceSettings = new SettingsManager.AppearanceSettings();
+        miscSettings = new SettingsManager.MiscSettings();
+        filamentSettings = new SettingsManager.FilamentSettings();
       }
 
       public SettingsManager.PrintSettings GetPrintSettingsSafe(string printerProfileName)
       {
-        if (!this.printSettings.ContainsKey(printerProfileName))
-          this.printSettings.Add(printerProfileName, new SettingsManager.PrintSettings());
-        return this.printSettings[printerProfileName];
+        if (!printSettings.ContainsKey(printerProfileName))
+        {
+          printSettings.Add(printerProfileName, new SettingsManager.PrintSettings());
+        }
+
+        return printSettings[printerProfileName];
       }
 
       public static XmlSerializer ClassSerializer
@@ -348,7 +379,10 @@ namespace M3D.GUI.Controller.Settings
         get
         {
           if (SettingsManager.M3DSettings.__class_serializer == null)
+          {
             SettingsManager.M3DSettings.__class_serializer = new XmlSerializer(typeof (SettingsManager.M3DSettings));
+          }
+
           return SettingsManager.M3DSettings.__class_serializer;
         }
       }
@@ -390,33 +424,33 @@ namespace M3D.GUI.Controller.Settings
 
       public AppearanceSettings()
       {
-        this.PrinterColor = "Automatic";
-        this.ModelColor = "Automatic";
-        this.IconColor = "Standard";
-        this.StartFullScreen = false;
-        this.ShowImproveHelpDialog = true;
-        this.ShowPrinterMismatchWarning = true;
-        this.ShowAllWarnings = true;
-        this.ShowRemoveModelWarning = true;
-        this.UseMultipleModels = true;
-        this.UpdaterMode = Updater.UpdateSettings.DownloadNotInstall;
-        this.auto_filament_color = new Color4((byte) 98, (byte) 181, (byte) 233, byte.MaxValue);
-        this.Units = SettingsManager.GridUnit.MM;
-        this.RenderMode = OpenGLRendererObject.OpenGLRenderMode.VBOs;
-        this.AutoDetectModelUnits = true;
-        this.AllowSDOnlyPrinting = false;
-        this.CaseType = PrinterSizeProfile.CaseType.ProCase;
+        PrinterColor = "Automatic";
+        ModelColor = "Automatic";
+        IconColor = "Standard";
+        StartFullScreen = false;
+        ShowImproveHelpDialog = true;
+        ShowPrinterMismatchWarning = true;
+        ShowAllWarnings = true;
+        ShowRemoveModelWarning = true;
+        UseMultipleModels = true;
+        UpdaterMode = Updater.UpdateSettings.DownloadNotInstall;
+        auto_filament_color = new Color4((byte) 98, (byte) 181, (byte) 233, byte.MaxValue);
+        Units = SettingsManager.GridUnit.MM;
+        RenderMode = OpenGLRendererObject.OpenGLRenderMode.VBOs;
+        AutoDetectModelUnits = true;
+        AllowSDOnlyPrinting = false;
+        CaseType = PrinterSizeProfile.CaseType.ProCase;
       }
 
       public PrinterSizeProfile.CaseType CaseType
       {
         get
         {
-          return this._CaseType;
+          return _CaseType;
         }
         set
         {
-          this._CaseType = value;
+          _CaseType = value;
         }
       }
 
@@ -425,11 +459,11 @@ namespace M3D.GUI.Controller.Settings
       {
         set
         {
-          this.StartFullScreen = value.ToLowerInvariant() == "true";
+          StartFullScreen = value.ToLowerInvariant() == "true";
         }
         get
         {
-          return !this.StartFullScreen ? "false" : "True";
+          return !StartFullScreen ? "false" : "True";
         }
       }
 
@@ -438,11 +472,11 @@ namespace M3D.GUI.Controller.Settings
       {
         set
         {
-          this.ShowAllWarnings = value.ToLowerInvariant() == "true";
+          ShowAllWarnings = value.ToLowerInvariant() == "true";
         }
         get
         {
-          return !this.ShowAllWarnings ? "false" : "True";
+          return !ShowAllWarnings ? "false" : "True";
         }
       }
     }
@@ -454,7 +488,7 @@ namespace M3D.GUI.Controller.Settings
 
       public FileAssociationSettings()
       {
-        this.ShowFileAssociationsDialog = true;
+        ShowFileAssociationsDialog = true;
       }
 
       [XmlElement("ShowFileAssociationsDialog")]
@@ -462,11 +496,11 @@ namespace M3D.GUI.Controller.Settings
       {
         set
         {
-          this.ShowFileAssociationsDialog = value.ToLowerInvariant() == "true";
+          ShowFileAssociationsDialog = value.ToLowerInvariant() == "true";
         }
         get
         {
-          return !this.ShowFileAssociationsDialog ? "false" : "True";
+          return !ShowFileAssociationsDialog ? "false" : "True";
         }
       }
     }
@@ -480,8 +514,8 @@ namespace M3D.GUI.Controller.Settings
 
       public MiscSettings()
       {
-        this.FileAssociations = new SettingsManager.FileAssociationSettings();
-        this.LastProFeaturesFlag = new SerializableDictionary<string, uint>();
+        FileAssociations = new SettingsManager.FileAssociationSettings();
+        LastProFeaturesFlag = new SerializableDictionary<string, uint>();
       }
     }
 
@@ -502,10 +536,10 @@ namespace M3D.GUI.Controller.Settings
 
       public void PullDataFromDictionary(FilamentDictionary dictionary)
       {
-        this.profiles.Clear();
+        profiles.Clear();
         foreach (var customValue in dictionary.CustomValues)
         {
-          this.profiles.Add(new SettingsManager.Filament()
+          profiles.Add(new SettingsManager.Filament()
           {
             Type = customValue.Key.type.ToString(),
             Color = customValue.Key.color.ToString(),
@@ -516,7 +550,7 @@ namespace M3D.GUI.Controller.Settings
 
       public void PushDataToDictionary(FilamentDictionary dictionary)
       {
-        foreach (SettingsManager.Filament profile in this.profiles)
+        foreach (SettingsManager.Filament profile in profiles)
         {
           FilamentProfile.TypeColorKey typeColorKey;
           typeColorKey.type = FilamentConstants.StringToType(profile.Type);
@@ -541,15 +575,15 @@ namespace M3D.GUI.Controller.Settings
 
       public PrintSettings()
       {
-        this.Reset();
+        Reset();
       }
 
       public void Reset()
       {
-        this.WaveBonding = false;
-        this.VerifyBed = true;
-        this.UseHeatedBed = true;
-        this.AutoUntetheredSupport = false;
+        WaveBonding = false;
+        VerifyBed = true;
+        UseHeatedBed = true;
+        AutoUntetheredSupport = false;
       }
 
       [XmlElement("wavebonding")]
@@ -557,11 +591,11 @@ namespace M3D.GUI.Controller.Settings
       {
         set
         {
-          this.WaveBonding = value.ToLowerInvariant() == "true";
+          WaveBonding = value.ToLowerInvariant() == "true";
         }
         get
         {
-          return !this.WaveBonding ? "false" : "True";
+          return !WaveBonding ? "false" : "True";
         }
       }
 
@@ -570,11 +604,11 @@ namespace M3D.GUI.Controller.Settings
       {
         set
         {
-          this.VerifyBed = value.ToLowerInvariant() == "true";
+          VerifyBed = value.ToLowerInvariant() == "true";
         }
         get
         {
-          return !this.VerifyBed ? "false" : "True";
+          return !VerifyBed ? "false" : "True";
         }
       }
     }
@@ -590,10 +624,10 @@ namespace M3D.GUI.Controller.Settings
 
       public FilamentSettings()
       {
-        this.CleanNozzleAfterInsert = true;
-        this.TrackFilament = true;
-        this.usedFilamentSpools = new SettingsManager.UsedSpools();
-        this.printerFilamentAssociations = new SerializableDictionary<PrinterSerialNumber, uint>();
+        CleanNozzleAfterInsert = true;
+        TrackFilament = true;
+        usedFilamentSpools = new SettingsManager.UsedSpools();
+        printerFilamentAssociations = new SerializableDictionary<PrinterSerialNumber, uint>();
       }
     }
 
@@ -604,7 +638,7 @@ namespace M3D.GUI.Controller.Settings
 
       public UsedSpools()
       {
-        this.filament = new List<FilamentSpool>();
+        filament = new List<FilamentSpool>();
       }
     }
   }

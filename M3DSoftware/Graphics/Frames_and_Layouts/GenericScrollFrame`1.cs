@@ -34,16 +34,18 @@ namespace M3D.Graphics.Frames_and_Layouts
     public GenericScrollFrame(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.verticalSlider = new VerticalSliderWidget(0, (Element2D) this);
-      this.horizonalSlider = new HorizontalSliderWidget(1, (Element2D) this);
-      this.m_frameDrawableRegion = new Frame();
-      this.m_frameDrawableRegion.Clipping = true;
-      this.m_frameDrawableRegion.SetPosition(2, 2);
-      this.ScollableChildframe = Activator.CreateInstance<T>();
-      this.ScollableChildframe.ID = 2;
-      this.ScollableChildframe.Parent = (Element2D) this;
-      this.ScollableChildframe.always_contains_point = true;
-      this.m_frameDrawableRegion.AddChildElement((Element2D) this.ScollableChildframe);
+      verticalSlider = new VerticalSliderWidget(0, (Element2D) this);
+      horizonalSlider = new HorizontalSliderWidget(1, (Element2D) this);
+      m_frameDrawableRegion = new Frame
+      {
+        Clipping = true
+      };
+      m_frameDrawableRegion.SetPosition(2, 2);
+      ScollableChildframe = Activator.CreateInstance<T>();
+      ScollableChildframe.ID = 2;
+      ScollableChildframe.Parent = (Element2D) this;
+      ScollableChildframe.always_contains_point = true;
+      m_frameDrawableRegion.AddChildElement((Element2D)ScollableChildframe);
     }
 
     public override ElementType GetElementType()
@@ -56,32 +58,43 @@ namespace M3D.Graphics.Frames_and_Layouts
       if (the_control.ID == 0)
       {
         if (msg != ControlMsg.SCROLL_MOVE)
-          return;
-        if (this.verticalSlider.Visible)
         {
-          int scrollbarWidth = this.scrollbar_width;
+          return;
         }
-        this.ScollableChildframe.Y = -(int) xparam;
+
+        if (verticalSlider.Visible)
+        {
+          var scrollbarWidth = scrollbar_width;
+        }
+        ScollableChildframe.Y = -(int) xparam;
       }
       else if (the_control.ID == 1)
       {
         if (msg != ControlMsg.SCROLL_MOVE)
-          return;
-        if (this.horizonalSlider.Visible)
         {
-          int scrollbarWidth = this.scrollbar_width;
+          return;
         }
-        this.ScollableChildframe.X = -(int) xparam;
+
+        if (horizonalSlider.Visible)
+        {
+          var scrollbarWidth = scrollbar_width;
+        }
+        ScollableChildframe.X = -(int) xparam;
       }
       else
+      {
         base.OnControlMsg(the_control, msg, xparam, yparam);
+      }
     }
 
     public override bool OnMouseCommand(MouseEvent mouseevent)
     {
-      if (mouseevent.type != MouseEventType.MouseWheel || !this.verticalSlider.Visible)
+      if (mouseevent.type != MouseEventType.MouseWheel || !verticalSlider.Visible)
+      {
         return base.OnMouseCommand(mouseevent);
-      this.verticalSlider.MoveSlider((float) -((double) mouseevent.delta / 120.0) * this.verticalSlider.PushButtonStep);
+      }
+
+      verticalSlider.MoveSlider((float) -((double) mouseevent.delta / 120.0) * verticalSlider.PushButtonStep);
       return true;
     }
 
@@ -92,144 +105,159 @@ namespace M3D.Graphics.Frames_and_Layouts
 
     public void Init(GUIHost host)
     {
-      this.ScollableChildframe.WrapOnNegative = false;
-      this.verticalSlider.InitTrack(host, "guicontrols", 1008f, 73f, 1016f, 95f, 2, 8);
-      this.verticalSlider.InitButton(host, "guicontrols", 1000f, 0.0f, 1023f, 23f, 1000f, 24f, 1023f, 47f, 1000f, 48f, 1023f, 71f, 4, 4, 24);
-      this.verticalSlider.InitMinus(host, "guicontrols", 928f, 48f, 951f, 71f, 952f, 48f, 975f, 71f, 976f, 48f, 999f, 71f);
-      this.verticalSlider.InitPlus(host, "guicontrols", 928f, 72f, 951f, 95f, 952f, 72f, 975f, 95f, 976f, 72f, 999f, 95f);
-      this.verticalSlider.SetButtonSize(24f);
-      this.verticalSlider.ShowPushButtons = true;
-      this.horizonalSlider.InitTrack(host, "guicontrols", 809f, 80f, 831f, 88f, 2, 8);
-      this.horizonalSlider.InitButton(host, "guicontrols", 1000f, 0.0f, 1023f, 23f, 1000f, 24f, 1023f, 47f, 1000f, 48f, 1023f, 71f, 4, 4, 24);
-      this.horizonalSlider.InitMinus(host, "guicontrols", 928f, 0.0f, 951f, 23f, 952f, 0.0f, 975f, 23f, 976f, 0.0f, 999f, 23f);
-      this.horizonalSlider.InitPlus(host, "guicontrols", 928f, 24f, 951f, 47f, 952f, 24f, 975f, 47f, 976f, 24f, 999f, 47f);
-      this.horizonalSlider.SetButtonSize(24f);
-      this.horizonalSlider.ShowPushButtons = true;
-      base.AddChildElement((Element2D) this.verticalSlider);
-      base.AddChildElement((Element2D) this.horizonalSlider);
-      base.AddChildElement((Element2D) this.m_frameDrawableRegion);
-      this.scrollbar_width = 24;
-      this.Refresh();
+      ScollableChildframe.WrapOnNegative = false;
+      verticalSlider.InitTrack(host, "guicontrols", 1008f, 73f, 1016f, 95f, 2, 8);
+      verticalSlider.InitButton(host, "guicontrols", 1000f, 0.0f, 1023f, 23f, 1000f, 24f, 1023f, 47f, 1000f, 48f, 1023f, 71f, 4, 4, 24);
+      verticalSlider.InitMinus(host, "guicontrols", 928f, 48f, 951f, 71f, 952f, 48f, 975f, 71f, 976f, 48f, 999f, 71f);
+      verticalSlider.InitPlus(host, "guicontrols", 928f, 72f, 951f, 95f, 952f, 72f, 975f, 95f, 976f, 72f, 999f, 95f);
+      verticalSlider.SetButtonSize(24f);
+      verticalSlider.ShowPushButtons = true;
+      horizonalSlider.InitTrack(host, "guicontrols", 809f, 80f, 831f, 88f, 2, 8);
+      horizonalSlider.InitButton(host, "guicontrols", 1000f, 0.0f, 1023f, 23f, 1000f, 24f, 1023f, 47f, 1000f, 48f, 1023f, 71f, 4, 4, 24);
+      horizonalSlider.InitMinus(host, "guicontrols", 928f, 0.0f, 951f, 23f, 952f, 0.0f, 975f, 23f, 976f, 0.0f, 999f, 23f);
+      horizonalSlider.InitPlus(host, "guicontrols", 928f, 24f, 951f, 47f, 952f, 24f, 975f, 47f, 976f, 24f, 999f, 47f);
+      horizonalSlider.SetButtonSize(24f);
+      horizonalSlider.ShowPushButtons = true;
+      base.AddChildElement((Element2D)verticalSlider);
+      base.AddChildElement((Element2D)horizonalSlider);
+      base.AddChildElement((Element2D)m_frameDrawableRegion);
+      scrollbar_width = 24;
+      Refresh();
     }
 
     public override void AddChildElement(Element2D child)
     {
-      this.ScollableChildframe.AddChildElement(child);
+      ScollableChildframe.AddChildElement(child);
     }
 
     public override void RemoveAllChildElements()
     {
-      this.ScollableChildframe.RemoveAllChildElements();
+      ScollableChildframe.RemoveAllChildElements();
     }
 
     public override void RemoveChildElement(Element2D child)
     {
-      this.ScollableChildframe.RemoveChildElement(child);
+      ScollableChildframe.RemoveChildElement(child);
     }
 
     public override void RemoveChildElementAt(int index)
     {
-      this.ScollableChildframe.RemoveChildElementAt(index);
+      ScollableChildframe.RemoveChildElementAt(index);
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
-      this.Parent = parent;
-      lock (this.ChildList)
+      Parent = parent;
+      lock (ChildList)
       {
-        foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
-          this.ScollableChildframe.AddChildElement(child);
-        this.ChildList.Clear();
-        this.ScollableChildframe.InitChildren((Element2D) this, host, MyButtonCallback);
+        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+        {
+          ScollableChildframe.AddChildElement(child);
+        }
+
+        ChildList.Clear();
+        ScollableChildframe.InitChildren((Element2D) this, host, MyButtonCallback);
       }
-      this.Init(host);
-      this.ScollableChildframe.Refresh();
+      Init(host);
+      ScollableChildframe.Refresh();
     }
 
     public override void Refresh()
     {
       bool flag1;
       bool flag2;
-      if (this.ShowScrollbar == GenericScrollFrame<T>.ScrollBarState.Off)
+      if (ShowScrollbar == GenericScrollFrame<T>.ScrollBarState.Off)
       {
         flag1 = false;
         flag2 = false;
       }
-      else if (this.ShowScrollbar == GenericScrollFrame<T>.ScrollBarState.On)
+      else if (ShowScrollbar == GenericScrollFrame<T>.ScrollBarState.On)
       {
         flag1 = true;
         flag2 = true;
       }
       else
       {
-        flag1 = this.ScollableChildframe.Width > this.Width;
-        flag2 = this.ScollableChildframe.Height > this.Height;
+        flag1 = ScollableChildframe.Width > Width;
+        flag2 = ScollableChildframe.Height > Height;
       }
-      this.m_frameDrawableRegion.Width = (flag2 ? this.Width - this.scrollbar_width : this.Width) - 4;
-      this.m_frameDrawableRegion.Height = (flag1 ? this.Height - this.scrollbar_width : this.Height) - 4;
+      m_frameDrawableRegion.Width = (flag2 ? Width - scrollbar_width : Width) - 4;
+      m_frameDrawableRegion.Height = (flag1 ? Height - scrollbar_width : Height) - 4;
       if (flag2)
       {
-        int height = flag1 ? this.Height - this.scrollbar_width : this.Height;
-        this.verticalSlider.SetPosition(-this.scrollbar_width, 0);
-        this.verticalSlider.SetSize(this.scrollbar_width, height);
-        int num = this.ScollableChildframe.Height - this.m_frameDrawableRegion.Height;
+        var height = flag1 ? Height - scrollbar_width : Height;
+        verticalSlider.SetPosition(-scrollbar_width, 0);
+        verticalSlider.SetSize(scrollbar_width, height);
+        var num = ScollableChildframe.Height - m_frameDrawableRegion.Height;
         if (num < 0)
+        {
           num = 0;
-        this.verticalSlider.Visible = true;
-        this.verticalSlider.Enabled = true;
-        this.verticalSlider.SetRange(0.0f, (float) (this.ScollableChildframe.Height - this.Height));
-        this.verticalSlider.PushButtonStep = (float) (int) Math.Ceiling((double) num / 10.0);
+        }
+
+        verticalSlider.Visible = true;
+        verticalSlider.Enabled = true;
+        verticalSlider.SetRange(0.0f, (float) (ScollableChildframe.Height - Height));
+        verticalSlider.PushButtonStep = (float) (int) Math.Ceiling((double) num / 10.0);
       }
       else
       {
-        if (this.verticalSlider.Visible)
-          this.verticalSlider.SetTrackPosition(0.0f);
-        this.verticalSlider.Visible = false;
-        this.verticalSlider.Enabled = false;
+        if (verticalSlider.Visible)
+        {
+          verticalSlider.SetTrackPosition(0.0f);
+        }
+
+        verticalSlider.Visible = false;
+        verticalSlider.Enabled = false;
       }
       if (flag1)
       {
-        int width = flag2 ? this.Width - this.scrollbar_width : this.Width;
-        this.horizonalSlider.SetPosition(0, -this.scrollbar_width);
-        this.horizonalSlider.SetSize(width, this.scrollbar_width);
-        int num = this.ScollableChildframe.Width - this.m_frameDrawableRegion.Width;
+        var width = flag2 ? Width - scrollbar_width : Width;
+        horizonalSlider.SetPosition(0, -scrollbar_width);
+        horizonalSlider.SetSize(width, scrollbar_width);
+        var num = ScollableChildframe.Width - m_frameDrawableRegion.Width;
         if (num < 0)
+        {
           num = 0;
-        this.horizonalSlider.Visible = true;
-        this.horizonalSlider.Enabled = true;
-        this.horizonalSlider.SetRange(0.0f, (float) (this.ScollableChildframe.Width - this.Width));
-        this.horizonalSlider.PushButtonStep = 1f;
-        this.horizonalSlider.PushButtonStep = (float) (int) Math.Ceiling((double) num / 10.0);
+        }
+
+        horizonalSlider.Visible = true;
+        horizonalSlider.Enabled = true;
+        horizonalSlider.SetRange(0.0f, (float) (ScollableChildframe.Width - Width));
+        horizonalSlider.PushButtonStep = 1f;
+        horizonalSlider.PushButtonStep = (float) (int) Math.Ceiling((double) num / 10.0);
       }
       else
       {
-        if (this.horizonalSlider.Visible)
-          this.horizonalSlider.SetTrackPosition(0.0f);
-        this.horizonalSlider.Visible = false;
-        this.horizonalSlider.Enabled = false;
+        if (horizonalSlider.Visible)
+        {
+          horizonalSlider.SetTrackPosition(0.0f);
+        }
+
+        horizonalSlider.Visible = false;
+        horizonalSlider.Enabled = false;
       }
     }
 
     public override void SetPosition(int x, int y)
     {
       base.SetPosition(x, y);
-      this.Refresh();
+      Refresh();
     }
 
     public override void SetSize(int width, int height)
     {
       base.SetSize(width, height);
-      this.Refresh();
+      Refresh();
     }
 
     public void VerticalMoveSlider(float fAmount)
     {
-      this.verticalSlider.MoveSlider(fAmount);
+      verticalSlider.MoveSlider(fAmount);
     }
 
     public void HorizonalMoveSlider(float fAmount)
     {
-      this.horizonalSlider.MoveSlider(fAmount);
+      horizonalSlider.MoveSlider(fAmount);
     }
 
     [XmlIgnore]
@@ -237,7 +265,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return (Element2D) this.ScollableChildframe;
+        return (Element2D)ScollableChildframe;
       }
     }
 
@@ -246,12 +274,12 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       set
       {
-        this._showScrollbar = value;
-        this.Refresh();
+        _showScrollbar = value;
+        Refresh();
       }
       get
       {
-        return this._showScrollbar;
+        return _showScrollbar;
       }
     }
 

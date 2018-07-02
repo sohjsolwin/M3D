@@ -17,14 +17,14 @@ namespace M3D.Spooling.Common
 
     public Synchronization(Synchronization rhs)
     {
-      this.LastCompletedRPCID = rhs.LastCompletedRPCID;
-      this.Locked = rhs.Locked;
+      LastCompletedRPCID = rhs.LastCompletedRPCID;
+      Locked = rhs.Locked;
     }
 
     public Synchronization()
     {
-      this.LastCompletedRPCID = 0U;
-      this.Locked = false;
+      LastCompletedRPCID = 0U;
+      Locked = false;
     }
   }
 }

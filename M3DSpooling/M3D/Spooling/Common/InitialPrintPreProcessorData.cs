@@ -22,13 +22,13 @@ namespace M3D.Spooling.Common
 
     public InitialPrintPreProcessorData(InitialPrintPreProcessorData other)
     {
-      this.StartingTemp = other.StartingTemp;
-      this.StartingTempStabilizationDelay = other.StartingTempStabilizationDelay;
-      this.StartingFanValue = other.StartingFanValue;
-      this.BedTemperature = other.BedTemperature;
-      this.PrimeAmount = other.PrimeAmount;
-      this.FirstRaftLayerTemperature = other.FirstRaftLayerTemperature;
-      this.SecondRaftResetTemp = other.SecondRaftResetTemp;
+      StartingTemp = other.StartingTemp;
+      StartingTempStabilizationDelay = other.StartingTempStabilizationDelay;
+      StartingFanValue = other.StartingFanValue;
+      BedTemperature = other.BedTemperature;
+      PrimeAmount = other.PrimeAmount;
+      FirstRaftLayerTemperature = other.FirstRaftLayerTemperature;
+      SecondRaftResetTemp = other.SecondRaftResetTemp;
     }
   }
 }

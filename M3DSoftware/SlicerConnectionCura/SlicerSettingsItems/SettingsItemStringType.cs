@@ -20,19 +20,19 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public SettingsItemStringType()
     {
-      this.value = "";
-      this.multiline = false;
+      value = "";
+      multiline = false;
     }
 
     public SettingsItemStringType(string _value, bool multiline)
     {
-      this.value = _value;
+      value = _value;
       this.multiline = multiline;
     }
 
     protected override bool SetFromSlicerValue(string val)
     {
-      this.value = val;
+      value = val;
       return true;
     }
 
@@ -43,7 +43,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override string TranslateToSlicerValue()
     {
-      return "\"\"\"" + Environment.NewLine + this.value + "\"\"\"";
+      return "\"\"\"" + Environment.NewLine + value + "\"\"\"";
     }
 
     public override bool HasWarning
@@ -69,14 +69,14 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemStringType(this.value, this.isMultiline);
+      return (SlicerSettingsItem) new SettingsItemStringType(value, isMultiline);
     }
 
     public bool isMultiline
     {
       get
       {
-        return this.multiline;
+        return multiline;
       }
     }
 
@@ -85,7 +85,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       get
       {
-        return Regex.Escape(this.value);
+        return Regex.Escape(value);
       }
       set
       {

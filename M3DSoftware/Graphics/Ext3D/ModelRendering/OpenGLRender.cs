@@ -20,9 +20,12 @@ namespace M3D.Graphics.Ext3D.ModelRendering
 
     public void Draw()
     {
-      if (!this.isInitalized())
-        this.Create();
-      this.DrawCallback();
+      if (!isInitalized())
+      {
+        Create();
+      }
+
+      DrawCallback();
     }
 
     public abstract void DrawCallback();
@@ -37,9 +40,12 @@ namespace M3D.Graphics.Ext3D.ModelRendering
 
     public void Dispose()
     {
-      if (this.isInitalized())
+      if (isInitalized())
+      {
         return;
-      this.Distroy();
+      }
+
+      Distroy();
     }
   }
 }

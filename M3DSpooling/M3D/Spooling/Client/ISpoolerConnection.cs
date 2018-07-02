@@ -23,10 +23,13 @@ namespace M3D.Spooling.Client
     {
       try
       {
-        string xml_message = !data.Contains("<EOF>") ? data : data.Substring(0, data.IndexOf("<EOF>"));
-        if (!(xml_message != "<?>") || this.XMLProcessor == null)
+        var xml_message = !data.Contains("<EOF>") ? data : data.Substring(0, data.IndexOf("<EOF>"));
+        if (!(xml_message != "<?>") || XMLProcessor == null)
+        {
           return;
-        this.XMLProcessor(xml_message);
+        }
+
+        XMLProcessor(xml_message);
       }
       catch (Exception ex)
       {

@@ -23,56 +23,78 @@ namespace M3D.Spooling.Common
     public PrinterSerialNumber(string serialnumber)
     {
       if (string.IsNullOrEmpty(serialnumber))
+      {
         throw new ArgumentNullException();
-      int num1 = 0;
-      foreach (char ch in serialnumber)
+      }
+
+      var num1 = 0;
+      foreach (var ch in serialnumber)
       {
         if (ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z' || ch >= '0' && ch <= '9')
         {
-          this.serial += ch.ToString();
+          serial += ch.ToString();
           ++num1;
           if (num1 == 2 || num1 == 4 || (num1 == 6 || num1 == 8) || (num1 == 10 || num1 == 13))
-            this.serial += "-";
+          {
+            serial += "-";
+          }
         }
         else if (ch != '-')
+        {
           throw new FormatException();
+        }
+
         if (num1 == 16)
+        {
           return;
+        }
       }
       if (num1 < 7)
       {
-        this.serial = new PrinterSerialNumber(serialnumber + "0000000000000000").ToString();
+        serial = new PrinterSerialNumber(serialnumber + "0000000000000000").ToString();
       }
       else
       {
         if (num1 >= 16)
+        {
           return;
-        int num2 = 16 - num1;
-        string str = "";
-        for (int index = 0; index < num2; ++index)
+        }
+
+        var num2 = 16 - num1;
+        var str = "";
+        for (var index = 0; index < num2; ++index)
+        {
           str += "0";
-        this.serial = this.serial.Substring(0, 10) + str + this.serial.Substring(10);
+        }
+
+        serial = serial.Substring(0, 10) + str + serial.Substring(10);
       }
     }
 
     public override string ToString()
     {
-      return this.serial;
+      return serial;
     }
 
     public override bool Equals(object obj)
     {
       if (obj == null)
+      {
         return false;
-      PrinterSerialNumber printerSerialNumber = obj as PrinterSerialNumber;
+      }
+
+      var printerSerialNumber = obj as PrinterSerialNumber;
       if ((object) printerSerialNumber == null)
+      {
         return false;
-      return this.serial == printerSerialNumber.serial;
+      }
+
+      return serial == printerSerialNumber.serial;
     }
 
     public override int GetHashCode()
     {
-      return this.serial.GetHashCode();
+      return serial.GetHashCode();
     }
 
     [XmlIgnore]
@@ -80,7 +102,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.serial.Substring(0, 2);
+        return serial.Substring(0, 2);
       }
     }
 
@@ -89,7 +111,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.serial.Substring(3, 8);
+        return serial.Substring(3, 8);
       }
     }
 
@@ -98,7 +120,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.serial.Substring(12, 2);
+        return serial.Substring(12, 2);
       }
     }
 
@@ -107,7 +129,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.serial.Substring(15, 3);
+        return serial.Substring(15, 3);
       }
     }
 
@@ -116,16 +138,22 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.serial.Substring(19);
+        return serial.Substring(19);
       }
     }
 
     public static bool operator ==(PrinterSerialNumber a, PrinterSerialNumber b)
     {
       if ((object) a == (object) b)
+      {
         return true;
+      }
+
       if ((object) a == null || (object) b == null)
+      {
         return false;
+      }
+
       return a.serial == b.serial;
     }
 
@@ -139,11 +167,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.serial;
+        return serial;
       }
       set
       {
-        this.serial = value;
+        serial = value;
       }
     }
   }

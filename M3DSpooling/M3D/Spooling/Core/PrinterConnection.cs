@@ -48,404 +48,534 @@ namespace M3D.Spooling.Core
 
     public CommandResult SaveEEPROMDataToXMLFile(string filename)
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       return firmwareController.eeprom_mapping.SaveToXMLFile(filename) ? CommandResult.Success : CommandResult.Failed_Argument;
     }
 
     public CommandResult KeepLockAlive()
     {
-      if (this.lockStatus != PrinterConnection.LockStatus.Locked)
-        return CommandResult.Failed_PrinterDoesNotHaveLock;
-      lock (this.lockResetTimer)
+      if (lockStatus != PrinterConnection.LockStatus.Locked)
       {
-        if (this.lockResetTimer.IsRunning)
-          this.lockResetTimer.Restart();
+        return CommandResult.Failed_PrinterDoesNotHaveLock;
+      }
+
+      lock (lockResetTimer)
+      {
+        if (lockResetTimer.IsRunning)
+        {
+          lockResetTimer.Restart();
+        }
       }
       return CommandResult.Success;
     }
 
     public CommandResult AddPrintJob(string user, JobParams jobParam)
     {
-      int num1 = (int) this.ReleaseLock(this.lockID);
-      if (this.m_oPowerRecoveryPlugin != null)
+      var num1 = (int)ReleaseLock(lockID);
+      if (m_oPowerRecoveryPlugin != null)
       {
-        int num2 = (int) this.m_oPowerRecoveryPlugin.ClearPowerRecoveryFault(false);
+        var num2 = (int)m_oPowerRecoveryPlugin.ClearPowerRecoveryFault(false);
       }
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       if (firmwareController.IsPrinting || firmwareController.IsPausedorPausing)
+      {
         return CommandResult.Failed_ThePrinterIsPrintingOrPaused;
+      }
+
       firmwareController.AddPrintJob(user, jobParam);
       return CommandResult.SuccessfullyReceived;
     }
 
     public CommandResult WriteManualCommands(params string[] commands)
     {
-      if (this.ControllerSelf != null)
-        return this.ControllerSelf.WriteManualCommands(commands);
+      if (ControllerSelf != null)
+      {
+        return ControllerSelf.WriteManualCommands(commands);
+      }
+
       return CommandResult.Failed_NoAvailableController;
     }
 
     public CommandResult WriteManualCommands(string dummy, params string[] commands)
     {
-      return this.WriteManualCommands(commands);
+      return WriteManualCommands(commands);
     }
 
     public CommandResult AbortPrint()
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       firmwareController.AbortPrint();
       return CommandResult.Success;
     }
 
     public CommandResult ContinuePrint()
     {
-      int num = (int) this.ReleaseLock(this.lockID);
-      FirmwareController firmwareController = this.GetFirmwareController();
+      var num = (int)ReleaseLock(lockID);
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController != null)
+      {
         return firmwareController.ContinuePrint();
+      }
+
       return CommandResult.Failed_NotInFirmware;
     }
 
     public CommandResult PausePrint()
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController != null)
+      {
         return firmwareController.PausePrint();
+      }
+
       return CommandResult.Failed_NotInFirmware;
     }
 
     public CommandResult ClearWarning()
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       firmwareController.ClearWarning();
       return CommandResult.Success;
     }
 
     public CommandResult SetTemperatureWhilePrinting(int temperature)
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       if (firmwareController.Status != PrinterStatus.Firmware_Printing)
+      {
         return CommandResult.Failed_PrinterNotPrinting;
-      int num = (int) firmwareController.WriteManualCommands(string.Format("M104 S{0}", (object) temperature));
+      }
+
+      var num = (int) firmwareController.WriteManualCommands(string.Format("M104 S{0}", temperature));
       return CommandResult.Success;
     }
 
     public CommandResult PrintBacklashPrint(string user)
     {
-      int num = (int) this.ReleaseLock(this.lockID);
-      FirmwareController firmwareController = this.GetFirmwareController();
+      var num = (int)ReleaseLock(lockID);
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       if (firmwareController.IsPrinting || firmwareController.IsPausedorPausing)
+      {
         return CommandResult.Failed_ThePrinterIsPrintingOrPaused;
+      }
+
       firmwareController.PrintBacklashPrint(user);
       return CommandResult.SuccessfullyReceived;
     }
 
     public CommandResult KillJobs()
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       firmwareController.KillJobs();
       return CommandResult.Success;
     }
 
     public CommandResult UpdateFirmware()
     {
-      int num = (int) this.ReleaseLock(this.lockID);
-      if (this.ControllerSelf == null)
+      var num = (int)ReleaseLock(lockID);
+      if (ControllerSelf == null)
+      {
         return CommandResult.Failed_NoAvailableController;
-      this.ControllerSelf.UpdateFirmware();
+      }
+
+      ControllerSelf.UpdateFirmware();
       return CommandResult.Success;
     }
 
     public void SendInterrupted(string message)
     {
-      if (this.lockStatus != PrinterConnection.LockStatus.Locked)
+      if (lockStatus != PrinterConnection.LockStatus.Locked)
+      {
         return;
-      this.BroadcastServer.SendMessageToClient(this.clientID, message);
+      }
+
+      BroadcastServer.SendMessageToClient(clientID, message);
     }
 
     public CommandResult SetCalibrationOffset(float offset)
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       return firmwareController.SetCalibrationOffset(offset) ? CommandResult.Success : CommandResult.Failed_Argument;
     }
 
     public CommandResult SetOffsetInformation(BedOffsets Off)
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       firmwareController.SetOffsetInformation(Off);
       return CommandResult.Success;
     }
 
     public CommandResult SetBacklashValues(BacklashSettings backlash)
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       firmwareController.SetBacklashValues(backlash);
       return CommandResult.Success;
     }
 
     public CommandResult SendEmergencyStop()
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       firmwareController.SendEmergencyStop();
       return CommandResult.SuccessfullyReceived;
     }
 
     public CommandResult SetFilamentInformation(FilamentSpool filament)
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       firmwareController.SetFilamentInformation(filament, true);
       return CommandResult.Success;
     }
 
     public CommandResult SetNozzleWidth(int iNozzleWidthMicrons)
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController != null)
+      {
         return firmwareController.SetNozzleWidth(iNozzleWidthMicrons);
+      }
+
       return CommandResult.Failed_NotInFirmware;
     }
 
     public CommandResult AddUpdateKeyValuePair(string key, string value)
     {
-      if (this.ControllerSelf == null)
+      if (ControllerSelf == null)
+      {
         return CommandResult.Failed_NoAvailableController;
-      if (this.printerInfo.persistantData.SavedData.ContainsKey(key))
-        this.printerInfo.persistantData.SavedData[key] = value;
+      }
+
+      if (printerInfo.persistantData.SavedData.ContainsKey(key))
+      {
+        printerInfo.persistantData.SavedData[key] = value;
+      }
       else
-        this.printerInfo.persistantData.SavedData.Add(key, value);
-      this.ControllerSelf.SavePersistantData();
+      {
+        printerInfo.persistantData.SavedData.Add(key, value);
+      }
+
+      ControllerSelf.SavePersistantData();
       return CommandResult.Success;
     }
 
     public CommandResult ClearPowerRecoveryFault()
     {
-      if (this.m_oPowerRecoveryPlugin != null)
-        return this.m_oPowerRecoveryPlugin.ClearPowerRecoveryFault(true);
+      if (m_oPowerRecoveryPlugin != null)
+      {
+        return m_oPowerRecoveryPlugin.ClearPowerRecoveryFault(true);
+      }
+
       return CommandResult.Failed_NotInFirmware;
     }
 
     public CommandResult RecoveryPrintFromPowerFailure(bool bHomingRequired)
     {
-      if (this.m_oPowerRecoveryPlugin == null)
+      if (m_oPowerRecoveryPlugin == null)
+      {
         return CommandResult.Failed_NotInFirmware;
-      int num = (int) this.m_oPowerRecoveryPlugin.RecoveryPrintFromPowerFailure(bHomingRequired);
+      }
+
+      var num = (int)m_oPowerRecoveryPlugin.RecoveryPrintFromPowerFailure(bHomingRequired);
       if (num != 0)
+      {
         return (CommandResult) num;
-      this.Status = PrinterStatus.Firmware_PowerRecovery;
-      this.BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.PowerOutageRecovery, this.Info.serial_number, (string) null).Serialize());
+      }
+
+      Status = PrinterStatus.Firmware_PowerRecovery;
+      BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.PowerOutageRecovery, Info.serial_number, (string) null).Serialize());
       return (CommandResult) num;
     }
 
     public CommandResult WriteSerialdata(string base64data)
     {
-      BootloaderController bootloaderController = this.GetBootloaderController();
+      BootloaderController bootloaderController = GetBootloaderController();
       if (bootloaderController == null)
+      {
         return CommandResult.Failed_NotInBootloader;
+      }
+
       bootloaderController.WriteSerialdata(Convert.FromBase64String(base64data));
       return CommandResult.Success;
     }
 
     public CommandResult WriteSerialdata(string base64data, int getbytes)
     {
-      BootloaderController bootloaderController = this.GetBootloaderController();
+      BootloaderController bootloaderController = GetBootloaderController();
       if (bootloaderController == null)
+      {
         return CommandResult.Failed_NotInBootloader;
+      }
+
       bootloaderController.WriteSerialdata(Convert.FromBase64String(base64data), getbytes);
       return CommandResult.Success;
     }
 
     public CommandResult GotoBootloader()
     {
-      int num = (int) this.ReleaseLock(this.lockID);
-      FirmwareController firmwareController = this.GetFirmwareController();
+      var num = (int)ReleaseLock(lockID);
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return CommandResult.Failed_NotInFirmware;
+      }
+
       firmwareController.GotoBootloader();
       return CommandResult.Success;
     }
 
     public CommandResult GotoFirmware()
     {
-      int num = (int) this.ReleaseLock(this.lockID);
-      BootloaderController bootloaderController = this.GetBootloaderController();
+      var num = (int)ReleaseLock(lockID);
+      BootloaderController bootloaderController = GetBootloaderController();
       if (bootloaderController == null)
+      {
         return CommandResult.Failed_NotInBootloader;
+      }
+
       bootloaderController.GotoFirmware();
       return CommandResult.Success;
     }
 
     private void InitConnection()
     {
-      this.shared_shutdown = new ThreadSafeVariable<bool>(false);
-      this.internal_logger = new Logger(this.shared_shutdown);
-      this.printerInfo = new PrinterInfo();
-      this.CurrentRPC_id.Value = this.printerInfo.synchronization.LastCompletedRPCID = (uint) (SpoolerServer.RandomGenerator.Next() % (int) byte.MaxValue);
-      this.printerInfo.hardware.com_port = this._safeSerialPort.PortName;
-      this.Info.serial_number = PrinterSerialNumber.Undefined;
-      this.Status = PrinterStatus.Uninitialized;
-      this.lockID = Guid.Empty;
-      this.clientID = Guid.Empty;
-      this.lockStatus = PrinterConnection.LockStatus.Unlocked;
-      this.lock_sync = new object();
+      shared_shutdown = new ThreadSafeVariable<bool>(false);
+      internal_logger = new Logger(shared_shutdown);
+      printerInfo = new PrinterInfo();
+      CurrentRPC_id.Value = printerInfo.synchronization.LastCompletedRPCID = (uint) (SpoolerServer.RandomGenerator.Next() % (int) byte.MaxValue);
+      printerInfo.hardware.com_port = _safeSerialPort.PortName;
+      Info.serial_number = PrinterSerialNumber.Undefined;
+      Status = PrinterStatus.Uninitialized;
+      lockID = Guid.Empty;
+      clientID = Guid.Empty;
+      lockStatus = PrinterConnection.LockStatus.Unlocked;
+      lock_sync = new object();
     }
 
     public PrinterConnection(string com_port)
     {
-      object portThreadSync = new object();
-      this._safeSerialPort = (ISerialPortIo) new SafeSerialPort(com_port, portThreadSync)
+      var portThreadSync = new object();
+      _safeSerialPort = (ISerialPortIo) new SafeSerialPort(com_port, portThreadSync)
       {
         Parity = Parity.None,
         StopBits = StopBits.One,
         Handshake = Handshake.None
       };
-      this.InitConnection();
+      InitConnection();
     }
 
     public void SetPrinterProfile(InternalPrinterProfile profile)
     {
-      if (this.MyPrinterProfile != null)
+      if (MyPrinterProfile != null)
+      {
         throw new InvalidOperationException("Profile can only be set once");
-      if (profile == null)
-        throw new ArgumentNullException("profile can not equal null");
-      this.MyPrinterProfile = profile;
-      this.printerInfo.ProfileName = this.MyPrinterProfile.ProfileName;
+      }
+
+      MyPrinterProfile = profile ?? throw new ArgumentNullException("profile can not equal null");
+      printerInfo.ProfileName = MyPrinterProfile.ProfileName;
     }
 
     public void StartSerialProcessing()
     {
-      if (this.serialThread != null)
+      if (serialThread != null)
+      {
         return;
-      this.serialThread = new SharedShutdownThread(new SharedShutdownThreadStart(this.SerialProcessingThread), this.shared_shutdown, PrinterCompatibleString.PRINTER_CULTURE);
-      this.serialThread.DelayBetweenIterations = 1;
-      this.serialThread.Name = "Serial";
-      this.serialThread.Priority = ThreadPriority.AboveNormal;
-      this.serialThread.Start();
+      }
+
+      serialThread = new SharedShutdownThread(new SharedShutdownThreadStart(SerialProcessingThread), shared_shutdown, PrinterCompatibleString.PRINTER_CULTURE)
+      {
+        DelayBetweenIterations = 1,
+        Name = "Serial",
+        Priority = ThreadPriority.AboveNormal
+      };
+      serialThread.Start();
     }
 
     public void RequestFastSerialProcessing(bool bFastModeRequested)
     {
       if (bFastModeRequested)
-        this.serialThread.DelayBetweenIterations = 0;
+      {
+        serialThread.DelayBetweenIterations = 0;
+      }
       else
-        this.serialThread.DelayBetweenIterations = 1;
+      {
+        serialThread.DelayBetweenIterations = 1;
+      }
     }
 
     private bool SerialProcessingThread()
     {
-      if (this.Info.Status == PrinterStatus.Uninitialized)
-        return this.ProcessHandshakingPrinter();
-      if (this.Info.Status == PrinterStatus.Error_PrinterNotAlive)
+      if (Info.Status == PrinterStatus.Uninitialized)
+      {
+        return ProcessHandshakingPrinter();
+      }
+
+      if (Info.Status == PrinterStatus.Error_PrinterNotAlive)
+      {
         return false;
-      return this.ProcessConnectedPrinter();
+      }
+
+      return ProcessConnectedPrinter();
     }
 
     private bool ProcessHandshakingPrinter()
     {
-      if (!this.DoInitialHandShaking())
+      if (!DoInitialHandShaking())
       {
-        if (!PrinterConnection.serial_failed_list.ContainsKey(this.ComPort))
+        if (!serial_failed_list.ContainsKey(ComPort))
         {
           PrinterConnection.ConnectAttemptData connectAttemptData;
           connectAttemptData.time = DateTime.Now;
           connectAttemptData.message_sent = false;
-          PrinterConnection.serial_failed_list.TryAdd(this.ComPort, connectAttemptData);
+          serial_failed_list.TryAdd(ComPort, connectAttemptData);
         }
         else
         {
-          PrinterConnection.ConnectAttemptData comparisonValue;
-          if (PrinterConnection.serial_failed_list.TryGetValue(this.ComPort, out comparisonValue) && ((DateTime.Now - comparisonValue.time).Seconds > 30 && !comparisonValue.message_sent))
+          if (serial_failed_list.TryGetValue(ComPort, out ConnectAttemptData comparisonValue) && ((DateTime.Now - comparisonValue.time).Seconds > 30 && !comparisonValue.message_sent))
           {
             PrinterConnection.ConnectAttemptData newValue;
             newValue.time = comparisonValue.time;
             newValue.message_sent = true;
-            PrinterConnection.serial_failed_list.TryUpdate(this.ComPort, newValue, comparisonValue);
-            SpoolerMessage spoolerMessage = new SpoolerMessage(MessageType.FirmwareErrorCyclePower, new PrinterSerialNumber("0000000000000000"), "null");
-            if (this.broadcastserver != null)
-              this.broadcastserver.BroadcastMessage(spoolerMessage.Serialize());
+            serial_failed_list.TryUpdate(ComPort, newValue, comparisonValue);
+            var spoolerMessage = new SpoolerMessage(MessageType.FirmwareErrorCyclePower, new PrinterSerialNumber("0000000000000000"), "null");
+            if (broadcastserver != null)
+            {
+              broadcastserver.BroadcastMessage(spoolerMessage.Serialize());
+            }
           }
         }
-        this.IsAlive = false;
+        IsAlive = false;
       }
-      else if (PrinterConnection.serial_failed_list.ContainsKey(this.ComPort))
+      else if (serial_failed_list.ContainsKey(ComPort))
       {
-        PrinterConnection.ConnectAttemptData connectAttemptData;
-        PrinterConnection.serial_failed_list.TryRemove(this.ComPort, out connectAttemptData);
+        serial_failed_list.TryRemove(ComPort, out ConnectAttemptData connectAttemptData);
       }
-      return this.IsAlive;
+      return IsAlive;
     }
 
     private bool ProcessConnectedPrinter()
     {
       try
       {
-        if (this.Status == PrinterStatus.Error_PrinterNotAlive)
+        if (Status == PrinterStatus.Error_PrinterNotAlive)
+        {
           return false;
-        if (!this.IsOpen)
-          this.Status = PrinterStatus.Error_PrinterNotAlive;
-        BaseController controllerSelf = this.ControllerSelf;
+        }
+
+        if (!IsOpen)
+        {
+          Status = PrinterStatus.Error_PrinterNotAlive;
+        }
+
+        BaseController controllerSelf = ControllerSelf;
         if (controllerSelf != null)
         {
           controllerSelf.DoConnectionLogic();
-          if (!controllerSelf.IsWorking || this.Status == PrinterStatus.Firmware_PrintingPaused)
+          if (!controllerSelf.IsWorking || Status == PrinterStatus.Firmware_PrintingPaused)
           {
-            uint num = this.CurrentRPC_id.Value;
-            if (num != 0U && (int) num != (int) this.Info.synchronization.LastCompletedRPCID)
-              this.Info.synchronization.LastCompletedRPCID = num;
-          }
-          else
-          {
-            lock (this.lockResetTimer)
+            var num = CurrentRPC_id.Value;
+            if (num != 0U && (int) num != (int)Info.synchronization.LastCompletedRPCID)
             {
-              if (this.lockResetTimer.IsRunning)
-                this.lockResetTimer.Restart();
-            }
-          }
-          if (this.lockStatus == PrinterConnection.LockStatus.Pending && this.Status != PrinterStatus.Connecting && (!controllerSelf.IsWorking && !controllerSelf.IsPrinting || this.Status == PrinterStatus.Firmware_PrintingPaused))
-          {
-            this.lockStatus = PrinterConnection.LockStatus.Locked;
-            this.Info.synchronization.Locked = true;
-            this.BroadcastServer.SendMessageToClient(this.clientID, new SpoolerMessage(MessageType.LockConfirmed, this.Info.serial_number, this.lockID.ToString()).Serialize());
-          }
-          if (controllerSelf.Idle && this.lockStatus == PrinterConnection.LockStatus.Locked)
-          {
-            lock (this.lockResetTimer)
-            {
-              if (!this.lockResetTimer.IsRunning)
-                this.lockResetTimer.Restart();
-              if (this.lockResetTimer.Elapsed.TotalSeconds > 30.0)
-                this.DoBreakLock();
+              Info.synchronization.LastCompletedRPCID = num;
             }
           }
           else
           {
-            lock (this.lockResetTimer)
+            lock (lockResetTimer)
             {
-              if (this.lockResetTimer.IsRunning)
-                this.lockResetTimer.Stop();
+              if (lockResetTimer.IsRunning)
+              {
+                lockResetTimer.Restart();
+              }
+            }
+          }
+          if (lockStatus == PrinterConnection.LockStatus.Pending && Status != PrinterStatus.Connecting && (!controllerSelf.IsWorking && !controllerSelf.IsPrinting || Status == PrinterStatus.Firmware_PrintingPaused))
+          {
+            lockStatus = PrinterConnection.LockStatus.Locked;
+            Info.synchronization.Locked = true;
+            BroadcastServer.SendMessageToClient(clientID, new SpoolerMessage(MessageType.LockConfirmed, Info.serial_number, lockID.ToString()).Serialize());
+          }
+          if (controllerSelf.Idle && lockStatus == PrinterConnection.LockStatus.Locked)
+          {
+            lock (lockResetTimer)
+            {
+              if (!lockResetTimer.IsRunning)
+              {
+                lockResetTimer.Restart();
+              }
+
+              if (lockResetTimer.Elapsed.TotalSeconds > 30.0)
+              {
+                DoBreakLock();
+              }
+            }
+          }
+          else
+          {
+            lock (lockResetTimer)
+            {
+              if (lockResetTimer.IsRunning)
+              {
+                lockResetTimer.Stop();
+              }
             }
           }
         }
@@ -453,8 +583,11 @@ namespace M3D.Spooling.Core
       catch (Exception ex)
       {
         if (ex.Message.ToString().ToLower() != "unable to write program memory.  the serial port is not open.")
+        {
           ErrorLogger.LogException("PrinterConnection Exception", ex);
-        this.Shutdown();
+        }
+
+        Shutdown();
         return false;
       }
       return true;
@@ -467,118 +600,141 @@ namespace M3D.Spooling.Core
 
     ~PrinterConnection()
     {
-      this.Shutdown();
-      this.shared_shutdown.Value = true;
+      Shutdown();
+      shared_shutdown.Value = true;
     }
 
     public void Shutdown()
     {
-      this.Shutdown(0);
+      Shutdown(0);
     }
 
     public void Shutdown(int sleep_delay)
     {
       bool flag;
-      lock (this.shutdownlock)
+      lock (shutdownlock)
       {
-        flag = !this.hasbeenshutdown;
-        this.hasbeenshutdown = true;
+        flag = !hasbeenshutdown;
+        hasbeenshutdown = true;
       }
       if (!flag)
+      {
         return;
-      this.InternalLogger.Shutdown();
-      if (this.ControllerSelf != null)
-        this.ControllerSelf.Shutdown();
-      this.Status = PrinterStatus.Error_PrinterNotAlive;
+      }
+
+      InternalLogger.Shutdown();
+      if (ControllerSelf != null)
+      {
+        ControllerSelf.Shutdown();
+      }
+
+      Status = PrinterStatus.Error_PrinterNotAlive;
       Thread.Sleep(sleep_delay);
-      this.shared_shutdown.Value = true;
+      shared_shutdown.Value = true;
     }
 
     public string Serialize()
     {
-      if (this.PrinterInfo.InBootloaderMode && SpoolerServer.AUTO_UPDATE_FIRMWARE || this.PrinterInfo.Status == PrinterStatus.Bootloader_StartingUp)
+      if (PrinterInfo.InBootloaderMode && SpoolerServer.AUTO_UPDATE_FIRMWARE || PrinterInfo.Status == PrinterStatus.Bootloader_StartingUp)
+      {
         return (string) null;
-      return this.PrinterInfo.Serialize();
+      }
+
+      return PrinterInfo.Serialize();
     }
 
     public bool DoInitialHandShaking()
     {
-      string str1 = "";
-      int result = 0;
+      var result = 0;
       Thread.Sleep(1000);
-      ASCIIEncoding asciiEncoding = new ASCIIEncoding();
+      var asciiEncoding = new ASCIIEncoding();
       try
       {
-        Stopwatch stopwatch1 = new Stopwatch();
+        var stopwatch1 = new Stopwatch();
         stopwatch1.Stop();
         stopwatch1.Reset();
         stopwatch1.Start();
-        Stopwatch stopwatch2 = new Stopwatch();
+        var stopwatch2 = new Stopwatch();
         stopwatch2.Stop();
         stopwatch2.Reset();
         stopwatch2.Start();
-        this.WriteToSerial(asciiEncoding.GetBytes("M115\r\n"));
-        this.InternalLogger.WriteLog("<< M115 :ASCII:", Logger.TextType.Write);
-        bool flag1 = true;
-        bool flag2 = false;
-        bool flag3 = false;
-        string input = "";
-        while (!this.shared_shutdown.Value)
+        WriteToSerial(asciiEncoding.GetBytes("M115\r\n"));
+        InternalLogger.WriteLog("<< M115 :ASCII:", Logger.TextType.Write);
+        var flag1 = true;
+        var flag2 = false;
+        var flag3 = false;
+        var input = "";
+        while (!shared_shutdown.Value)
         {
           if (flag1 && stopwatch2.ElapsedMilliseconds > 2000L)
           {
             if (!flag2)
             {
-              if (!this.WriteToSerial(asciiEncoding.GetBytes("M115\r\n")))
+              if (!WriteToSerial(asciiEncoding.GetBytes("M115\r\n")))
+              {
                 return false;
-              this.InternalLogger.WriteLog("<< M115 :ASCII:(Resend)", Logger.TextType.Write);
+              }
+
+              InternalLogger.WriteLog("<< M115 :ASCII:(Resend)", Logger.TextType.Write);
               stopwatch2.Stop();
               stopwatch2.Reset();
               stopwatch2.Start();
               flag2 = true;
             }
             else
+            {
               flag3 = true;
+            }
           }
-          input += this.ReadExisting();
+          input += ReadExisting();
           Match match = Regex.Match(input, "B\\d+", RegexOptions.CultureInvariant);
           if (match.Success)
           {
-            string str2 = match.Value;
+            var str2 = match.Value;
             if (!int.TryParse(str2.Substring(1), out result))
+            {
               result = 0;
+            }
+
             stopwatch1.Stop();
-            str1 = "";
-            this.InternalLogger.WriteLog(">> " + str2, Logger.TextType.Read);
-            this.ControllerSelf = (BaseController) new BootloaderController(result, this, this.printerInfo, this.internal_logger, this.shared_shutdown, this.broadcastserver, this.MyPrinterProfile);
+            InternalLogger.WriteLog(">> " + str2, Logger.TextType.Read);
+            ControllerSelf = (BaseController) new BootloaderController(result, this, printerInfo, internal_logger, shared_shutdown, broadcastserver, MyPrinterProfile);
             return true;
           }
-          int startIndex = input.IndexOf("ok");
+          var startIndex = input.IndexOf("ok");
           if (startIndex >= 0)
           {
             if (flag1)
+            {
               return false;
+            }
+
             stopwatch1.Stop();
-            this.ControllerSelf = (BaseController) new FirmwareController(input.Substring(startIndex), this, this.printerInfo, this.internal_logger, this.shared_shutdown, this.broadcastserver, this.MyPrinterProfile);
-            this.RegisterFirmwarePlugins();
+            ControllerSelf = (BaseController) new FirmwareController(input.Substring(startIndex), this, printerInfo, internal_logger, shared_shutdown, broadcastserver, MyPrinterProfile);
+            RegisterFirmwarePlugins();
             return true;
           }
-          int length = input.IndexOf('\n');
+          var length = input.IndexOf('\n');
           if (length >= 0)
           {
-            string str2 = input.Substring(0, length);
+            var str2 = input.Substring(0, length);
             input = input.Substring(length + 1);
-            this.InternalLogger.WriteLog(">> " + str2, Logger.TextType.Read);
+            InternalLogger.WriteLog(">> " + str2, Logger.TextType.Read);
             if (str2.Contains("e"))
+            {
               flag3 = true;
+            }
           }
           if (flag3)
           {
             flag3 = false;
             input = "";
-            if (!this.WriteToSerial(new GCode() { M = (ushort) 115 }.getBinary(2)))
+            if (!WriteToSerial(new GCode() { M = (ushort) 115 }.getBinary(2)))
+            {
               return false;
-            this.InternalLogger.WriteLog("<< M115", Logger.TextType.Write);
+            }
+
+            InternalLogger.WriteLog("<< M115", Logger.TextType.Write);
             flag1 = false;
           }
         }
@@ -593,17 +749,23 @@ namespace M3D.Spooling.Core
 
     private FirmwareController GetFirmwareController()
     {
-      BaseController controllerSelf = this.ControllerSelf;
+      BaseController controllerSelf = ControllerSelf;
       if (controllerSelf != null)
+      {
         return controllerSelf as FirmwareController;
+      }
+
       return (FirmwareController) null;
     }
 
     private BootloaderController GetBootloaderController()
     {
-      BaseController controllerSelf = this.ControllerSelf;
+      BaseController controllerSelf = ControllerSelf;
       if (controllerSelf != null)
+      {
         return controllerSelf as BootloaderController;
+      }
+
       return (BootloaderController) null;
     }
 
@@ -611,11 +773,11 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this.m_oController.Value;
+        return m_oController.Value;
       }
       set
       {
-        this.m_oController.Value = value;
+        m_oController.Value = value;
       }
     }
 
@@ -623,13 +785,16 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return (uint) this.printerInfo.Status > 0U;
+        return (uint)printerInfo.Status > 0U;
       }
       set
       {
         if (value)
+        {
           return;
-        this.printerInfo.Status = PrinterStatus.Error_PrinterNotAlive;
+        }
+
+        printerInfo.Status = PrinterStatus.Error_PrinterNotAlive;
       }
     }
 
@@ -637,7 +802,7 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this.printerInfo.serial_number.ToString();
+        return printerInfo.serial_number.ToString();
       }
     }
 
@@ -645,7 +810,7 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this.printerInfo.hardware.com_port;
+        return printerInfo.hardware.com_port;
       }
     }
 
@@ -653,7 +818,7 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this.printerInfo;
+        return printerInfo;
       }
     }
 
@@ -661,7 +826,7 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this._safeSerialPort;
+        return _safeSerialPort;
       }
     }
 
@@ -669,7 +834,7 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this.lastError;
+        return lastError;
       }
     }
 
@@ -677,9 +842,12 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        if (this.ControllerSelf == null)
+        if (ControllerSelf == null)
+        {
           return false;
-        return this.ControllerSelf.IsWorking;
+        }
+
+        return ControllerSelf.IsWorking;
       }
     }
 
@@ -687,9 +855,12 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        if (this.ControllerSelf == null)
+        if (ControllerSelf == null)
+        {
           return false;
-        return this.ControllerSelf.HasActiveJob;
+        }
+
+        return ControllerSelf.HasActiveJob;
       }
     }
 
@@ -697,9 +868,12 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        if (this.ControllerSelf == null)
+        if (ControllerSelf == null)
+        {
           return false;
-        return this.ControllerSelf.IsPrinting;
+        }
+
+        return ControllerSelf.IsPrinting;
       }
     }
 
@@ -707,25 +881,34 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        if (this.ControllerSelf == null)
+        if (ControllerSelf == null)
+        {
           return false;
-        return this.ControllerSelf.IsPaused;
+        }
+
+        return ControllerSelf.IsPaused;
       }
     }
 
     public int GetJobsCount()
     {
-      if (this.ControllerSelf == null)
+      if (ControllerSelf == null)
+      {
         return 0;
-      return this.ControllerSelf.GetJobsCount();
+      }
+
+      return ControllerSelf.GetJobsCount();
     }
 
     public bool Ready
     {
       get
       {
-        if (!this.Info.InFirmwareMode)
-          return this.Info.InBootloaderMode;
+        if (!Info.InFirmwareMode)
+        {
+          return Info.InBootloaderMode;
+        }
+
         return true;
       }
     }
@@ -734,13 +917,17 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        lock (this.statusthreadsync)
-          return this.Info.Status;
+        lock (statusthreadsync)
+        {
+          return Info.Status;
+        }
       }
       protected set
       {
-        lock (this.statusthreadsync)
-          this.Info.Status = value;
+        lock (statusthreadsync)
+        {
+          Info.Status = value;
+        }
       }
     }
 
@@ -748,11 +935,11 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this.Info.serial_number;
+        return Info.serial_number;
       }
       set
       {
-        this.Info.serial_number = value;
+        Info.serial_number = value;
       }
     }
 
@@ -760,7 +947,7 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this.PrinterInfo;
+        return PrinterInfo;
       }
     }
 
@@ -768,80 +955,95 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return new PrinterInfo(this.Info);
+        return new PrinterInfo(Info);
       }
     }
 
     public void WriteLog(string text, Logger.TextType type)
     {
-      this.internal_logger.WriteLog(text, type);
+      internal_logger.WriteLog(text, type);
     }
 
     internal Logger InternalLogger
     {
       get
       {
-        return this.internal_logger;
+        return internal_logger;
       }
     }
 
     public void OnClientRemoved(Guid guid)
     {
-      if (!(this.clientID == guid))
+      if (!(clientID == guid))
+      {
         return;
-      this.lockStatus = PrinterConnection.LockStatus.Unlocked;
-      this.Info.synchronization.Locked = false;
-      this.clientID = Guid.Empty;
-      this.lockID = Guid.Empty;
+      }
+
+      lockStatus = PrinterConnection.LockStatus.Unlocked;
+      Info.synchronization.Locked = false;
+      clientID = Guid.Empty;
+      lockID = Guid.Empty;
     }
 
     public CommandResult AcquireLock(Guid clientID)
     {
-      lock (this.lock_sync)
+      lock (lock_sync)
       {
-        if (this.IsPrinting && !this.IsPaused)
+        if (IsPrinting && !IsPaused)
+        {
           return CommandResult.Failed_CannotLockWhilePrinting;
-        if (this.lockStatus == PrinterConnection.LockStatus.Locked && !(this.clientID == clientID))
+        }
+
+        if (lockStatus == PrinterConnection.LockStatus.Locked && !(this.clientID == clientID))
+        {
           return CommandResult.Failed_PrinterAlreadyLocked;
+        }
+
         this.clientID = clientID;
-        this.lockID = Guid.NewGuid();
-        this.lockStatus = PrinterConnection.LockStatus.Pending;
+        lockID = Guid.NewGuid();
+        lockStatus = PrinterConnection.LockStatus.Pending;
         return CommandResult.Pending;
       }
     }
 
     public CommandResult BreakLock()
     {
-      if (this.Status != PrinterStatus.Firmware_Idle)
+      if (Status != PrinterStatus.Firmware_Idle)
+      {
         return CommandResult.Failed_PreviousCommandNotCompleted;
-      this.DoBreakLock();
+      }
+
+      DoBreakLock();
       return CommandResult.LockForcedOpen;
     }
 
     public CommandResult ReleaseLock(Guid lockID)
     {
       CommandResult commandResult = CommandResult.Failed_PrinterDoesNotHaveLock;
-      lock (this.lock_sync)
+      lock (lock_sync)
       {
-        if (this.lockStatus != PrinterConnection.LockStatus.Locked)
+        if (lockStatus != PrinterConnection.LockStatus.Locked)
         {
-          if (this.lockStatus != PrinterConnection.LockStatus.Pending)
+          if (lockStatus != PrinterConnection.LockStatus.Pending)
+          {
             goto label_11;
+          }
         }
         if (this.lockID == lockID)
         {
-          this.lockStatus = PrinterConnection.LockStatus.Unlocked;
-          this.Info.synchronization.Locked = false;
-          this.clientID = Guid.Empty;
+          lockStatus = PrinterConnection.LockStatus.Unlocked;
+          Info.synchronization.Locked = false;
+          clientID = Guid.Empty;
           lockID = Guid.Empty;
           commandResult = CommandResult.Success_LockReleased;
         }
-        BaseController controllerSelf = this.ControllerSelf;
+        BaseController controllerSelf = ControllerSelf;
         if (controllerSelf != null)
         {
-          FirmwareController firmwareController = controllerSelf as FirmwareController;
-          if (firmwareController != null)
+          if (controllerSelf is FirmwareController firmwareController)
+          {
             firmwareController.BoundsCheckingEnabled = true;
+          }
         }
       }
 label_11:
@@ -851,35 +1053,41 @@ label_11:
     public CommandResult VerifyLock(Guid lockID)
     {
       CommandResult commandResult = CommandResult.Failed_PrinterDoesNotHaveLock;
-      lock (this.lock_sync)
+      lock (lock_sync)
       {
-        if (this.lockStatus == PrinterConnection.LockStatus.Locked)
+        if (lockStatus == PrinterConnection.LockStatus.Locked)
         {
           if (this.lockID == lockID)
+          {
             commandResult = CommandResult.Success;
+          }
         }
-        else if (this.lockStatus == PrinterConnection.LockStatus.Pending)
+        else if (lockStatus == PrinterConnection.LockStatus.Pending)
         {
           if (this.lockID == lockID)
+          {
             commandResult = CommandResult.Failed_LockNotReady;
+          }
         }
         else if (lockID == Guid.Empty)
+        {
           commandResult = CommandResult.Success;
+        }
       }
       return commandResult;
     }
 
     private void DoBreakLock()
     {
-      this.BroadcastServer.SendMessageToClient(this.clientID, new SpoolerMessage(MessageType.LockResult, this.Info.serial_number, 0.ToString("D8") + CommandResult.LockLost_TimedOut.ToString()).Serialize());
-      int num = (int) this.ReleaseLock(this.lockID);
+      BroadcastServer.SendMessageToClient(clientID, new SpoolerMessage(MessageType.LockResult, Info.serial_number, 0.ToString("D8") + CommandResult.LockLost_TimedOut.ToString()).Serialize());
+      var num = (int)ReleaseLock(lockID);
     }
 
     public Guid MyLock
     {
       get
       {
-        return this.lockID;
+        return lockID;
       }
     }
 
@@ -887,21 +1095,21 @@ label_11:
     {
       try
       {
-        return this.SerialConnect(115200);
+        return SerialConnect(115200);
       }
       catch (Exception ex)
       {
-        this.lastError = ex.Message + "\n" + ex.StackTrace;
+        lastError = ex.Message + "\n" + ex.StackTrace;
         return false;
       }
     }
 
     public bool WriteToSerial(byte[] command)
     {
-      bool flag = true;
+      var flag = true;
       try
       {
-        this._safeSerialPort.Write(command, 0, command.Length);
+        _safeSerialPort.Write(command, 0, command.Length);
       }
       catch (ThreadAbortException ex)
       {
@@ -916,8 +1124,11 @@ label_11:
 
     public string ReadExisting()
     {
-      if (this._safeSerialPort.BytesToRead > 0)
-        return this._safeSerialPort.ReadExisting();
+      if (_safeSerialPort.BytesToRead > 0)
+      {
+        return _safeSerialPort.ReadExisting();
+      }
+
       return (string) null;
     }
 
@@ -925,7 +1136,7 @@ label_11:
     {
       get
       {
-        return this._safeSerialPort.IsOpen;
+        return _safeSerialPort.IsOpen;
       }
     }
 
@@ -933,22 +1144,22 @@ label_11:
     {
       try
       {
-        this._safeSerialPort.Open();
+        _safeSerialPort.Open();
       }
       catch (Exception ex)
       {
-        this.lastError = ex.Message;
+        lastError = ex.Message;
         return false;
       }
       try
       {
-        this._safeSerialPort.WriteTimeout = 5000;
-        this._safeSerialPort.ReadTimeout = 5000;
+        _safeSerialPort.WriteTimeout = 5000;
+        _safeSerialPort.ReadTimeout = 5000;
       }
       catch (Exception ex)
       {
-        this._safeSerialPort.Dispose();
-        this.lastError = ex.Message;
+        _safeSerialPort.Dispose();
+        lastError = ex.Message;
         return false;
       }
       Thread.Sleep(250);
@@ -957,38 +1168,51 @@ label_11:
 
     public CommandResult RegisterExternalPluginGCodes(string ID, string[] gCodeList)
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController != null)
+      {
         return firmwareController.RegisterExternalPluginGCodes(ID, gCodeList);
+      }
+
       return CommandResult.Failed_NotInFirmware;
     }
 
     public void BroadcastPluginMessage(SpoolerMessage message)
     {
       if (message.Type != MessageType.PluginMessage)
+      {
         return;
-      if (this.clientID != Guid.Empty)
-        this.BroadcastServer.SendMessageToClient(this.clientID, message.Serialize());
+      }
+
+      if (clientID != Guid.Empty)
+      {
+        BroadcastServer.SendMessageToClient(clientID, message.Serialize());
+      }
       else
-        this.BroadcastServer.BroadcastMessage(message.Serialize());
+      {
+        BroadcastServer.BroadcastMessage(message.Serialize());
+      }
     }
 
     private void RegisterFirmwarePlugins()
     {
-      FirmwareController firmwareController = this.GetFirmwareController();
+      FirmwareController firmwareController = GetFirmwareController();
       if (firmwareController == null)
+      {
         return;
-      SDCardPlugin sdCardPlugin = new SDCardPlugin(this.PrinterInfo.accessories.SDCardStatus, new SDCardPlugin.ActiveSDPrintCallback(firmwareController.ConnectToActiveSDPrint));
-      int num1 = (int) firmwareController.RegisterPlugin((FirmwareControllerPlugin) sdCardPlugin);
-      this.m_oPowerRecoveryPlugin = new PowerRecoveryPlugin(this.PrinterInfo.powerRecovery, (IPublicFirmwareController) firmwareController, new PowerRecoveryPlugin.RecoverySpoolerPrintCallback(firmwareController.RecoverySpoolerPrintCallback));
-      int num2 = (int) firmwareController.RegisterPlugin((FirmwareControllerPlugin) this.m_oPowerRecoveryPlugin);
+      }
+
+      var sdCardPlugin = new SDCardPlugin(PrinterInfo.accessories.SDCardStatus, new SDCardPlugin.ActiveSDPrintCallback(firmwareController.ConnectToActiveSDPrint));
+      var num1 = (int) firmwareController.RegisterPlugin((FirmwareControllerPlugin) sdCardPlugin);
+      m_oPowerRecoveryPlugin = new PowerRecoveryPlugin(PrinterInfo.powerRecovery, (IPublicFirmwareController) firmwareController, new PowerRecoveryPlugin.RecoverySpoolerPrintCallback(firmwareController.RecoverySpoolerPrintCallback));
+      var num2 = (int) firmwareController.RegisterPlugin((FirmwareControllerPlugin)m_oPowerRecoveryPlugin);
     }
 
     protected IBroadcastServer BroadcastServer
     {
       get
       {
-        return this.broadcastserver;
+        return broadcastserver;
       }
     }
 

@@ -24,26 +24,29 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     {
       get
       {
-        return this.printerColor;
+        return printerColor;
       }
       set
       {
-        this.printerColor = value;
-        Color4 color4 = new Color4(this.printerColor.R / 4f, this.printerColor.G / 4f, this.printerColor.B / 4f, 1f);
-        if (this.PrinterModel != null)
+        printerColor = value;
+        var color4 = new Color4(printerColor.R / 4f, printerColor.G / 4f, printerColor.B / 4f, 1f);
+        if (PrinterModel != null)
         {
-          this.PrinterModel.Ambient = color4;
-          this.PrinterModel.Diffuse = this.printerColor;
+          PrinterModel.Ambient = color4;
+          PrinterModel.Diffuse = printerColor;
         }
-        if (this.PrinterBed != null)
+        if (PrinterBed != null)
         {
-          this.PrinterBed.Ambient = color4;
-          this.PrinterBed.Diffuse = this.printerColor;
+          PrinterBed.Ambient = color4;
+          PrinterBed.Diffuse = printerColor;
         }
-        if (this.PrinterLogo == null)
+        if (PrinterLogo == null)
+        {
           return;
-        this.PrinterLogo.Ambient = color4;
-        this.PrinterLogo.Diffuse = this.printerColor;
+        }
+
+        PrinterLogo.Ambient = color4;
+        PrinterLogo.Diffuse = printerColor;
       }
     }
 
@@ -59,7 +62,10 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     {
       M3D.Graphics.Ext3D.ModelRendering.Model model = ModelLoadingManager.LoadModelFromFile(filename);
       if (model != null)
+      {
         return model;
+      }
+
       throw new FileLoadException();
     }
 

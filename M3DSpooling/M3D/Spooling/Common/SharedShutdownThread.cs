@@ -27,22 +27,22 @@ namespace M3D.Spooling.Common
 
     public SharedShutdownThread(SharedShutdownThreadStart oThreadLoopBody, ThreadSafeVariable<bool> oShutdown, CultureInfo oThreadCulture)
     {
-      this.m_oSleepDelay = new ThreadSafeVariable<int>(-1);
-      this.ThreadLoopBody = oThreadLoopBody;
-      this.m_oSharedShutdownFlag = oShutdown;
-      this.m_oThreadCulture = oThreadCulture;
-      this.m_oInternalThread = new Thread(new ThreadStart(this.vInternalThreadLoop));
+      m_oSleepDelay = new ThreadSafeVariable<int>(-1);
+      ThreadLoopBody = oThreadLoopBody;
+      m_oSharedShutdownFlag = oShutdown;
+      m_oThreadCulture = oThreadCulture;
+      m_oInternalThread = new Thread(new ThreadStart(vInternalThreadLoop));
     }
 
     public string Name
     {
       get
       {
-        return this.m_oInternalThread.Name;
+        return m_oInternalThread.Name;
       }
       set
       {
-        this.m_oInternalThread.Name = value;
+        m_oInternalThread.Name = value;
       }
     }
 
@@ -50,11 +50,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.m_oInternalThread.Priority;
+        return m_oInternalThread.Priority;
       }
       set
       {
-        this.m_oInternalThread.Priority = value;
+        m_oInternalThread.Priority = value;
       }
     }
 
@@ -62,11 +62,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.m_oInternalThread.IsBackground;
+        return m_oInternalThread.IsBackground;
       }
       set
       {
-        this.m_oInternalThread.IsBackground = value;
+        m_oInternalThread.IsBackground = value;
       }
     }
 
@@ -74,31 +74,38 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.m_oSleepDelay.Value;
+        return m_oSleepDelay.Value;
       }
       set
       {
-        this.m_oSleepDelay.Value = value;
+        m_oSleepDelay.Value = value;
       }
     }
 
     public void Start()
     {
-      this.m_oInternalThread.Start();
+      m_oInternalThread.Start();
     }
 
     private void vInternalThreadLoop()
     {
       try
       {
-        if (this.m_oThreadCulture != null)
-          Thread.CurrentThread.CurrentCulture = this.m_oThreadCulture;
-        while (!this.m_oSharedShutdownFlag.Value && this.ThreadLoopBody())
+        if (m_oThreadCulture != null)
         {
-          if (this.m_oSleepDelay.Value == 0)
-            Thread.Sleep(this.m_oMinimumDelay);
-          else if (0 < this.m_oSleepDelay.Value)
-            Thread.Sleep(this.m_oSleepDelay.Value);
+          Thread.CurrentThread.CurrentCulture = m_oThreadCulture;
+        }
+
+        while (!m_oSharedShutdownFlag.Value && ThreadLoopBody())
+        {
+          if (m_oSleepDelay.Value == 0)
+          {
+            Thread.Sleep(m_oMinimumDelay);
+          }
+          else if (0 < m_oSleepDelay.Value)
+          {
+            Thread.Sleep(m_oSleepDelay.Value);
+          }
         }
       }
       catch (ThreadAbortException ex)
@@ -106,8 +113,10 @@ namespace M3D.Spooling.Common
       }
       finally
       {
-        if (this.OnThreadAborted != null)
-          this.OnThreadAborted((object) this, this.m_oSharedShutdownFlag);
+        if (OnThreadAborted != null)
+        {
+          OnThreadAborted((object) this, m_oSharedShutdownFlag);
+        }
       }
     }
   }

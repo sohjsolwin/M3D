@@ -34,87 +34,91 @@ namespace M3D.Graphics.Frames_and_Layouts
     public TreeNodeWidget(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.layoutMode = Layout.LayoutMode.ResizeLayoutToFitChildren;
+      layoutMode = Layout.LayoutMode.ResizeLayoutToFitChildren;
     }
 
     public void Init(GUIHost host, string label, bool open)
     {
-      this.BorderColor = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      this.BGColor = new Color4(1f, 1f, 1f, 1f);
-      this.border_width = this.indent;
-      this.CreateLabel(host);
-      this.Label = label;
-      this.labelButton.Checked = open;
-      this.TopLevel = false;
+      BorderColor = new Color4(0.5f, 0.5f, 0.5f, 1f);
+      BGColor = new Color4(1f, 1f, 1f, 1f);
+      border_width = indent;
+      CreateLabel(host);
+      Label = label;
+      labelButton.Checked = open;
+      TopLevel = false;
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
       base.InitChildren(parent, host, MyButtonCallback);
-      this.Init(host, this._label, false);
+      Init(host, _label, false);
     }
 
     private void OnButtonClicked(ButtonWidget button)
     {
-      button.Text = this.LabelButtonText;
+      button.Text = LabelButtonText;
       if (button.Checked)
       {
-        this.labelButton.TextDownColor = new Color4(1f, 1f, 1f, 1f);
-        this.BGColor = new Color4((byte) 97, (byte) 97, (byte) 97, byte.MaxValue);
-        foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+        labelButton.TextDownColor = new Color4(1f, 1f, 1f, 1f);
+        BGColor = new Color4((byte) 97, (byte) 97, (byte) 97, byte.MaxValue);
+        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
         {
-          if (child != this.labelButton)
+          if (child != labelButton)
           {
             child.Visible = true;
             child.X = 20;
           }
         }
-        if (this.Parent != null)
-          this.Parent.TurnOffGroup(this.GroupID, (Element2D) this);
+        if (Parent != null)
+        {
+          Parent.TurnOffGroup(GroupID, (Element2D) this);
+        }
       }
       else
       {
-        if (this.TopLevel)
+        if (TopLevel)
         {
-          this.labelButton.TextColor = new Color4(0.1843137f, 0.3294118f, 0.345098f, 1f);
-          this.labelButton.TextDownColor = new Color4(0.25f, 0.25f, 0.25f, 1f);
-          this.BGColor = new Color4(1f, 1f, 1f, 1f);
+          labelButton.TextColor = new Color4(0.1843137f, 0.3294118f, 0.345098f, 1f);
+          labelButton.TextDownColor = new Color4(0.25f, 0.25f, 0.25f, 1f);
+          BGColor = new Color4(1f, 1f, 1f, 1f);
         }
-        foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
         {
-          if (child != this.labelButton)
+          if (child != labelButton)
+          {
             child.Visible = false;
+          }
         }
       }
-      this.Refresh();
+      Refresh();
     }
 
     public override void Refresh()
     {
       base.Refresh();
-      this.Parent.Refresh();
+      Parent.Refresh();
     }
 
     public override void SetOff()
     {
-      this.labelButton.Checked = false;
+      labelButton.Checked = false;
     }
 
     private void CreateLabel(GUIHost host)
     {
-      this.labelButton = new ButtonWidget(2001, (Element2D) this);
-      this.labelButton.Init(host, ButtonTemplate.TextOnly);
-      this.labelButton.SetCallback(new ButtonCallback(this.OnButtonClicked));
-      this.labelButton.Height = this.label_height;
-      this.labelButton.RelativeWidth = 1f;
-      this.labelButton.Alignment = QFontAlignment.Left;
-      this.labelButton.AlwaysHighlightOnMouseOver = true;
-      this.labelButton.DontMove = true;
-      this.labelButton.ClickType = ButtonType.Checkable;
-      this.labelButton.CanClickOff = true;
-      this.labelButton.Text = this.LabelButtonText;
-      this.AddFirstChild((Element2D) this.labelButton);
-      this.Refresh();
+      labelButton = new ButtonWidget(2001, (Element2D) this);
+      labelButton.Init(host, ButtonTemplate.TextOnly);
+      labelButton.SetCallback(new ButtonCallback(OnButtonClicked));
+      labelButton.Height = label_height;
+      labelButton.RelativeWidth = 1f;
+      labelButton.Alignment = QFontAlignment.Left;
+      labelButton.AlwaysHighlightOnMouseOver = true;
+      labelButton.DontMove = true;
+      labelButton.ClickType = ButtonType.Checkable;
+      labelButton.CanClickOff = true;
+      labelButton.Text = LabelButtonText;
+      AddFirstChild((Element2D)labelButton);
+      Refresh();
     }
 
     [XmlAttribute("label")]
@@ -122,14 +126,17 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this._label;
+        return _label;
       }
       set
       {
-        this._label = value;
-        if (this.labelButton == null)
+        _label = value;
+        if (labelButton == null)
+        {
           return;
-        this.labelButton.Text = this.LabelButtonText;
+        }
+
+        labelButton.Text = LabelButtonText;
       }
     }
 
@@ -138,14 +145,17 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.label_height;
+        return label_height;
       }
       set
       {
-        this.label_height = value;
-        if (this.labelButton == null)
+        label_height = value;
+        if (labelButton == null)
+        {
           return;
-        this.labelButton.Height = this.label_height;
+        }
+
+        labelButton.Height = label_height;
       }
     }
 
@@ -153,9 +163,12 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        if (this.labelButton != null && this.labelButton.Checked)
-          return this.OpenText;
-        return this.ClosedText;
+        if (labelButton != null && labelButton.Checked)
+        {
+          return OpenText;
+        }
+
+        return ClosedText;
       }
     }
 
@@ -163,7 +176,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return "-   " + this._label;
+        return "-   " + _label;
       }
     }
 
@@ -171,7 +184,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return "+   " + this._label;
+        return "+   " + _label;
       }
     }
 
@@ -180,22 +193,22 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this._topLevel;
+        return _topLevel;
       }
       set
       {
-        this._topLevel = value;
-        if (this._topLevel && !this.labelButton.Checked)
+        _topLevel = value;
+        if (_topLevel && !labelButton.Checked)
         {
-          this.labelButton.TextColor = new Color4(0.1843137f, 0.3294118f, 0.345098f, 1f);
-          this.labelButton.TextDownColor = new Color4(0.25f, 0.25f, 0.25f, 1f);
-          this.BGColor = new Color4(1f, 1f, 1f, 1f);
+          labelButton.TextColor = new Color4(0.1843137f, 0.3294118f, 0.345098f, 1f);
+          labelButton.TextDownColor = new Color4(0.25f, 0.25f, 0.25f, 1f);
+          BGColor = new Color4(1f, 1f, 1f, 1f);
         }
         else
         {
-          this.labelButton.TextColor = new Color4(1f, 1f, 1f, 1f);
-          this.labelButton.TextDownColor = new Color4(1f, 1f, 1f, 1f);
-          this.BGColor = new Color4((byte) 97, (byte) 97, (byte) 97, byte.MaxValue);
+          labelButton.TextColor = new Color4(1f, 1f, 1f, 1f);
+          labelButton.TextDownColor = new Color4(1f, 1f, 1f, 1f);
+          BGColor = new Color4((byte) 97, (byte) 97, (byte) 97, byte.MaxValue);
         }
       }
     }

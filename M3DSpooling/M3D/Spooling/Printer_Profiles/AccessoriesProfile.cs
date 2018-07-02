@@ -19,23 +19,23 @@ namespace M3D.Spooling.Printer_Profiles
 
     public AccessoriesProfile(bool HasBuiltinHeatedBed, int HeatedBedMinTemp, int HeatedBedMaxTemp, bool HasSDCard, bool bHasInterchangeableNozzle, int iDefaultNozzleSizeMicrons, int iMinimumNozzleSizeMicrons, int iMaximumNozzleSizeMicrons, int iMinimumNozzleWarningSizeMicrons, int iMaximumNozzleWarningSizeMicrons)
     {
-      this.HeatedBedConstants = new AccessoriesProfile.HeatedBedProfile(HasBuiltinHeatedBed, HeatedBedMinTemp, HeatedBedMaxTemp);
-      this.SDCardConstants = new AccessoriesProfile.SDCardProfile(HasSDCard);
-      this.NozzleConstants = new AccessoriesProfile.NozzleProfile(bHasInterchangeableNozzle, iDefaultNozzleSizeMicrons, iMinimumNozzleSizeMicrons, iMaximumNozzleSizeMicrons, iMinimumNozzleWarningSizeMicrons, iMaximumNozzleWarningSizeMicrons);
+      HeatedBedConstants = new AccessoriesProfile.HeatedBedProfile(HasBuiltinHeatedBed, HeatedBedMinTemp, HeatedBedMaxTemp);
+      SDCardConstants = new AccessoriesProfile.SDCardProfile(HasSDCard);
+      NozzleConstants = new AccessoriesProfile.NozzleProfile(bHasInterchangeableNozzle, iDefaultNozzleSizeMicrons, iMinimumNozzleSizeMicrons, iMaximumNozzleSizeMicrons, iMinimumNozzleWarningSizeMicrons, iMaximumNozzleWarningSizeMicrons);
     }
 
     public AccessoriesProfile(AccessoriesProfile other)
     {
-      this.HeatedBedConstants = new AccessoriesProfile.HeatedBedProfile(other.HeatedBedConstants);
-      this.SDCardConstants = new AccessoriesProfile.SDCardProfile(other.SDCardConstants);
-      this.NozzleConstants = new AccessoriesProfile.NozzleProfile(other.NozzleConstants);
+      HeatedBedConstants = new AccessoriesProfile.HeatedBedProfile(other.HeatedBedConstants);
+      SDCardConstants = new AccessoriesProfile.SDCardProfile(other.SDCardConstants);
+      NozzleConstants = new AccessoriesProfile.NozzleProfile(other.NozzleConstants);
     }
 
     public AccessoriesProfile()
     {
-      this.HeatedBedConstants = new AccessoriesProfile.HeatedBedProfile();
-      this.SDCardConstants = new AccessoriesProfile.SDCardProfile();
-      this.NozzleConstants = new AccessoriesProfile.NozzleProfile();
+      HeatedBedConstants = new AccessoriesProfile.HeatedBedProfile();
+      SDCardConstants = new AccessoriesProfile.SDCardProfile();
+      NozzleConstants = new AccessoriesProfile.NozzleProfile();
     }
 
     public class HeatedBedProfile
@@ -56,16 +56,16 @@ namespace M3D.Spooling.Printer_Profiles
 
       public HeatedBedProfile(AccessoriesProfile.HeatedBedProfile other)
       {
-        this.HasBuiltinHeatedBed = other.HasBuiltinHeatedBed;
-        this.HeatedBedMinTemp = other.HeatedBedMinTemp;
-        this.HeatedBedMaxTemp = other.HeatedBedMaxTemp;
+        HasBuiltinHeatedBed = other.HasBuiltinHeatedBed;
+        HeatedBedMinTemp = other.HeatedBedMinTemp;
+        HeatedBedMaxTemp = other.HeatedBedMaxTemp;
       }
 
       public HeatedBedProfile()
       {
-        this.HasBuiltinHeatedBed = false;
-        this.HeatedBedMinTemp = 0;
-        this.HeatedBedMaxTemp = 0;
+        HasBuiltinHeatedBed = false;
+        HeatedBedMinTemp = 0;
+        HeatedBedMaxTemp = 0;
       }
     }
 
@@ -81,12 +81,12 @@ namespace M3D.Spooling.Printer_Profiles
 
       public SDCardProfile(AccessoriesProfile.SDCardProfile other)
       {
-        this.HasSDCard = other.HasSDCard;
+        HasSDCard = other.HasSDCard;
       }
 
       public SDCardProfile()
       {
-        this.HasSDCard = false;
+        HasSDCard = false;
       }
     }
 
@@ -117,22 +117,22 @@ namespace M3D.Spooling.Printer_Profiles
 
       public NozzleProfile(AccessoriesProfile.NozzleProfile other)
       {
-        this.bHasInterchangeableNozzle = other.bHasInterchangeableNozzle;
-        this.iDefaultNozzleSizeMicrons = other.iDefaultNozzleSizeMicrons;
-        this.iMinimumNozzleSizeMicrons = other.iMinimumNozzleSizeMicrons;
-        this.iMaximumNozzleSizeMicrons = other.iMaximumNozzleSizeMicrons;
-        this.iMinimumNozzleWarningSizeMicrons = other.iMinimumNozzleWarningSizeMicrons;
-        this.iMaximumNozzleWarningSizeMicrons = other.iMaximumNozzleWarningSizeMicrons;
+        bHasInterchangeableNozzle = other.bHasInterchangeableNozzle;
+        iDefaultNozzleSizeMicrons = other.iDefaultNozzleSizeMicrons;
+        iMinimumNozzleSizeMicrons = other.iMinimumNozzleSizeMicrons;
+        iMaximumNozzleSizeMicrons = other.iMaximumNozzleSizeMicrons;
+        iMinimumNozzleWarningSizeMicrons = other.iMinimumNozzleWarningSizeMicrons;
+        iMaximumNozzleWarningSizeMicrons = other.iMaximumNozzleWarningSizeMicrons;
       }
 
       public NozzleProfile()
       {
-        this.bHasInterchangeableNozzle = false;
-        this.iDefaultNozzleSizeMicrons = 0;
-        this.iMinimumNozzleSizeMicrons = 0;
-        this.iMaximumNozzleSizeMicrons = 0;
-        this.iMinimumNozzleWarningSizeMicrons = 0;
-        this.iMaximumNozzleWarningSizeMicrons = 0;
+        bHasInterchangeableNozzle = false;
+        iDefaultNozzleSizeMicrons = 0;
+        iMinimumNozzleSizeMicrons = 0;
+        iMaximumNozzleSizeMicrons = 0;
+        iMinimumNozzleWarningSizeMicrons = 0;
+        iMaximumNozzleWarningSizeMicrons = 0;
       }
     }
   }

@@ -22,9 +22,9 @@ namespace M3D.GUI.Forms.Splash
 
     public SplashFormFirstRun()
     {
-      this.InitializeComponent();
-      this.CenterToScreen();
-      this.timer1.Start();
+      InitializeComponent();
+      CenterToScreen();
+      timer1.Start();
       SplashFormFirstRun.WasRunForTheFirstTime = true;
     }
 
@@ -38,39 +38,44 @@ namespace M3D.GUI.Forms.Splash
 
     private void timer1_Tick(object sender, EventArgs e)
     {
-      this.timer1.Stop();
-      this.timer1.Enabled = false;
-      string publicDataFolder = Paths.PublicDataFolder;
+      timer1.Stop();
+      timer1.Enabled = false;
+      var publicDataFolder = Paths.PublicDataFolder;
       SplashFormFirstRun.DirectoryCopy(Path.Combine(Paths.ResourceFolder, "Data"), Path.Combine(publicDataFolder, "Data"), true);
       SplashFormFirstRun.DirectoryCopy(Path.Combine(Paths.ResourceFolder, "MyLibrary"), Path.Combine(publicDataFolder, "MyLibrary"), true);
       SplashFormFirstRun.DirectoryCopy(Path.Combine(Paths.ResourceFolder, "Utility"), Path.Combine(publicDataFolder, "Utility"), true);
       SplashFormFirstRun.DirectoryCopy(Path.Combine(Paths.ResourceFolder, "Working"), Path.Combine(publicDataFolder, "Working"), true);
-      BinaryWriter binaryWriter = new BinaryWriter((Stream) new FileStream(Path.Combine(publicDataFolder, "version.info"), FileMode.Create));
+      var binaryWriter = new BinaryWriter((Stream) new FileStream(Path.Combine(publicDataFolder, "version.info"), FileMode.Create));
       binaryWriter.Write(M3D.Spooling.Version.Client_Version.major);
       binaryWriter.Write(M3D.Spooling.Version.Client_Version.minor);
       binaryWriter.Write(M3D.Spooling.Version.Client_Version.build);
       binaryWriter.Write(M3D.Spooling.Version.Client_Version.hotfix);
       binaryWriter.Close();
-      this.Hide();
-      this.Close();
+      Hide();
+      Close();
     }
 
     private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
     {
-      DirectoryInfo directoryInfo1 = new DirectoryInfo(sourceDirName);
+      var directoryInfo1 = new DirectoryInfo(sourceDirName);
       DirectoryInfo[] directories;
       try
       {
         directories = directoryInfo1.GetDirectories();
         if (!directoryInfo1.Exists)
+        {
           throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceDirName);
+        }
       }
       catch (Exception ex)
       {
         throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceDirName, ex);
       }
       if (!Directory.Exists(destDirName))
+      {
         Directory.CreateDirectory(destDirName);
+      }
+
       try
       {
         new DirectoryInfo(destDirName).Attributes &= ~FileAttributes.ReadOnly;
@@ -89,7 +94,7 @@ namespace M3D.GUI.Forms.Splash
         }
         try
         {
-          string destFileName = Path.Combine(destDirName, file.Name);
+          var destFileName = Path.Combine(destDirName, file.Name);
           file.CopyTo(destFileName, true);
         }
         catch (Exception ex)
@@ -97,46 +102,61 @@ namespace M3D.GUI.Forms.Splash
         }
       }
       if (!copySubDirs)
+      {
         return;
+      }
+
       foreach (DirectoryInfo directoryInfo2 in directories)
       {
-        string destDirName1 = Path.Combine(destDirName, directoryInfo2.Name);
+        var destDirName1 = Path.Combine(destDirName, directoryInfo2.Name);
         SplashFormFirstRun.DirectoryCopy(directoryInfo2.FullName, destDirName1, copySubDirs);
       }
     }
 
     protected override void Dispose(bool disposing)
     {
-      if (disposing && this.components != null)
-        this.components.Dispose();
+      if (disposing && components != null)
+      {
+        components.Dispose();
+      }
+
       base.Dispose(disposing);
     }
 
     private void InitializeComponent()
     {
-      this.components = (IContainer) new Container();
-      this.timer1 = new Timer(this.components);
-      this.SuspendLayout();
-      this.timer1.Interval = 2000;
-      this.timer1.Tick += new EventHandler(this.timer1_Tick);
-      this.AutoScaleDimensions = new SizeF(6f, 13f);
-      this.AutoScaleMode = AutoScaleMode.Font;
-      this.BackColor = Color.White;
-      this.BackgroundImageLayout = ImageLayout.Center;
+      components = (IContainer) new Container();
+      timer1 = new Timer(components);
+      SuspendLayout();
+      timer1.Interval = 2000;
+      timer1.Tick += new EventHandler(timer1_Tick);
+      AutoScaleDimensions = new SizeF(6f, 13f);
+      AutoScaleMode = AutoScaleMode.Font;
+      BackColor = Color.White;
+      BackgroundImageLayout = ImageLayout.Center;
       if (Program.isDEBUGBUILD || VersionNumber.Stage.DEBUG == M3D.Spooling.Version.Client_Version.stage)
-        this.BackgroundImage = (Image) Resources.splashscreen_debug;
+      {
+        BackgroundImage = (Image) Resources.splashscreen_debug;
+      }
       else if (VersionNumber.Stage.Alpha == M3D.Spooling.Version.Client_Version.stage)
-        this.BackgroundImage = (Image) Resources.splashscreenFirstRunAlpha;
+      {
+        BackgroundImage = (Image) Resources.splashscreenFirstRunAlpha;
+      }
       else if (VersionNumber.Stage.Beta == M3D.Spooling.Version.Client_Version.stage)
-        this.BackgroundImage = (Image) Resources.splashscreenFirstRun_beta;
+      {
+        BackgroundImage = (Image) Resources.splashscreenFirstRun_beta;
+      }
       else if (M3D.Spooling.Version.Client_Version.stage == VersionNumber.Stage.Release || VersionNumber.Stage.ReleaseCandidate == M3D.Spooling.Version.Client_Version.stage)
-        this.BackgroundImage = (Image) Resources.splashscreenFirstRun_real;
-      this.ClientSize = new Size(500, 375);
-      this.ControlBox = false;
-      this.FormBorderStyle = FormBorderStyle.None;
-      this.Name = nameof (SplashFormFirstRun);
-      this.TransparencyKey = Color.White;
-      this.ResumeLayout(false);
+      {
+        BackgroundImage = (Image) Resources.splashscreenFirstRun_real;
+      }
+
+      ClientSize = new Size(500, 375);
+      ControlBox = false;
+      FormBorderStyle = FormBorderStyle.None;
+      Name = nameof (SplashFormFirstRun);
+      TransparencyKey = Color.White;
+      ResumeLayout(false);
     }
   }
 }

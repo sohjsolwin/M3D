@@ -29,21 +29,21 @@ namespace M3D.Spooling.Printer_Profiles
 
     public PrinterProfile()
     {
-      this.AccessoriesConstants = new AccessoriesProfile();
-      this.TemperatureConstants = new TemperatureProfile();
-      this.PrinterSizeConstants = new PrinterSizeProfile();
-      this.SpeedLimitConstants = new SpeedLimitProfile();
-      this.SupportedFeaturesConstants = new SupportedFeaturesProfile();
+      AccessoriesConstants = new AccessoriesProfile();
+      TemperatureConstants = new TemperatureProfile();
+      PrinterSizeConstants = new PrinterSizeProfile();
+      SpeedLimitConstants = new SpeedLimitProfile();
+      SupportedFeaturesConstants = new SupportedFeaturesProfile();
     }
 
     public PrinterProfile(PrinterProfile other)
     {
-      this.AccessoriesConstants = new AccessoriesProfile(other.AccessoriesConstants);
-      this.TemperatureConstants = new TemperatureProfile(other.TemperatureConstants);
-      this.PrinterSizeConstants = new PrinterSizeProfile(other.PrinterSizeConstants);
-      this.SpeedLimitConstants = new SpeedLimitProfile(other.SpeedLimitConstants);
-      this.SupportedFeaturesConstants = new SupportedFeaturesProfile(other.SupportedFeaturesConstants);
-      this.ProfileName = other.ProfileName;
+      AccessoriesConstants = new AccessoriesProfile(other.AccessoriesConstants);
+      TemperatureConstants = new TemperatureProfile(other.TemperatureConstants);
+      PrinterSizeConstants = new PrinterSizeProfile(other.PrinterSizeConstants);
+      SpeedLimitConstants = new SpeedLimitProfile(other.SpeedLimitConstants);
+      SupportedFeaturesConstants = new SupportedFeaturesProfile(other.SupportedFeaturesConstants);
+      ProfileName = other.ProfileName;
     }
 
     [XmlElement("ProfileName")]
@@ -51,11 +51,11 @@ namespace M3D.Spooling.Printer_Profiles
     {
       get
       {
-        return this.profilename.Value;
+        return profilename.Value;
       }
       set
       {
-        this.profilename.Value = value;
+        profilename.Value = value;
       }
     }
   }

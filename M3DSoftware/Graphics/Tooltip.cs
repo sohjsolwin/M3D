@@ -24,30 +24,32 @@ namespace M3D.Graphics
     public Tooltip(GUIHost host)
       : base(0)
     {
-      this.mytimer = new Stopwatch();
-      this.mytimer.Reset();
-      this.mytimer.Stop();
+      mytimer = new Stopwatch();
+      mytimer.Reset();
+      mytimer.Stop();
       this.host = host;
-      this.SetSize(300, 100);
-      this.X = 0;
-      this.Y = 0;
-      this.BGColor = new Color4(byte.MaxValue, byte.MaxValue, (byte) 225, byte.MaxValue);
-      this.BorderColor = new Color4((byte) 0, (byte) 0, (byte) 0, byte.MaxValue);
-      this.text_information = new TextWidget(0);
-      this.text_information.Text = "";
-      this.text_information.Size = FontSize.Medium;
-      this.text_information.Alignment = QFontAlignment.Left;
-      this.text_information.VAlignment = TextVerticalAlignment.Middle;
-      this.text_information.SetPosition(0, 0);
-      this.text_information.SetSize(272, 72);
-      this.text_information.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
-      this.AddChildElement((Element2D) this.text_information);
+      SetSize(300, 100);
+      X = 0;
+      Y = 0;
+      BGColor = new Color4(byte.MaxValue, byte.MaxValue, (byte) 225, byte.MaxValue);
+      BorderColor = new Color4((byte) 0, (byte) 0, (byte) 0, byte.MaxValue);
+      text_information = new TextWidget(0)
+      {
+        Text = "",
+        Size = FontSize.Medium,
+        Alignment = QFontAlignment.Left,
+        VAlignment = TextVerticalAlignment.Middle
+      };
+      text_information.SetPosition(0, 0);
+      text_information.SetSize(272, 72);
+      text_information.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
+      AddChildElement((Element2D)text_information);
     }
 
     public void SetMessage(string message)
     {
       this.message = message;
-      QFont currentFont = this.host.GetCurrentFont();
+      QFont currentFont = host.GetCurrentFont();
       float num1;
       float num2;
       if (currentFont != null)
@@ -60,48 +62,69 @@ namespace M3D.Graphics
         num1 = 0.0f;
         num2 = 0.0f;
       }
-      this.text_information.SetSize((int) ((double) num1 * 1.0), (int) ((double) num2 * 1.7));
-      this.SetSize((int) ((double) num1 * 1.0), (int) ((double) num2 * 1.7));
+      text_information.SetSize((int) ((double) num1 * 1.0), (int) ((double) num2 * 1.7));
+      SetSize((int) ((double) num1 * 1.0), (int) ((double) num2 * 1.7));
     }
 
     public void Show(int x, int y)
     {
-      if (this.show)
+      if (show)
+      {
         return;
-      this.mytimer.Reset();
-      this.mytimer.Start();
-      this.show = true;
-      if (x + this.Width > this.host.GLWindowWidth())
-        this.X = this.host.GLWindowWidth() - this.Width;
+      }
+
+      mytimer.Reset();
+      mytimer.Start();
+      show = true;
+      if (x + Width > host.GLWindowWidth())
+      {
+        X = host.GLWindowWidth() - Width;
+      }
       else
-        this.X = x;
+      {
+        X = x;
+      }
+
       Cursor current = Cursor.Current;
-      int num = 0;
+      var num = 0;
       if (current != (Cursor) null)
+      {
         num = current.Size.Height;
-      if (y - this.Height < 0)
-        this.Y = y + (int) ((double) num * 0.75);
+      }
+
+      if (y - Height < 0)
+      {
+        Y = y + (int) ((double) num * 0.75);
+      }
       else
-        this.Y = y - this.Height - num / 20;
+      {
+        Y = y - Height - num / 20;
+      }
     }
 
     public void Hide()
     {
-      this.show = false;
+      show = false;
     }
 
     public override void OnRender(GUIHost host)
     {
-      this.text_information.Text = this.message;
-      if (!this.show)
+      text_information.Text = message;
+      if (!show)
+      {
         return;
-      float elapsedMilliseconds = (float) this.mytimer.ElapsedMilliseconds;
+      }
+
+      var elapsedMilliseconds = (float)mytimer.ElapsedMilliseconds;
       if ((double) elapsedMilliseconds <= 1000.0)
+      {
         return;
+      }
+
       if ((double) elapsedMilliseconds > 10000.0)
       {
-        this.show = false;
-        this.mytimer.Reset();
+        show = false;
+        mytimer.Reset();
       }
       base.OnRender(host);
     }

@@ -45,13 +45,13 @@ namespace M3D.Slicer.Cura15_04
     public SmartSlicerSettingsCura15_04(SmartSlicerSettingsCura15_04 otherSettings)
       : base((SmartSlicerSettingsBase) otherSettings)
     {
-      this.MaxSpeed = otherSettings.MaxSpeed;
-      this.WarningSpeed = otherSettings.WarningSpeed;
-      this.DefaultSpeed = otherSettings.DefaultSpeed;
-      this.TraversalSpeed = otherSettings.TraversalSpeed;
-      this.DefaultRetractionSpeed = otherSettings.DefaultRetractionSpeed;
-      this.MaxRetractionSpeed = otherSettings.MaxRetractionSpeed;
-      this.m_CurrentPrinter = otherSettings.m_CurrentPrinter;
+      MaxSpeed = otherSettings.MaxSpeed;
+      WarningSpeed = otherSettings.WarningSpeed;
+      DefaultSpeed = otherSettings.DefaultSpeed;
+      TraversalSpeed = otherSettings.TraversalSpeed;
+      DefaultRetractionSpeed = otherSettings.DefaultRetractionSpeed;
+      MaxRetractionSpeed = otherSettings.MaxRetractionSpeed;
+      m_CurrentPrinter = otherSettings.m_CurrentPrinter;
     }
 
     public override bool ParseFile(string filename)
@@ -70,10 +70,10 @@ namespace M3D.Slicer.Cura15_04
       {
         try
         {
-          string option = this.GetOption(line);
+          var option = GetOption(line);
           if (!option.StartsWith("#"))
           {
-            string val = this.ExtractParameter(line);
+            var val = ExtractParameter(line);
             if (val == "\"\"\"")
             {
               val = "";
@@ -81,10 +81,12 @@ namespace M3D.Slicer.Cura15_04
               while ((str = streamReader.ReadLine()) != null && !(str == "\"\"\""))
               {
                 if (str.Length > 0)
+                {
                   val = val + str + Environment.NewLine;
+                }
               }
             }
-            if (this.ContainsKey(option))
+            if (ContainsKey(option))
             {
               if (this[option].ReadSlicerSetting(val) == SettingReadResult.Failed)
               {
@@ -126,374 +128,426 @@ namespace M3D.Slicer.Cura15_04
             if (!(checkBoxName == "InternalToGUI_autoFanSettings"))
             {
               if (!(checkBoxName == "InternalToGUI_useNozzleSizeForExtrusionWidth"))
+              {
                 return;
+              }
+
               if (state)
-                this.EnableUseNozzleSizeForExtrusionWidth();
+              {
+                EnableUseNozzleSizeForExtrusionWidth();
+              }
               else
-                this.DisableUseNozzleSizeForExtrusionWidth();
+              {
+                DisableUseNozzleSizeForExtrusionWidth();
+              }
             }
             else if (state)
-              this.EnableAutoFanSettings();
+            {
+              EnableAutoFanSettings();
+            }
             else
-              this.DisableAutoFanSettings();
+            {
+              DisableAutoFanSettings();
+            }
           }
           else if (state)
-            this.EnableSkirt();
+          {
+            EnableSkirt();
+          }
           else
-            this.DisableSkirt();
+          {
+            DisableSkirt();
+          }
         }
         else if (state)
-          this.EnableSupport(M3D.Slicer.General.SupportType.GridSupport);
+        {
+          EnableSupport(M3D.Slicer.General.SupportType.GridSupport);
+        }
         else
-          this.DisableSupport();
+        {
+          DisableSupport();
+        }
       }
       else if (state)
-        this.EnableRaft(filament);
+      {
+        EnableRaft(filament);
+      }
       else
-        this.DisableRaft();
+      {
+        DisableRaft();
+      }
     }
 
     public override void ConfigureFromPrinterData(IPrinter oPrinter)
     {
-      this.m_CurrentPrinter = oPrinter;
-      PrinterInfo info = this.m_CurrentPrinter.Info;
-      PrinterProfile myPrinterProfile = this.m_CurrentPrinter.MyPrinterProfile;
-      this.ProfileName = myPrinterProfile.ProfileName;
-      this.MaxSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.FastestPossible / 60.0);
-      this.DefaultSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.DefaultSpeed / 60.0);
-      this.TraversalSpeed = (int) ((double) this.MaxSpeed * 0.75);
-      this.WarningSpeed = (int) ((double) this.MaxSpeed * 0.75);
-      this.DefaultRetractionSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.DEFAULT_FEEDRATE_E_Negative / 60.0);
-      this.MaxRetractionSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.MAX_FEEDRATE_E_Negative / 60.0);
-      if (this.UsingNozzleSizeForExtrusionWidth)
-        (this.GetSettingsItem("extrusionWidth") as SettingsItemFloatMMType).value = SmartSlicerSettingsCura15_04.micronsToMM(info.extruder.iNozzleSizeMicrons);
-      SettingsItemIntType settingsItem1 = this.GetSettingsItem("initialLayerSpeed") as SettingsItemIntType;
-      settingsItem1.value = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.initialLayerSpeed, this.DefaultSpeed);
-      settingsItem1.warning_range = new Range<int>(4, this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.initialLayerSpeed, this.WarningSpeed));
-      settingsItem1.error_range = new Range<int>(1, this.MaxSpeed);
-      SettingsItemIntType settingsItem2 = this.GetSettingsItem("printSpeed") as SettingsItemIntType;
-      settingsItem2.value = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.printSpeed, this.DefaultSpeed);
-      settingsItem2.warning_range = new Range<int>(5, this.WarningSpeed);
-      settingsItem2.error_range = new Range<int>(1, this.MaxSpeed);
-      SettingsItemIntType settingsItem3 = this.GetSettingsItem("inset0Speed") as SettingsItemIntType;
-      settingsItem3.value = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.inset0Speed, this.DefaultSpeed);
-      settingsItem3.warning_range = new Range<int>(5, this.WarningSpeed);
-      settingsItem3.error_range = new Range<int>(1, this.MaxSpeed);
-      SettingsItemIntType settingsItem4 = this.GetSettingsItem("insetXSpeed") as SettingsItemIntType;
-      settingsItem4.value = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.insetXSpeed, this.DefaultSpeed);
-      settingsItem4.warning_range = new Range<int>(5, this.WarningSpeed);
-      settingsItem4.error_range = new Range<int>(1, this.MaxSpeed);
-      SettingsItemIntType settingsItem5 = this.GetSettingsItem("moveSpeed") as SettingsItemIntType;
-      settingsItem5.value = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.moveSpeed, this.TraversalSpeed);
-      settingsItem5.warning_range = new Range<int>(10, this.TraversalSpeed);
-      settingsItem5.error_range = new Range<int>(1, this.MaxSpeed);
-      SettingsItemIntType settingsItem6 = this.GetSettingsItem("infillSpeed") as SettingsItemIntType;
-      settingsItem6.value = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.infillSpeed, this.DefaultSpeed);
-      settingsItem6.warning_range = new Range<int>(5, this.WarningSpeed);
-      settingsItem6.error_range = new Range<int>(1, this.MaxSpeed);
-      SettingsItemIntType settingsItem7 = this.GetSettingsItem("retractionSpeed") as SettingsItemIntType;
-      settingsItem7.value = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.retractionSpeed, this.DefaultRetractionSpeed);
-      settingsItem7.warning_range = new Range<int>(1, this.DefaultRetractionSpeed);
-      settingsItem7.error_range = new Range<int>(1, this.MaxRetractionSpeed);
-      SettingsItemIntType settingsItem8 = this.GetSettingsItem("skinSpeed") as SettingsItemIntType;
-      settingsItem8.value = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.skinSpeed, this.DefaultSpeed);
-      settingsItem8.warning_range = new Range<int>(10, this.WarningSpeed);
-      settingsItem8.error_range = new Range<int>(1, this.MaxSpeed);
-      SettingsItemIntType settingsItem9 = this.GetSettingsItem("raftBaseSpeed") as SettingsItemIntType;
+      m_CurrentPrinter = oPrinter;
+      PrinterInfo info = m_CurrentPrinter.Info;
+      PrinterProfile myPrinterProfile = m_CurrentPrinter.MyPrinterProfile;
+      ProfileName = myPrinterProfile.ProfileName;
+      MaxSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.FastestPossible / 60.0);
+      DefaultSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.DefaultSpeed / 60.0);
+      TraversalSpeed = (int) ((double)MaxSpeed * 0.75);
+      WarningSpeed = (int) ((double)MaxSpeed * 0.75);
+      DefaultRetractionSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.DEFAULT_FEEDRATE_E_Negative / 60.0);
+      MaxRetractionSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.MAX_FEEDRATE_E_Negative / 60.0);
+      if (UsingNozzleSizeForExtrusionWidth)
+      {
+        (GetSettingsItem("extrusionWidth") as SettingsItemFloatMMType).value = SmartSlicerSettingsCura15_04.micronsToMM(info.extruder.iNozzleSizeMicrons);
+      }
+
+      var settingsItem1 = GetSettingsItem("initialLayerSpeed") as SettingsItemIntType;
+      settingsItem1.value = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.initialLayerSpeed, DefaultSpeed);
+      settingsItem1.warning_range = new Range<int>(4, nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.initialLayerSpeed, WarningSpeed));
+      settingsItem1.error_range = new Range<int>(1, MaxSpeed);
+      var settingsItem2 = GetSettingsItem("printSpeed") as SettingsItemIntType;
+      settingsItem2.value = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.printSpeed, DefaultSpeed);
+      settingsItem2.warning_range = new Range<int>(5, WarningSpeed);
+      settingsItem2.error_range = new Range<int>(1, MaxSpeed);
+      var settingsItem3 = GetSettingsItem("inset0Speed") as SettingsItemIntType;
+      settingsItem3.value = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.inset0Speed, DefaultSpeed);
+      settingsItem3.warning_range = new Range<int>(5, WarningSpeed);
+      settingsItem3.error_range = new Range<int>(1, MaxSpeed);
+      var settingsItem4 = GetSettingsItem("insetXSpeed") as SettingsItemIntType;
+      settingsItem4.value = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.insetXSpeed, DefaultSpeed);
+      settingsItem4.warning_range = new Range<int>(5, WarningSpeed);
+      settingsItem4.error_range = new Range<int>(1, MaxSpeed);
+      var settingsItem5 = GetSettingsItem("moveSpeed") as SettingsItemIntType;
+      settingsItem5.value = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.moveSpeed, TraversalSpeed);
+      settingsItem5.warning_range = new Range<int>(10, TraversalSpeed);
+      settingsItem5.error_range = new Range<int>(1, MaxSpeed);
+      var settingsItem6 = GetSettingsItem("infillSpeed") as SettingsItemIntType;
+      settingsItem6.value = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.infillSpeed, DefaultSpeed);
+      settingsItem6.warning_range = new Range<int>(5, WarningSpeed);
+      settingsItem6.error_range = new Range<int>(1, MaxSpeed);
+      var settingsItem7 = GetSettingsItem("retractionSpeed") as SettingsItemIntType;
+      settingsItem7.value = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.retractionSpeed, DefaultRetractionSpeed);
+      settingsItem7.warning_range = new Range<int>(1, DefaultRetractionSpeed);
+      settingsItem7.error_range = new Range<int>(1, MaxRetractionSpeed);
+      var settingsItem8 = GetSettingsItem("skinSpeed") as SettingsItemIntType;
+      settingsItem8.value = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.skinSpeed, DefaultSpeed);
+      settingsItem8.warning_range = new Range<int>(10, WarningSpeed);
+      settingsItem8.error_range = new Range<int>(1, MaxSpeed);
+      var settingsItem9 = GetSettingsItem("raftBaseSpeed") as SettingsItemIntType;
       settingsItem9.value = 0;
-      settingsItem9.warning_range = new Range<int>(4, this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.raftBaseSpeed, this.WarningSpeed));
-      settingsItem9.error_range = new Range<int>(1, this.MaxSpeed);
-      SettingsItemIntType settingsItem10 = this.GetSettingsItem("raftSurfaceSpeed") as SettingsItemIntType;
+      settingsItem9.warning_range = new Range<int>(4, nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.raftBaseSpeed, WarningSpeed));
+      settingsItem9.error_range = new Range<int>(1, MaxSpeed);
+      var settingsItem10 = GetSettingsItem("raftSurfaceSpeed") as SettingsItemIntType;
       settingsItem10.value = 0;
-      settingsItem10.warning_range = new Range<int>(4, this.WarningSpeed);
-      settingsItem10.error_range = new Range<int>(1, this.MaxSpeed);
+      settingsItem10.warning_range = new Range<int>(4, WarningSpeed);
+      settingsItem10.error_range = new Range<int>(1, MaxSpeed);
     }
 
     public override void SetPrintQuality(PrintQuality level, FilamentSpool filament, int iModelCount)
     {
-      this.FilamentFlow = 100;
-      int nProfileProposedSpeed = filament.filament_type != FilamentSpool.TypeEnum.ABS ? (filament.filament_location != FilamentSpool.Location.Internal ? this.DefaultSpeed : (int) ((double) this.DefaultSpeed * 0.899999976158142)) : (int) ((double) this.DefaultSpeed * 1.10000002384186);
-      this.InitialSpeedupLayers = 4;
-      this.InitialLayerSpeed = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.initialLayerSpeed, (int) ((double) nProfileProposedSpeed * 0.800000011920929));
-      this.PrintSpeed = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.printSpeed, nProfileProposedSpeed);
-      this.Inset0Speed = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.inset0Speed, (int) ((double) nProfileProposedSpeed * 0.800000011920929));
-      this.InsetXSpeed = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.insetXSpeed, (int) ((double) nProfileProposedSpeed * 0.899999976158142));
-      this.MoveSpeed = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.moveSpeed, this.TraversalSpeed);
-      this.InfillSpeed = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.infillSpeed, nProfileProposedSpeed);
-      this.SkinSpeed = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.skinSpeed, nProfileProposedSpeed);
-      if (!this.UsingAutoFanSettings)
-        this.FanFullOnLayerNr = 2;
-      this.SupportXYDistance = 0.7f;
-      this.SupportZDistance = 0.15f;
-      this.SupportExtruder = -1;
-      this.RetractionSpeed = this.nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.retractionSpeed, this.DefaultRetractionSpeed);
-      this.RetractionAmountPrime = 0.0f;
-      if ("Micro" == this.ProfileName)
+      FilamentFlow = 100;
+      var nProfileProposedSpeed = filament.filament_type != FilamentSpool.TypeEnum.ABS ? (filament.filament_location != FilamentSpool.Location.Internal ? DefaultSpeed : (int) ((double)DefaultSpeed * 0.899999976158142)) : (int) ((double)DefaultSpeed * 1.10000002384186);
+      InitialSpeedupLayers = 4;
+      InitialLayerSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.initialLayerSpeed, (int) ((double) nProfileProposedSpeed * 0.800000011920929));
+      PrintSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.printSpeed, nProfileProposedSpeed);
+      Inset0Speed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.inset0Speed, (int) ((double) nProfileProposedSpeed * 0.800000011920929));
+      InsetXSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.insetXSpeed, (int) ((double) nProfileProposedSpeed * 0.899999976158142));
+      MoveSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.moveSpeed, TraversalSpeed);
+      InfillSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.infillSpeed, nProfileProposedSpeed);
+      SkinSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.skinSpeed, nProfileProposedSpeed);
+      if (!UsingAutoFanSettings)
       {
-        this.RetractionZHop = 0.0f;
-        this.MinimalExtrusionBeforeRetraction = 0.1f;
+        FanFullOnLayerNr = 2;
+      }
+
+      SupportXYDistance = 0.7f;
+      SupportZDistance = 0.15f;
+      SupportExtruder = -1;
+      RetractionSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.retractionSpeed, DefaultRetractionSpeed);
+      RetractionAmountPrime = 0.0f;
+      if ("Micro" == ProfileName)
+      {
+        RetractionZHop = 0.0f;
+        MinimalExtrusionBeforeRetraction = 0.1f;
       }
       if (iModelCount > 1)
       {
-        this.RetractionAmount = 6f;
-        this.RetractionMinimalDistance = 2f;
+        RetractionAmount = 6f;
+        RetractionMinimalDistance = 2f;
       }
       else
       {
-        this.RetractionAmount = 2.4f;
-        this.RetractionMinimalDistance = !("Micro" == this.ProfileName) ? 0.5f : 1.5f;
+        RetractionAmount = 2.4f;
+        RetractionMinimalDistance = !("Micro" == ProfileName) ? 0.5f : 1.5f;
       }
-      if (!this.UsingAutoFanSettings)
+      if (!UsingAutoFanSettings)
       {
         if (filament.filament_type == FilamentSpool.TypeEnum.ABS)
         {
-          this.FanSpeedMin = 0;
-          this.FanSpeedMax = 1;
+          FanSpeedMin = 0;
+          FanSpeedMax = 1;
         }
         else if (filament.filament_type == FilamentSpool.TypeEnum.PLA || filament.filament_type == FilamentSpool.TypeEnum.FLX || filament.filament_type == FilamentSpool.TypeEnum.TGH)
         {
-          this.FanSpeedMin = 100;
-          this.FanSpeedMax = 100;
-          this.FanFullOnLayerNr = 1;
+          FanSpeedMin = 100;
+          FanSpeedMax = 100;
+          FanFullOnLayerNr = 1;
         }
       }
-      if (!this.SupportedPrintQualities.Contains(level))
+      if (!SupportedPrintQualities.Contains(level))
+      {
         return;
+      }
+
       switch (level)
       {
         case PrintQuality.Expert:
-          this.LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(50);
+          LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(50);
           break;
         case PrintQuality.VeryHighQuality:
-          this.LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(150);
+          LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(150);
           break;
         case PrintQuality.HighQuality:
-          this.LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(200);
+          LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(200);
           break;
         case PrintQuality.MediumQuality:
-          this.LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(250);
+          LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(250);
           break;
         case PrintQuality.FastPrint:
-          this.LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(300);
+          LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(300);
           break;
         case PrintQuality.VeryFastPrint:
-          this.LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(350);
+          LayerThickness = SmartSlicerSettingsCura15_04.micronsToMM(350);
           break;
         default:
           return;
       }
-      this.InitialLayerThickness = 0.3f;
+      InitialLayerThickness = 0.3f;
     }
 
     public override void SetToDefault()
     {
-      this.LoadSettingsItemsFromFile();
+      LoadSettingsItemsFromFile();
     }
 
     public override void SetFillQuality(FillQuality level)
     {
-      if (!this.SupportedFillQualities.Contains(level))
+      if (!SupportedFillQualities.Contains(level))
+      {
         return;
+      }
+
       switch (level)
       {
         case FillQuality.HollowThinWalls:
-          this.DownSkinCount = this.mmToLayerCountConverter(0.75f);
-          this.UpSkinCount = this.mmToLayerCountConverter(0.75f);
-          this.InsetCount = 1;
-          this.SparseInfillLineDistance = -1f;
-          this.InfillPattern = FillPaternCura.Automatic;
+          DownSkinCount = mmToLayerCountConverter(0.75f);
+          UpSkinCount = mmToLayerCountConverter(0.75f);
+          InsetCount = 1;
+          SparseInfillLineDistance = -1f;
+          InfillPattern = FillPaternCura.Automatic;
           break;
         case FillQuality.HollowThickWalls:
-          this.DownSkinCount = this.mmToLayerCountConverter(0.75f);
-          this.UpSkinCount = this.mmToLayerCountConverter(1.25f);
-          this.InsetCount = 3;
-          this.SparseInfillLineDistance = -1f;
-          this.InfillPattern = FillPaternCura.Automatic;
+          DownSkinCount = mmToLayerCountConverter(0.75f);
+          UpSkinCount = mmToLayerCountConverter(1.25f);
+          InsetCount = 3;
+          SparseInfillLineDistance = -1f;
+          InfillPattern = FillPaternCura.Automatic;
           break;
         case FillQuality.Solid:
-          this.DownSkinCount = this.mmToLayerCountConverter(0.75f);
-          this.UpSkinCount = this.mmToLayerCountConverter(0.75f);
-          this.InsetCount = 3;
-          this.SparseInfillLineDistance = 0.35f;
-          this.InfillSpeed = this.DefaultSpeed;
-          this.InfillPattern = FillPaternCura.Automatic;
+          DownSkinCount = mmToLayerCountConverter(0.75f);
+          UpSkinCount = mmToLayerCountConverter(0.75f);
+          InsetCount = 3;
+          SparseInfillLineDistance = 0.35f;
+          InfillSpeed = DefaultSpeed;
+          InfillPattern = FillPaternCura.Automatic;
           break;
         case FillQuality.ExtraHigh:
-          this.DownSkinCount = this.mmToLayerCountConverter(1.5f);
-          this.UpSkinCount = this.mmToLayerCountConverter(2f);
-          this.InsetCount = 4;
-          this.SparseInfillLineDistance = 1.5f;
-          this.InfillSpeed = this.DefaultSpeed;
-          this.InfillPattern = FillPaternCura.Automatic;
+          DownSkinCount = mmToLayerCountConverter(1.5f);
+          UpSkinCount = mmToLayerCountConverter(2f);
+          InsetCount = 4;
+          SparseInfillLineDistance = 1.5f;
+          InfillSpeed = DefaultSpeed;
+          InfillPattern = FillPaternCura.Automatic;
           break;
         case FillQuality.High:
-          this.DownSkinCount = this.mmToLayerCountConverter(1.5f);
-          this.UpSkinCount = this.mmToLayerCountConverter(2f);
-          this.InsetCount = 4;
-          this.SparseInfillLineDistance = 2.5f;
-          this.InfillSpeed = this.DefaultSpeed;
-          this.InfillPattern = FillPaternCura.Automatic;
+          DownSkinCount = mmToLayerCountConverter(1.5f);
+          UpSkinCount = mmToLayerCountConverter(2f);
+          InsetCount = 4;
+          SparseInfillLineDistance = 2.5f;
+          InfillSpeed = DefaultSpeed;
+          InfillPattern = FillPaternCura.Automatic;
           break;
         case FillQuality.Medium:
-          this.DownSkinCount = this.mmToLayerCountConverter(1.5f);
-          this.UpSkinCount = this.mmToLayerCountConverter(2f);
-          this.InsetCount = 4;
-          this.SparseInfillLineDistance = 4f;
-          this.InfillSpeed = this.DefaultSpeed;
-          this.InfillPattern = FillPaternCura.Automatic;
+          DownSkinCount = mmToLayerCountConverter(1.5f);
+          UpSkinCount = mmToLayerCountConverter(2f);
+          InsetCount = 4;
+          SparseInfillLineDistance = 4f;
+          InfillSpeed = DefaultSpeed;
+          InfillPattern = FillPaternCura.Automatic;
           break;
         case FillQuality.Low:
-          this.DownSkinCount = this.mmToLayerCountConverter(1f);
-          this.UpSkinCount = this.mmToLayerCountConverter(1.5f);
-          this.InsetCount = 3;
-          this.SparseInfillLineDistance = 5.5f;
-          this.InfillSpeed = this.DefaultSpeed;
-          this.InfillPattern = FillPaternCura.Automatic;
+          DownSkinCount = mmToLayerCountConverter(1f);
+          UpSkinCount = mmToLayerCountConverter(1.5f);
+          InsetCount = 3;
+          SparseInfillLineDistance = 5.5f;
+          InfillSpeed = DefaultSpeed;
+          InfillPattern = FillPaternCura.Automatic;
           break;
       }
     }
 
     public override void EnableRaft(FilamentSpool filament)
     {
-      this.RaftMargin = 2f;
-      this.RaftLineSpacing = 3f;
-      this.RaftBaseThickness = 0.4f;
-      this.RaftBaseLineWidth = 2.5f;
-      this.RaftBaseSpeed = (int) ((double) this.DefaultSpeed * 0.5);
-      this.RaftInterfaceThickness = 0.4f;
-      this.RaftInterfaceLinewidth = 1f;
-      this.RaftInterfaceLineSpacing = 2f;
+      RaftMargin = 2f;
+      RaftLineSpacing = 3f;
+      RaftBaseThickness = 0.4f;
+      RaftBaseLineWidth = 2.5f;
+      RaftBaseSpeed = (int) ((double)DefaultSpeed * 0.5);
+      RaftInterfaceThickness = 0.4f;
+      RaftInterfaceLinewidth = 1f;
+      RaftInterfaceLineSpacing = 2f;
       if (filament.filament_type == FilamentSpool.TypeEnum.PLA)
       {
-        this.RaftFanSpeed = 100;
-        this.RaftAirGapLayer0 = 0.285f;
-        this.RaftAirGap = true;
+        RaftFanSpeed = 100;
+        RaftAirGapLayer0 = 0.285f;
+        RaftAirGap = true;
       }
       else if (filament.filament_type == FilamentSpool.TypeEnum.TGH || filament.filament_type == FilamentSpool.TypeEnum.FLX)
       {
-        this.RaftFanSpeed = 100;
-        this.RaftAirGapLayer0 = 0.5f;
-        this.RaftAirGap = true;
+        RaftFanSpeed = 100;
+        RaftAirGapLayer0 = 0.5f;
+        RaftAirGap = true;
       }
       else
       {
-        this.RaftFanSpeed = 0;
-        this.RaftAirGapLayer0 = 0.5f;
-        this.RaftAirGap = true;
+        RaftFanSpeed = 0;
+        RaftAirGapLayer0 = 0.5f;
+        RaftAirGap = true;
       }
-      this.RaftSurfaceThickness = 0.2f;
-      this.RaftSurfaceLinewidth = 0.25f;
-      this.RaftSurfaceLineSpacing = 0.25f;
-      this.RaftSurfaceLayers = 2;
-      this.RaftSurfaceSpeed = this.DefaultSpeed;
+      RaftSurfaceThickness = 0.2f;
+      RaftSurfaceLinewidth = 0.25f;
+      RaftSurfaceLineSpacing = 0.25f;
+      RaftSurfaceLayers = 2;
+      RaftSurfaceSpeed = DefaultSpeed;
     }
 
     public override void EnableSkirt()
     {
-      this.SkirtDistance = 2f;
-      this.SkirtLineCount = 1;
-      this.SkirtMinLength = 0.0f;
+      SkirtDistance = 2f;
+      SkirtLineCount = 1;
+      SkirtMinLength = 0.0f;
     }
 
     public override void DisableSkirt()
     {
-      this.SkirtDistance = 0.0f;
-      this.SkirtLineCount = 0;
-      this.SkirtMinLength = 0.0f;
+      SkirtDistance = 0.0f;
+      SkirtLineCount = 0;
+      SkirtMinLength = 0.0f;
     }
 
     private void EnableNonRaftThickBase()
     {
-      this.Layer0ExtrusionWidth = 1.5f;
-      this.InitialLayerThickness = 0.4f;
-      this.InitialLayerSpeed = (int) ((double) this.DefaultSpeed * 0.25);
+      Layer0ExtrusionWidth = 1.5f;
+      InitialLayerThickness = 0.4f;
+      InitialLayerSpeed = (int) ((double)DefaultSpeed * 0.25);
     }
 
     public override void EnableSupport(M3D.Slicer.General.SupportType supportType)
     {
-      this.SupportAngle = -1;
-      this.SupportXYDistance = 0.7f;
-      this.SupportZDistance = 0.15f;
-      this.SupportExtruder = -1;
+      SupportAngle = -1;
+      SupportXYDistance = 0.7f;
+      SupportZDistance = 0.15f;
+      SupportExtruder = -1;
       if (supportType == M3D.Slicer.General.SupportType.LineSupport || supportType == M3D.Slicer.General.SupportType.LineSupportEveryWhere)
-        this.SupportType = SupportPatternCura.Lines;
+      {
+        SupportType = SupportPatternCura.Lines;
+      }
       else if (supportType == M3D.Slicer.General.SupportType.GridSupport || supportType == M3D.Slicer.General.SupportType.GridSupportEveryWhere)
-        this.SupportType = SupportPatternCura.Grid;
+      {
+        SupportType = SupportPatternCura.Grid;
+      }
+
       if (supportType == M3D.Slicer.General.SupportType.LineSupport || supportType == M3D.Slicer.General.SupportType.GridSupport)
       {
-        this.SupportAngle = 50;
-        this.SupportEverywhere = 0;
+        SupportAngle = 50;
+        SupportEverywhere = 0;
       }
       else
       {
         if (supportType != M3D.Slicer.General.SupportType.LineSupportEveryWhere && supportType != M3D.Slicer.General.SupportType.GridSupportEveryWhere)
+        {
           return;
-        this.SupportEverywhere = 50;
-        this.SupportAngle = 50;
+        }
+
+        SupportEverywhere = 50;
+        SupportAngle = 50;
       }
     }
 
     public override void DisableSupport()
     {
-      this.SupportAngle = -1;
+      SupportAngle = -1;
     }
 
     public override void DisableRaft()
     {
-      this.RaftMargin = 0.0f;
-      this.RaftLineSpacing = 0.0f;
-      this.RaftBaseThickness = 0.0f;
-      this.RaftBaseLineWidth = 0.0f;
-      this.RaftBaseSpeed = 0;
-      this.RaftInterfaceThickness = 0.0f;
-      this.RaftInterfaceLinewidth = 0.0f;
-      this.RaftInterfaceLineSpacing = 0.0f;
-      this.RaftFanSpeed = 0;
-      this.RaftAirGapLayer0 = 0.0f;
-      this.RaftAirGap = false;
-      this.RaftSurfaceThickness = 0.0f;
-      this.RaftSurfaceLinewidth = 0.0f;
-      this.RaftSurfaceLineSpacing = 0.0f;
-      this.RaftSurfaceLayers = 0;
-      this.RaftSurfaceSpeed = 0;
-      this.EnableNonRaftThickBase();
+      RaftMargin = 0.0f;
+      RaftLineSpacing = 0.0f;
+      RaftBaseThickness = 0.0f;
+      RaftBaseLineWidth = 0.0f;
+      RaftBaseSpeed = 0;
+      RaftInterfaceThickness = 0.0f;
+      RaftInterfaceLinewidth = 0.0f;
+      RaftInterfaceLineSpacing = 0.0f;
+      RaftFanSpeed = 0;
+      RaftAirGapLayer0 = 0.0f;
+      RaftAirGap = false;
+      RaftSurfaceThickness = 0.0f;
+      RaftSurfaceLinewidth = 0.0f;
+      RaftSurfaceLineSpacing = 0.0f;
+      RaftSurfaceLayers = 0;
+      RaftSurfaceSpeed = 0;
+      EnableNonRaftThickBase();
     }
 
     public override void EnableAutoFanSettings()
     {
-      this.FanFullOnLayerNr = -1;
-      this.FanSpeedMax = -1;
-      this.FanSpeedMin = -1;
+      FanFullOnLayerNr = -1;
+      FanSpeedMax = -1;
+      FanSpeedMin = -1;
     }
 
     public override void DisableAutoFanSettings()
     {
-      this.FanFullOnLayerNr = 2;
-      this.FanSpeedMax = 100;
-      this.FanSpeedMin = 40;
+      FanFullOnLayerNr = 2;
+      FanSpeedMax = 100;
+      FanSpeedMin = 40;
     }
 
     public override void EnableUseNozzleSizeForExtrusionWidth()
     {
-      if (this.m_CurrentPrinter == null)
+      if (m_CurrentPrinter == null)
+      {
         return;
-      this.ExtrusionWidth = (float) this.m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons / 1000f;
-      int num = (int) this.m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, "UsingNozzleSizeForExtrusionWidth", "true");
+      }
+
+      ExtrusionWidth = (float)m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons / 1000f;
+      var num = (int)m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, "UsingNozzleSizeForExtrusionWidth", "true");
     }
 
     public override void DisableUseNozzleSizeForExtrusionWidth()
     {
-      if (this.m_CurrentPrinter == null)
+      if (m_CurrentPrinter == null)
+      {
         return;
-      int num = (int) this.m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, "UsingNozzleSizeForExtrusionWidth", "false");
+      }
+
+      var num = (int)m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, "UsingNozzleSizeForExtrusionWidth", "false");
     }
 
     public int mmToLayerCountConverter(float mmLayerThickness)
     {
-      float layerThickness = this.LayerThickness;
-      int num = (int) ((double) mmLayerThickness / (double) layerThickness + 0.5);
+      var layerThickness = LayerThickness;
+      var num = (int) ((double) mmLayerThickness / (double) layerThickness + 0.5);
       if (num < 3)
+      {
         num = 3;
+      }
+
       return num;
     }
 
@@ -501,9 +555,11 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        PrintQuality result;
-        if (Enum.TryParse<PrintQuality>(SmartSlicerSettingsCura15_04.millimetersToMicrons(this.LayerThickness).ToString(), out result) && this.SupportedPrintQualities.Contains(result))
+        if (Enum.TryParse<PrintQuality>(SmartSlicerSettingsCura15_04.millimetersToMicrons(LayerThickness).ToString(), out PrintQuality result) && SupportedPrintQualities.Contains(result))
+        {
           return result;
+        }
+
         return PrintQuality.Custom;
       }
     }
@@ -512,16 +568,23 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if ((double) this.SparseInfillLineDistance == -1.0)
+        if ((double)SparseInfillLineDistance == -1.0)
         {
-          if (this.InsetCount == 1)
+          if (InsetCount == 1)
+          {
             return FillQuality.HollowThinWalls;
-          if (this.InsetCount == 3)
+          }
+
+          if (InsetCount == 3)
+          {
             return FillQuality.HollowThickWalls;
+          }
         }
-        FillQuality result;
-        if (Enum.TryParse<FillQuality>(SmartSlicerSettingsCura15_04.millimetersToMicrons(this.SparseInfillLineDistance).ToString(), out result) && this.SupportedFillQualities.Contains(result))
+        if (Enum.TryParse<FillQuality>(SmartSlicerSettingsCura15_04.millimetersToMicrons(SparseInfillLineDistance).ToString(), out FillQuality result) && SupportedFillQualities.Contains(result))
+        {
           return result;
+        }
+
         return FillQuality.Custom;
       }
     }
@@ -530,8 +593,11 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if ((double) this.RaftMargin > 0.0 && (double) this.RaftLineSpacing > 0.0 && ((double) this.RaftBaseThickness > 0.0 && (double) this.RaftBaseLineWidth > 0.0) && (this.RaftBaseSpeed > 0 && (double) this.RaftInterfaceThickness > 0.0 && ((double) this.RaftInterfaceLinewidth > 0.0 && (double) this.RaftInterfaceLineSpacing > 0.0)) && ((double) this.RaftSurfaceThickness > 0.0 && (double) this.RaftSurfaceLinewidth > 0.0 && ((double) this.RaftSurfaceLineSpacing > 0.0 && this.RaftSurfaceLayers > 0)))
-          return this.RaftSurfaceSpeed > 0;
+        if ((double)RaftMargin > 0.0 && (double)RaftLineSpacing > 0.0 && ((double)RaftBaseThickness > 0.0 && (double)RaftBaseLineWidth > 0.0) && (RaftBaseSpeed > 0 && (double)RaftInterfaceThickness > 0.0 && ((double)RaftInterfaceLinewidth > 0.0 && (double)RaftInterfaceLineSpacing > 0.0)) && ((double)RaftSurfaceThickness > 0.0 && (double)RaftSurfaceLinewidth > 0.0 && ((double)RaftSurfaceLineSpacing > 0.0 && RaftSurfaceLayers > 0)))
+        {
+          return RaftSurfaceSpeed > 0;
+        }
+
         return false;
       }
     }
@@ -540,7 +606,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        return this.SupportAngle != -1;
+        return SupportAngle != -1;
       }
     }
 
@@ -548,8 +614,11 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if ((double) this.SkirtDistance > 0.0)
-          return this.SkirtLineCount > 0;
+        if ((double)SkirtDistance > 0.0)
+        {
+          return SkirtLineCount > 0;
+        }
+
         return false;
       }
     }
@@ -558,8 +627,11 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if (this.FanFullOnLayerNr >= 0 && this.FanSpeedMax >= 0)
-          return this.FanSpeedMin < 0;
+        if (FanFullOnLayerNr >= 0 && FanSpeedMax >= 0)
+        {
+          return FanSpeedMin < 0;
+        }
+
         return true;
       }
     }
@@ -568,17 +640,20 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if (this.m_CurrentPrinter != null)
+        if (m_CurrentPrinter != null)
         {
-          string valueFromPrinter = this.m_CurrentPrinter.GetValidatedValueFromPrinter(nameof (UsingNozzleSizeForExtrusionWidth));
+          var valueFromPrinter = m_CurrentPrinter.GetValidatedValueFromPrinter(nameof (UsingNozzleSizeForExtrusionWidth));
           if (valueFromPrinter != null)
-            return "true" == valueFromPrinter;
-          if (this.m_CurrentPrinter.MyPrinterProfile.AccessoriesConstants.NozzleConstants.bHasInterchangeableNozzle && (int) ((double) this.ExtrusionWidth * 1000.0) == this.m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons)
           {
-            int num = (int) this.m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, nameof (UsingNozzleSizeForExtrusionWidth), "true");
+            return "true" == valueFromPrinter;
+          }
+
+          if (m_CurrentPrinter.MyPrinterProfile.AccessoriesConstants.NozzleConstants.bHasInterchangeableNozzle && (int) ((double)ExtrusionWidth * 1000.0) == m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons)
+          {
+            var num = (int)m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, nameof (UsingNozzleSizeForExtrusionWidth), "true");
             return true;
           }
-          int num1 = (int) this.m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, nameof (UsingNozzleSizeForExtrusionWidth), "false");
+          var num1 = (int)m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, nameof (UsingNozzleSizeForExtrusionWidth), "false");
         }
         return false;
       }
@@ -588,9 +663,12 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if (this.m_CurrentPrinter == null)
+        if (m_CurrentPrinter == null)
+        {
           return false;
-        return this.m_CurrentPrinter.MyPrinterProfile.AccessoriesConstants.NozzleConstants.bHasInterchangeableNozzle;
+        }
+
+        return m_CurrentPrinter.MyPrinterProfile.AccessoriesConstants.NozzleConstants.bHasInterchangeableNozzle;
       }
     }
 
@@ -598,8 +676,11 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if (this.m_CurrentPrinter != null)
-          return (double) this.ExtrusionWidth != (double) this.m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons / 1000.0;
+        if (m_CurrentPrinter != null)
+        {
+          return (double)ExtrusionWidth != (double)m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons / 1000.0;
+        }
+
         return false;
       }
     }
@@ -608,8 +689,11 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if (this.SupportEverywhere > 0)
-          return this.HasSupport;
+        if (SupportEverywhere > 0)
+        {
+          return HasSupport;
+        }
+
         return false;
       }
     }
@@ -619,15 +703,20 @@ namespace M3D.Slicer.Cura15_04
       get
       {
         List<PrintQuality> printQualityList;
-        if ("Pro" == this.ProfileName)
+        if ("Pro" == ProfileName)
+        {
           printQualityList = new List<PrintQuality>()
           {
             PrintQuality.FastPrint,
             PrintQuality.HighQuality,
             PrintQuality.VeryFastPrint
           };
+        }
         else
+        {
           printQualityList = new List<PrintQuality>((IEnumerable<PrintQuality>) Enum.GetValues(typeof (PrintQuality)));
+        }
+
         return printQualityList;
       }
     }
@@ -644,16 +733,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("layerThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("layerThickness") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("layerThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("layerThickness") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -662,16 +757,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("initialLayerThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("initialLayerThickness") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("initialLayerThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("initialLayerThickness") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -680,16 +781,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("filamentDiameter") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("filamentDiameter") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("filamentDiameter") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("filamentDiameter") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -698,16 +805,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("filamentFlow") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("filamentFlow") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("filamentFlow") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("filamentFlow") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -716,16 +829,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("layer0extrusionWidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("layer0extrusionWidth") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("layer0extrusionWidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("layer0extrusionWidth") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -734,16 +853,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("extrusionWidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("extrusionWidth") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("extrusionWidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("extrusionWidth") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -752,16 +877,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("insetCount") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("insetCount") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("insetCount") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("insetCount") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -770,16 +901,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("downSkinCount") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("downSkinCount") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("downSkinCount") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("downSkinCount") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -788,16 +925,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("upSkinCount") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("upSkinCount") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("upSkinCount") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("upSkinCount") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -806,16 +949,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("skirtDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("skirtDistance") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("skirtDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("skirtDistance") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -824,16 +973,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("skirtLineCount") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("skirtLineCount") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("skirtLineCount") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("skirtLineCount") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -842,16 +997,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("skirtMinLength") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("skirtMinLength") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("skirtMinLength") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("skirtMinLength") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -860,16 +1021,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("initialSpeedupLayers") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("initialSpeedupLayers") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("initialSpeedupLayers") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("initialSpeedupLayers") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -878,16 +1045,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("initialLayerSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("initialLayerSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("initialLayerSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("initialLayerSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -896,16 +1069,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("printSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("printSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("printSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("printSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -914,16 +1093,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("skinSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("skinSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("skinSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("skinSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -932,16 +1117,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("inset0Speed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("inset0Speed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("inset0Speed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("inset0Speed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -950,16 +1141,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("insetXSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("insetXSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("insetXSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("insetXSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -968,16 +1165,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("moveSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("moveSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("moveSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("moveSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -986,16 +1189,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("fanFullOnLayerNr") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("fanFullOnLayerNr") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("fanFullOnLayerNr") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("fanFullOnLayerNr") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1004,16 +1213,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("sparseInfillLineDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("sparseInfillLineDistance") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("sparseInfillLineDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("sparseInfillLineDistance") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1022,16 +1237,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("infillOverlap") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("infillOverlap") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("infillOverlap") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("infillOverlap") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1040,16 +1261,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("infillSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("infillSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("infillSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("infillSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1058,16 +1285,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFillPatternTypeCura settingsItem = this.GetSettingsItem("infillPattern") as SettingsItemFillPatternTypeCura;
+        var settingsItem = GetSettingsItem("infillPattern") as SettingsItemFillPatternTypeCura;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFillPatternTypeCura settingsItem = this.GetSettingsItem("infillPattern") as SettingsItemFillPatternTypeCura;
+        var settingsItem = GetSettingsItem("infillPattern") as SettingsItemFillPatternTypeCura;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1076,16 +1309,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemSupportPatternTypeCura settingsItem = this.GetSettingsItem("supportType") as SettingsItemSupportPatternTypeCura;
+        var settingsItem = GetSettingsItem("supportType") as SettingsItemSupportPatternTypeCura;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemSupportPatternTypeCura settingsItem = this.GetSettingsItem("supportType") as SettingsItemSupportPatternTypeCura;
+        var settingsItem = GetSettingsItem("supportType") as SettingsItemSupportPatternTypeCura;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1094,16 +1333,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("supportAngle") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("supportAngle") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("supportAngle") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("supportAngle") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1112,16 +1357,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("supportEverywhere") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("supportEverywhere") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("supportEverywhere") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("supportEverywhere") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1130,16 +1381,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("supportLineDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("supportLineDistance") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("supportLineDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("supportLineDistance") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1148,16 +1405,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("supportXYDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("supportXYDistance") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("supportXYDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("supportXYDistance") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1166,16 +1429,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("supportZDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("supportZDistance") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("supportZDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("supportZDistance") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1184,16 +1453,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("supportExtruder") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("supportExtruder") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("supportExtruder") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("supportExtruder") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1202,16 +1477,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionAmount") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionAmount") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionAmount") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionAmount") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1220,16 +1501,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionAmountPrime") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionAmountPrime") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionAmountPrime") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionAmountPrime") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1238,16 +1525,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("retractionSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("retractionSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("retractionSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("retractionSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1256,16 +1549,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionAmountExtruderSwitch") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionAmountExtruderSwitch") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionAmountExtruderSwitch") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionAmountExtruderSwitch") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1274,16 +1573,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionMinimalDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionMinimalDistance") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionMinimalDistance") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionMinimalDistance") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1292,16 +1597,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("minimalExtrusionBeforeRetraction") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("minimalExtrusionBeforeRetraction") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("minimalExtrusionBeforeRetraction") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("minimalExtrusionBeforeRetraction") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1310,16 +1621,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionZHop") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionZHop") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("retractionZHop") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("retractionZHop") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1328,16 +1645,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemBoolType settingsItem = this.GetSettingsItem("enableCombing") as SettingsItemBoolType;
+        var settingsItem = GetSettingsItem("enableCombing") as SettingsItemBoolType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemBoolType settingsItem = this.GetSettingsItem("enableCombing") as SettingsItemBoolType;
+        var settingsItem = GetSettingsItem("enableCombing") as SettingsItemBoolType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1346,16 +1669,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("fixHorrible") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("fixHorrible") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("fixHorrible") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("fixHorrible") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1364,16 +1693,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("spiralizeMode") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("spiralizeMode") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("spiralizeMode") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("spiralizeMode") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1382,16 +1717,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("simpleMode") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("simpleMode") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("simpleMode") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("simpleMode") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1400,16 +1741,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemGCodeFlavorTypeCura settingsItem = this.GetSettingsItem("gcodeFlavor") as SettingsItemGCodeFlavorTypeCura;
+        var settingsItem = GetSettingsItem("gcodeFlavor") as SettingsItemGCodeFlavorTypeCura;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemGCodeFlavorTypeCura settingsItem = this.GetSettingsItem("gcodeFlavor") as SettingsItemGCodeFlavorTypeCura;
+        var settingsItem = GetSettingsItem("gcodeFlavor") as SettingsItemGCodeFlavorTypeCura;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1418,16 +1765,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("objectSink") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("objectSink") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("objectSink") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("objectSink") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1436,16 +1789,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemBoolType settingsItem = this.GetSettingsItem("autoCenter") as SettingsItemBoolType;
+        var settingsItem = GetSettingsItem("autoCenter") as SettingsItemBoolType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemBoolType settingsItem = this.GetSettingsItem("autoCenter") as SettingsItemBoolType;
+        var settingsItem = GetSettingsItem("autoCenter") as SettingsItemBoolType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1454,16 +1813,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftMargin") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftMargin") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftMargin") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftMargin") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1472,16 +1837,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftLineSpacing") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftLineSpacing") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftLineSpacing") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftLineSpacing") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1490,16 +1861,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftBaseThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftBaseThickness") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftBaseThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftBaseThickness") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1508,16 +1885,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftBaseLinewidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftBaseLinewidth") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftBaseLinewidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftBaseLinewidth") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1526,16 +1909,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftInterfaceThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftInterfaceThickness") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftInterfaceThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftInterfaceThickness") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1544,16 +1933,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftInterfaceLinewidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftInterfaceLinewidth") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftInterfaceLinewidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftInterfaceLinewidth") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1562,16 +1957,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftInterfaceLineSpacing") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftInterfaceLineSpacing") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftInterfaceLineSpacing") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftInterfaceLineSpacing") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1580,16 +1981,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemBoolType settingsItem = this.GetSettingsItem("raftAirGap") as SettingsItemBoolType;
+        var settingsItem = GetSettingsItem("raftAirGap") as SettingsItemBoolType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemBoolType settingsItem = this.GetSettingsItem("raftAirGap") as SettingsItemBoolType;
+        var settingsItem = GetSettingsItem("raftAirGap") as SettingsItemBoolType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1598,16 +2005,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftAirGapLayer0") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftAirGapLayer0") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftAirGapLayer0") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftAirGapLayer0") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1616,16 +2029,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("raftBaseSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("raftBaseSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("raftBaseSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("raftBaseSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1634,16 +2053,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("raftFanSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("raftFanSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("raftFanSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("raftFanSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1652,16 +2077,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftSurfaceThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftSurfaceThickness") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftSurfaceThickness") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftSurfaceThickness") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1670,16 +2101,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftSurfaceLinewidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftSurfaceLinewidth") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftSurfaceLinewidth") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftSurfaceLinewidth") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1688,16 +2125,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftSurfaceLineSpacing") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftSurfaceLineSpacing") as SettingsItemFloatMMType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatMMType settingsItem = this.GetSettingsItem("raftSurfaceLineSpacing") as SettingsItemFloatMMType;
+        var settingsItem = GetSettingsItem("raftSurfaceLineSpacing") as SettingsItemFloatMMType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1706,16 +2149,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("raftSurfaceLayers") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("raftSurfaceLayers") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("raftSurfaceLayers") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("raftSurfaceLayers") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1724,16 +2173,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("raftSurfaceSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("raftSurfaceSpeed") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("raftSurfaceSpeed") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("raftSurfaceSpeed") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1742,16 +2197,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("minimalLayerTime") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("minimalLayerTime") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("minimalLayerTime") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("minimalLayerTime") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1760,16 +2221,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("minimalFeedrate") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("minimalFeedrate") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("minimalFeedrate") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("minimalFeedrate") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1778,16 +2245,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemFloatSecondsType settingsItem = this.GetSettingsItem("coolHeadLift") as SettingsItemFloatSecondsType;
+        var settingsItem = GetSettingsItem("coolHeadLift") as SettingsItemFloatSecondsType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemFloatSecondsType settingsItem = this.GetSettingsItem("coolHeadLift") as SettingsItemFloatSecondsType;
+        var settingsItem = GetSettingsItem("coolHeadLift") as SettingsItemFloatSecondsType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1796,16 +2269,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("fanSpeedMin") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("fanSpeedMin") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("fanSpeedMin") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("fanSpeedMin") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1814,16 +2293,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("fanSpeedMax") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("fanSpeedMax") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("fanSpeedMax") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("fanSpeedMax") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1832,16 +2317,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemBoolType settingsItem = this.GetSettingsItem("enableOozeShield") as SettingsItemBoolType;
+        var settingsItem = GetSettingsItem("enableOozeShield") as SettingsItemBoolType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemBoolType settingsItem = this.GetSettingsItem("enableOozeShield") as SettingsItemBoolType;
+        var settingsItem = GetSettingsItem("enableOozeShield") as SettingsItemBoolType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1850,16 +2341,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("wipeTowerSize") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("wipeTowerSize") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("wipeTowerSize") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("wipeTowerSize") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1868,16 +2365,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("multiVolumeOverlap") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("multiVolumeOverlap") as SettingsItemIntType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemIntType settingsItem = this.GetSettingsItem("multiVolumeOverlap") as SettingsItemIntType;
+        var settingsItem = GetSettingsItem("multiVolumeOverlap") as SettingsItemIntType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1886,16 +2389,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemStringType settingsItem = this.GetSettingsItem("startCode") as SettingsItemStringType;
+        var settingsItem = GetSettingsItem("startCode") as SettingsItemStringType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemStringType settingsItem = this.GetSettingsItem("startCode") as SettingsItemStringType;
+        var settingsItem = GetSettingsItem("startCode") as SettingsItemStringType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1904,16 +2413,22 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        SettingsItemStringType settingsItem = this.GetSettingsItem("endCode") as SettingsItemStringType;
+        var settingsItem = GetSettingsItem("endCode") as SettingsItemStringType;
         if (settingsItem != null)
+        {
           return settingsItem.value;
+        }
+
         throw new Exception("Slicer setting does not exist");
       }
       set
       {
-        SettingsItemStringType settingsItem = this.GetSettingsItem("endCode") as SettingsItemStringType;
+        var settingsItem = GetSettingsItem("endCode") as SettingsItemStringType;
         if (settingsItem == null)
+        {
           throw new Exception("Slicer setting does not exist");
+        }
+
         settingsItem.value = value;
       }
     }
@@ -1932,7 +2447,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        return string.Format("defaultCura15_04{0}.cfg", (object) this.ProfileName);
+        return string.Format("defaultCura15_04{0}.cfg", (object)ProfileName);
       }
     }
 
@@ -1942,7 +2457,9 @@ namespace M3D.Slicer.Cura15_04
       foreach (System.Collections.Generic.KeyValuePair<string, SlicerSettingsItem> keyValuePair in (SmartSlicerSettingsBase) this)
       {
         if (!(keyValuePair.Value is SettingsItemStringType))
+        {
           keyValuePairList.Add(new General.KeyValuePair<string, string>(keyValuePair.Key, keyValuePair.Value.TranslateToUserValue()));
+        }
       }
       return keyValuePairList;
     }
@@ -1950,13 +2467,18 @@ namespace M3D.Slicer.Cura15_04
     public override void LoadFromUserKeyValuePairList(List<General.KeyValuePair<string, string>> list)
     {
       foreach (General.KeyValuePair<string, string> keyValuePair in list)
-        this.GetSettingsItem(keyValuePair.Key)?.ParseUserValue(keyValuePair.Value);
+      {
+        GetSettingsItem(keyValuePair.Key)?.ParseUserValue(keyValuePair.Value);
+      }
     }
 
     public SlicerSettingsItem GetSettingsItem(string name)
     {
-      if (this.ContainsKey(name))
+      if (ContainsKey(name))
+      {
         return this[name];
+      }
+
       return (SlicerSettingsItem) null;
     }
 
@@ -1965,29 +2487,41 @@ namespace M3D.Slicer.Cura15_04
       streamwriter.WriteLine("# Generated by M3D Printer Software");
       foreach (System.Collections.Generic.KeyValuePair<string, SlicerSettingsItem> keyValuePair in (SmartSlicerSettingsBase) this)
       {
-        string str = string.Format("{0} = {1}", (object) keyValuePair.Key, (object) keyValuePair.Value.TranslateToSlicerValue());
+        var str = string.Format("{0} = {1}", (object) keyValuePair.Key, (object) keyValuePair.Value.TranslateToSlicerValue());
         streamwriter.WriteLine(str);
       }
     }
 
     private string ExtractParameter(string line)
     {
-      int num = line.IndexOf("=");
+      var num = line.IndexOf("=");
       if (num < 0)
+      {
         throw new InvalidOperationException(SmartSlicerSettingsCura15_04.sErrorReading(line));
-      int startIndex = num + 1;
+      }
+
+      var startIndex = num + 1;
       while (startIndex < line.Length && line[startIndex] == ' ')
+      {
         ++startIndex;
+      }
+
       if (startIndex >= line.Length)
+      {
         throw new InvalidOperationException(SmartSlicerSettingsCura15_04.sErrorReading(line));
+      }
+
       return line.Substring(startIndex);
     }
 
     private string GetOption(string line)
     {
-      int length = line.IndexOf(' ');
+      var length = line.IndexOf(' ');
       if (length <= 0)
+      {
         throw new InvalidOperationException(SmartSlicerSettingsCura15_04.sErrorReading(line));
+      }
+
       return line.Substring(0, length);
     }
 
@@ -1998,8 +2532,8 @@ namespace M3D.Slicer.Cura15_04
 
     private int nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem eWhichSpeed, int nProfileProposedSpeed)
     {
-      int val2 = nProfileProposedSpeed;
-      if ("Pro" == this.ProfileName)
+      var val2 = nProfileProposedSpeed;
+      if ("Pro" == ProfileName)
       {
         switch (eWhichSpeed)
         {
@@ -2021,7 +2555,7 @@ namespace M3D.Slicer.Cura15_04
             break;
         }
       }
-      else if ("Micro+" == this.ProfileName)
+      else if ("Micro+" == ProfileName)
       {
         switch (eWhichSpeed)
         {

@@ -24,18 +24,18 @@ namespace M3D.Spooling.Common.Utils
 
     public DebugLogger(string filename, uint maxSize)
     {
-      this.m_sSaveFileName = filename;
-      this.m_iPrimaryMaxSize = maxSize;
-      this.m_SecondaryMaxSize = maxSize;
-      this.Init();
-      FileUtils.GrantAccess(this.m_sSaveFileName);
+      m_sSaveFileName = filename;
+      m_iPrimaryMaxSize = maxSize;
+      m_SecondaryMaxSize = maxSize;
+      Init();
+      FileUtils.GrantAccess(m_sSaveFileName);
     }
 
     public void Init()
     {
-      this.m_PrimaryLogs = new DebugLog[(int) this.m_iPrimaryMaxSize];
-      this.m_SecondaryLogs = new DebugLog[(int) this.m_SecondaryMaxSize];
-      this.Add("DebuggLogger Init()", "Initialize debug logger. Max size: " + (object) this.m_iPrimaryMaxSize, DebugLogger.LogType.Primary);
+      m_PrimaryLogs = new DebugLog[(int)m_iPrimaryMaxSize];
+      m_SecondaryLogs = new DebugLog[(int)m_SecondaryMaxSize];
+      Add("DebuggLogger Init()", "Initialize debug logger. Max size: " + (object)m_iPrimaryMaxSize, DebugLogger.LogType.Primary);
     }
 
     public void Add(string functionName, string description, DebugLogger.LogType logType)
@@ -44,22 +44,22 @@ namespace M3D.Spooling.Common.Utils
       {
         if (logType == DebugLogger.LogType.Primary)
         {
-          this.m_PrimaryLogs[(int) this.m_iPrimaryIndex] = new DebugLog(functionName, description);
-          this.m_iPrimaryIndex = (this.m_iPrimaryIndex + 1U) % this.m_iPrimaryMaxSize;
-          if ((int) this.m_iPrimaryIndex == (int) this.m_iPrimaryStartIndex)
+          m_PrimaryLogs[(int)m_iPrimaryIndex] = new DebugLog(functionName, description);
+          m_iPrimaryIndex = (m_iPrimaryIndex + 1U) % m_iPrimaryMaxSize;
+          if ((int)m_iPrimaryIndex == (int)m_iPrimaryStartIndex)
           {
-            ++this.m_iPrimaryStartIndex;
-            this.m_iPrimaryStartIndex %= this.m_iPrimaryMaxSize;
+            ++m_iPrimaryStartIndex;
+            m_iPrimaryStartIndex %= m_iPrimaryMaxSize;
           }
         }
         else
         {
-          this.m_SecondaryLogs[(int) this.m_iSecondaryIndex] = new DebugLog(functionName, description);
-          this.m_iSecondaryIndex = (this.m_iSecondaryIndex + 1U) % this.m_SecondaryMaxSize;
-          if ((int) this.m_iSecondaryIndex == (int) this.m_iSecondaryStartIndex)
+          m_SecondaryLogs[(int)m_iSecondaryIndex] = new DebugLog(functionName, description);
+          m_iSecondaryIndex = (m_iSecondaryIndex + 1U) % m_SecondaryMaxSize;
+          if ((int)m_iSecondaryIndex == (int)m_iSecondaryStartIndex)
           {
-            ++this.m_iSecondaryStartIndex;
-            this.m_iSecondaryStartIndex %= this.m_SecondaryMaxSize;
+            ++m_iSecondaryStartIndex;
+            m_iSecondaryStartIndex %= m_SecondaryMaxSize;
           }
         }
       }
@@ -67,23 +67,29 @@ namespace M3D.Spooling.Common.Utils
       {
         Trace.WriteLine(ex.Message);
       }
-      this.Print(this.m_sSaveFileName);
+      Print(m_sSaveFileName);
     }
 
     public void Print(string fileName)
     {
       try
       {
-        TextWriter text = (TextWriter) File.CreateText(fileName);
+        var text = (TextWriter) File.CreateText(fileName);
         text.WriteLine("Primary Debug Log");
         text.WriteLine();
-        for (uint index = this.m_iPrimaryStartIndex; (int) index != (int) this.m_iPrimaryIndex; index = (index + 1U) % this.m_iPrimaryMaxSize)
-          this.m_PrimaryLogs[(int) index].Print(text);
+        for (var index = m_iPrimaryStartIndex; (int) index != (int)m_iPrimaryIndex; index = (index + 1U) % m_iPrimaryMaxSize)
+        {
+          m_PrimaryLogs[(int) index].Print(text);
+        }
+
         text.WriteLine();
         text.WriteLine("Secondary Debug Log");
         text.WriteLine();
-        for (uint index = this.m_iSecondaryStartIndex; (int) index != (int) this.m_iSecondaryIndex; index = (index + 1U) % this.m_SecondaryMaxSize)
-          this.m_SecondaryLogs[(int) index].Print(text);
+        for (var index = m_iSecondaryStartIndex; (int) index != (int)m_iSecondaryIndex; index = (index + 1U) % m_SecondaryMaxSize)
+        {
+          m_SecondaryLogs[(int) index].Print(text);
+        }
+
         text.Close();
       }
       catch (Exception ex)

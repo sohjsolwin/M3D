@@ -19,35 +19,45 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     public SettingsItemGCodeFlavorTypeCura()
       : base(typeof (GCodeFlavorCura))
     {
-      this.value = GCodeFlavorCura.Reprap;
+      value = GCodeFlavorCura.Reprap;
     }
 
     public SettingsItemGCodeFlavorTypeCura(GCodeFlavorCura _value)
       : base(typeof (GCodeFlavorCura))
     {
-      this.value = _value;
+      value = _value;
     }
 
     protected override bool SetFromSlicerValue(string val)
     {
-      this.formatError = false;
+      formatError = false;
       if (val == "Reprap" || val == "0")
-        this.value = GCodeFlavorCura.Reprap;
+      {
+        value = GCodeFlavorCura.Reprap;
+      }
       else if (val == "Ultigcode" || val == "1")
-        this.value = GCodeFlavorCura.Ultigcode;
+      {
+        value = GCodeFlavorCura.Ultigcode;
+      }
       else if (val == "MakerBot" || val == "2")
-        this.value = GCodeFlavorCura.MakerBot;
+      {
+        value = GCodeFlavorCura.MakerBot;
+      }
       else if (val == "BFB" || val == "3")
-        this.value = GCodeFlavorCura.BFB;
+      {
+        value = GCodeFlavorCura.BFB;
+      }
       else if (val == "Mach3" || val == "4")
-        this.value = GCodeFlavorCura.Mach3;
+      {
+        value = GCodeFlavorCura.Mach3;
+      }
       else if (val == "Volumetric" || val == "5")
       {
-        this.value = GCodeFlavorCura.Volumetric;
+        value = GCodeFlavorCura.Volumetric;
       }
       else
       {
-        this.formatError = true;
+        formatError = true;
         return false;
       }
       return true;
@@ -60,31 +70,45 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override string TranslateToSlicerValue()
     {
-      return ((int) this.value).ToString();
+      return ((int)value).ToString();
     }
 
     public override string TranslateToUserValue()
     {
-      return this.value.ToString();
+      return value.ToString();
     }
 
     public override void ParseUserValue(string val)
     {
-      this.formatError = false;
+      formatError = false;
       if (val == "Reprap")
-        this.value = GCodeFlavorCura.Reprap;
+      {
+        value = GCodeFlavorCura.Reprap;
+      }
       else if (val == "Ultigcode")
-        this.value = GCodeFlavorCura.Ultigcode;
+      {
+        value = GCodeFlavorCura.Ultigcode;
+      }
       else if (val == "MakerBot")
-        this.value = GCodeFlavorCura.MakerBot;
+      {
+        value = GCodeFlavorCura.MakerBot;
+      }
       else if (val == "BFB")
-        this.value = GCodeFlavorCura.BFB;
+      {
+        value = GCodeFlavorCura.BFB;
+      }
       else if (val == "Mach3")
-        this.value = GCodeFlavorCura.Mach3;
+      {
+        value = GCodeFlavorCura.Mach3;
+      }
       else if (val == "Volumetric")
-        this.value = GCodeFlavorCura.Volumetric;
+      {
+        value = GCodeFlavorCura.Volumetric;
+      }
       else
-        this.formatError = true;
+      {
+        formatError = true;
+      }
     }
 
     public override bool HasWarning
@@ -97,7 +121,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemGCodeFlavorTypeCura(this.value);
+      return (SlicerSettingsItem) new SettingsItemGCodeFlavorTypeCura(value);
     }
   }
 }

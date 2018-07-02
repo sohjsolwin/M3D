@@ -25,12 +25,14 @@ namespace M3D.GUI.Dialogs
 
     private static void XMLOnShow(PopupMessageBox parentFrame, XMLFrame childFrame, GUIHost host, object data)
     {
-      FeaturesDialog.ProFeaturesDialogData featuresDialogData = data as FeaturesDialog.ProFeaturesDialogData;
+      var featuresDialogData = data as FeaturesDialog.ProFeaturesDialogData;
       ((TextWidget) childFrame.FindChildElement("FeaturePanel::Title")).Text = string.Format("{0} Features", (object) featuresDialogData.printer.MyPrinterProfile.ProfileName);
       ((TextWidget) childFrame.FindChildElement("FeaturePanel::Desc")).Text = string.Format("Here are the {0} features currently available for your printer.", (object) featuresDialogData.printer.MyPrinterProfile.ProfileName);
-      FeaturesDialog.featurePanel = new FeaturePanel(1004, host, featuresDialogData.spoolerConnection, featuresDialogData.printer);
-      FeaturesDialog.featurePanel.Visible = true;
-      FeaturesDialog.featurePanel.Enabled = true;
+      FeaturesDialog.featurePanel = new FeaturePanel(1004, host, featuresDialogData.spoolerConnection, featuresDialogData.printer)
+      {
+        Visible = true,
+        Enabled = true
+      };
       childFrame.FindChildElement(1003).AddChildElement((Element2D) FeaturesDialog.featurePanel);
     }
 

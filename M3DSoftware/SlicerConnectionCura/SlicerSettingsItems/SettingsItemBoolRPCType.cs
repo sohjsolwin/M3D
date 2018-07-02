@@ -24,8 +24,8 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public SettingsItemBoolRPCType(string propertyName, SmartSlicerSettingsBase parentObject)
     {
-      this.m_oParentObject = parentObject;
-      this.m_sPropertyName = propertyName;
+      m_oParentObject = parentObject;
+      m_sPropertyName = propertyName;
     }
 
     protected override bool SetFromSlicerValue(string val)
@@ -40,12 +40,12 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override string TranslateToSlicerValue()
     {
-      return !this.PropertyAccessor ? "0" : "1";
+      return !PropertyAccessor ? "0" : "1";
     }
 
     public override string TranslateToUserValue()
     {
-      return !this.PropertyAccessor ? "false" : "true";
+      return !PropertyAccessor ? "false" : "true";
     }
 
     public override void ParseUserValue(string value)
@@ -75,30 +75,34 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemBoolRPCType(this.m_sPropertyName, this.m_oParentObject);
+      return (SlicerSettingsItem) new SettingsItemBoolRPCType(m_sPropertyName, m_oParentObject);
     }
 
     public void SetParentSettings(SmartSlicerSettingsBase parentObject)
     {
-      this.m_oParentObject = parentObject;
+      m_oParentObject = parentObject;
     }
 
     private bool PropertyAccessor
     {
       get
       {
-        if (this.m_oParentObject != null)
+        if (m_oParentObject != null)
         {
           try
           {
-            object obj = this.m_oParentObject.GetType().GetProperty(this.m_sPropertyName).GetValue((object) this.m_oParentObject);
+            var obj = m_oParentObject.GetType().GetProperty(m_sPropertyName).GetValue((object)m_oParentObject);
             if (obj is bool)
+            {
               return (bool) obj;
+            }
           }
           catch (Exception ex)
           {
             if (Debugger.IsAttached)
+            {
               Debugger.Break();
+            }
           }
         }
         return false;

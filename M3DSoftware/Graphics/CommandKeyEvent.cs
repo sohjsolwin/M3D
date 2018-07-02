@@ -20,7 +20,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.key;
+        return key;
       }
     }
   }

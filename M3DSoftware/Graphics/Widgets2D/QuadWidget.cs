@@ -25,17 +25,17 @@ namespace M3D.Graphics.Widgets2D
     public QuadWidget(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.IgnoreMouse = true;
+      IgnoreMouse = true;
     }
 
     public override void OnRender(GUIHost host)
     {
       Simple2DRenderer.Quad quad;
-      quad.x0 = (float) this.X_Abs;
-      quad.y0 = (float) this.Y_Abs;
-      quad.x1 = (float) (this.X_Abs + this.Width);
-      quad.y1 = (float) (this.Y_Abs + this.Height);
-      quad.color = this.Color;
+      quad.x0 = (float)X_Abs;
+      quad.y0 = (float)Y_Abs;
+      quad.x1 = (float) (X_Abs + Width);
+      quad.y1 = (float) (Y_Abs + Height);
+      quad.color = Color;
       host.GetSimpleRenderer().DrawQuad(quad);
     }
   }

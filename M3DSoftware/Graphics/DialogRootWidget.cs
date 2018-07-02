@@ -13,9 +13,12 @@ namespace M3D.Graphics
   {
     public override void OnRender(GUIHost host)
     {
-      Element2D element2D = this.ChildList.Last();
+      Element2D element2D = ChildList.Last();
       if (element2D == null)
+      {
         return;
+      }
+
       base.OnRender(host);
       element2D.OnRender(host);
     }
@@ -23,46 +26,61 @@ namespace M3D.Graphics
     public override void AddChildElement(Element2D child)
     {
       base.AddChildElement(child);
-      Frame frame = child as Frame;
+      var frame = child as Frame;
       if (frame != null)
+      {
         frame.DarkenBackground = true;
-      this.Refresh();
+      }
+
+      Refresh();
     }
 
     public override bool OnKeyboardEvent(KeyboardEvent keyboardevent)
     {
-      Element2D element2D = this.ChildList.Last();
+      Element2D element2D = ChildList.Last();
       if (element2D != null)
+      {
         return element2D.OnKeyboardEvent(keyboardevent);
+      }
+
       return false;
     }
 
     public override void OnMouseLeave()
     {
-      this.ChildList.Last()?.OnMouseLeave();
+      ChildList.Last()?.OnMouseLeave();
     }
 
     public override bool OnMouseCommand(MouseEvent mouseevent)
     {
-      Element2D element2D = this.ChildList.Last();
+      Element2D element2D = ChildList.Last();
       if (element2D != null)
+      {
         return element2D.OnMouseCommand(mouseevent);
+      }
+
       return false;
     }
 
     public override void OnMouseMove(int x, int y)
     {
-      this.ChildList.Last()?.OnMouseMove(x, y);
+      ChildList.Last()?.OnMouseMove(x, y);
     }
 
     public override Element2D GetSelfOrDependantAtPoint(int x, int y)
     {
-      Element2D element2D1 = this.ChildList.Last();
-      Element2D element2D2 = (Element2D) null;
+      Element2D element2D1 = ChildList.Last();
+      var element2D2 = (Element2D) null;
       if (element2D1 != null)
+      {
         element2D2 = element2D1.GetSelfOrDependantAtPoint(x, y);
+      }
+
       if (element2D2 == null)
+      {
         element2D2 = (Element2D) this;
+      }
+
       return element2D2;
     }
 
@@ -70,7 +88,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.ChildList.Count > 0;
+        return ChildList.Count > 0;
       }
       set
       {

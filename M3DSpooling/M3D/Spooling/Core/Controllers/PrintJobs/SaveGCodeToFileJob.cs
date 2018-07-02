@@ -22,19 +22,21 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public override JobCreateResult Create(PrinterInfo printerInfo)
     {
-      this.Status = JobStatus.SavingToFile;
+      Status = JobStatus.SavingToFile;
       JobCreateResult jobCreateResult = base.Create(printerInfo);
       if (jobCreateResult.Result == ProcessReturn.SUCCESS)
       {
         try
         {
-          using (GCodeFileReader gcodeFileReader = new GCodeFileReader(this.GCodeFilename))
+          using (var gcodeFileReader = new GCodeFileReader(GCodeFilename))
           {
-            using (GCodeFileWriter gcodeFileWriter = new GCodeFileWriter(this.Details.jobParams.outputfile, true))
+            using (var gcodeFileWriter = new GCodeFileWriter(Details.jobParams.outputfile, true))
             {
               GCode nextLine;
               while ((nextLine = gcodeFileReader.GetNextLine(true)) != null)
+              {
                 gcodeFileWriter.Write(nextLine);
+              }
             }
           }
         }

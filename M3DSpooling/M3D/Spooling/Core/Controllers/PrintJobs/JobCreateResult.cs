@@ -17,9 +17,9 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public JobCreateResult(AbstractJob job, ProcessReturn result, List<MessageType> warnings)
     {
-      this.Warnings = warnings;
-      this.Result = result;
-      this.Job = job;
+      Warnings = warnings;
+      Result = result;
+      Job = job;
     }
   }
 }

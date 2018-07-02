@@ -19,43 +19,52 @@ namespace M3D.Spooling.ConnectionManager
 
     public WinUSBPrinterFinder()
     {
-      this.com_ports = new List<string>();
+      com_ports = new List<string>();
     }
 
     public override List<string> UsbAttached(uint MyDeviceVID, uint MyDevicePID)
     {
-      int num = 0;
-      List<USBClass.DeviceProperties> DPList = new List<USBClass.DeviceProperties>();
-      lock (this.com_ports)
+      var num = 0;
+      var DPList = new List<USBClass.DeviceProperties>();
+      lock (com_ports)
       {
-        this.com_ports.Clear();
+        com_ports.Clear();
         if (USBClass.GetUSBDevice(MyDeviceVID, MyDevicePID, DPList, true, new uint?()))
         {
           foreach (USBClass.DeviceProperties deviceProperties in DPList)
           {
             if (!string.IsNullOrEmpty(deviceProperties.COMPort))
-              this.com_ports.Add(deviceProperties.COMPort);
+            {
+              com_ports.Add(deviceProperties.COMPort);
+            }
             else
+            {
               ++num;
+            }
           }
         }
       }
       if (WinUSBPrinterFinder._deviceInstallDetectedCount.Value > num)
       {
-        if (this.installDetectedTimer.IsRunning)
+        if (installDetectedTimer.IsRunning)
         {
-          if (this.installDetectedTimer.ElapsedMilliseconds > 2000L)
+          if (installDetectedTimer.ElapsedMilliseconds > 2000L)
           {
-            this.installDetectedTimer.Stop();
+            installDetectedTimer.Stop();
             WinUSBPrinterFinder._deviceInstallDetectedCount.Value = num;
           }
         }
         else
-          this.installDetectedTimer.Restart();
+        {
+          installDetectedTimer.Restart();
+        }
       }
       else
+      {
         WinUSBPrinterFinder._deviceInstallDetectedCount.Value = num;
-      return new List<string>((IEnumerable<string>) this.com_ports);
+      }
+
+      return new List<string>((IEnumerable<string>)com_ports);
     }
 
     public static int DeviceInstallDetected

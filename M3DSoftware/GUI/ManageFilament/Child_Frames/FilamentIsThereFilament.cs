@@ -24,33 +24,36 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     public override void MyButtonCallback(ButtonWidget button)
     {
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
       if (selectedPrinter == null)
+      {
         return;
+      }
+
       switch (button.ID)
       {
         case 5:
-          this.CurrentDetails.mode = Manage3DInkMainWindow.Mode.SetFilamentLocationAlreadyInserted;
-          this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page11_CheatCodePage, this.CurrentDetails);
+          CurrentDetails.mode = Manage3DInkMainWindow.Mode.SetFilamentLocationAlreadyInserted;
+          MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page11_CheatCodePage, CurrentDetails);
           break;
         case 6:
-          this.CurrentDetails.pageAfterWait = Manage3DInkMainWindow.PageID.Page0_StartupPage;
-          if (this.settingsManager != null)
+          CurrentDetails.pageAfterWait = Manage3DInkMainWindow.PageID.Page0_StartupPage;
+          if (settingsManager != null)
           {
-            this.settingsManager.DisassociateFilamentFromPrinter(selectedPrinter.Info.serial_number);
-            this.settingsManager.SaveSettings();
+            settingsManager.DisassociateFilamentFromPrinter(selectedPrinter.Info.serial_number);
+            settingsManager.SaveSettings();
           }
-          int none = (int) selectedPrinter.SetFilamentToNone(new AsyncCallback(this.MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(selectedPrinter, Manage3DInkMainWindow.PageID.Page8_WaitingPage, this.CurrentDetails));
+          var none = (int) selectedPrinter.SetFilamentToNone(new AsyncCallback(MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(selectedPrinter, Manage3DInkMainWindow.PageID.Page8_WaitingPage, CurrentDetails));
           break;
         case 9:
-          this.MainWindow.ResetToStartup();
+          MainWindow.ResetToStartup();
           break;
       }
     }
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("3D Ink Details", "Is there 3D Ink in your printer?", true, true, false, false, false, false);
+      CreateManageFilamentFrame("3D Ink Details", "Is there 3D Ink in your printer?", true, true, false, false, false, false);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)

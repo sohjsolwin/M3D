@@ -35,11 +35,11 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this._logReads.Value;
+        return _logReads.Value;
       }
       set
       {
-        this._logReads.Value = value;
+        _logReads.Value = value;
       }
     }
 
@@ -47,11 +47,11 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this._logWrites.Value;
+        return _logWrites.Value;
       }
       set
       {
-        this._logWrites.Value = value;
+        _logWrites.Value = value;
       }
     }
 
@@ -59,11 +59,11 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this._logFeedback.Value;
+        return _logFeedback.Value;
       }
       set
       {
-        this._logFeedback.Value = value;
+        _logFeedback.Value = value;
       }
     }
 
@@ -71,11 +71,11 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this._logWaits.Value;
+        return _logWaits.Value;
       }
       set
       {
-        this._logWaits.Value = value;
+        _logWaits.Value = value;
       }
     }
 
@@ -83,11 +83,11 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this._logToFile.Value;
+        return _logToFile.Value;
       }
       set
       {
-        this._logToFile.Value = value;
+        _logToFile.Value = value;
       }
     }
 
@@ -95,11 +95,11 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this._logToScreen.Value;
+        return _logToScreen.Value;
       }
       set
       {
-        this._logToScreen.Value = value;
+        _logToScreen.Value = value;
       }
     }
 
@@ -107,7 +107,7 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this._printerSerial.Value;
+        return _printerSerial.Value;
       }
     }
 
@@ -122,90 +122,102 @@ namespace M3D.Spooling.Core
       string path2;
       if (!string.IsNullOrEmpty(printer_serial))
       {
-        this._printerSerial = new ThreadSafeVariable<string>(printer_serial);
+        _printerSerial = new ThreadSafeVariable<string>(printer_serial);
         path2 = printer_serial + "--" + DateTime.Now.ToString("yyyy-MM-dd_H-mm-ss") + ".txt";
       }
       else
       {
-        this._printerSerial = new ThreadSafeVariable<string>("Detecting");
+        _printerSerial = new ThreadSafeVariable<string>("Detecting");
         path2 = Guid.NewGuid().ToString() + ".txt";
       }
-      this._logFile = Path.Combine(Paths.LogPath, path2);
-      this._logReads = new ThreadSafeVariable<bool>(true);
-      this._logWrites = new ThreadSafeVariable<bool>(true);
-      this._logWaits = new ThreadSafeVariable<bool>(false);
-      this._logToFile = new ThreadSafeVariable<bool>(true);
-      this._logFeedback = new ThreadSafeVariable<bool>(false);
-      this._logToScreen = new ThreadSafeVariable<bool>(true);
-      this._buffer = new List<string>();
-      this._writeThread = new Thread(new ThreadStart(this.WriteThread));
-      this._writeThread.IsBackground = true;
-      this._writeThread.Name = "Write Log";
-      this._writeThread.IsBackground = true;
-      this._fileLock = new object();
-      this._file = (StreamWriter) null;
-      this._writeThread.Priority = ThreadPriority.Lowest;
-      this._writeThread.IsBackground = true;
-      this._writeThread.Start();
+      _logFile = Path.Combine(Paths.LogPath, path2);
+      _logReads = new ThreadSafeVariable<bool>(true);
+      _logWrites = new ThreadSafeVariable<bool>(true);
+      _logWaits = new ThreadSafeVariable<bool>(false);
+      _logToFile = new ThreadSafeVariable<bool>(true);
+      _logFeedback = new ThreadSafeVariable<bool>(false);
+      _logToScreen = new ThreadSafeVariable<bool>(true);
+      _buffer = new List<string>();
+      _writeThread = new Thread(new ThreadStart(WriteThread))
+      {
+        IsBackground = true,
+        Name = "Write Log"
+      };
+      _writeThread.IsBackground = true;
+      _fileLock = new object();
+      _file = (StreamWriter) null;
+      _writeThread.Priority = ThreadPriority.Lowest;
+      _writeThread.IsBackground = true;
+      _writeThread.Start();
     }
 
     public void Shutdown()
     {
-      this.threadAborted.Value = true;
-      this._writeThread = (Thread) null;
+      threadAborted.Value = true;
+      _writeThread = (Thread) null;
     }
 
     public void ResetWithSerialNumber(string printer_serial)
     {
-      this._printerSerial.Value = printer_serial;
-      string destFileName = Path.Combine(Paths.LogPath, printer_serial + "--" + DateTime.Now.ToString("yyyy-MM-dd_H-mm-ss") + ".txt");
-      lock (this._fileLock)
+      _printerSerial.Value = printer_serial;
+      var destFileName = Path.Combine(Paths.LogPath, printer_serial + "--" + DateTime.Now.ToString("yyyy-MM-dd_H-mm-ss") + ".txt");
+      lock (_fileLock)
       {
-        if (this._file != null)
+        if (_file != null)
         {
-          this._file.Close();
+          _file.Close();
           try
           {
-            File.Move(this._logFile, destFileName);
+            File.Move(_logFile, destFileName);
           }
           catch (Exception ex)
           {
-            this.ShowException(ex);
+            ShowException(ex);
           }
-          this._logFile = destFileName;
+          _logFile = destFileName;
           try
           {
-            this._file = new StreamWriter(this._logFile, true);
+            _file = new StreamWriter(_logFile, true);
           }
           catch (Exception ex)
           {
-            this.ShowException(ex);
+            ShowException(ex);
           }
         }
         else
-          this._logFile = destFileName;
+        {
+          _logFile = destFileName;
+        }
       }
     }
 
     public void WriteLog(string text, Logger.TextType type)
     {
-      if (type != Logger.TextType.Read && type != Logger.TextType.Wait && type != Logger.TextType.Feedback && ((type != Logger.TextType.Write || !this.LogWrites) && type != Logger.TextType.Error))
-        return;
-      if (this.LogToFile)
+      if (type != Logger.TextType.Read && type != Logger.TextType.Wait && type != Logger.TextType.Feedback && ((type != Logger.TextType.Write || !LogWrites) && type != Logger.TextType.Error))
       {
-        lock (this._buffer)
-          this._buffer.Add(text);
-      }
-      if (!this.LogToScreen && type != Logger.TextType.Error || this._onLog == null)
         return;
-      this._onLog(text, this.PrinterSerial);
+      }
+
+      if (LogToFile)
+      {
+        lock (_buffer)
+        {
+          _buffer.Add(text);
+        }
+      }
+      if (!LogToScreen && type != Logger.TextType.Error || _onLog == null)
+      {
+        return;
+      }
+
+      _onLog(text, PrinterSerial);
     }
 
     private void ShowException(Exception e)
     {
-      ErrorLogger.LogErrorMsg(this._printerSerial.ToString() + ": Unable to create log file. File logging disabled: " + e.Message, "File Logging Error");
-      this.threadAborted.Value = true;
-      this._writeThread = (Thread) null;
+      ErrorLogger.LogErrorMsg(_printerSerial.ToString() + ": Unable to create log file. File logging disabled: " + e.Message, "File Logging Error");
+      threadAborted.Value = true;
+      _writeThread = (Thread) null;
     }
 
     private void WriteThread()
@@ -213,14 +225,17 @@ namespace M3D.Spooling.Core
       do
       {
         Thread.Sleep(3000);
-        this.writebufferToFile();
+        writebufferToFile();
       }
-      while (!this.threadAborted.Value && (this.shared_shutdown != null ? (!this.shared_shutdown.Value ? 1 : 0) : 1) != 0);
+      while (!threadAborted.Value && (shared_shutdown != null ? (!shared_shutdown.Value ? 1 : 0) : 1) != 0);
       try
       {
-        if (this._file == null)
+        if (_file == null)
+        {
           return;
-        this._file.Close();
+        }
+
+        _file.Close();
       }
       catch (Exception ex)
       {
@@ -230,47 +245,56 @@ namespace M3D.Spooling.Core
     private void writebufferToFile()
     {
       List<string> stringList;
-      lock (this._buffer)
+      lock (_buffer)
       {
-        stringList = new List<string>((IEnumerable<string>) this._buffer);
-        this._buffer.Clear();
+        stringList = new List<string>((IEnumerable<string>)_buffer);
+        _buffer.Clear();
       }
       if (stringList.Count == 0)
-        return;
-      lock (this._fileLock)
       {
-        if (this._file == null)
+        return;
+      }
+
+      lock (_fileLock)
+      {
+        if (_file == null)
         {
           try
           {
-            this._file = new StreamWriter(this._logFile);
+            _file = new StreamWriter(_logFile);
           }
           catch (Exception ex)
           {
             if (ex is ThreadAbortException)
+            {
               throw ex;
+            }
           }
         }
-        foreach (string str in stringList)
+        foreach (var str in stringList)
         {
           try
           {
-            this._file.WriteLine(str);
+            _file.WriteLine(str);
           }
           catch (Exception ex)
           {
             if (ex is ThreadAbortException)
+            {
               throw ex;
+            }
           }
         }
         try
         {
-          this._file.Flush();
+          _file.Flush();
         }
         catch (Exception ex)
         {
           if (ex is ThreadAbortException)
+          {
             throw ex;
+          }
         }
       }
     }

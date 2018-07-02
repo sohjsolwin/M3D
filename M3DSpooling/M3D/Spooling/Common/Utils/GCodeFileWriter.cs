@@ -26,7 +26,7 @@ namespace M3D.Spooling.Common.Utils
 
     public GCodeFileWriter(string gcodefilename, bool bIsBinaryMode)
     {
-      this.m_bIsBinaryMode = bIsBinaryMode;
+      m_bIsBinaryMode = bIsBinaryMode;
       FileStream fileStream;
       try
       {
@@ -36,34 +36,48 @@ namespace M3D.Spooling.Common.Utils
       {
         return;
       }
-      if (this.m_bIsBinaryMode)
-        this.writeBinary = new BinaryWriter((Stream) fileStream, Encoding.ASCII);
+      if (m_bIsBinaryMode)
+      {
+        writeBinary = new BinaryWriter((Stream) fileStream, Encoding.ASCII);
+      }
       else
-        this.writeAscii = new StreamWriter((Stream) fileStream, Encoding.ASCII);
+      {
+        writeAscii = new StreamWriter((Stream) fileStream, Encoding.ASCII);
+      }
     }
 
     public void Dispose()
     {
-      this.Close();
+      Close();
     }
 
     public void Close()
     {
-      if (this.writeBinary != null)
-        this.writeBinary.Close();
-      if (this.writeAscii == null)
+      if (writeBinary != null)
+      {
+        writeBinary.Close();
+      }
+
+      if (writeAscii == null)
+      {
         return;
-      this.writeAscii.Close();
+      }
+
+      writeAscii.Close();
     }
 
     public bool Write(GCode code)
     {
       try
       {
-        if (this.m_bIsBinaryMode)
-          this.writeBinary.Write(code.getBinary(2));
+        if (m_bIsBinaryMode)
+        {
+          writeBinary.Write(code.getBinary(2));
+        }
         else
-          this.writeAscii.WriteLine(code.getAscii(false, false));
+        {
+          writeAscii.WriteLine(code.getAscii(false, false));
+        }
       }
       catch (Exception ex)
       {

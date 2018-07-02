@@ -30,56 +30,56 @@ namespace M3D.Spooling.Core.Controllers
       this.printerProfile = printerProfile;
       this.base_printer = base_printer;
       this.logger = logger;
-      this.printerInfo = info;
+      printerInfo = info;
       this.broadcastserver = broadcastserver;
     }
 
     protected bool WriteToSerial(byte[] command)
     {
-      return this.base_printer.WriteToSerial(command);
+      return base_printer.WriteToSerial(command);
     }
 
     protected string ReadExisting()
     {
-      return this.base_printer.ReadExisting();
+      return base_printer.ReadExisting();
     }
 
     protected bool IsSerialOpen
     {
       get
       {
-        return this.base_printer.IsOpen;
+        return base_printer.IsOpen;
       }
     }
 
     public void WriteLog(string text, Logger.TextType type)
     {
-      this.logger.WriteLog(text, type);
+      logger.WriteLog(text, type);
     }
 
     public bool GantryClipsRemoved
     {
       get
       {
-        return this.PersistantDetails.GantryClipsRemoved;
+        return PersistantDetails.GantryClipsRemoved;
       }
       set
       {
-        this.PersistantDetails.GantryClipsRemoved = value;
-        this.SavePersistantData();
+        PersistantDetails.GantryClipsRemoved = value;
+        SavePersistantData();
       }
     }
 
     protected void LoadPersistantData()
     {
-      bool flag = false;
-      if (this.MyPrinterInfo.serial_number != PrinterSerialNumber.Undefined)
+      var flag = false;
+      if (MyPrinterInfo.serial_number != PrinterSerialNumber.Undefined)
       {
-        string path = Path.Combine(Paths.SpoolerStorage, this.MyPrinterInfo.MySerialNumber + ".db2");
+        var path = Path.Combine(Paths.SpoolerStorage, MyPrinterInfo.MySerialNumber + ".db2");
         try
         {
-          TextReader textReader = (TextReader) new StreamReader(path);
-          this.PersistantDetails = (PersistantData) PersistantData.ClassSerializer.Deserialize(textReader);
+          var textReader = (TextReader) new StreamReader(path);
+          PersistantDetails = (PersistantData) PersistantData.ClassSerializer.Deserialize(textReader);
           textReader.Close();
           flag = true;
         }
@@ -87,28 +87,37 @@ namespace M3D.Spooling.Core.Controllers
         {
         }
       }
-      if (!this.MyPrinterProfile.OptionsConstants.CheckGantryClips)
-        this.PersistantDetails.GantryClipsRemoved = true;
-      if (flag || this.CheckLegacyPrinterHistory())
+      if (!MyPrinterProfile.OptionsConstants.CheckGantryClips)
+      {
+        PersistantDetails.GantryClipsRemoved = true;
+      }
+
+      if (flag || CheckLegacyPrinterHistory())
+      {
         return;
-      this.PersistantDetails = new PersistantData();
-      if (!this.MyPrinterProfile.OptionsConstants.CheckGantryClips)
-        this.PersistantDetails.GantryClipsRemoved = true;
-      this.SavePersistantData();
+      }
+
+      PersistantDetails = new PersistantData();
+      if (!MyPrinterProfile.OptionsConstants.CheckGantryClips)
+      {
+        PersistantDetails.GantryClipsRemoved = true;
+      }
+
+      SavePersistantData();
     }
 
     public bool SavePersistantData()
     {
-      bool flag = true;
-      if (this.MyPrinterInfo.serial_number != PrinterSerialNumber.Undefined && this.PersistantDetails != null)
+      var flag = true;
+      if (MyPrinterInfo.serial_number != PrinterSerialNumber.Undefined && PersistantDetails != null)
       {
-        string str = Path.Combine(Paths.SpoolerStorage, this.MyPrinterInfo.MySerialNumber + ".db2");
+        var str = Path.Combine(Paths.SpoolerStorage, MyPrinterInfo.MySerialNumber + ".db2");
         try
         {
-          TextWriter textWriter = (TextWriter) new StreamWriter(str);
-          XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+          var textWriter = (TextWriter) new StreamWriter(str);
+          var namespaces = new XmlSerializerNamespaces();
           namespaces.Add(string.Empty, string.Empty);
-          PersistantData.ClassSerializer.Serialize(textWriter, (object) this.PersistantDetails, namespaces);
+          PersistantData.ClassSerializer.Serialize(textWriter, (object)PersistantDetails, namespaces);
           textWriter.Close();
           FileUtils.GrantAccess(str);
         }
@@ -122,21 +131,25 @@ namespace M3D.Spooling.Core.Controllers
 
     private bool CheckLegacyPrinterHistory()
     {
-      string path = Path.Combine(Paths.SpoolerStorage, "printerhistory.db2");
+      var path = Path.Combine(Paths.SpoolerStorage, "printerhistory.db2");
       try
       {
-        TextReader textReader = (TextReader) new StreamReader(path);
+        var textReader = (TextReader) new StreamReader(path);
         string str;
         do
         {
           str = textReader.ReadLine();
           if (string.IsNullOrEmpty(str))
+          {
             return false;
+          }
         }
-        while (!str.Contains("<Parameter Name=\"" + this.MyPrinterInfo.MySerialNumber + "\""));
-        this.PersistantDetails = new PersistantData();
-        this.PersistantDetails.GantryClipsRemoved = str.Contains("gantry_clips_removed=\"true\"");
-        this.SavePersistantData();
+        while (!str.Contains("<Parameter Name=\"" + MyPrinterInfo.MySerialNumber + "\""));
+        PersistantDetails = new PersistantData
+        {
+          GantryClipsRemoved = str.Contains("gantry_clips_removed=\"true\"")
+        };
+        SavePersistantData();
         return true;
       }
       catch (Exception ex)
@@ -151,10 +164,13 @@ namespace M3D.Spooling.Core.Controllers
 
     public virtual void Shutdown()
     {
-      this.SavePersistantData();
-      if (!this.broadcast_shutdown || this.BroadcastServer == null)
+      SavePersistantData();
+      if (!broadcast_shutdown || BroadcastServer == null)
+      {
         return;
-      this.BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.PrinterShutdown, this.MySerialNumber, "null").Serialize());
+      }
+
+      BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.PrinterShutdown, MySerialNumber, "null").Serialize());
     }
 
     public abstract void UpdateFirmware();
@@ -175,8 +191,11 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        if (!this.IsPaused)
-          return this.IsPrinting;
+        if (!IsPaused)
+        {
+          return IsPrinting;
+        }
+
         return true;
       }
     }
@@ -187,8 +206,11 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        if (this.Status != PrinterStatus.Firmware_PrintingPaused)
-          return this.Status == PrinterStatus.Firmware_PrintingPausedProcessing;
+        if (Status != PrinterStatus.Firmware_PrintingPaused)
+        {
+          return Status == PrinterStatus.Firmware_PrintingPausedProcessing;
+        }
+
         return true;
       }
     }
@@ -197,8 +219,11 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        if (!this.IsPaused)
-          return this.Status == PrinterStatus.Firmware_IsWaitingToPause;
+        if (!IsPaused)
+        {
+          return Status == PrinterStatus.Firmware_IsWaitingToPause;
+        }
+
         return true;
       }
     }
@@ -207,7 +232,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.base_printer.SerialPort;
+        return base_printer.SerialPort;
       }
     }
 
@@ -215,11 +240,11 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.MyPrinterInfo.serial_number;
+        return MyPrinterInfo.serial_number;
       }
       set
       {
-        this.MyPrinterInfo.serial_number = value;
+        MyPrinterInfo.serial_number = value;
       }
     }
 
@@ -227,7 +252,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.MyPrinterInfo.extruder;
+        return MyPrinterInfo.extruder;
       }
     }
 
@@ -235,7 +260,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.MyPrinterInfo.hardware;
+        return MyPrinterInfo.hardware;
       }
     }
 
@@ -243,7 +268,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.MyPrinterInfo.calibration;
+        return MyPrinterInfo.calibration;
       }
     }
 
@@ -251,7 +276,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.MyPrinterInfo.accessories;
+        return MyPrinterInfo.accessories;
       }
     }
 
@@ -259,11 +284,11 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.MyPrinterInfo.persistantData;
+        return MyPrinterInfo.persistantData;
       }
       private set
       {
-        this.MyPrinterInfo.persistantData = value;
+        MyPrinterInfo.persistantData = value;
       }
     }
 
@@ -271,7 +296,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.broadcastserver;
+        return broadcastserver;
       }
     }
 
@@ -279,7 +304,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.printerInfo;
+        return printerInfo;
       }
     }
 
@@ -287,13 +312,17 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        lock (this.statusthreadsync)
-          return this.MyPrinterInfo.Status;
+        lock (statusthreadsync)
+        {
+          return MyPrinterInfo.Status;
+        }
       }
       protected set
       {
-        lock (this.statusthreadsync)
-          this.MyPrinterInfo.Status = value;
+        lock (statusthreadsync)
+        {
+          MyPrinterInfo.Status = value;
+        }
       }
     }
 
@@ -301,7 +330,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       get
       {
-        return this.printerProfile;
+        return printerProfile;
       }
     }
   }

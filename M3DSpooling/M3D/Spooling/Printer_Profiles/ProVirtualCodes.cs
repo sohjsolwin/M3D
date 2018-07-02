@@ -10,8 +10,8 @@ namespace M3D.Spooling.Printer_Profiles
   {
     public ProVirtualCodes()
     {
-      this.AddVirtualCode(582, new VirtualCodeProfile.RunVirtualCode(StandardVirtualCodes.M582SetNozzleWidth));
-      this.AddVirtualCode(583, new VirtualCodeProfile.RunVirtualCode(StandardVirtualCodes.M583GetNozzleWidth));
+      AddVirtualCode(582, new VirtualCodeProfile.RunVirtualCode(StandardVirtualCodes.M582SetNozzleWidth));
+      AddVirtualCode(583, new VirtualCodeProfile.RunVirtualCode(StandardVirtualCodes.M583GetNozzleWidth));
     }
   }
 }

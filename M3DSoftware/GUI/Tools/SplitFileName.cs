@@ -16,11 +16,11 @@ namespace M3D.GUI.Tools
 
     public SplitFileName(string filepath)
     {
-      this.ext = Path.GetExtension(filepath);
-      this.ext = this.ext.TrimStart('.');
-      this.name = Path.GetFileNameWithoutExtension(filepath);
-      this.path = Path.GetDirectoryName(filepath);
-      this.path += !this.path.EndsWith(Path.DirectorySeparatorChar.ToString()) ? Path.DirectorySeparatorChar.ToString() : "";
+      ext = Path.GetExtension(filepath);
+      ext = ext.TrimStart('.');
+      name = Path.GetFileNameWithoutExtension(filepath);
+      path = Path.GetDirectoryName(filepath);
+      path += !path.EndsWith(Path.DirectorySeparatorChar.ToString()) ? Path.DirectorySeparatorChar.ToString() : "";
     }
   }
 }

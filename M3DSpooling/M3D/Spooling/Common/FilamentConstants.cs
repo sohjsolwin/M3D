@@ -22,21 +22,36 @@ namespace M3D.Spooling.Common
     {
       typeStr = typeStr.ToUpperInvariant();
       if (typeStr == "ABSR")
+      {
         typeStr = "ABS_R";
+      }
+
       if (typeStr == "ABS-R")
+      {
         typeStr = "ABS_R";
+      }
+
       if (typeStr == "FLX")
+      {
         return FilamentSpool.TypeEnum.TGH;
+      }
+
       if (typeStr == "CAM")
+      {
         return FilamentSpool.TypeEnum.PLA;
+      }
+
       return (FilamentSpool.TypeEnum) Enum.Parse(typeof (FilamentSpool.TypeEnum), typeStr);
     }
 
     public static List<string> GetTypes()
     {
-      List<string> stringList = new List<string>();
-      foreach (object obj in Enum.GetValues(typeof (FilamentSpool.TypeEnum)))
+      var stringList = new List<string>();
+      foreach (var obj in Enum.GetValues(typeof (FilamentSpool.TypeEnum)))
+      {
         stringList.Add(obj.ToString());
+      }
+
       return stringList;
     }
 
@@ -58,7 +73,10 @@ namespace M3D.Spooling.Common
           return "TriChrome 3D Ink™";
         default:
           if (Debugger.IsAttached && brand != FilamentConstants.Branding.Other)
+          {
             Debugger.Break();
+          }
+
           return "";
       }
     }
@@ -68,7 +86,10 @@ namespace M3D.Spooling.Common
       Filament filament = FilamentConstants.ProductList.Find((Predicate<Filament>) (f =>
       {
         if (f.Color == color)
+        {
           return f.Type == type;
+        }
+
         return false;
       }));
       if (filament == null)
@@ -76,19 +97,24 @@ namespace M3D.Spooling.Common
         filament = FilamentConstants.ProductList.Find((Predicate<Filament>) (f =>
         {
           if (f.Color == FilamentConstants.ColorsEnum.Other)
+          {
             return f.Type == type;
+          }
+
           return false;
         }));
         if (filament == null)
+        {
           return FilamentConstants.Branding.Other;
+        }
       }
       return filament.Brand;
     }
 
     public static string ColorsToString(FilamentConstants.ColorsEnum color)
     {
-      string str = color.ToString();
-      for (int startIndex = 1; startIndex < str.Length; ++startIndex)
+      var str = color.ToString();
+      for (var startIndex = 1; startIndex < str.Length; ++startIndex)
       {
         if (char.IsUpper(str[startIndex]))
         {
@@ -389,9 +415,11 @@ namespace M3D.Spooling.Common
     {
       public static FilamentConstants.Temperature.MaxMin MaxMinForFilamentType(FilamentSpool.TypeEnum type)
       {
-        FilamentConstants.Temperature.MaxMin maxMin = new FilamentConstants.Temperature.MaxMin();
-        maxMin.Max = 285f;
-        maxMin.Min = 100f;
+        var maxMin = new FilamentConstants.Temperature.MaxMin
+        {
+          Max = 285f,
+          Min = 100f
+        };
         switch (type)
         {
           case FilamentSpool.TypeEnum.ABS:
@@ -424,7 +452,7 @@ namespace M3D.Spooling.Common
 
       public static int Default(FilamentSpool.TypeEnum type)
       {
-        int num = 0;
+        var num = 0;
         switch (type)
         {
           case FilamentSpool.TypeEnum.ABS:
@@ -448,13 +476,16 @@ namespace M3D.Spooling.Common
             break;
         }
         if (num == 0)
+        {
           throw new NotImplementedException("Constants.MaxMinForFilamentType is not implemented for type: " + (object) type);
+        }
+
         return num;
       }
 
       public static int BedDefault(FilamentSpool.TypeEnum type)
       {
-        int num = 0;
+        var num = 0;
         switch (type)
         {
           case FilamentSpool.TypeEnum.ABS:

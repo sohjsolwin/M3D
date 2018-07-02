@@ -31,38 +31,38 @@ namespace M3D.Graphics.Widgets2D
     public void Init(GUIHost host, int num_boxes, int maxCharacterPerBox)
     {
       this.host = host;
-      this.MaxCharacterPerBox = maxCharacterPerBox;
-      this.NumBoxes = num_boxes;
+      MaxCharacterPerBox = maxCharacterPerBox;
+      NumBoxes = num_boxes;
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
       base.InitChildren(parent, host, MyButtonCallback);
       this.host = host;
-      this.NumBoxes = this.NumBoxes;
-      this.Color = this.Color;
-      this.Size = this.Size;
-      this.Refresh();
+      NumBoxes = NumBoxes;
+      Color = Color;
+      Size = Size;
+      Refresh();
     }
 
     private void Initialize(int num)
     {
-      double num1 = 1.0 - ((double) num - 1.0) * 0.100000001490116;
-      float num2 = 0.1f;
-      double num3 = (double) num;
-      float num4 = (float) (num1 / num3);
-      float num5 = 0.0f;
-      this.editboxes = new EditBoxWidget[num];
-      for (int index = 0; index < num; ++index)
+      var num1 = 1.0 - ((double) num - 1.0) * 0.100000001490116;
+      var num2 = 0.1f;
+      var num3 = (double) num;
+      var num4 = (float) (num1 / num3);
+      var num5 = 0.0f;
+      editboxes = new EditBoxWidget[num];
+      for (var index = 0; index < num; ++index)
       {
-        EditBoxWidget editBoxWidget = new EditBoxWidget(index + 1000, (Element2D) this);
-        editBoxWidget.Init(this.host, "guicontrols", 640f, 448f, 672f, 480f);
+        var editBoxWidget = new EditBoxWidget(index + 1000, (Element2D) this);
+        editBoxWidget.Init(host, "guicontrols", 640f, 448f, 672f, 480f);
         editBoxWidget.SetGrowableWidth(4, 4, 32);
         editBoxWidget.Text = "";
         editBoxWidget.OnKeyboardEvent(new KeyboardEvent(KeyboardEventType.InputKey, false, false, false));
         editBoxWidget.Enabled = true;
         editBoxWidget.SetSize(100, 24);
-        editBoxWidget.Color = this.Color;
+        editBoxWidget.Color = Color;
         editBoxWidget.SetTextWindowBorders(7, 7, 7, 7);
         editBoxWidget.RelativeX = num5;
         editBoxWidget.RelativeY = 0.0f;
@@ -70,38 +70,46 @@ namespace M3D.Graphics.Widgets2D
         editBoxWidget.RelativeHeight = 1f;
         editBoxWidget.Size = FontSize.Large;
         editBoxWidget.CAPS = true;
-        editBoxWidget.SetCallbackEnterKey(new EditBoxWidget.EditBoxCallback(this.EditBoxCallbackEnterKey));
-        editBoxWidget.SetCallbackOnClick(new EditBoxWidget.EditBoxCallback(this.EditBoxCallbackOnClick));
-        editBoxWidget.SetCallbackOnTextAdded(new EditBoxWidget.EditBoxCallback(this.EditBoxCallbackEnterKeyOnTextAdded));
-        editBoxWidget.SetCallbackOnBackspace(new EditBoxWidget.EditBoxCallback(this.EditBoxCallbackOnBackSpace));
-        editBoxWidget.MAX_CHARS = this.MaxCharacterPerBox;
+        editBoxWidget.SetCallbackEnterKey(new EditBoxWidget.EditBoxCallback(EditBoxCallbackEnterKey));
+        editBoxWidget.SetCallbackOnClick(new EditBoxWidget.EditBoxCallback(EditBoxCallbackOnClick));
+        editBoxWidget.SetCallbackOnTextAdded(new EditBoxWidget.EditBoxCallback(EditBoxCallbackEnterKeyOnTextAdded));
+        editBoxWidget.SetCallbackOnBackspace(new EditBoxWidget.EditBoxCallback(EditBoxCallbackOnBackSpace));
+        editBoxWidget.MAX_CHARS = MaxCharacterPerBox;
         num5 += num2 + num4;
-        this.AddChildElement((Element2D) editBoxWidget);
-        this.editboxes[index] = editBoxWidget;
+        AddChildElement((Element2D) editBoxWidget);
+        editboxes[index] = editBoxWidget;
       }
-      this.initialized = true;
+      initialized = true;
     }
 
     public override void OnFocusChanged()
     {
-      if (!this.HasFocus || !this.initialized || this.editboxes.Length == 0)
+      if (!HasFocus || !initialized || editboxes.Length == 0)
+      {
         return;
-      this.host.SetFocus((Element2D) this.editboxes[0]);
+      }
+
+      host.SetFocus((Element2D)editboxes[0]);
     }
 
     public Color4 Color
     {
       get
       {
-        return this.color;
+        return color;
       }
       set
       {
-        this.color = value;
-        if (!this.initialized)
+        color = value;
+        if (!initialized)
+        {
           return;
-        foreach (EditBoxWidget editbox in this.editboxes)
+        }
+
+        foreach (EditBoxWidget editbox in editboxes)
+        {
           editbox.Color = value;
+        }
       }
     }
 
@@ -110,15 +118,20 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.size;
+        return size;
       }
       set
       {
-        this.size = value;
-        if (!this.initialized)
+        size = value;
+        if (!initialized)
+        {
           return;
-        foreach (EditBoxWidget editbox in this.editboxes)
+        }
+
+        foreach (EditBoxWidget editbox in editboxes)
+        {
           editbox.Size = value;
+        }
       }
     }
 
@@ -126,16 +139,23 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.num_boxes;
+        return num_boxes;
       }
       set
       {
-        if (this.initialized)
+        if (initialized)
+        {
           throw new InvalidOperationException("MultiBoxEditBoxWidget can only be initialized once.");
-        if (this.host != null)
-          this.Initialize(value);
+        }
+
+        if (host != null)
+        {
+          Initialize(value);
+        }
         else
-          this.num_boxes = value;
+        {
+          num_boxes = value;
+        }
       }
     }
 
@@ -143,26 +163,41 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        if (!this.initialized)
+        if (!initialized)
+        {
           return "";
-        string str = "";
-        foreach (EditBoxWidget editbox in this.editboxes)
+        }
+
+        var str = "";
+        foreach (EditBoxWidget editbox in editboxes)
+        {
           str += editbox.Text;
+        }
+
         return str;
       }
       set
       {
-        if (!this.initialized)
-          throw new InvalidOperationException("MultiBoxEditBoxWidget has not been initialized.");
-        foreach (AbstractEditBoxWidget editbox in this.editboxes)
-          editbox.Text = "";
-        int startIndex = 0;
-        for (int index = 0; startIndex < value.Length && index < this.editboxes.Length; ++index)
+        if (!initialized)
         {
-          int length = this.editboxes[index].MAX_CHARS;
+          throw new InvalidOperationException("MultiBoxEditBoxWidget has not been initialized.");
+        }
+
+        foreach (AbstractEditBoxWidget editbox in editboxes)
+        {
+          editbox.Text = "";
+        }
+
+        var startIndex = 0;
+        for (var index = 0; startIndex < value.Length && index < editboxes.Length; ++index)
+        {
+          var length = editboxes[index].MAX_CHARS;
           if (startIndex + length > value.Length)
+          {
             length = value.Length - startIndex;
-          this.editboxes[index].Text = value.Substring(startIndex, length);
+          }
+
+          editboxes[index].Text = value.Substring(startIndex, length);
           startIndex += length;
         }
       }
@@ -170,20 +205,29 @@ namespace M3D.Graphics.Widgets2D
 
     private void EditBoxCallbackOnBackSpace(EditBoxWidget edit)
     {
-      int cursor = edit.Cursor;
+      var cursor = edit.Cursor;
       if (!string.IsNullOrEmpty(edit.Text) || edit.Cursor != 0)
+      {
         return;
-      int index = edit.ID - 1000 - 1;
+      }
+
+      var index = edit.ID - 1000 - 1;
       if (index < 0)
+      {
         return;
-      this.host.SetFocus((Element2D) this.editboxes[index]);
+      }
+
+      host.SetFocus((Element2D)editboxes[index]);
     }
 
     private void EditBoxCallbackEnterKey(EditBoxWidget edit)
     {
       MultiBoxEditBoxWidget.EditBoxCallback enterkeycallback = this.enterkeycallback;
       if (enterkeycallback == null)
+      {
         return;
+      }
+
       enterkeycallback(this);
     }
 
@@ -192,7 +236,10 @@ namespace M3D.Graphics.Widgets2D
       edit.Text = "";
       MultiBoxEditBoxWidget.EditBoxCallback clickkeycallback = this.clickkeycallback;
       if (clickkeycallback == null)
+      {
         return;
+      }
+
       clickkeycallback(this);
     }
 
@@ -200,29 +247,34 @@ namespace M3D.Graphics.Widgets2D
     {
       if (edit.Text.Length == edit.MAX_CHARS)
       {
-        int num = edit.ID - 1000;
-        if (num < this.editboxes.Length - 1)
-          this.host.SetFocus((Element2D) this.editboxes[num + 1]);
+        var num = edit.ID - 1000;
+        if (num < editboxes.Length - 1)
+        {
+          host.SetFocus((Element2D)editboxes[num + 1]);
+        }
       }
       MultiBoxEditBoxWidget.EditBoxCallback onnewtext = this.onnewtext;
       if (onnewtext == null)
+      {
         return;
+      }
+
       onnewtext(this);
     }
 
     public void SetCallbackEnterKey(MultiBoxEditBoxWidget.EditBoxCallback func)
     {
-      this.enterkeycallback = func;
+      enterkeycallback = func;
     }
 
     public void SetCallbackOnClick(MultiBoxEditBoxWidget.EditBoxCallback func)
     {
-      this.clickkeycallback = func;
+      clickkeycallback = func;
     }
 
     public void SetCallbackOnTextAdded(MultiBoxEditBoxWidget.EditBoxCallback func)
     {
-      this.onnewtext = func;
+      onnewtext = func;
     }
 
     public delegate void EditBoxCallback(MultiBoxEditBoxWidget edit);

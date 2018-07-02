@@ -34,96 +34,107 @@ namespace M3D.GUI.SettingsPages
       : base(ID)
     {
       this.spooler_connection = spooler_connection;
-      this.mExclusivePrinter = exclusive;
-      this.Init(host);
-      this.mProFeaturesFrame = (Frame) this.FindChildElement(2000);
-      this.mProUnavailableFrame = (Frame) this.FindChildElement(3000);
-      this.mProUnavailableFrame.Visible = true;
-      this.mProFeaturesFrame.Visible = false;
-      this.Visible = false;
-      this.Enabled = false;
+      mExclusivePrinter = exclusive;
+      Init(host);
+      mProFeaturesFrame = (Frame)FindChildElement(2000);
+      mProUnavailableFrame = (Frame)FindChildElement(3000);
+      mProUnavailableFrame.Visible = true;
+      mProFeaturesFrame.Visible = false;
+      Visible = false;
+      Enabled = false;
     }
 
     private void Init(GUIHost host)
     {
-      this.mHost = host;
-      string featurePanel = Resources.FeaturePanel;
-      this.Init(host, featurePanel, new ButtonCallback(this.MyButtonCallback));
-      this.featureListBox = (ScrollableVerticalLayout) this.FindChildElement(2101);
-      this.RelativeWidth = 1f;
-      this.RelativeHeight = 1f;
+      mHost = host;
+      var featurePanel = Resources.FeaturePanel;
+      Init(host, featurePanel, new ButtonCallback(MyButtonCallback));
+      featureListBox = (ScrollableVerticalLayout)FindChildElement(2101);
+      RelativeWidth = 1f;
+      RelativeHeight = 1f;
     }
 
     public override void SetVisible(bool bVisible)
     {
-      if (bVisible && !this.Visible)
-        this.CheckProAvailability();
+      if (bVisible && !Visible)
+      {
+        CheckProAvailability();
+      }
       else
-        this.currentPrinter = (PrinterObject) null;
+      {
+        currentPrinter = (PrinterObject) null;
+      }
+
       base.SetVisible(bVisible);
     }
 
     private void CheckProAvailability()
     {
-      PrinterObject printer = this.spooler_connection.SelectedPrinter;
-      if (this.mExclusivePrinter != null)
-        printer = !this.mExclusivePrinter.isConnected() ? (PrinterObject) null : this.mExclusivePrinter;
-      if (this.currentPrinter == printer)
+      PrinterObject printer = spooler_connection.SelectedPrinter;
+      if (mExclusivePrinter != null)
+      {
+        printer = !mExclusivePrinter.isConnected() ? (PrinterObject) null : mExclusivePrinter;
+      }
+
+      if (currentPrinter == printer)
+      {
         return;
+      }
+
       if (printer == null || !printer.Info.supportedFeatures.UsesSupportedFeatures)
       {
-        if (!this.mProUnavailableFrame.Visible)
+        if (!mProUnavailableFrame.Visible)
         {
-          this.mProUnavailableFrame.Visible = true;
-          this.mProFeaturesFrame.Visible = false;
-          this.featureListBox.RemoveAllChildElements();
+          mProUnavailableFrame.Visible = true;
+          mProFeaturesFrame.Visible = false;
+          featureListBox.RemoveAllChildElements();
         }
       }
-      else if (!this.mProFeaturesFrame.Visible)
+      else if (!mProFeaturesFrame.Visible)
       {
-        this.mProUnavailableFrame.Visible = false;
-        this.mProFeaturesFrame.Visible = true;
-        this.AddFeatureButtons(printer);
+        mProUnavailableFrame.Visible = false;
+        mProFeaturesFrame.Visible = true;
+        AddFeatureButtons(printer);
       }
       else
       {
-        this.featureListBox.RemoveAllChildElements();
-        this.AddFeatureButtons(printer);
+        featureListBox.RemoveAllChildElements();
+        AddFeatureButtons(printer);
       }
-      this.currentPrinter = printer;
+      currentPrinter = printer;
     }
 
     private void AddFeatureButtons(PrinterObject printer)
     {
-      this.featureListBox.RemoveAllChildElements();
+      featureListBox.RemoveAllChildElements();
       foreach (KeyValuePair<string, int> enumerate in printer.MyPrinterProfile.SupportedFeaturesConstants.EnumerateList())
       {
-        string key = enumerate.Key;
-        int feature_slot = enumerate.Value;
+        var key = enumerate.Key;
+        var feature_slot = enumerate.Value;
         SupportedFeatures.Status status = printer.Info.supportedFeatures.GetStatus(feature_slot);
-        this.featureListBox.AddChildElement((Element2D) this.CreateFeatureButton(this.mHost, enumerate, status));
+        featureListBox.AddChildElement((Element2D)CreateFeatureButton(mHost, enumerate, status));
       }
     }
 
     public override void OnUpdate()
     {
-      this.CheckProAvailability();
+      CheckProAvailability();
       base.OnUpdate();
     }
 
     private ButtonWidget CreateFeatureButton(GUIHost host, KeyValuePair<string, int> featureNameSlotPair, SupportedFeatures.Status status)
     {
-      ButtonWidget buttonWidget = new ButtonWidget(featureNameSlotPair.Value);
+      var buttonWidget = new ButtonWidget(featureNameSlotPair.Value);
       buttonWidget.SetSize(300, 29);
       buttonWidget.ImageAreaWidth = 29;
       buttonWidget.Alignment = QFontAlignment.Justify;
       buttonWidget.Size = FontSize.Medium;
       buttonWidget.Text = "  " + featureNameSlotPair.Key;
-      buttonWidget.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      float u0 = 0.0f;
-      float v0 = 0.0f;
-      float u1 = 0.0f;
-      float v1 = 0.0f;
+      buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
+      var u0 = 0.0f;
+      var v0 = 0.0f;
+      var u1 = 0.0f;
+      var v1 = 0.0f;
       switch (status)
       {
         case SupportedFeatures.Status.Unavailable:

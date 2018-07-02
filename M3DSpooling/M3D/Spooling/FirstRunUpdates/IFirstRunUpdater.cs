@@ -17,7 +17,7 @@ namespace M3D.Spooling.FirstRunUpdates
 
     public int GetSerialDate(string serial_number)
     {
-      string s = serial_number.Substring(2, 6);
+      var s = serial_number.Substring(2, 6);
       try
       {
         return int.Parse(s);

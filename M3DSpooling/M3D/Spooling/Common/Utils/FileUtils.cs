@@ -21,7 +21,7 @@ namespace M3D.Spooling.Common.Utils
     {
       try
       {
-        DirectoryInfo directoryInfo = new DirectoryInfo(fullPath);
+        var directoryInfo = new DirectoryInfo(fullPath);
         DirectorySecurity accessControl = directoryInfo.GetAccessControl();
         accessControl.AddAccessRule(new FileSystemAccessRule((IdentityReference) new SecurityIdentifier(WellKnownSidType.WorldSid, (SecurityIdentifier) null), FileSystemRights.FullControl, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
         directoryInfo.SetAccessControl(accessControl);

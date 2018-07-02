@@ -21,14 +21,14 @@ namespace M3D.Spooling.Common.Utils
     {
       this.functionName = functionName;
       this.description = description;
-      this.memoryUsed = Process.GetCurrentProcess().PrivateMemorySize64;
-      this.timeStamp = DateTime.Now.Ticks;
+      memoryUsed = Process.GetCurrentProcess().PrivateMemorySize64;
+      timeStamp = DateTime.Now.Ticks;
     }
 
     public void Print(TextWriter tw)
     {
-      string str = new DateTime(this.timeStamp).ToString("dd/MM/yyyy HH:mm:ss.ffff tt");
-      tw.WriteLine(string.Format("{0}: {1} Current Memory Used: {2} bytes.  Date: {3}", (object) this.functionName, (object) this.description, (object) this.memoryUsed, (object) str));
+      var str = new DateTime(timeStamp).ToString("dd/MM/yyyy HH:mm:ss.ffff tt");
+      tw.WriteLine(string.Format("{0}: {1} Current Memory Used: {2} bytes.  Date: {3}", (object)functionName, (object)description, (object)memoryUsed, (object) str));
     }
   }
 }

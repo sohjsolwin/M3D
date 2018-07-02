@@ -34,9 +34,9 @@ namespace M3D.Graphics.Frames_and_Layouts
     public Frame(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.bordercolor = new Color4((byte) 0, (byte) 0, (byte) 0, (byte) 0);
-      this.bgcolor = new Color4((byte) 0, (byte) 0, (byte) 0, (byte) 0);
-      this.Clipping = false;
+      bordercolor = new Color4((byte) 0, (byte) 0, (byte) 0, (byte) 0);
+      bgcolor = new Color4((byte) 0, (byte) 0, (byte) 0, (byte) 0);
+      Clipping = false;
     }
 
     public virtual void Close()
@@ -45,8 +45,11 @@ namespace M3D.Graphics.Frames_and_Layouts
 
     public override bool ContainsPoint(int x, int y)
     {
-      if (this.always_contains_point)
+      if (always_contains_point)
+      {
         return true;
+      }
+
       return base.ContainsPoint(x, y);
     }
 
@@ -58,7 +61,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     public override void OnRender(GUIHost host)
     {
       Simple2DRenderer simpleRenderer = host.GetSimpleRenderer();
-      if (this.DarkenBackground)
+      if (DarkenBackground)
       {
         Simple2DRenderer.Quad quad;
         quad.x0 = 0.0f;
@@ -69,36 +72,45 @@ namespace M3D.Graphics.Frames_and_Layouts
         simpleRenderer.DrawQuad(quad);
       }
       if (simpleRenderer == null)
+      {
         return;
-      if (this.Clipping)
-        simpleRenderer.PushClipping(new Simple2DRenderer.Region(this.X_Abs, this.Y_Abs, this.X_Abs + this.Width, this.Y_Abs + this.Height));
-      Simple2DRenderer.Quad quad1;
-      quad1.x0 = (float) this.X_Abs;
-      quad1.y0 = (float) this.Y_Abs;
-      quad1.x1 = (float) (this.X_Abs + this.Width);
-      quad1.y1 = (float) (this.Y_Abs + this.Height);
-      quad1.color = this.bgcolor;
-      if ((double) this.bordercolor.A > 0.0)
-      {
-        quad1.x0 = (float) (this.X_Abs + 1);
-        quad1.y0 = (float) (this.Y_Abs + 1);
-        quad1.x1 = (float) (this.X_Abs + this.Width - 1);
-        quad1.y1 = (float) (this.Y_Abs + this.Height - 1);
-        quad1.color = this.bgcolor;
       }
-      if ((double) this.bgcolor.A > 0.0)
+
+      if (Clipping)
       {
-        quad1.color = this.bgcolor;
+        simpleRenderer.PushClipping(new Simple2DRenderer.Region(X_Abs, Y_Abs, X_Abs + Width, Y_Abs + Height));
+      }
+
+      Simple2DRenderer.Quad quad1;
+      quad1.x0 = (float)X_Abs;
+      quad1.y0 = (float)Y_Abs;
+      quad1.x1 = (float) (X_Abs + Width);
+      quad1.y1 = (float) (Y_Abs + Height);
+      quad1.color = bgcolor;
+      if ((double)bordercolor.A > 0.0)
+      {
+        quad1.x0 = (float) (X_Abs + 1);
+        quad1.y0 = (float) (Y_Abs + 1);
+        quad1.x1 = (float) (X_Abs + Width - 1);
+        quad1.y1 = (float) (Y_Abs + Height - 1);
+        quad1.color = bgcolor;
+      }
+      if ((double)bgcolor.A > 0.0)
+      {
+        quad1.color = bgcolor;
         simpleRenderer.DrawQuad(quad1);
       }
-      if ((double) this.bordercolor.A > 0.0)
+      if ((double)bordercolor.A > 0.0)
       {
-        quad1.color = this.bordercolor;
+        quad1.color = bordercolor;
         simpleRenderer.DrawQuadLine(quad1);
       }
       base.OnRender(host);
-      if (!this.Clipping)
+      if (!Clipping)
+      {
         return;
+      }
+
       simpleRenderer.PopClipping();
     }
 
@@ -107,12 +119,12 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.hexBackgroundColor;
+        return hexBackgroundColor;
       }
       set
       {
-        this.hexBackgroundColor = value;
-        this.BGColor = IElement.GenerateColorFromHtml(this.hexBackgroundColor);
+        hexBackgroundColor = value;
+        BGColor = IElement.GenerateColorFromHtml(hexBackgroundColor);
       }
     }
 
@@ -120,11 +132,11 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.bgcolor;
+        return bgcolor;
       }
       set
       {
-        this.bgcolor = value;
+        bgcolor = value;
       }
     }
 
@@ -133,12 +145,12 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.hexBorderColor;
+        return hexBorderColor;
       }
       set
       {
-        this.hexBorderColor = value;
-        this.BorderColor = IElement.GenerateColorFromHtml(this.hexBorderColor);
+        hexBorderColor = value;
+        BorderColor = IElement.GenerateColorFromHtml(hexBorderColor);
       }
     }
 
@@ -147,11 +159,11 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.bordercolor;
+        return bordercolor;
       }
       set
       {
-        this.bordercolor = value;
+        bordercolor = value;
       }
     }
 

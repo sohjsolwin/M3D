@@ -21,10 +21,15 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public XMLTabCollectionSettingsItem Clone()
     {
-      XMLTabCollectionSettingsItem collectionSettingsItem = new XMLTabCollectionSettingsItem();
-      collectionSettingsItem.Header = this.Header;
-      foreach (XMLSettingsItem xmlSettingsItem in this.Items)
+      var collectionSettingsItem = new XMLTabCollectionSettingsItem
+      {
+        Header = Header
+      };
+      foreach (XMLSettingsItem xmlSettingsItem in Items)
+      {
         collectionSettingsItem.Items.Add(xmlSettingsItem.Clone());
+      }
+
       return collectionSettingsItem;
     }
   }

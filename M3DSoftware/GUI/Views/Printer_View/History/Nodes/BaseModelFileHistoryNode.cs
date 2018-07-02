@@ -25,17 +25,20 @@ namespace M3D.GUI.Views.Printer_View.History.Nodes
 
     protected void AddModel(PrinterView printerView)
     {
-      printerView.ModelLoadingInterface.LoadModelIntoPrinter(new PrintDetails.ObjectDetails(this.filename, new PrintDetails.Transform(this.transform.translation, this.transform.scaling, this.transform.rotation))
+      printerView.ModelLoadingInterface.LoadModelIntoPrinter(new PrintDetails.ObjectDetails(filename, new PrintDetails.Transform(transform.translation, transform.scaling, transform.rotation))
       {
-        UID = this.ObjectID,
-        zipFileName = this.zipfilename
+        UID = ObjectID,
+        zipFileName = zipfilename
       });
     }
 
     protected void RemoveModel(PrinterView printerView)
     {
-      if (!printerView.SelectModelbyID(this.ObjectID))
+      if (!printerView.SelectModelbyID(ObjectID))
+      {
         return;
+      }
+
       printerView.RemoveSelectedModel();
     }
   }

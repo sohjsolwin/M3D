@@ -19,34 +19,53 @@ namespace M3D.Spooler
     [STAThread]
     private static void Main(string[] args)
     {
-      string filename = Path.Combine(Paths.SharedDataFolder, "spoolerclientlog.txt");
+      var filename = Path.Combine(Paths.SharedDataFolder, "spoolerclientlog.txt");
       Thread.CurrentThread.CurrentCulture = PrinterCompatibleString.PRINTER_CULTURE;
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       Application.ThreadException += new ThreadExceptionEventHandler(Program.UIThreadException);
       Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Program.CurrentDomain_UnhandledException);
-      int num = 100;
-      SpoolerClientBuiltIn spooler_client = new SpoolerClientBuiltIn(new DebugLogger(filename, (uint) num));
-      spooler_client.IgnoreConnectingPrinters = false;
+      var num = 100;
+      var spooler_client = new SpoolerClientBuiltIn(new DebugLogger(filename, (uint)num))
+      {
+        IgnoreConnectingPrinters = false
+      };
       if (spooler_client.StartInternalSpoolerSession() == SpoolerResult.Fail_Connect)
+      {
         return;
-      for (int index = 0; index < args.Length; ++index)
+      }
+
+      for (var index = 0; index < args.Length; ++index)
       {
         if (args[index] == "A")
+        {
           MainForm.AUTO_SHUTDOWN_IF_ALL_CLIENTS_DISCONNECT = true;
+        }
         else if (args[index] == "H")
+        {
           TrayAppForm.start_invisible = true;
+        }
         else if (args[index] == "ZA91L")
+        {
           spooler_client.StayInBootloader = true;
+        }
         else if (args[index] == "NIF")
+        {
           spooler_client.CHECK_INCOMPATIBLE_FIRMWARE = false;
+        }
         else if (args[index] == "NOGAN")
+        {
           spooler_client.CHECK_GANTRY_CLIPS = false;
+        }
         else if (args[index] == "NOBED")
+        {
           spooler_client.CHECK_BED_CALIBRATION = false;
+        }
         else if (args[index] == "AUTO")
+        {
           spooler_client.AUTO_UPDATE_FIRMWARE = true;
+        }
       }
       spooler_client.CheckFirmware = true;
       Application.Run((Form) new TrayAppForm(spooler_client));
@@ -78,12 +97,15 @@ namespace M3D.Spooler
 
     private static void ShowExceptionHandler(string source, Exception exp)
     {
-      string str = "An application error occurred in " + source + ". Please contact the administrator with the following information.\n\nException: " + exp.Message + "\n\nStack Trace:\n" + exp.StackTrace;
+      var str = "An application error occurred in " + source + ". Please contact the administrator with the following information.\n\nException: " + exp.Message + "\n\nStack Trace:\n" + exp.StackTrace;
       if (exp.InnerException != null)
+      {
         str = str + "Inner Exception: " + exp.InnerException.Message + "\n\nStack Trace:\n" + exp.InnerException.StackTrace;
+      }
+
       try
       {
-        int num = (int) MessageBox.Show("Fatal Non-UI Error. Could not write the error to the event log. Reason: " + str, "Fatal Non-UI Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+        var num = (int) MessageBox.Show("Fatal Non-UI Error. Could not write the error to the event log. Reason: " + str, "Fatal Non-UI Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
       }
       finally
       {

@@ -14,7 +14,7 @@ namespace M3D.GUI.Views.Library_View
 
     public QueryResults()
     {
-      this.records = new List<T>();
+      records = new List<T>();
     }
   }
 }

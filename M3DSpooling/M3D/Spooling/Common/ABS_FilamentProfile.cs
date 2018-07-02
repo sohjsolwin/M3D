@@ -15,24 +15,32 @@ namespace M3D.Spooling.Common
     public ABS_FilamentProfile(FilamentSpool spool, PrinterProfile printer_profile)
       : base(spool)
     {
-      this.ABSWarningDim = printer_profile.PrinterSizeConstants.ABSWarningDim;
-      this.preprocessor.initialPrint.StartingTemp = this.filament.filament_temperature;
+      ABSWarningDim = printer_profile.PrinterSizeConstants.ABSWarningDim;
+      preprocessor.initialPrint.StartingTemp = filament.filament_temperature;
       if ("Micro" == printer_profile.ProfileName)
-        this.preprocessor.initialPrint.StartingFanValue = 50;
+      {
+        preprocessor.initialPrint.StartingFanValue = 50;
+      }
       else
-        this.preprocessor.initialPrint.StartingFanValue = 220;
-      this.preprocessor.initialPrint.StartingTempStabilizationDelay = 10;
-      this.preprocessor.bonding.FirstLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(this.filament.filament_temperature + 15);
-      this.preprocessor.bonding.SecondLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(this.filament.filament_temperature + 10);
-      this.preprocessor.initialPrint.PrimeAmount = 19;
-      this.preprocessor.initialPrint.FirstRaftLayerTemperature = printer_profile.TemperatureConstants.GetBoundedTemp(this.filament.filament_temperature + 15);
-      this.preprocessor.initialPrint.SecondRaftResetTemp = false;
+      {
+        preprocessor.initialPrint.StartingFanValue = 220;
+      }
+
+      preprocessor.initialPrint.StartingTempStabilizationDelay = 10;
+      preprocessor.bonding.FirstLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature + 15);
+      preprocessor.bonding.SecondLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature + 10);
+      preprocessor.initialPrint.PrimeAmount = 19;
+      preprocessor.initialPrint.FirstRaftLayerTemperature = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature + 15);
+      preprocessor.initialPrint.SecondRaftResetTemp = false;
     }
 
     public override bool TestSizeWarning(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
     {
-      if ((double) maxX - (double) minX <= (double) this.ABSWarningDim && (double) maxY - (double) minY <= (double) this.ABSWarningDim)
-        return (double) maxZ - (double) minZ > (double) this.ABSWarningDim;
+      if ((double) maxX - (double) minX <= (double)ABSWarningDim && (double) maxY - (double) minY <= (double)ABSWarningDim)
+      {
+        return (double) maxZ - (double) minZ > (double)ABSWarningDim;
+      }
+
       return true;
     }
 

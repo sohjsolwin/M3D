@@ -34,11 +34,17 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public XMLSetting Clone()
     {
-      XMLSetting xmlSetting = new XMLSetting();
-      foreach (XMLTabCollectionSettingsItem visibleSetting in this.VisibleSettings)
+      var xmlSetting = new XMLSetting();
+      foreach (XMLTabCollectionSettingsItem visibleSetting in VisibleSettings)
+      {
         xmlSetting.VisibleSettings.Add(visibleSetting.Clone());
-      foreach (XMLSettingsItem invisibleSetting in this.InvisibleSettings)
+      }
+
+      foreach (XMLSettingsItem invisibleSetting in InvisibleSettings)
+      {
         xmlSetting.InvisibleSettings.Add(invisibleSetting.Clone());
+      }
+
       return xmlSetting;
     }
 
@@ -51,35 +57,49 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
       catch (Exception ex)
       {
         if (ex is ThreadAbortException)
+        {
           throw ex;
+        }
+
         return (XMLSetting) null;
       }
     }
 
     public static XMLSetting Load(TextReader inputReader)
     {
-      XMLSetting xmlSetting = (XMLSetting) null;
+      var xmlSetting = (XMLSetting) null;
       try
       {
-        using (XmlReader xmlReader = XmlReader.Create(inputReader))
+        using (var xmlReader = XmlReader.Create(inputReader))
+        {
           xmlSetting = (XMLSetting) new XmlSerializer(typeof (XMLSetting)).Deserialize(xmlReader);
+        }
       }
       catch (Exception ex)
       {
         if (ex is ThreadAbortException)
+        {
           throw ex;
+        }
+
         return (XMLSetting) null;
       }
-      HashSet<string> stringSet = new HashSet<string>();
-      HashSet<string> crossCheckName = new HashSet<string>();
-      for (int index = 0; index < xmlSetting.VisibleSettings.Count; ++index)
+      var stringSet = new HashSet<string>();
+      var crossCheckName = new HashSet<string>();
+      for (var index = 0; index < xmlSetting.VisibleSettings.Count; ++index)
       {
         XMLTabCollectionSettingsItem visibleSetting = xmlSetting.VisibleSettings[index];
-        string header = visibleSetting.Header;
+        var header = visibleSetting.Header;
         if (header == null)
+        {
           throw new Exception("XMLSetting.UserViewableSettings contains a tab without a Header string!");
+        }
+
         if (stringSet.Contains(header))
+        {
           throw new Exception(string.Format("Tabs must have unique text! \"{0}\" has duplicates", (object) header));
+        }
+
         stringSet.Add(header);
         XMLSetting.CheckNamesAndText_Helper(crossCheckName, visibleSetting.Items, true);
       }
@@ -89,48 +109,65 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     private static void CheckNamesAndText_Helper(HashSet<string> crossCheckName, List<XMLSettingsItem> Items, bool TextRequired)
     {
-      for (int index = 0; index < Items.Count; ++index)
+      for (var index = 0; index < Items.Count; ++index)
       {
-        string name = Items[index].Name;
+        var name = Items[index].Name;
         if (name == null)
+        {
           throw new Exception("XMLSetting.UserViewableSettings.Setting is missing a Name string!");
+        }
+
         if (TextRequired && Items[index].Text == null)
+        {
           throw new Exception("XMLSetting.UserViewableSettings.Setting is missing a Text string!");
+        }
+
         if (crossCheckName.Contains(name))
+        {
           throw new Exception(string.Format("Setting names must be unique! \"{0}\" has duplicates", (object) name));
+        }
+
         crossCheckName.Add(name);
       }
     }
 
     public List<XMLSettingsItem> GetAllSettings()
     {
-      int count = this.InvisibleSettings.Count;
-      for (int index = 0; index < this.VisibleSettings.Count; ++index)
-        count += this.VisibleSettings[index].Items.Count;
-      List<XMLSettingsItem> xmlSettingsItemList = new List<XMLSettingsItem>(count);
-      for (int index = 0; index < this.VisibleSettings.Count; ++index)
-        xmlSettingsItemList.AddRange((IEnumerable<XMLSettingsItem>) this.VisibleSettings[index].Items);
-      xmlSettingsItemList.AddRange((IEnumerable<XMLSettingsItem>) this.InvisibleSettings);
+      var count = InvisibleSettings.Count;
+      for (var index = 0; index < VisibleSettings.Count; ++index)
+      {
+        count += VisibleSettings[index].Items.Count;
+      }
+
+      var xmlSettingsItemList = new List<XMLSettingsItem>(count);
+      for (var index = 0; index < VisibleSettings.Count; ++index)
+      {
+        xmlSettingsItemList.AddRange((IEnumerable<XMLSettingsItem>)VisibleSettings[index].Items);
+      }
+
+      xmlSettingsItemList.AddRange((IEnumerable<XMLSettingsItem>)InvisibleSettings);
       return xmlSettingsItemList;
     }
 
     public List<XMLSettingsItem> GetAllNonGUISettings()
     {
-      List<XMLSettingsItem> allSettings = this.GetAllSettings();
+      List<XMLSettingsItem> allSettings = GetAllSettings();
       allSettings.RemoveAll((Predicate<XMLSettingsItem>) (item => item.Name.StartsWith(XMLSetting.MagicInternalString, StringComparison.InvariantCultureIgnoreCase)));
       return allSettings;
     }
 
     internal List<XMLSettingsItem> GetGUIOnlySettings()
     {
-      List<XMLSettingsItem> xmlSettingsItemList = new List<XMLSettingsItem>();
-      for (int index1 = 0; index1 < this.VisibleSettings.Count; ++index1)
+      var xmlSettingsItemList = new List<XMLSettingsItem>();
+      for (var index1 = 0; index1 < VisibleSettings.Count; ++index1)
       {
-        for (int index2 = 0; index2 < this.VisibleSettings[index1].Items.Count; ++index2)
+        for (var index2 = 0; index2 < VisibleSettings[index1].Items.Count; ++index2)
         {
-          XMLSettingsItem xmlSettingsItem = this.VisibleSettings[index1].Items[index2];
+          XMLSettingsItem xmlSettingsItem = VisibleSettings[index1].Items[index2];
           if (xmlSettingsItem.Name.StartsWith(XMLSetting.MagicInternalString, StringComparison.InvariantCultureIgnoreCase))
+          {
             xmlSettingsItemList.Add(xmlSettingsItem);
+          }
         }
       }
       return xmlSettingsItemList;

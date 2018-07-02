@@ -20,17 +20,21 @@ namespace M3D.GUI.Controller
 
     public static PackageManager Load(string filePath)
     {
-      PackageManager packageManager = (PackageManager) null;
+      var packageManager = (PackageManager) null;
       try
       {
-        using (XmlReader xmlReader = XmlReader.Create(filePath))
+        using (var xmlReader = XmlReader.Create(filePath))
+        {
           packageManager = (PackageManager) new XmlSerializer(typeof (PackageManager)).Deserialize(xmlReader);
+        }
       }
       catch (Exception ex)
       {
         packageManager = (PackageManager) null;
         if (ex is ThreadAbortException)
+        {
           throw ex;
+        }
       }
       return packageManager;
     }

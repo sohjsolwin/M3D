@@ -35,13 +35,16 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        List<ResetCauseEnum> resetCauseEnumList = new List<ResetCauseEnum>();
-        int num = 1;
+        var resetCauseEnumList = new List<ResetCauseEnum>();
+        var num = 1;
         while (num <= 32)
         {
-          ResetCauseEnum resetCauseEnum = (ResetCauseEnum) (num & (int) this.LastResetCauseMask);
+          var resetCauseEnum = (ResetCauseEnum) (num & (int)LastResetCauseMask);
           if (resetCauseEnum != ResetCauseEnum.None)
+          {
             resetCauseEnumList.Add(resetCauseEnum);
+          }
+
           num <<= 1;
         }
         return resetCauseEnumList;
@@ -50,28 +53,28 @@ namespace M3D.Spooling.Common
 
     public Hardware(Hardware rhs)
     {
-      this.com_port = rhs.com_port;
-      this.machine_type = rhs.machine_type;
-      this.LastResetCauseMask = rhs.LastResetCauseMask;
-      this.firmware_version = rhs.firmware_version;
-      this.firmware_name = rhs.firmware_name;
-      this.firmware_url = rhs.firmware_url;
-      this.protocol_version = rhs.protocol_version;
-      this.extruder_count = rhs.extruder_count;
-      this.repetier_protocol = rhs.repetier_protocol;
+      com_port = rhs.com_port;
+      machine_type = rhs.machine_type;
+      LastResetCauseMask = rhs.LastResetCauseMask;
+      firmware_version = rhs.firmware_version;
+      firmware_name = rhs.firmware_name;
+      firmware_url = rhs.firmware_url;
+      protocol_version = rhs.protocol_version;
+      extruder_count = rhs.extruder_count;
+      repetier_protocol = rhs.repetier_protocol;
     }
 
     public Hardware()
     {
-      this.com_port = "";
-      this.machine_type = "";
-      this.LastResetCauseMask = (ushort) 0;
-      this.firmware_version = 0U;
-      this.firmware_name = "unknown";
-      this.firmware_url = "unknown";
-      this.protocol_version = "unknown";
-      this.extruder_count = 1;
-      this.repetier_protocol = 2;
+      com_port = "";
+      machine_type = "";
+      LastResetCauseMask = (ushort) 0;
+      firmware_version = 0U;
+      firmware_name = "unknown";
+      firmware_url = "unknown";
+      protocol_version = "unknown";
+      extruder_count = 1;
+      repetier_protocol = 2;
     }
   }
 }

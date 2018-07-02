@@ -42,16 +42,16 @@ namespace M3D.Graphics
 
     public IElement(int ID, IElement parent)
     {
-      this._ID = ID;
-      this.IParent = parent;
-      this._bEnabled = true;
-      this._bVisible = true;
-      this.group = -1;
+      _ID = ID;
+      IParent = parent;
+      _bEnabled = true;
+      _bVisible = true;
+      group = -1;
     }
 
     protected void SetBaseParent(IElement parent)
     {
-      this.IParent = parent;
+      IParent = parent;
     }
 
     public virtual void Refresh()
@@ -60,48 +60,70 @@ namespace M3D.Graphics
 
     public virtual void OnRender()
     {
-      if (this.DoOnRender == null)
+      if (DoOnRender == null)
+      {
         return;
-      this.DoOnRender();
+      }
+
+      DoOnRender();
     }
 
     public virtual void OnUpdate()
     {
-      if (this.DoOnUpdate == null)
+      if (DoOnUpdate == null)
+      {
         return;
-      this.DoOnUpdate();
+      }
+
+      DoOnUpdate();
     }
 
     protected virtual void OnHide()
     {
-      if (this.DoOnHide == null)
+      if (DoOnHide == null)
+      {
         return;
-      this.DoOnHide();
+      }
+
+      DoOnHide();
     }
 
     protected virtual void OnUnhide()
     {
-      if (this.DoOnUnhide == null)
+      if (DoOnUnhide == null)
+      {
         return;
-      this.DoOnUnhide();
+      }
+
+      DoOnUnhide();
     }
 
     public virtual void SetEnabled(bool bEnabled)
     {
-      if (this._bEnabled == bEnabled)
+      if (_bEnabled == bEnabled)
+      {
         return;
-      this._bEnabled = bEnabled;
+      }
+
+      _bEnabled = bEnabled;
     }
 
     public virtual void SetVisible(bool bVisible)
     {
-      if (this._bVisible == bVisible)
+      if (_bVisible == bVisible)
+      {
         return;
-      this._bVisible = bVisible;
-      if (this._bVisible)
-        this.OnUnhide();
+      }
+
+      _bVisible = bVisible;
+      if (_bVisible)
+      {
+        OnUnhide();
+      }
       else
-        this.OnHide();
+      {
+        OnHide();
+      }
     }
 
     [XmlAttribute("id")]
@@ -109,11 +131,11 @@ namespace M3D.Graphics
     {
       get
       {
-        return this._ID;
+        return _ID;
       }
       set
       {
-        this._ID = value;
+        _ID = value;
       }
     }
 
@@ -122,19 +144,25 @@ namespace M3D.Graphics
     {
       get
       {
-        if (this.IParent == null)
+        if (IParent == null)
         {
-          if (IElement.HasEnabledOnlyItem || !this._bEnabled)
+          if (IElement.HasEnabledOnlyItem || !_bEnabled)
+          {
             return IElement.InEnabledOnlyList(this);
+          }
+
           return true;
         }
-        if (!this._bEnabled || !this.IParent.Enabled)
+        if (!_bEnabled || !IParent.Enabled)
+        {
           return IElement.InEnabledOnlyList(this);
+        }
+
         return true;
       }
       set
       {
-        this.SetEnabled(value);
+        SetEnabled(value);
       }
     }
 
@@ -143,15 +171,21 @@ namespace M3D.Graphics
     {
       get
       {
-        if (!this._bVisible)
+        if (!_bVisible)
+        {
           return false;
-        if (this.IParent == null)
+        }
+
+        if (IParent == null)
+        {
           return true;
-        return this.IParent.Visible;
+        }
+
+        return IParent.Visible;
       }
       set
       {
-        this.SetVisible(value);
+        SetVisible(value);
       }
     }
 
@@ -160,7 +194,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return this._bVisible;
+        return _bVisible;
       }
     }
 
@@ -169,11 +203,11 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.group;
+        return group;
       }
       set
       {
-        this.group = value;
+        group = value;
       }
     }
 
@@ -182,20 +216,24 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.toolTipMessage;
+        return toolTipMessage;
       }
       set
       {
         if (value.StartsWith("T_"))
-          this.toolTipMessage = Locale.GlobalLocale.T(value);
+        {
+          toolTipMessage = Locale.GlobalLocale.T(value);
+        }
         else
-          this.toolTipMessage = value;
+        {
+          toolTipMessage = value;
+        }
       }
     }
 
     public static Color4 GenerateColorFromHtml(string hexColor)
     {
-      Color4 color4 = new Color4();
+      var color4 = new Color4();
       try
       {
         Color color = ColorTranslator.FromHtml(hexColor);
@@ -210,7 +248,9 @@ namespace M3D.Graphics
     private static bool InEnabledOnlyList(IElement element)
     {
       lock (IElement.EnabledOnlyList)
+      {
         return IElement.EnabledOnlyList.Contains(element);
+      }
     }
 
     public static bool HasEnabledOnlyItem
@@ -218,7 +258,9 @@ namespace M3D.Graphics
       get
       {
         lock (IElement.EnabledOnlyList)
+        {
           return IElement.EnabledOnlyList.Count > 0;
+        }
       }
     }
 
@@ -227,7 +269,10 @@ namespace M3D.Graphics
       lock (IElement.EnabledOnlyList)
       {
         if (IElement.EnabledOnlyList.Contains(element))
+        {
           return;
+        }
+
         IElement.EnabledOnlyList.Add(element);
       }
     }
@@ -237,7 +282,10 @@ namespace M3D.Graphics
       lock (IElement.EnabledOnlyList)
       {
         if (!IElement.EnabledOnlyList.Contains(element))
+        {
           return;
+        }
+
         IElement.EnabledOnlyList.Remove(element);
       }
     }
@@ -245,7 +293,9 @@ namespace M3D.Graphics
     public static void ClearEnabledOnlyList()
     {
       lock (IElement.EnabledOnlyList)
+      {
         IElement.EnabledOnlyList.Clear();
+      }
     }
   }
 }

@@ -23,11 +23,11 @@ namespace M3D.Spooling.Common
 
     public BedOffsets(BedOffsets other)
     {
-      this.BL = other.BL;
-      this.BR = other.BR;
-      this.FR = other.FR;
-      this.FL = other.FL;
-      this.ZO = other.ZO;
+      BL = other.BL;
+      BR = other.BR;
+      FR = other.FR;
+      FL = other.FL;
+      ZO = other.ZO;
     }
 
     public BedOffsets(float BL, float BR, float FR, float FL, float ZO)

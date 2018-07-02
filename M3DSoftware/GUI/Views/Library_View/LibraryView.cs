@@ -45,19 +45,19 @@ namespace M3D.GUI.Views.Library_View
     public LibraryView(int ID, Element2D parent, GLControl glControl, GUIHost host, MessagePopUp infobox, ModelLoadingManager model_loading_manager)
       : base(ID, parent)
     {
-      this.bUpdateWhenNotVisible = true;
-      this.m_gui_host = host;
+      bUpdateWhenNotVisible = true;
+      m_gui_host = host;
       Sprite.texture_height_pixels = 1024;
       Sprite.texture_width_pixels = 1024;
-      this.m_gui_host.SetFontProperty(FontSize.VeryLarge, 20f);
-      this.m_gui_host.SetFontProperty(FontSize.Large, 14f);
-      this.m_gui_host.SetFontProperty(FontSize.Medium, 11f);
-      this.m_gui_host.SetFontProperty(FontSize.Small, 8f);
-      this.RelativeX = 0.51f;
-      this.RelativeY = 0.11f;
-      this.RelativeWidth = 0.423f;
-      this.RelativeHeight = 0.83f;
-      ImageWidget imageWidget1 = new ImageWidget(1008, (Element2D) null);
+      m_gui_host.SetFontProperty(FontSize.VeryLarge, 20f);
+      m_gui_host.SetFontProperty(FontSize.Large, 14f);
+      m_gui_host.SetFontProperty(FontSize.Medium, 11f);
+      m_gui_host.SetFontProperty(FontSize.Small, 8f);
+      RelativeX = 0.51f;
+      RelativeY = 0.11f;
+      RelativeWidth = 0.423f;
+      RelativeHeight = 0.83f;
+      var imageWidget1 = new ImageWidget(1008, (Element2D) null);
       imageWidget1.Init(host, "extendedcontrols3", 3f, 288f, 84f, 374f, 3f, 288f, 84f, 374f, 3f, 288f, 84f, 374f);
       imageWidget1.Text = "Remove From List";
       imageWidget1.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
@@ -66,9 +66,9 @@ namespace M3D.GUI.Views.Library_View
       imageWidget1.ImageAreaWidth = 80;
       imageWidget1.SetSize(80, 115);
       imageWidget1.Visible = false;
-      this.AddChildElement((Element2D) imageWidget1);
+      AddChildElement((Element2D) imageWidget1);
       imageWidget1.SetPosition(-12, -115);
-      ImageWidget imageWidget2 = new ImageWidget(1009, (Element2D) null);
+      var imageWidget2 = new ImageWidget(1009, (Element2D) null);
       imageWidget2.Init(host, "extendedcontrols3", 92f, 285f, 173f, 346f, 92f, 285f, 173f, 346f, 92f, 285f, 173f, 346f);
       imageWidget2.Text = "Save";
       imageWidget2.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
@@ -77,10 +77,10 @@ namespace M3D.GUI.Views.Library_View
       imageWidget2.ImageAreaWidth = 81;
       imageWidget2.SetSize(81, 85);
       imageWidget2.Visible = false;
-      this.AddChildElement((Element2D) imageWidget2);
+      AddChildElement((Element2D) imageWidget2);
       imageWidget2.SetPosition(-12, -240);
-      this.search_filter = "";
-      EditBoxWidget editBoxWidget = new EditBoxWidget(1001, (Element2D) null);
+      search_filter = "";
+      var editBoxWidget = new EditBoxWidget(1001, (Element2D) null);
       editBoxWidget.Init(host, "guicontrols", 513f, 0.0f, 608f, 63f);
       editBoxWidget.SetGrowableWidth(40, 16, 64);
       editBoxWidget.Size = FontSize.Large;
@@ -88,92 +88,108 @@ namespace M3D.GUI.Views.Library_View
       editBoxWidget.SetTextWindowBorders(48, 16, 22, 16);
       editBoxWidget.SetToolTipRegion(0, 48, 0, 60);
       editBoxWidget.ToolTipMessage = host.Locale.T("T_TOOLTIP_SEARCH");
-      editBoxWidget.Hint = this.m_gui_host.Locale.T("T_SEARCH");
-      this.tabsFrame = new HorizontalLayout(0, (Element2D) null);
-      this.tabsFrame.FixedColumnWidth = true;
-      this.tabsFrame.BorderWidth = 0;
-      this.tabsFrame.BorderHeight = 0;
-      this.tabsFrame.RelativeWidth = 1f;
-      this.navigation = new Frame(0, (Element2D) null);
-      this.navigation_left = new ButtonWidget(1005, (Element2D) null);
-      this.navigation_left.Text = "";
-      this.navigation_left.X = 16;
-      this.navigation_left.Y = 0;
-      this.navigation_left.Width = 32;
-      this.navigation_left.Height = 32;
-      this.navigation_left.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.navigation_left.Init(host, "guicontrols", 608f, 0.0f, 639f, 31f, 640f, 0.0f, 671f, 31f, 672f, 0.0f, 703f, 31f, 704f, 0.0f, 735f, 31f);
-      this.navigation_right = new ButtonWidget(1006, (Element2D) null);
-      this.navigation_right.Text = "";
-      this.navigation_right.X = -48;
-      this.navigation_right.Y = 0;
-      this.navigation_right.Width = 32;
-      this.navigation_right.Height = 32;
-      this.navigation_right.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.navigation_right.Init(host, "guicontrols", 608f, 32f, 639f, 63f, 640f, 32f, 671f, 63f, 672f, 32f, 703f, 63f, 704f, 32f, 735f, 63f);
-      this.pagebuttons = new ButtonWidget[32];
-      for (int ID1 = 1032; ID1 <= 1063; ++ID1)
+      editBoxWidget.Hint = m_gui_host.Locale.T("T_SEARCH");
+      tabsFrame = new HorizontalLayout(0, (Element2D)null)
       {
-        int index = ID1 - 1032;
-        this.pagebuttons[index] = new ButtonWidget(ID1, (Element2D) null);
-        this.pagebuttons[index].Text = "";
-        this.pagebuttons[index].X = 48 + (ID1 - 1032) * 24;
-        this.pagebuttons[index].Y = 8;
-        this.pagebuttons[index].Width = 16;
-        this.pagebuttons[index].Height = 16;
-        this.pagebuttons[index].SetCallback(new ButtonCallback(this.MyButtonCallback));
-        this.pagebuttons[index].Init(host, "guicontrols", 448f, 192f, 463f, 208f, 480f, 192f, 495f, 208f, 464f, 192f, 479f, 208f);
-        this.pagebuttons[index].DontMove = true;
-        this.pagebuttons[index].GroupID = 1;
-        this.pagebuttons[index].ClickType = ButtonType.Checkable;
-        this.pagebuttons[index].Visible = false;
-        this.navigation.AddChildElement((Element2D) this.pagebuttons[index]);
+        FixedColumnWidth = true,
+        BorderWidth = 0,
+        BorderHeight = 0,
+        RelativeWidth = 1f
+      };
+      navigation = new Frame(0, (Element2D) null);
+      navigation_left = new ButtonWidget(1005, (Element2D)null)
+      {
+        Text = "",
+        X = 16,
+        Y = 0,
+        Width = 32,
+        Height = 32
+      };
+      navigation_left.SetCallback(new ButtonCallback(MyButtonCallback));
+      navigation_left.Init(host, "guicontrols", 608f, 0.0f, 639f, 31f, 640f, 0.0f, 671f, 31f, 672f, 0.0f, 703f, 31f, 704f, 0.0f, 735f, 31f);
+      navigation_right = new ButtonWidget(1006, (Element2D)null)
+      {
+        Text = "",
+        X = -48,
+        Y = 0,
+        Width = 32,
+        Height = 32
+      };
+      navigation_right.SetCallback(new ButtonCallback(MyButtonCallback));
+      navigation_right.Init(host, "guicontrols", 608f, 32f, 639f, 63f, 640f, 32f, 671f, 63f, 672f, 32f, 703f, 63f, 704f, 32f, 735f, 63f);
+      pagebuttons = new ButtonWidget[32];
+      for (var ID1 = 1032; ID1 <= 1063; ++ID1)
+      {
+        var index = ID1 - 1032;
+        pagebuttons[index] = new ButtonWidget(ID1, (Element2D)null)
+        {
+          Text = "",
+          X = 48 + (ID1 - 1032) * 24,
+          Y = 8,
+          Width = 16,
+          Height = 16
+        };
+        pagebuttons[index].SetCallback(new ButtonCallback(MyButtonCallback));
+        pagebuttons[index].Init(host, "guicontrols", 448f, 192f, 463f, 208f, 480f, 192f, 495f, 208f, 464f, 192f, 479f, 208f);
+        pagebuttons[index].DontMove = true;
+        pagebuttons[index].GroupID = 1;
+        pagebuttons[index].ClickType = ButtonType.Checkable;
+        pagebuttons[index].Visible = false;
+        navigation.AddChildElement((Element2D)pagebuttons[index]);
       }
-      this.navigation.AddChildElement((Element2D) this.navigation_left);
-      this.navigation.AddChildElement((Element2D) this.navigation_right);
-      this.LibraryGrid = new GridLayout(1);
-      this.LibraryGrid.ColumnWidth = 130;
-      this.LibraryGrid.RowHeight = 150;
-      this.LibraryGrid.BorderWidth = 0;
-      this.LibraryGrid.BorderHeight = 0;
-      VerticalLayout verticalLayout = new VerticalLayout(0);
-      verticalLayout.RelativeHeight = 1f;
-      verticalLayout.RelativeWidth = 1f;
-      verticalLayout.BorderHeight = 10;
+      navigation.AddChildElement((Element2D)navigation_left);
+      navigation.AddChildElement((Element2D)navigation_right);
+      LibraryGrid = new GridLayout(1)
+      {
+        ColumnWidth = 130,
+        RowHeight = 150,
+        BorderWidth = 0,
+        BorderHeight = 0
+      };
+      var verticalLayout = new VerticalLayout(0)
+      {
+        RelativeHeight = 1f,
+        RelativeWidth = 1f,
+        BorderHeight = 10
+      };
       verticalLayout.AddChildElement((Element2D) editBoxWidget, 0, 64 + verticalLayout.BorderHeight);
-      verticalLayout.AddChildElement((Element2D) this.tabsFrame, 1, 64 + verticalLayout.BorderHeight);
-      verticalLayout.AddChildElement((Element2D) this.navigation, 2, 32 + verticalLayout.BorderHeight);
-      verticalLayout.AddChildElement((Element2D) this.LibraryGrid, 3, -1);
-      this.AddChildElement((Element2D) verticalLayout);
-      this.library_status = new TextWidget(1007);
-      this.library_status.Text = this.m_gui_host.Locale.T("T_NOMODELS");
-      this.library_status.Size = FontSize.VeryLarge;
-      this.library_status.Alignment = QFontAlignment.Centre;
-      this.library_status.RelativeHeight = 1f;
-      this.library_status.RelativeWidth = 1f;
-      this.library_status.X = 0;
-      this.library_status.Y = 0;
-      this.library_status.Color = new Color4(0.9922f, 0.3765f, 0.2471f, 1f);
-      this.AddChildElement((Element2D) this.library_status);
-      this.recentModelsTab = new RecentModelTab(this, model_loading_manager, infobox, glControl);
-      ButtonWidget buttonWidget = this.AddTabButton(host, (LibraryViewTab) this.recentModelsTab, LibraryView.TabButtonStyle.Left, this.m_gui_host.Locale.T("T_RECENT_MODELS"), 1002);
-      this.recentPrintsTab = new RecentPrintsTab(this, model_loading_manager);
-      this.AddTabButton(host, (LibraryViewTab) this.recentPrintsTab, LibraryView.TabButtonStyle.Right, this.m_gui_host.Locale.T("T_RECENT_PRINTS"), 1004);
-      int num = 1;
+      verticalLayout.AddChildElement((Element2D)tabsFrame, 1, 64 + verticalLayout.BorderHeight);
+      verticalLayout.AddChildElement((Element2D)navigation, 2, 32 + verticalLayout.BorderHeight);
+      verticalLayout.AddChildElement((Element2D)LibraryGrid, 3, -1);
+      AddChildElement((Element2D) verticalLayout);
+      library_status = new TextWidget(1007)
+      {
+        Text = m_gui_host.Locale.T("T_NOMODELS"),
+        Size = FontSize.VeryLarge,
+        Alignment = QFontAlignment.Centre,
+        RelativeHeight = 1f,
+        RelativeWidth = 1f,
+        X = 0,
+        Y = 0,
+        Color = new Color4(0.9922f, 0.3765f, 0.2471f, 1f)
+      };
+      AddChildElement((Element2D)library_status);
+      recentModelsTab = new RecentModelTab(this, model_loading_manager, infobox, glControl);
+      ButtonWidget buttonWidget = AddTabButton(host, (LibraryViewTab)recentModelsTab, LibraryView.TabButtonStyle.Left, m_gui_host.Locale.T("T_RECENT_MODELS"), 1002);
+      recentPrintsTab = new RecentPrintsTab(this, model_loading_manager);
+      AddTabButton(host, (LibraryViewTab)recentPrintsTab, LibraryView.TabButtonStyle.Right, m_gui_host.Locale.T("T_RECENT_PRINTS"), 1004);
+      var num = 1;
       buttonWidget.SetChecked(num != 0);
-      this.ShowView(true);
-      this.viewstate = ViewState.Active;
+      ShowView(true);
+      viewstate = ViewState.Active;
     }
 
     private ButtonWidget AddTabButton(GUIHost host, LibraryViewTab tabFrame, LibraryView.TabButtonStyle style, string text, int ID)
     {
-      ButtonWidget buttonWidget = new ButtonWidget(ID, (Element2D) null);
-      buttonWidget.Text = text;
-      buttonWidget.TextColor = new Color4(0.71f, 0.71f, 0.71f, 1f);
-      buttonWidget.TextOverColor = new Color4(1f, 1f, 1f, 1f);
-      buttonWidget.TextDownColor = new Color4(1f, 1f, 1f, 1f);
-      buttonWidget.Size = FontSize.Medium;
-      buttonWidget.SetCallback(new ButtonCallback(this.TabButtonCallback));
+      var buttonWidget = new ButtonWidget(ID, (Element2D)null)
+      {
+        Text = text,
+        TextColor = new Color4(0.71f, 0.71f, 0.71f, 1f),
+        TextOverColor = new Color4(1f, 1f, 1f, 1f),
+        TextDownColor = new Color4(1f, 1f, 1f, 1f),
+        Size = FontSize.Medium
+      };
+      buttonWidget.SetCallback(new ButtonCallback(TabButtonCallback));
       buttonWidget.DontMove = true;
       buttonWidget.ClickType = ButtonType.Checkable;
       buttonWidget.GroupID = 1;
@@ -191,155 +207,198 @@ namespace M3D.GUI.Views.Library_View
           break;
       }
       buttonWidget.SetGrowableWidth(16, 16, 48);
-      this.tabsFrame.AddChildElement((Element2D) buttonWidget);
+      tabsFrame.AddChildElement((Element2D) buttonWidget);
       return buttonWidget;
     }
 
     public override void OnRender(GUIHost host)
     {
-      if (this.LibraryGrid != null)
+      if (LibraryGrid != null)
       {
-        if (this.LibraryGrid.Count < 1)
-          this.library_status.Visible = true;
+        if (LibraryGrid.Count < 1)
+        {
+          library_status.Visible = true;
+        }
         else
-          this.library_status.Visible = false;
-        if (this.LibraryGrid.CurPage == 0)
-          this.navigation_left.Enabled = false;
+        {
+          library_status.Visible = false;
+        }
+
+        if (LibraryGrid.CurPage == 0)
+        {
+          navigation_left.Enabled = false;
+        }
         else
-          this.navigation_left.Enabled = true;
-        if (this.LibraryGrid.CurPage == this.LibraryGrid.PageCount - 1)
-          this.navigation_right.Enabled = false;
+        {
+          navigation_left.Enabled = true;
+        }
+
+        if (LibraryGrid.CurPage == LibraryGrid.PageCount - 1)
+        {
+          navigation_right.Enabled = false;
+        }
         else
-          this.navigation_right.Enabled = true;
-        this.ResetPageButtons();
+        {
+          navigation_right.Enabled = true;
+        }
+
+        ResetPageButtons();
       }
       base.OnRender(host);
     }
 
     public void ScheduleRefresh()
     {
-      this.refresh.Value = true;
+      refresh.Value = true;
     }
 
     private void RefreshTab()
     {
-      if (this.currentTab == null)
+      if (currentTab == null)
+      {
         return;
-      this.currentTab.Show(this.m_gui_host, this.LibraryGrid, this.search_filter);
+      }
+
+      currentTab.Show(m_gui_host, LibraryGrid, search_filter);
     }
 
     private void ResetPageButtons()
     {
-      string extra_info = "ResetPageButtons:";
+      var extra_info = "ResetPageButtons:";
       try
       {
-        if (this.LibraryGrid == null)
+        if (LibraryGrid == null)
+        {
           return;
+        }
+
         extra_info = "ResetPageButtons:1";
-        if (this.lastpage_count != this.LibraryGrid.PageCount)
+        if (lastpage_count != LibraryGrid.PageCount)
         {
           extra_info = "ResetPageButtons:2";
-          this.lastpage_count = this.LibraryGrid.PageCount;
+          lastpage_count = LibraryGrid.PageCount;
         }
         extra_info = "ResetPageButtons:3";
-        int curPage = this.LibraryGrid.CurPage;
+        var curPage = LibraryGrid.CurPage;
         extra_info = "ResetPageButtons:4";
-        for (int index = 1032; index < 1063; ++index)
+        for (var index = 1032; index < 1063; ++index)
         {
           extra_info = "ResetPageButtons:5";
-          this.pagebuttons[index - 1032].Visible = false;
+          pagebuttons[index - 1032].Visible = false;
           extra_info = "ResetPageButtons:6";
-          this.pagebuttons[index - 1032].SetChecked(false);
+          pagebuttons[index - 1032].SetChecked(false);
         }
         extra_info = "ResetPageButtons:7";
-        this.LibraryGrid.CurPage = curPage;
+        LibraryGrid.CurPage = curPage;
         extra_info = "ResetPageButtons:8";
-        if (this.LibraryGrid.Count < 1)
+        if (LibraryGrid.Count < 1)
+        {
           return;
+        }
+
         extra_info = "ResetPageButtons:9";
-        int num1 = this.navigation.Width - 96;
-        int num2 = num1 / 16;
-        int num3 = this.lastpage_count;
+        var num1 = navigation.Width - 96;
+        var num2 = num1 / 16;
+        var num3 = lastpage_count;
         if (num3 > num2)
+        {
           num3 = num2;
+        }
+
         if (num3 > 32)
+        {
           num3 = 32;
+        }
+
         extra_info = "ResetPageButtons:10";
-        int num4 = (num1 - num3 * 16) / 2 + 48;
-        for (int index = 0; index < num3; ++index)
+        var num4 = (num1 - num3 * 16) / 2 + 48;
+        for (var index = 0; index < num3; ++index)
         {
           extra_info = "ResetPageButtons:11";
-          this.pagebuttons[index].X = num4;
+          pagebuttons[index].X = num4;
           extra_info = "ResetPageButtons:12";
-          this.pagebuttons[index].Visible = true;
+          pagebuttons[index].Visible = true;
           num4 += 16;
         }
         extra_info = "ResetPageButtons:13";
         if (curPage >= num3)
+        {
           return;
-        this.pagebuttons[curPage].SetChecked(true);
+        }
+
+        pagebuttons[curPage].SetChecked(true);
       }
       catch (Exception ex)
       {
-        if (this.temp_exception_count < 100)
-          ++this.temp_exception_count;
+        if (temp_exception_count < 100)
+        {
+          ++temp_exception_count;
+        }
         else
+        {
           ExceptionForm.ShowExceptionForm(ex, extra_info);
+        }
       }
     }
 
     public void TransitionViewState(ViewState new_state)
     {
-      if (new_state == this.viewstate || new_state == ViewState.ToActive || new_state == ViewState.ToHidden)
+      if (new_state == viewstate || new_state == ViewState.ToActive || new_state == ViewState.ToHidden)
+      {
         return;
-      float num1 = 0.5f;
-      float num2 = 1f;
+      }
+
+      var num1 = 0.5f;
+      var num2 = 1f;
       if (new_state == ViewState.Active)
       {
-        this.viewstate = ViewState.ToActive;
-        this.target_x = num1;
-        this.animationTime = 1500L;
+        viewstate = ViewState.ToActive;
+        target_x = num1;
+        animationTime = 1500L;
       }
       else
       {
-        this.viewstate = ViewState.ToHidden;
-        this.target_x = num2;
-        this.animationTime = 300L;
+        viewstate = ViewState.ToHidden;
+        target_x = num2;
+        animationTime = 300L;
       }
-      this.realanimtiontime = (int) this.animationTime;
-      this.startTime = DateTime.Now.Ticks / 10000L;
+      realanimtiontime = (int)animationTime;
+      startTime = DateTime.Now.Ticks / 10000L;
     }
 
     private void ShowView(bool show)
     {
-      if (this.Visible == show)
+      if (Visible == show)
+      {
         return;
-      this.Visible = show;
+      }
+
+      Visible = show;
     }
 
     public override void OnUpdate()
     {
-      if (this.recorddata_to_load != null && this.currentTab != null)
+      if (recorddata_to_load != null && currentTab != null)
       {
-        this.currentTab.LoadRecord(this.recorddata_to_load);
-        this.recorddata_to_load = (LibraryRecord) null;
+        currentTab.LoadRecord(recorddata_to_load);
+        recorddata_to_load = (LibraryRecord) null;
       }
-      if (this.viewstate == ViewState.ToActive || this.viewstate == ViewState.ToHidden)
+      if (viewstate == ViewState.ToActive || viewstate == ViewState.ToHidden)
       {
-        this.elapsed = DateTime.Now.Ticks / 10000L - this.startTime;
-        if (this.elapsed >= (long) this.realanimtiontime || (double) this.X == (double) this.target_x)
+        elapsed = DateTime.Now.Ticks / 10000L - startTime;
+        if (elapsed >= (long)realanimtiontime || (double)X == (double)target_x)
         {
-          this.elapsed = (long) this.realanimtiontime;
-          this.viewstate = this.viewstate != ViewState.ToActive ? ViewState.Hidden : ViewState.Active;
+          elapsed = (long)realanimtiontime;
+          viewstate = viewstate != ViewState.ToActive ? ViewState.Hidden : ViewState.Active;
         }
-        float num = this.target_x - (this.target_x - this.RelativeX) * (float) (1.0 - (double) this.elapsed / (double) this.realanimtiontime);
-        this.RelativeX = num;
-        this.ShowView((double) num < 1.0);
+        var num = target_x - (target_x - RelativeX) * (float) (1.0 - (double)elapsed / (double)realanimtiontime);
+        RelativeX = num;
+        ShowView((double) num < 1.0);
       }
-      if (this.refresh.Value)
+      if (refresh.Value)
       {
-        this.RefreshTab();
-        this.refresh.Value = false;
+        RefreshTab();
+        refresh.Value = false;
       }
       base.OnUpdate();
     }
@@ -347,22 +406,28 @@ namespace M3D.GUI.Views.Library_View
     public void TabButtonCallback(ButtonWidget button)
     {
       if (!(button.Data is LibraryViewTab))
+      {
         return;
-      this.currentTab = (LibraryViewTab) button.Data;
-      this.ScheduleRefresh();
+      }
+
+      currentTab = (LibraryViewTab) button.Data;
+      ScheduleRefresh();
     }
 
     public void MyButtonCallback(ButtonWidget button)
     {
       if (button.ID >= 1032 && button.ID <= 1063)
-        this.LibraryGrid.CurPage = button.ID - 1032;
+      {
+        LibraryGrid.CurPage = button.ID - 1032;
+      }
+
       switch (button.ID)
       {
         case 1005:
-          --this.LibraryGrid.CurPage;
+          --LibraryGrid.CurPage;
           break;
         case 1006:
-          ++this.LibraryGrid.CurPage;
+          ++LibraryGrid.CurPage;
           break;
       }
     }
@@ -372,54 +437,76 @@ namespace M3D.GUI.Views.Library_View
       switch (msg)
       {
         case ControlMsg.MSG_MOVE:
-          if (this.currentTab.CanRemoveRecords)
+          if (currentTab.CanRemoveRecords)
           {
-            ImageWidget childElement = (ImageWidget) this.FindChildElement(1008);
+            var childElement = (ImageWidget)FindChildElement(1008);
             if (childElement != null)
+            {
               childElement.Visible = true;
+            }
           }
-          if (!this.currentTab.CanSaveRecords)
+          if (!currentTab.CanSaveRecords)
+          {
             break;
-          ImageWidget childElement1 = (ImageWidget) this.FindChildElement(1009);
+          }
+
+          var childElement1 = (ImageWidget)FindChildElement(1009);
           if (childElement1 == null)
+          {
             break;
+          }
+
           childElement1.Visible = true;
           break;
         case ControlMsg.ENTERHIT:
           if (the_control.GetElementType() != ElementType.EditBoxWidget)
+          {
             break;
-          EditBoxWidget editBoxWidget = (EditBoxWidget) the_control;
+          }
+
+          var editBoxWidget = (EditBoxWidget) the_control;
           if (editBoxWidget.ID != 1001)
+          {
             break;
-          this.search_filter = editBoxWidget.Text;
-          this.RefreshTab();
+          }
+
+          search_filter = editBoxWidget.Text;
+          RefreshTab();
           break;
         case ControlMsg.MSG_DRAGSTOP:
-          ImageWidget childElement2 = (ImageWidget) this.FindChildElement(1008);
-          ImageWidget childElement3 = (ImageWidget) this.FindChildElement(1009);
+          var childElement2 = (ImageWidget)FindChildElement(1008);
+          var childElement3 = (ImageWidget)FindChildElement(1009);
           if (the_control.GetElementType() == ElementType.ButtonWidget)
           {
-            ButtonWidget buttonWidget = (ButtonWidget) the_control;
+            var buttonWidget = (ButtonWidget) the_control;
             if (buttonWidget.Data != null && buttonWidget.Data is LibraryRecord)
             {
-              if (this.currentTab.CanRemoveRecords && buttonWidget.Overlaps((Element2D) childElement2, (int) xparam - buttonWidget.X_Abs, (int) yparam - buttonWidget.Y_Abs))
+              if (currentTab.CanRemoveRecords && buttonWidget.Overlaps((Element2D) childElement2, (int) xparam - buttonWidget.X_Abs, (int) yparam - buttonWidget.Y_Abs))
               {
-                this.currentTab.RemoveRecord((LibraryRecord) buttonWidget.Data);
-                this.refresh.Value = true;
+                currentTab.RemoveRecord((LibraryRecord) buttonWidget.Data);
+                refresh.Value = true;
               }
-              else if (this.currentTab.CanSaveRecords && buttonWidget.Overlaps((Element2D) childElement3, (int) xparam - buttonWidget.X_Abs, (int) yparam - buttonWidget.Y_Abs))
+              else if (currentTab.CanSaveRecords && buttonWidget.Overlaps((Element2D) childElement3, (int) xparam - buttonWidget.X_Abs, (int) yparam - buttonWidget.Y_Abs))
               {
-                this.currentTab.SaveRecord((LibraryRecord) buttonWidget.Data);
-                this.refresh.Value = true;
+                currentTab.SaveRecord((LibraryRecord) buttonWidget.Data);
+                refresh.Value = true;
               }
               else
-                this.recorddata_to_load = (LibraryRecord) buttonWidget.Data;
+              {
+                recorddata_to_load = (LibraryRecord) buttonWidget.Data;
+              }
             }
           }
           if (childElement2 != null)
+          {
             childElement2.Visible = false;
+          }
+
           if (childElement3 == null)
+          {
             break;
+          }
+
           childElement3.Visible = false;
           break;
         default:
@@ -432,7 +519,7 @@ namespace M3D.GUI.Views.Library_View
     {
       get
       {
-        return this.recentModelsTab;
+        return recentModelsTab;
       }
     }
 
@@ -440,7 +527,7 @@ namespace M3D.GUI.Views.Library_View
     {
       get
       {
-        return this.recentPrintsTab;
+        return recentPrintsTab;
       }
     }
 

@@ -60,23 +60,23 @@ namespace M3D.Graphics.Widgets2D
     public ButtonWidget(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.textcolor = new Color4(0.1843137f, 0.3294118f, 0.345098f, 1f);
-      this.textovercolor = new Color4(0.3686275f, 0.6588235f, 0.6901961f, 1f);
-      this.textdowncolor = new Color4(0.25f, 0.25f, 0.25f, 1f);
-      this.textdisabledcolor = new Color4(0.7f, 0.7f, 0.7f, 1f);
-      this.white = new Color4(1f, 1f, 1f, 1f);
-      this.imageHasFocusColor = this.white;
-      this.Color = this.textcolor;
-      this.down = false;
-      this.state = State.Normal;
-      this.buttoncallback = (ButtonCallback) null;
-      this.ClickType = ButtonType.Clickable;
-      this._can_click_off = false;
-      this.draggable_fully = false;
-      this.dragged_fully = false;
-      this.dragged_x_fully = 0;
-      this.dragged_y_fully = 0;
-      this.IgnoreMouse = false;
+      textcolor = new Color4(0.1843137f, 0.3294118f, 0.345098f, 1f);
+      textovercolor = new Color4(0.3686275f, 0.6588235f, 0.6901961f, 1f);
+      textdowncolor = new Color4(0.25f, 0.25f, 0.25f, 1f);
+      textdisabledcolor = new Color4(0.7f, 0.7f, 0.7f, 1f);
+      white = new Color4(1f, 1f, 1f, 1f);
+      imageHasFocusColor = white;
+      Color = textcolor;
+      down = false;
+      state = State.Normal;
+      buttoncallback = (ButtonCallback) null;
+      ClickType = ButtonType.Clickable;
+      _can_click_off = false;
+      draggable_fully = false;
+      dragged_fully = false;
+      dragged_x_fully = 0;
+      dragged_y_fully = 0;
+      IgnoreMouse = false;
     }
 
     public override ElementType GetElementType()
@@ -86,23 +86,23 @@ namespace M3D.Graphics.Widgets2D
 
     public void SetDraggable(int xmin, int xmax, int ymin, int ymax)
     {
-      this.ClickType = ButtonType.Draggable;
-      this.draggable_xmin = xmin;
-      this.draggable_xmax = xmax;
-      this.draggable_ymin = ymin;
-      this.draggable_ymax = ymax;
+      ClickType = ButtonType.Draggable;
+      draggable_xmin = xmin;
+      draggable_xmax = xmax;
+      draggable_ymin = ymin;
+      draggable_ymax = ymax;
     }
 
     public void SetFullyDraggable()
     {
-      this.draggable_fully = true;
-      this.dragged_fully = false;
+      draggable_fully = true;
+      dragged_fully = false;
     }
 
     public override void SetOff()
     {
-      this.down = false;
-      this.state = State.Normal;
+      down = false;
+      state = State.Normal;
     }
 
     [XmlAttribute("ischecked")]
@@ -110,39 +110,48 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.SetChecked(value);
+        SetChecked(value);
       }
       get
       {
-        if (this.ClickType == ButtonType.Checkable)
-          return this.state == State.Down;
+        if (ClickType == ButtonType.Checkable)
+        {
+          return state == State.Down;
+        }
+
         return false;
       }
     }
 
     public void SetChecked(bool bChecked)
     {
-      if (this.ClickType == ButtonType.Checkable)
+      if (ClickType == ButtonType.Checkable)
       {
         if (bChecked)
         {
-          this.down = true;
-          this.state = State.Down;
-          if (this.Parent != null)
-            this.Parent.TurnOffGroup(this.GroupID, (Element2D) this);
-          this.DoButtonCallback(true);
+          down = true;
+          state = State.Down;
+          if (Parent != null)
+          {
+            Parent.TurnOffGroup(GroupID, (Element2D) this);
+          }
+
+          DoButtonCallback(true);
         }
         else
         {
-          this.SetOff();
-          this.DoButtonCallback(true);
+          SetOff();
+          DoButtonCallback(true);
         }
       }
       else
       {
         if (!bChecked)
+        {
           return;
-        this.DoButtonCallback(true);
+        }
+
+        DoButtonCallback(true);
       }
     }
 
@@ -151,36 +160,46 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return (object) this.Checked;
+        return (object)Checked;
       }
       set
       {
         if (value is bool)
-          this.Checked = (bool) value;
+        {
+          Checked = (bool) value;
+        }
         else if (value is int)
         {
-          this.Checked = (int) value > 0;
+          Checked = (int) value > 0;
         }
         else
         {
           if (!(value is string))
+          {
             throw new Exception("ButtonWidget.Value cannot have be set to a non-bool/int value");
-          string lowerInvariant = ((string) value).ToLowerInvariant();
+          }
+
+          var lowerInvariant = ((string) value).ToLowerInvariant();
           if (!(lowerInvariant == "true") && !(lowerInvariant == "1"))
           {
             if (!(lowerInvariant == "false") && !(lowerInvariant == "0"))
+            {
               throw new Exception("ButtonWidget.Value cannot be set to a string that is not equal to true,false,1,0");
-            this.Checked = false;
+            }
+
+            Checked = false;
           }
           else
-            this.Checked = true;
+          {
+            Checked = true;
+          }
         }
       }
     }
 
     public void SetCallback(ButtonCallback func)
     {
-      this.buttoncallback = func;
+      buttoncallback = func;
     }
 
     public override void OnParentResize()
@@ -190,224 +209,282 @@ namespace M3D.Graphics.Widgets2D
 
     public override void OnMouseLeave()
     {
-      if (this.DisableMouseEvents)
+      if (DisableMouseEvents)
+      {
         return;
-      if (this.dragged_fully && this.draggable_fully)
-      {
-        float xparam = (float) (this.X_Abs - this.X + this.dragged_x_fully);
-        float yparam = (float) (this.Y_Abs - this.Y + this.dragged_y_fully);
-        this.dragged_fully = false;
-        this.down = false;
-        this.state = State.Normal;
-        this.OnControlMsg((Element2D) this, ControlMsg.MSG_DRAGSTOP, xparam, yparam);
       }
-      else if (this.ClickType == ButtonType.Draggable && this.down)
+
+      if (dragged_fully && draggable_fully)
       {
-        this.down = false;
-        this.state = State.Normal;
-        this.OnControlMsg((Element2D) this, ControlMsg.MSG_DRAGSTOP, 0.0f, 0.0f);
+        var xparam = (float) (X_Abs - X + dragged_x_fully);
+        var yparam = (float) (Y_Abs - Y + dragged_y_fully);
+        dragged_fully = false;
+        down = false;
+        state = State.Normal;
+        OnControlMsg((Element2D) this, ControlMsg.MSG_DRAGSTOP, xparam, yparam);
       }
-      if (this.ClickType != ButtonType.Checkable)
-        this.down = false;
-      this.mouse_over = false;
+      else if (ClickType == ButtonType.Draggable && down)
+      {
+        down = false;
+        state = State.Normal;
+        OnControlMsg((Element2D) this, ControlMsg.MSG_DRAGSTOP, 0.0f, 0.0f);
+      }
+      if (ClickType != ButtonType.Checkable)
+      {
+        down = false;
+      }
+
+      mouse_over = false;
       base.OnMouseLeave();
     }
 
     public override void OnMouseMove(int x, int y)
     {
-      if (this.DisableMouseEvents || !this.Enabled)
-        return;
-      if (this.draggable_fully && this.down)
+      if (DisableMouseEvents || !Enabled)
       {
-        int num1 = x - this.lastx;
-        int num2 = y - this.lasty;
+        return;
+      }
+
+      if (draggable_fully && down)
+      {
+        var num1 = x - lastx;
+        var num2 = y - lasty;
         if (num1 != 0 || num2 != 0)
         {
-          this.dragged_x_fully += num1;
-          this.dragged_y_fully += num2;
-          this.OnControlMsg((Element2D) this, ControlMsg.MSG_MOVE, (float) this.dragged_x_fully, (float) this.dragged_y_fully);
-          this.lastx = x;
-          this.lasty = y;
-          this.dragged_fully = true;
+          dragged_x_fully += num1;
+          dragged_y_fully += num2;
+          OnControlMsg((Element2D) this, ControlMsg.MSG_MOVE, (float)dragged_x_fully, (float)dragged_y_fully);
+          lastx = x;
+          lasty = y;
+          dragged_fully = true;
         }
       }
-      else if (this.ClickType == ButtonType.Draggable && this.down)
+      else if (ClickType == ButtonType.Draggable && down)
       {
-        this.lastx = x;
-        this.lasty = y;
-        int num1 = x - (this.X_Abs + this.Width / 2);
-        int num2 = y - (this.Y_Abs + this.Height / 2);
-        int x1 = this.X + num1;
-        int y1 = this.Y + num2;
-        if (x1 < this.draggable_xmin)
-          x1 = this.draggable_xmin;
-        if (y1 < this.draggable_ymin)
-          y1 = this.draggable_ymin;
-        if (x1 > this.draggable_xmax)
-          x1 = this.draggable_xmax;
-        if (y1 > this.draggable_ymax)
-          y1 = this.draggable_ymax;
-        this.OnControlMsg((Element2D) this, ControlMsg.MSG_MOVE, (float) x1, (float) y1);
-        this.SetPosition(x1, y1);
+        lastx = x;
+        lasty = y;
+        var num1 = x - (X_Abs + Width / 2);
+        var num2 = y - (Y_Abs + Height / 2);
+        var x1 = X + num1;
+        var y1 = Y + num2;
+        if (x1 < draggable_xmin)
+        {
+          x1 = draggable_xmin;
+        }
+
+        if (y1 < draggable_ymin)
+        {
+          y1 = draggable_ymin;
+        }
+
+        if (x1 > draggable_xmax)
+        {
+          x1 = draggable_xmax;
+        }
+
+        if (y1 > draggable_ymax)
+        {
+          y1 = draggable_ymax;
+        }
+
+        OnControlMsg((Element2D) this, ControlMsg.MSG_MOVE, (float) x1, (float) y1);
+        SetPosition(x1, y1);
       }
-      else if (!this.ContainsPoint(x, y) && !this.down)
-        this.state = State.Normal;
+      else if (!ContainsPoint(x, y) && !down)
+      {
+        state = State.Normal;
+      }
+
       base.OnMouseMove(x, y);
     }
 
     public override bool OnMouseCommand(MouseEvent mouseevent)
     {
-      if (this.DisableMouseEvents || !this.Enabled)
+      if (DisableMouseEvents || !Enabled)
+      {
         return false;
-      if (this.ClickType != ButtonType.Checkable)
-        this.state = State.Normal;
+      }
+
+      if (ClickType != ButtonType.Checkable)
+      {
+        state = State.Normal;
+      }
+
       if (mouseevent.type == MouseEventType.Down)
       {
-        if (this.ContainsPoint(mouseevent.pos.x, mouseevent.pos.y))
+        if (ContainsPoint(mouseevent.pos.x, mouseevent.pos.y))
         {
-          this.lastx = mouseevent.pos.x;
-          this.lasty = mouseevent.pos.y;
-          this.dragged_x_fully = this.X;
-          this.dragged_y_fully = this.Y;
-          this.down = this.ClickType != ButtonType.Checkable || !this.CanClickOff || !this.down;
-          this.dragged_fully = false;
-          this.state = State.Down;
-          if (this.ClickType == ButtonType.Checkable)
-            this.SetChecked(this.down);
+          lastx = mouseevent.pos.x;
+          lasty = mouseevent.pos.y;
+          dragged_x_fully = X;
+          dragged_y_fully = Y;
+          down = ClickType != ButtonType.Checkable || !CanClickOff || !down;
+          dragged_fully = false;
+          state = State.Down;
+          if (ClickType == ButtonType.Checkable)
+          {
+            SetChecked(down);
+          }
+
           return true;
         }
-        if (this.ClickType != ButtonType.Checkable)
-          this.down = false;
+        if (ClickType != ButtonType.Checkable)
+        {
+          down = false;
+        }
       }
       else if (mouseevent.type == MouseEventType.Up)
       {
-        if (mouseevent.button == MouseButton.Left && this.down && (this.ContainsPoint(mouseevent.pos.x, mouseevent.pos.y) && this.ClickType == ButtonType.Clickable) && !this.dragged_fully)
+        if (mouseevent.button == MouseButton.Left && down && (ContainsPoint(mouseevent.pos.x, mouseevent.pos.y) && ClickType == ButtonType.Clickable) && !dragged_fully)
         {
-          this.DoButtonCallback(false);
-          this.OnControlMsg((Element2D) this, ControlMsg.MSG_HIT, 0.0f, 0.0f);
-          this.Color = this.textcolor;
+          DoButtonCallback(false);
+          OnControlMsg((Element2D) this, ControlMsg.MSG_HIT, 0.0f, 0.0f);
+          Color = textcolor;
           return true;
         }
       }
-      else if (this.ContainsPoint(mouseevent.pos.x, mouseevent.pos.y))
+      else if (ContainsPoint(mouseevent.pos.x, mouseevent.pos.y))
       {
-        this.mouse_over = true;
-        if (this.ClickType != ButtonType.Checkable || !this.down)
+        mouse_over = true;
+        if (ClickType != ButtonType.Checkable || !down)
         {
-          this.Color = this.textovercolor;
-          this.state = State.Highlighted;
+          Color = textovercolor;
+          state = State.Highlighted;
         }
       }
       else
       {
-        if (this.ClickType != ButtonType.Checkable || this.AlwaysHighlightOnMouseOver)
-          this.Color = this.textcolor;
-        this.mouse_over = false;
+        if (ClickType != ButtonType.Checkable || AlwaysHighlightOnMouseOver)
+        {
+          Color = textcolor;
+        }
+
+        mouse_over = false;
       }
       return false;
     }
 
     public override bool OnKeyboardEvent(KeyboardEvent keyboardevent)
     {
-      if (!this.Enabled || !this.HasFocus)
+      if (!Enabled || !HasFocus)
+      {
         return false;
+      }
+
       if (keyboardevent.type == KeyboardEventType.InputKey && ((InputKeyEvent) keyboardevent).Ch == '\r')
       {
-        this.down = this.ClickType != ButtonType.Checkable || !this.CanClickOff || !this.down;
-        this.dragged_fully = false;
-        this.state = State.Down;
-        if (this.ClickType == ButtonType.Checkable)
-          this.SetChecked(this.down);
-        this.DoButtonCallback(false);
-        this.OnControlMsg((Element2D) this, ControlMsg.MSG_HIT, 0.0f, 0.0f);
-        this.Color = this.textcolor;
+        down = ClickType != ButtonType.Checkable || !CanClickOff || !down;
+        dragged_fully = false;
+        state = State.Down;
+        if (ClickType == ButtonType.Checkable)
+        {
+          SetChecked(down);
+        }
+
+        DoButtonCallback(false);
+        OnControlMsg((Element2D) this, ControlMsg.MSG_HIT, 0.0f, 0.0f);
+        Color = textcolor;
       }
       return true;
     }
 
     public override void OnRender(GUIHost host)
     {
-      if (this.Enabled)
+      if (Enabled)
       {
-        switch (this.state)
+        switch (state)
         {
           case State.Normal:
-            this.TextElementColor = this.textcolor;
-            this.off_x = 0;
-            this.off_y = 0;
+            TextElementColor = textcolor;
+            off_x = 0;
+            off_y = 0;
             break;
           case State.Highlighted:
-            this.TextElementColor = this.textovercolor;
-            if (!this.dontmove)
+            TextElementColor = textovercolor;
+            if (!dontmove)
             {
-              this.off_x = 0;
-              this.off_y = 0;
+              off_x = 0;
+              off_y = 0;
               break;
             }
             break;
           case State.Down:
-            this.TextElementColor = !this.mouse_over || !this.AlwaysHighlightOnMouseOver ? this.textdowncolor : this.textovercolor;
-            if (!this.dontmove)
+            TextElementColor = !mouse_over || !AlwaysHighlightOnMouseOver ? textdowncolor : textovercolor;
+            if (!dontmove)
             {
-              this.off_x = 2;
-              this.off_y = 2;
+              off_x = 2;
+              off_y = 2;
               break;
             }
             break;
         }
-        if (this.state != State.Highlighted && this.Flashing && ImageWidget.FlashOn)
-          this.TextElementColor = this.textovercolor;
+        if (state != State.Highlighted && Flashing && ImageWidget.FlashOn)
+        {
+          TextElementColor = textovercolor;
+        }
       }
       else
       {
-        this.TextElementColor = this.textdisabledcolor;
-        this.off_x = 0;
-        this.off_y = 0;
+        TextElementColor = textdisabledcolor;
+        off_x = 0;
+        off_y = 0;
       }
-      if (this.ClickType == ButtonType.Checkable)
+      if (ClickType == ButtonType.Checkable)
       {
-        if (this.HasFocus)
-          this.ImageColor = this.imageHasFocusColor;
+        if (HasFocus)
+        {
+          ImageColor = imageHasFocusColor;
+        }
         else
-          this.ImageColor = this.white;
+        {
+          ImageColor = white;
+        }
       }
       else
       {
-        int num = this.HasFocus ? 1 : 0;
+        var num = HasFocus ? 1 : 0;
       }
-      if (!this.Enabled && this.FadeWhenDisabled)
+      if (!Enabled && FadeWhenDisabled)
       {
-        Color4 imageColor = this.ImageColor;
+        Color4 imageColor = ImageColor;
         imageColor.A = 0.5f;
-        this.ImageColor = imageColor;
+        ImageColor = imageColor;
       }
-      if (this.Checked && !this.Enabled)
+      if (Checked && !Enabled)
+      {
         base.OnRender(host);
+      }
       else
+      {
         base.OnRender(host);
-      if (!this.dragged_fully || !this.draggable_fully)
+      }
+
+      if (!dragged_fully || !draggable_fully)
+      {
         return;
-      int x = this.X;
-      int y = this.Y;
-      bool wrapOnNegativeX = this.WrapOnNegativeX;
-      bool wrapOnNegativeY = this.WrapOnNegativeY;
-      this.WrapOnNegativeX = false;
-      this.WrapOnNegativeY = false;
-      this.X = this.dragged_x_fully;
-      this.Y = this.dragged_y_fully;
+      }
+
+      var x = X;
+      var y = Y;
+      var wrapOnNegativeX = WrapOnNegativeX;
+      var wrapOnNegativeY = WrapOnNegativeY;
+      WrapOnNegativeX = false;
+      WrapOnNegativeY = false;
+      X = dragged_x_fully;
+      Y = dragged_y_fully;
       base.OnRender(host);
-      this.WrapOnNegativeX = wrapOnNegativeX;
-      this.WrapOnNegativeY = wrapOnNegativeY;
-      this.X = x;
-      this.Y = y;
+      WrapOnNegativeX = wrapOnNegativeX;
+      WrapOnNegativeY = wrapOnNegativeY;
+      X = x;
+      Y = y;
     }
 
     public void Init(GUIHost host, ButtonTemplate color_template)
     {
-      this.SetToDefaultOptions(color_template);
-      this.Init(host, this.ImageSrc, this.u0, this.v0, this.u1, this.v1, this.over_u0, this.over_v0, this.over_u1, this.over_v1, this.down_u0, this.down_v0, this.down_u1, this.down_v1, this.disabled_u0, this.disabled_v0, this.disabled_u1, this.disabled_v1);
-      this.SetGrowableWidth(this.leftbordersize_pixels, this.rightbordersize_pixels, this.minimum_width_pixels);
-      this.SetGrowableHeight(this.topbordersize_pixels, this.bottombordersize_pixels, this.minimum_height_pixels);
+      SetToDefaultOptions(color_template);
+      Init(host, ImageSrc, u0, v0, u1, v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1, disabled_u0, disabled_v0, disabled_u1, disabled_v1);
+      SetGrowableWidth(leftbordersize_pixels, rightbordersize_pixels, minimum_width_pixels);
+      SetGrowableHeight(topbordersize_pixels, bottombordersize_pixels, minimum_height_pixels);
     }
 
     private void SetToDefaultOptions(ButtonTemplate type_template)
@@ -415,190 +492,211 @@ namespace M3D.Graphics.Widgets2D
       switch (type_template)
       {
         case ButtonTemplate.Gray:
-          this.ImageSrc = "extendedcontrols";
-          this.u0 = 0.0f;
-          this.v0 = 928f;
-          this.u1 = 63f;
-          this.v1 = 975f;
-          this.down_u0 = 64f;
-          this.down_v0 = 928f;
-          this.down_u1 = (float) sbyte.MaxValue;
-          this.down_v1 = 975f;
-          this.over_u0 = 128f;
-          this.over_v0 = 928f;
-          this.over_u1 = 191f;
-          this.over_v1 = 975f;
-          this.disabled_u0 = 0.0f;
-          this.disabled_v0 = 928f;
-          this.disabled_u1 = 63f;
-          this.disabled_v1 = 975f;
-          this.leftbordersize_pixels = 9;
-          this.rightbordersize_pixels = 9;
-          this.minimum_width_pixels = 26;
-          this.topbordersize_pixels = 9;
-          this.bottombordersize_pixels = 9;
-          this.minimum_height_pixels = 24;
+          ImageSrc = "extendedcontrols";
+          u0 = 0.0f;
+          v0 = 928f;
+          u1 = 63f;
+          v1 = 975f;
+          down_u0 = 64f;
+          down_v0 = 928f;
+          down_u1 = (float) sbyte.MaxValue;
+          down_v1 = 975f;
+          over_u0 = 128f;
+          over_v0 = 928f;
+          over_u1 = 191f;
+          over_v1 = 975f;
+          disabled_u0 = 0.0f;
+          disabled_v0 = 928f;
+          disabled_u1 = 63f;
+          disabled_v1 = 975f;
+          leftbordersize_pixels = 9;
+          rightbordersize_pixels = 9;
+          minimum_width_pixels = 26;
+          topbordersize_pixels = 9;
+          bottombordersize_pixels = 9;
+          minimum_height_pixels = 24;
           break;
         case ButtonTemplate.Blue:
-          this.ImageSrc = "extendedcontrols";
-          this.u0 = 0.0f;
-          this.v0 = 976f;
-          this.u1 = 63f;
-          this.v1 = 1023f;
-          this.down_u0 = 64f;
-          this.down_v0 = 976f;
-          this.down_u1 = (float) sbyte.MaxValue;
-          this.down_v1 = 1023f;
-          this.over_u0 = 128f;
-          this.over_v0 = 976f;
-          this.over_u1 = 191f;
-          this.over_v1 = 1023f;
-          this.disabled_u0 = 0.0f;
-          this.disabled_v0 = 928f;
-          this.disabled_u1 = 63f;
-          this.disabled_v1 = 975f;
-          this.leftbordersize_pixels = 9;
-          this.rightbordersize_pixels = 9;
-          this.minimum_width_pixels = 26;
-          this.topbordersize_pixels = 9;
-          this.bottombordersize_pixels = 9;
-          this.minimum_height_pixels = 24;
+          ImageSrc = "extendedcontrols";
+          u0 = 0.0f;
+          v0 = 976f;
+          u1 = 63f;
+          v1 = 1023f;
+          down_u0 = 64f;
+          down_v0 = 976f;
+          down_u1 = (float) sbyte.MaxValue;
+          down_v1 = 1023f;
+          over_u0 = 128f;
+          over_v0 = 976f;
+          over_u1 = 191f;
+          over_v1 = 1023f;
+          disabled_u0 = 0.0f;
+          disabled_v0 = 928f;
+          disabled_u1 = 63f;
+          disabled_v1 = 975f;
+          leftbordersize_pixels = 9;
+          rightbordersize_pixels = 9;
+          minimum_width_pixels = 26;
+          topbordersize_pixels = 9;
+          bottombordersize_pixels = 9;
+          minimum_height_pixels = 24;
           break;
         case ButtonTemplate.CheckBox:
-          this.ImageSrc = "guicontrols";
-          this.u0 = 640f;
-          this.v0 = 448f;
-          this.u1 = 671f;
-          this.v1 = 479f;
-          this.down_u0 = 640f;
-          this.down_v0 = 480f;
-          this.down_u1 = 671f;
-          this.down_v1 = 511f;
-          this.over_u0 = 672f;
-          this.over_v0 = 448f;
-          this.over_u1 = 703f;
-          this.over_v1 = 479f;
-          this.disabled_u0 = 672f;
-          this.disabled_v0 = 480f;
-          this.disabled_u1 = 703f;
-          this.disabled_v1 = 511f;
-          this.DontMove = true;
-          this.ClickType = ButtonType.Checkable;
-          if (!this._can_click_off_set)
-            this.CanClickOff = true;
-          this.SetGrowableWidth(9, 9, 26);
-          this.SetGrowableHeight(9, 9, 24);
+          ImageSrc = "guicontrols";
+          u0 = 640f;
+          v0 = 448f;
+          u1 = 671f;
+          v1 = 479f;
+          down_u0 = 640f;
+          down_v0 = 480f;
+          down_u1 = 671f;
+          down_v1 = 511f;
+          over_u0 = 672f;
+          over_v0 = 448f;
+          over_u1 = 703f;
+          over_v1 = 479f;
+          disabled_u0 = 672f;
+          disabled_v0 = 480f;
+          disabled_u1 = 703f;
+          disabled_v1 = 511f;
+          DontMove = true;
+          ClickType = ButtonType.Checkable;
+          if (!_can_click_off_set)
+          {
+            CanClickOff = true;
+          }
+
+          SetGrowableWidth(9, 9, 26);
+          SetGrowableHeight(9, 9, 24);
           break;
         case ButtonTemplate.MenuItem:
-          this.ImageSrc = "extendedcontrols";
-          this.u0 = 961f;
-          this.v0 = 65f;
-          this.u1 = 1022f;
-          this.v1 = (float) sbyte.MaxValue;
-          this.down_u0 = 897f;
-          this.down_v0 = 65f;
-          this.down_u1 = 959f;
-          this.down_v1 = (float) sbyte.MaxValue;
-          this.over_u0 = 897f;
-          this.over_v0 = 65f;
-          this.over_u1 = 959f;
-          this.over_v1 = (float) sbyte.MaxValue;
-          this.disabled_u0 = 672f;
-          this.disabled_v0 = 480f;
-          this.disabled_u1 = 703f;
-          this.disabled_v1 = 511f;
-          this.DontMove = true;
-          this.ClickType = ButtonType.Clickable;
-          this.CanClickOff = false;
-          this.leftbordersize_pixels = 4;
-          this.rightbordersize_pixels = 4;
-          this.minimum_width_pixels = 16;
-          this.topbordersize_pixels = 4;
-          this.bottombordersize_pixels = 4;
-          this.minimum_height_pixels = 16;
-          this.VAlignment = TextVerticalAlignment.Middle;
-          this.Alignment = QFontAlignment.Left;
+          ImageSrc = "extendedcontrols";
+          u0 = 961f;
+          v0 = 65f;
+          u1 = 1022f;
+          v1 = (float) sbyte.MaxValue;
+          down_u0 = 897f;
+          down_v0 = 65f;
+          down_u1 = 959f;
+          down_v1 = (float) sbyte.MaxValue;
+          over_u0 = 897f;
+          over_v0 = 65f;
+          over_u1 = 959f;
+          over_v1 = (float) sbyte.MaxValue;
+          disabled_u0 = 672f;
+          disabled_v0 = 480f;
+          disabled_u1 = 703f;
+          disabled_v1 = 511f;
+          DontMove = true;
+          ClickType = ButtonType.Clickable;
+          CanClickOff = false;
+          leftbordersize_pixels = 4;
+          rightbordersize_pixels = 4;
+          minimum_width_pixels = 16;
+          topbordersize_pixels = 4;
+          bottombordersize_pixels = 4;
+          minimum_height_pixels = 16;
+          VAlignment = TextVerticalAlignment.Middle;
+          Alignment = QFontAlignment.Left;
           break;
         case ButtonTemplate.TextOnly:
         case ButtonTemplate.TextOnlyWhite:
         case ButtonTemplate.TextOnlyBlue:
-          this.ImageSrc = "guicontrols";
-          this.u0 = 200f;
-          this.v0 = 705f;
-          this.u1 = 220f;
-          this.v1 = 725f;
-          this.down_u0 = 200f;
-          this.down_v0 = 705f;
-          this.down_u1 = 220f;
-          this.down_v1 = 725f;
-          this.over_u0 = 200f;
-          this.over_v0 = 705f;
-          this.over_u1 = 220f;
-          this.over_v1 = 725f;
-          this.disabled_u0 = 200f;
-          this.disabled_v0 = 705f;
-          this.disabled_u1 = 220f;
-          this.disabled_v1 = 725f;
+          ImageSrc = "guicontrols";
+          u0 = 200f;
+          v0 = 705f;
+          u1 = 220f;
+          v1 = 725f;
+          down_u0 = 200f;
+          down_v0 = 705f;
+          down_u1 = 220f;
+          down_v1 = 725f;
+          over_u0 = 200f;
+          over_v0 = 705f;
+          over_u1 = 220f;
+          over_v1 = 725f;
+          disabled_u0 = 200f;
+          disabled_v0 = 705f;
+          disabled_u1 = 220f;
+          disabled_v1 = 725f;
           if (type_template == ButtonTemplate.TextOnlyWhite)
           {
-            this.TextColor = new Color4(1f, 1f, 1f, 1f);
+            TextColor = new Color4(1f, 1f, 1f, 1f);
             break;
           }
           if (type_template != ButtonTemplate.TextOnlyBlue)
+          {
             break;
-          this.TextColor = new Color4(0.3529412f, 0.7450981f, 0.8627451f, 1f);
-          this.TextOverColor = new Color4(0.4392157f, 0.8392157f, 0.9372549f, 1f);
-          this.TextDownColor = new Color4(0.2f, 0.6078432f, 0.7098039f, 1f);
+          }
+
+          TextColor = new Color4(0.3529412f, 0.7450981f, 0.8627451f, 1f);
+          TextOverColor = new Color4(0.4392157f, 0.8392157f, 0.9372549f, 1f);
+          TextDownColor = new Color4(0.2f, 0.6078432f, 0.7098039f, 1f);
           break;
         case ButtonTemplate.GrayCheckable:
-          this.ImageSrc = "extendedcontrols";
-          this.u0 = 0.0f;
-          this.v0 = 928f;
-          this.u1 = 63f;
-          this.v1 = 975f;
-          this.down_u0 = 64f;
-          this.down_v0 = 928f;
-          this.down_u1 = (float) sbyte.MaxValue;
-          this.down_v1 = 975f;
-          this.over_u0 = 128f;
-          this.over_v0 = 928f;
-          this.over_u1 = 191f;
-          this.over_v1 = 975f;
-          this.disabled_u0 = 0.0f;
-          this.disabled_v0 = 928f;
-          this.disabled_u1 = 63f;
-          this.disabled_v1 = 975f;
-          this.leftbordersize_pixels = 9;
-          this.rightbordersize_pixels = 9;
-          this.minimum_width_pixels = 26;
-          this.topbordersize_pixels = 9;
-          this.bottombordersize_pixels = 9;
-          this.minimum_height_pixels = 24;
-          this.DontMove = true;
-          this.ClickType = ButtonType.Checkable;
-          if (this._can_click_off_set)
+          ImageSrc = "extendedcontrols";
+          u0 = 0.0f;
+          v0 = 928f;
+          u1 = 63f;
+          v1 = 975f;
+          down_u0 = 64f;
+          down_v0 = 928f;
+          down_u1 = (float) sbyte.MaxValue;
+          down_v1 = 975f;
+          over_u0 = 128f;
+          over_v0 = 928f;
+          over_u1 = 191f;
+          over_v1 = 975f;
+          disabled_u0 = 0.0f;
+          disabled_v0 = 928f;
+          disabled_u1 = 63f;
+          disabled_v1 = 975f;
+          leftbordersize_pixels = 9;
+          rightbordersize_pixels = 9;
+          minimum_width_pixels = 26;
+          topbordersize_pixels = 9;
+          bottombordersize_pixels = 9;
+          minimum_height_pixels = 24;
+          DontMove = true;
+          ClickType = ButtonType.Checkable;
+          if (_can_click_off_set)
+          {
             break;
-          this.CanClickOff = true;
+          }
+
+          CanClickOff = true;
           break;
       }
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
-      if (!parent.IsComboBoxElement() && !parent.IsListBoxElement() && ((double) this.u0 == 0.0 && (double) this.v0 == 0.0) && ((double) this.u1 == 0.0 && (double) this.v1 == 0.0))
-        this.SetToDefaultOptions(this.type_template);
+      if (!parent.IsComboBoxElement() && !parent.IsListBoxElement() && ((double)u0 == 0.0 && (double)v0 == 0.0) && ((double)u1 == 0.0 && (double)v1 == 0.0))
+      {
+        SetToDefaultOptions(type_template);
+      }
+
       base.InitChildren(parent, host, MyButtonCallback);
       if (parent.GetElementType() != ElementType.ComboBoxWidget)
-        this.SetCallback(MyButtonCallback);
-      this.SetGrowableWidth(16, 16, 48);
+      {
+        SetCallback(MyButtonCallback);
+      }
+
+      SetGrowableWidth(16, 16, 48);
     }
 
     private void DoButtonCallback(bool wasChecked)
     {
-      if (this.buttoncallback != null)
-        this.buttoncallback(this);
+      if (buttoncallback != null)
+      {
+        buttoncallback(this);
+      }
+
       if (ButtonWidget.ButtonListenerHook == null)
+      {
         return;
+      }
+
       ButtonWidget.ButtonListenerHook(this);
     }
 
@@ -607,11 +705,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.type;
+        return type;
       }
       set
       {
-        this.type = value;
+        type = value;
       }
     }
 
@@ -620,12 +718,12 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.hexColor;
+        return hexColor;
       }
       set
       {
-        this.hexColor = value;
-        this.TextColor = IElement.GenerateColorFromHtml(value);
+        hexColor = value;
+        TextColor = IElement.GenerateColorFromHtml(value);
       }
     }
 
@@ -633,12 +731,12 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.textcolor;
+        return textcolor;
       }
       set
       {
-        this.Color = value;
-        this.textcolor = value;
+        Color = value;
+        textcolor = value;
       }
     }
 
@@ -646,11 +744,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.Color;
+        return Color;
       }
       set
       {
-        this.Color = value;
+        Color = value;
       }
     }
 
@@ -659,12 +757,12 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.hexFontOverColor;
+        return hexFontOverColor;
       }
       set
       {
-        this.hexFontOverColor = value;
-        this.TextOverColor = IElement.GenerateColorFromHtml(this.hexFontOverColor);
+        hexFontOverColor = value;
+        TextOverColor = IElement.GenerateColorFromHtml(hexFontOverColor);
       }
     }
 
@@ -672,11 +770,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.textovercolor;
+        return textovercolor;
       }
       set
       {
-        this.textovercolor = value;
+        textovercolor = value;
       }
     }
 
@@ -684,11 +782,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.imageHasFocusColor;
+        return imageHasFocusColor;
       }
       set
       {
-        this.imageHasFocusColor = value;
+        imageHasFocusColor = value;
       }
     }
 
@@ -697,12 +795,12 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.hexFontDownColor;
+        return hexFontDownColor;
       }
       set
       {
-        this.hexFontDownColor = value;
-        this.TextDownColor = IElement.GenerateColorFromHtml(this.hexFontDownColor);
+        hexFontDownColor = value;
+        TextDownColor = IElement.GenerateColorFromHtml(hexFontDownColor);
       }
     }
 
@@ -710,11 +808,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.textdowncolor;
+        return textdowncolor;
       }
       set
       {
-        this.textdowncolor = value;
+        textdowncolor = value;
       }
     }
 
@@ -722,11 +820,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.textdisabledcolor;
+        return textdisabledcolor;
       }
       set
       {
-        this.textdisabledcolor = value;
+        textdisabledcolor = value;
       }
     }
 
@@ -735,18 +833,18 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.dontmove;
+        return dontmove;
       }
       set
       {
-        this.dontmove = value;
+        dontmove = value;
       }
     }
 
     private void StopDragging()
     {
-      this.down = false;
-      this.dragged_fully = false;
+      down = false;
+      dragged_fully = false;
     }
 
     [XmlAttribute("can-click-off")]
@@ -754,12 +852,12 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this._can_click_off = value;
-        this._can_click_off_set = true;
+        _can_click_off = value;
+        _can_click_off_set = true;
       }
       get
       {
-        return this._can_click_off;
+        return _can_click_off;
       }
     }
   }

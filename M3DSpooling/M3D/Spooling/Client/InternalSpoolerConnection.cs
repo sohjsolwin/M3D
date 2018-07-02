@@ -18,7 +18,7 @@ namespace M3D.Spooling.Client
     {
       set
       {
-        this.spooler_server.OnReceivedSpoolerShutdownMessage += value;
+        spooler_server.OnReceivedSpoolerShutdownMessage += value;
       }
     }
 
@@ -26,7 +26,7 @@ namespace M3D.Spooling.Client
     {
       set
       {
-        this.spooler_server.OnReceivedSpoolerShowMessage += value;
+        spooler_server.OnReceivedSpoolerShowMessage += value;
       }
     }
 
@@ -34,44 +34,50 @@ namespace M3D.Spooling.Client
     {
       set
       {
-        this.spooler_server.OnReceivedSpoolerHideMessage += value;
+        spooler_server.OnReceivedSpoolerHideMessage += value;
       }
     }
 
     public InternalSpoolerConnection()
     {
-      this.spooler_server = new SpoolerServer();
-      this.spooler_server.SetBroadcastServer((IBroadcastServer) this);
+      spooler_server = new SpoolerServer();
+      spooler_server.SetBroadcastServer((IBroadcastServer) this);
     }
 
     public bool ConnectToWindow(IntPtr hwnd)
     {
-      return this.spooler_server.ConnectToWindow(hwnd);
+      return spooler_server.ConnectToWindow(hwnd);
     }
 
     public bool StartServer(int port)
     {
-      int num = this.spooler_server.StartSocketPeer(port) >= 0 ? 1 : 0;
+      var num = spooler_server.StartSocketPeer(port) >= 0 ? 1 : 0;
       if (num != 0)
+      {
         return num != 0;
-      this.spooler_server.Shutdown();
+      }
+
+      spooler_server.Shutdown();
       return num != 0;
     }
 
     public override void ShutdownConnection()
     {
-      this.spooler_server.CloseConnections();
-      this.spooler_server.Shutdown();
+      spooler_server.CloseConnections();
+      spooler_server.Shutdown();
     }
 
     public override SpoolerResult SendSpoolerMessageInternal(string message)
     {
       SpoolerResult spoolerResult = SpoolerResult.Fail_Connect;
-      if (this.spooler_server != null)
+      if (spooler_server != null)
       {
-        string data = this.spooler_server.onClientMessage(message);
+        var data = spooler_server.onClientMessage(message);
         if (!string.IsNullOrEmpty(data))
-          this.OnRawMessage(data);
+        {
+          OnRawMessage(data);
+        }
+
         spoolerResult = SpoolerResult.OK;
       }
       return spoolerResult;
@@ -90,23 +96,27 @@ namespace M3D.Spooling.Client
 
     public void BroadcastMessage(string message)
     {
-      this.OnRawMessage("<SocketBroadcast>" + message + "</SocketBroadcast><EOF>");
-      this.spooler_server.BroadcastMessage(message);
+      OnRawMessage("<SocketBroadcast>" + message + "</SocketBroadcast><EOF>");
+      spooler_server.BroadcastMessage(message);
     }
 
     public void SendMessageToClient(Guid client_guid, string message)
     {
-      if (client_guid == this.spooler_server.MyGuid)
-        this.OnRawMessage("<SocketBroadcast>" + message + "</SocketBroadcast><EOF>");
+      if (client_guid == spooler_server.MyGuid)
+      {
+        OnRawMessage("<SocketBroadcast>" + message + "</SocketBroadcast><EOF>");
+      }
       else
-        this.spooler_server.SendMessageToClient(client_guid, message);
+      {
+        spooler_server.SendMessageToClient(client_guid, message);
+      }
     }
 
     internal SpoolerServer SpoolerServer
     {
       get
       {
-        return this.spooler_server;
+        return spooler_server;
       }
     }
   }

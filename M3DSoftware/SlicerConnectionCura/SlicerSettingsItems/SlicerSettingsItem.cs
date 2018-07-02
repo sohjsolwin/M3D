@@ -17,7 +17,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public SlicerSettingsItem()
     {
-      this.GroupToggleSetting = (SlicerSettingsItem) null;
+      GroupToggleSetting = (SlicerSettingsItem) null;
     }
 
     [XmlIgnore]
@@ -28,31 +28,37 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       get
       {
-        if (this.GroupToggleSetting == null)
+        if (GroupToggleSetting == null)
+        {
           return true;
-        string userValue = this.GroupToggleSetting.TranslateToUserValue();
-        bool flag = !userValue.Equals("false", StringComparison.InvariantCultureIgnoreCase) && !userValue.Equals("0");
-        if (this.ReverseGroupToggle)
+        }
+
+        var userValue = GroupToggleSetting.TranslateToUserValue();
+        var flag = !userValue.Equals("false", StringComparison.InvariantCultureIgnoreCase) && !userValue.Equals("0");
+        if (ReverseGroupToggle)
+        {
           return !flag;
+        }
+
         return flag;
       }
     }
 
     public SettingReadResult ReadSlicerSetting(string val)
     {
-      return !this.SetFromSlicerValue(val) ? SettingReadResult.Failed : SettingReadResult.OK_Processed;
+      return !SetFromSlicerValue(val) ? SettingReadResult.Failed : SettingReadResult.OK_Processed;
     }
 
     protected abstract bool SetFromSlicerValue(string val);
 
     protected virtual bool SetFromSlicerValueX(string val)
     {
-      return this.SetFromSlicerValue(val);
+      return SetFromSlicerValue(val);
     }
 
     protected virtual bool SetFromSlicerValueY(string val)
     {
-      return this.SetFromSlicerValue(val);
+      return SetFromSlicerValue(val);
     }
 
     public abstract SettingItemType GetItemType();
@@ -61,12 +67,12 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public virtual string TranslateToUserValue()
     {
-      return this.TranslateToSlicerValue();
+      return TranslateToSlicerValue();
     }
 
     public virtual void ParseUserValue(string value)
     {
-      this.SetFromSlicerValue(value);
+      SetFromSlicerValue(value);
     }
 
     public abstract bool HasWarning { get; }

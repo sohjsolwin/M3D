@@ -31,12 +31,12 @@ namespace M3D.Graphics.Widgets2D
     public HorizontalSliderWidget(HorizontalSliderWidget source, int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.CopySliderProperties((SliderWidget) source);
+      CopySliderProperties((SliderWidget) source);
     }
 
     public void InitTrack(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, int growableborder, int min)
     {
-      this.InitTrack(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, growableborder, min, false);
+      InitTrack(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, growableborder, min, false);
     }
 
     public override ElementType GetElementType()
@@ -47,52 +47,61 @@ namespace M3D.Graphics.Widgets2D
     public override void SetSize(int width, int height)
     {
       base.SetSize(width, height);
-      this.Refresh();
+      Refresh();
     }
 
     public override void Refresh()
     {
-      int width = this.Width;
-      int height = this.Height;
-      this.m_track_size = (float) width;
-      if (this.ShowPushButtons)
+      var width = Width;
+      var height = Height;
+      m_track_size = (float) width;
+      if (ShowPushButtons)
       {
-        this.m_track_size -= (float) (height * 2);
-        this.m_pushButtonPlus.SetSize(height, height);
-        this.m_pushButtonPlus.X = -height;
-        this.m_pushButtonMinus.SetSize(height, height);
-        this.m_pushButtonMinus.X = 0;
-        this.m_pushButtonPlus.Visible = true;
-        this.m_pushButtonPlus.Enabled = true;
-        this.m_pushButtonMinus.Visible = true;
-        this.m_pushButtonMinus.Enabled = true;
-        this.m_trackSubControl.SetPosition(height, 0);
-        this.m_trackSubControl.SetSize((int) this.m_track_size, height);
+        m_track_size -= (float) (height * 2);
+        m_pushButtonPlus.SetSize(height, height);
+        m_pushButtonPlus.X = -height;
+        m_pushButtonMinus.SetSize(height, height);
+        m_pushButtonMinus.X = 0;
+        m_pushButtonPlus.Visible = true;
+        m_pushButtonPlus.Enabled = true;
+        m_pushButtonMinus.Visible = true;
+        m_pushButtonMinus.Enabled = true;
+        m_trackSubControl.SetPosition(height, 0);
+        m_trackSubControl.SetSize((int)m_track_size, height);
       }
       else
       {
-        this.m_pushButtonPlus.Visible = false;
-        this.m_pushButtonPlus.Enabled = false;
-        this.m_pushButtonMinus.Visible = false;
-        this.m_pushButtonMinus.Enabled = false;
-        this.m_trackSubControl.SetPosition(0, 0);
-        this.m_trackSubControl.SetSize((int) this.m_track_size, height);
+        m_pushButtonPlus.Visible = false;
+        m_pushButtonPlus.Enabled = false;
+        m_pushButtonMinus.Visible = false;
+        m_pushButtonMinus.Enabled = false;
+        m_trackSubControl.SetPosition(0, 0);
+        m_trackSubControl.SetSize((int)m_track_size, height);
       }
-      float num = (this.m_track_size - (float) this.m_buttonSubControl.Width) / this.m_range;
-      if ((double) this.m_button_size_percent > 0.0)
-        this.m_buttonSubControl.SetSize((int) ((double) this.m_button_size_percent * (double) this.m_track_size), height);
+      var num = (m_track_size - (float)m_buttonSubControl.Width) / m_range;
+      if ((double)m_button_size_percent > 0.0)
+      {
+        m_buttonSubControl.SetSize((int) ((double)m_button_size_percent * (double)m_track_size), height);
+      }
       else
-        this.m_buttonSubControl.SetSize((int) this.m_button_size, height);
-      this.m_buttonSubControl.SetPosition((int) ((double) this.m_trackSubControl.X + ((double) this.m_track_position - (double) this.m_range_start) * (double) num), this.m_trackSubControl.Y);
-      this.m_buttonSubControl.SetDraggable(this.m_trackSubControl.X, this.m_trackSubControl.X + this.m_trackSubControl.Width - this.m_buttonSubControl.Width, this.m_trackSubControl.Y, this.m_trackSubControl.Y);
+      {
+        m_buttonSubControl.SetSize((int)m_button_size, height);
+      }
+
+      m_buttonSubControl.SetPosition((int) ((double)m_trackSubControl.X + ((double)m_track_position - (double)m_range_start) * (double) num), m_trackSubControl.Y);
+      m_buttonSubControl.SetDraggable(m_trackSubControl.X, m_trackSubControl.X + m_trackSubControl.Width - m_buttonSubControl.Width, m_trackSubControl.Y, m_trackSubControl.Y);
     }
 
     public override void OnControlMsg(Element2D the_control, ControlMsg msg, float xparam, float yparam)
     {
       if (the_control.GetElementType() == ElementType.ButtonWidget && msg == ControlMsg.MSG_MOVE)
-        base.OnControlMsg(the_control, msg, xparam - (float) this.m_trackSubControl.X, (float) (this.m_trackSubControl.Width - this.m_buttonSubControl.Width));
+      {
+        base.OnControlMsg(the_control, msg, xparam - (float)m_trackSubControl.X, (float) (m_trackSubControl.Width - m_buttonSubControl.Width));
+      }
       else
+      {
         base.OnControlMsg(the_control, msg, xparam, yparam);
+      }
     }
   }
 }

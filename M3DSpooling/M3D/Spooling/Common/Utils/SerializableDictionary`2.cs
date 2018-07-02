@@ -30,35 +30,38 @@ namespace M3D.Spooling.Common.Utils
 
     public void ReadXml(XmlReader reader)
     {
-      XmlSerializer xmlSerializer1 = new XmlSerializer(typeof (TKey));
-      XmlSerializer xmlSerializer2 = new XmlSerializer(typeof (TValue));
-      int num = reader.IsEmptyElement ? 1 : 0;
+      var xmlSerializer1 = new XmlSerializer(typeof (TKey));
+      var xmlSerializer2 = new XmlSerializer(typeof (TValue));
+      var num = reader.IsEmptyElement ? 1 : 0;
       reader.Read();
       if (num != 0)
+      {
         return;
+      }
+
       while (reader.NodeType != XmlNodeType.EndElement)
       {
         reader.ReadStartElement("item");
         reader.ReadStartElement("key");
-        TKey key = (TKey) xmlSerializer1.Deserialize(reader);
+        var key = (TKey) xmlSerializer1.Deserialize(reader);
         reader.ReadEndElement();
         reader.ReadStartElement("value");
-        TValue obj = (TValue) xmlSerializer2.Deserialize(reader);
+        var obj = (TValue) xmlSerializer2.Deserialize(reader);
         reader.ReadEndElement();
-        this.Add(key, obj);
+        Add(key, obj);
         reader.ReadEndElement();
-        int content = (int) reader.MoveToContent();
+        var content = (int) reader.MoveToContent();
       }
       reader.ReadEndElement();
     }
 
     public void WriteXml(XmlWriter writer)
     {
-      XmlSerializer xmlSerializer1 = new XmlSerializer(typeof (TKey));
-      XmlSerializer xmlSerializer2 = new XmlSerializer(typeof (TValue));
-      XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+      var xmlSerializer1 = new XmlSerializer(typeof (TKey));
+      var xmlSerializer2 = new XmlSerializer(typeof (TValue));
+      var namespaces = new XmlSerializerNamespaces();
       namespaces.Add(string.Empty, string.Empty);
-      foreach (TKey key in this.Keys)
+      foreach (TKey key in Keys)
       {
         writer.WriteStartElement("item");
         writer.WriteStartElement("key");

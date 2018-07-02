@@ -46,18 +46,21 @@ namespace M3D.Graphics.Ext3D
 
     public override void Render3D()
     {
-      if (this.LightIndex >= 0 && this.LightIndex <= 4 && this.Enabled)
+      if (LightIndex >= 0 && LightIndex <= 4 && Enabled)
       {
-        GL.Enable((EnableCap) (16384 + this.LightIndex));
-        GL.Light((LightName) (16384 + this.LightIndex), LightParameter.Position, this.Position);
-        GL.Light((LightName) (16384 + this.LightIndex), LightParameter.Ambient, this.Ambient);
-        GL.Light((LightName) (16384 + this.LightIndex), LightParameter.Diffuse, this.Diffuse);
-        GL.Light((LightName) (16384 + this.LightIndex), LightParameter.Specular, this.Specular);
+        GL.Enable((EnableCap) (16384 + LightIndex));
+        GL.Light((LightName) (16384 + LightIndex), LightParameter.Position, Position);
+        GL.Light((LightName) (16384 + LightIndex), LightParameter.Ambient, Ambient);
+        GL.Light((LightName) (16384 + LightIndex), LightParameter.Diffuse, Diffuse);
+        GL.Light((LightName) (16384 + LightIndex), LightParameter.Specular, Specular);
       }
       base.Render3D();
-      if (!this.LightOnlyChildren || this.LightIndex < 0 || (this.LightIndex > 4 || !this.Enabled))
+      if (!LightOnlyChildren || LightIndex < 0 || (LightIndex > 4 || !Enabled))
+      {
         return;
-      GL.Disable((EnableCap) (16384 + this.LightIndex));
+      }
+
+      GL.Disable((EnableCap) (16384 + LightIndex));
     }
   }
 }

@@ -21,12 +21,12 @@ namespace M3D
 
     public void CreateShutdownMessage(string msg)
     {
-      WinStopShutdown.NativeMethods.ShutdownBlockReasonCreate(this.hWnd, msg);
+      WinStopShutdown.NativeMethods.ShutdownBlockReasonCreate(hWnd, msg);
     }
 
     public void DestroyShutdownMessage()
     {
-      WinStopShutdown.NativeMethods.ShutdownBlockReasonDestroy(this.hWnd);
+      WinStopShutdown.NativeMethods.ShutdownBlockReasonDestroy(hWnd);
     }
 
     internal static class NativeMethods

@@ -26,28 +26,36 @@ namespace M3D.GUI.Views.Printer_View
 
     public void Init(GUIHost host)
     {
-      string modelListToolbox = Resources.ModelListToolbox;
-      this.Init(host, modelListToolbox, new ButtonCallback(this.MyButtonCallback));
-      this.SetSize(300, 170);
-      this.listbox = this.FindChildElement(5031) as ListBoxWidget;
-      if (this.listbox != null)
-        this.listbox.SetOnChangeCallback(new ListBoxWidget.OnChangeCallback(this.OnListboxSelectionChanged));
-      this.printerview.OnModelListChanged += new PrinterView.ModelListChanged(this.OnModelListChanged);
+      var modelListToolbox = Resources.ModelListToolbox;
+      Init(host, modelListToolbox, new ButtonCallback(MyButtonCallback));
+      SetSize(300, 170);
+      listbox = FindChildElement(5031) as ListBoxWidget;
+      if (listbox != null)
+      {
+        listbox.SetOnChangeCallback(new ListBoxWidget.OnChangeCallback(OnListboxSelectionChanged));
+      }
+
+      printerview.OnModelListChanged += new PrinterView.ModelListChanged(OnModelListChanged);
     }
 
     public void OnListboxSelectionChanged(ListBoxWidget listBox)
     {
-      int selected = this.listbox.Selected;
-      if (selected < 0 || selected >= this.listbox.Items.Count)
+      var selected = listbox.Selected;
+      if (selected < 0 || selected >= listbox.Items.Count)
+      {
         return;
-      this.printerview.SelectModelbyID(((ModelTransformPair.Data) this.listbox.Items[selected]).ID);
+      }
+
+      printerview.SelectModelbyID(((ModelTransformPair.Data)listbox.Items[selected]).ID);
     }
 
     public void OnModelListChanged(List<ModelTransformPair.Data> modelData)
     {
-      this.listbox.Items.Clear();
+      listbox.Items.Clear();
       foreach (ModelTransformPair.Data data in modelData)
-        this.listbox.Items.Add((object) data);
+      {
+        listbox.Items.Add((object) data);
+      }
     }
 
     private void MyButtonCallback(ButtonWidget button)

@@ -26,18 +26,21 @@ public class SerialPortConfig
   public SerialPortConfig(string name, int baudRate, int dataBits, StopBits stopBits, Parity parity, bool dtrEnable, bool rtsEnable)
   {
     if (string.IsNullOrWhiteSpace(name))
+    {
       throw new ArgumentNullException(nameof (name));
-    this.RtsEnable = rtsEnable;
-    this.BaudRate = baudRate;
-    this.DataBits = dataBits;
-    this.StopBits = stopBits;
-    this.Parity = parity;
-    this.DtrEnable = dtrEnable;
-    this.Name = name;
+    }
+
+    RtsEnable = rtsEnable;
+    BaudRate = baudRate;
+    DataBits = dataBits;
+    StopBits = stopBits;
+    Parity = parity;
+    DtrEnable = dtrEnable;
+    Name = name;
   }
 
   public override string ToString()
   {
-    return string.Format("{0} (Baud: {1}/DataBits: {2}/Parity: {3}/StopBits: {4}/{5})", (object) this.Name, (object) this.BaudRate, (object) this.DataBits, (object) this.Parity, (object) this.StopBits, this.RtsEnable ? (object) "RTS" : (object) "No RTS");
+    return string.Format("{0} (Baud: {1}/DataBits: {2}/Parity: {3}/StopBits: {4}/{5})", (object)Name, (object)BaudRate, (object)DataBits, (object)Parity, (object)StopBits, RtsEnable ? (object) "RTS" : (object) "No RTS");
   }
 }

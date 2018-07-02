@@ -18,33 +18,36 @@ namespace M3D.Spooling.ConnectionManager
 
     public override List<string> UsbAttached(uint VID, uint PID)
     {
-      this.idVendor = VID.ToString("X4");
-      this.idProduct = PID.ToString("X4");
-      lock (this.com_ports)
-        this.com_ports = this.find_all_tty_usb();
-      return new List<string>((IEnumerable<string>) this.com_ports);
+      idVendor = VID.ToString("X4");
+      idProduct = PID.ToString("X4");
+      lock (com_ports)
+      {
+        com_ports = find_all_tty_usb();
+      }
+
+      return new List<string>((IEnumerable<string>)com_ports);
     }
 
     private List<string> find_all_tty_usb()
     {
-      List<string> stringList = new List<string>();
-      foreach (string directory1 in Directory.GetDirectories("/sys/bus/usb/devices"))
+      var stringList = new List<string>();
+      foreach (var directory1 in Directory.GetDirectories("/sys/bus/usb/devices"))
       {
-        string str1 = Path.Combine("/sys/bus/usb/devices", directory1);
-        if (File.Exists(Path.Combine(str1, "idVendor")) && File.Exists(Path.Combine(str1, "idProduct")) && (string.Concat(File.ReadAllLines(Path.Combine(str1, "idVendor"))).Trim().Equals(this.idVendor, StringComparison.OrdinalIgnoreCase) && string.Concat(File.ReadAllLines(Path.Combine(str1, "idProduct"))).Trim().Equals(this.idProduct, StringComparison.OrdinalIgnoreCase)))
+        var str1 = Path.Combine("/sys/bus/usb/devices", directory1);
+        if (File.Exists(Path.Combine(str1, "idVendor")) && File.Exists(Path.Combine(str1, "idProduct")) && (string.Concat(File.ReadAllLines(Path.Combine(str1, "idVendor"))).Trim().Equals(idVendor, StringComparison.OrdinalIgnoreCase) && string.Concat(File.ReadAllLines(Path.Combine(str1, "idProduct"))).Trim().Equals(idProduct, StringComparison.OrdinalIgnoreCase)))
         {
-          foreach (string directory2 in Directory.GetDirectories(str1))
+          foreach (var directory2 in Directory.GetDirectories(str1))
           {
-            string str2 = directory1 + Path.DirectorySeparatorChar.ToString() + Path.GetFileName(directory1) + ":";
+            var str2 = directory1 + Path.DirectorySeparatorChar.ToString() + Path.GetFileName(directory1) + ":";
             if (directory2.StartsWith(str2))
             {
-              foreach (string directory3 in Directory.GetDirectories(Path.Combine(str1, directory2)))
+              foreach (var directory3 in Directory.GetDirectories(Path.Combine(str1, directory2)))
               {
                 if (directory3.Contains("tty"))
                 {
-                  foreach (string directory4 in Directory.GetDirectories(directory3))
+                  foreach (var directory4 in Directory.GetDirectories(directory3))
                   {
-                    string fileName = Path.GetFileName(directory4);
+                    var fileName = Path.GetFileName(directory4);
                     stringList.Add(Path.Combine("/dev", fileName));
                   }
                 }

@@ -19,29 +19,32 @@ namespace M3D.Slicer.General
 
     public SmartSlicerSettingsStack(SmartSlicerSettingsBase smartSlicerSettings)
     {
-      this.mSmartSlicerSettings = smartSlicerSettings;
-      this.mSettingsStackList = new Dictionary<string, Stack<SmartSlicerSettingsBase>>();
+      mSmartSlicerSettings = smartSlicerSettings;
+      mSettingsStackList = new Dictionary<string, Stack<SmartSlicerSettingsBase>>();
     }
 
     public void SetCurrentSettingsFromPrinterProfile(IPrinter oPrinter)
     {
-      string profileName = oPrinter.MyPrinterProfile.ProfileName;
-      if (!this.mSettingsStackList.ContainsKey(profileName))
+      var profileName = oPrinter.MyPrinterProfile.ProfileName;
+      if (!mSettingsStackList.ContainsKey(profileName))
       {
-        Stack<SmartSlicerSettingsBase> slicerSettingsBaseStack = new Stack<SmartSlicerSettingsBase>();
-        slicerSettingsBaseStack.Push(this.mSmartSlicerSettings);
-        this.mSettingsStackList.Add(profileName, slicerSettingsBaseStack);
+        var slicerSettingsBaseStack = new Stack<SmartSlicerSettingsBase>();
+        slicerSettingsBaseStack.Push(mSmartSlicerSettings);
+        mSettingsStackList.Add(profileName, slicerSettingsBaseStack);
       }
-      this.mCurrentSettingsStack = this.mSettingsStackList[profileName];
-      this.SlicerSettings?.ConfigureFromPrinterData(oPrinter);
-      this.LoadSlicerSettings(this.SlicerSettings);
+      mCurrentSettingsStack = mSettingsStackList[profileName];
+      SlicerSettings?.ConfigureFromPrinterData(oPrinter);
+      LoadSlicerSettings(SlicerSettings);
     }
 
     private void LoadSlicerSettings(SmartSlicerSettingsBase slicer_settings)
     {
-      string filename = Path.Combine(Paths.WorkingFolder, slicer_settings.ConfigurationFileName);
+      var filename = Path.Combine(Paths.WorkingFolder, slicer_settings.ConfigurationFileName);
       if (slicer_settings.ParseFile(filename))
+      {
         return;
+      }
+
       slicer_settings.SetToDefault();
     }
 
@@ -49,31 +52,40 @@ namespace M3D.Slicer.General
     {
       get
       {
-        if (this.mCurrentSettingsStack != null)
-          return this.mCurrentSettingsStack.Peek();
+        if (mCurrentSettingsStack != null)
+        {
+          return mCurrentSettingsStack.Peek();
+        }
+
         return (SmartSlicerSettingsBase) null;
       }
     }
 
     public void PushSettings()
     {
-      this.mCurrentSettingsStack.Push(this.SlicerSettings.Clone());
+      mCurrentSettingsStack.Push(SlicerSettings.Clone());
     }
 
     public void PopSettings()
     {
-      if (this.mCurrentSettingsStack.Count <= 1)
+      if (mCurrentSettingsStack.Count <= 1)
+      {
         return;
-      this.mCurrentSettingsStack.Pop();
+      }
+
+      mCurrentSettingsStack.Pop();
     }
 
     public void SaveSettingsDown()
     {
-      if (this.mCurrentSettingsStack.Count < 2)
+      if (mCurrentSettingsStack.Count < 2)
+      {
         return;
-      SmartSlicerSettingsBase slicerSettingsBase = this.mCurrentSettingsStack.Pop();
-      this.mCurrentSettingsStack.Pop();
-      this.mCurrentSettingsStack.Push(slicerSettingsBase);
+      }
+
+      SmartSlicerSettingsBase slicerSettingsBase = mCurrentSettingsStack.Pop();
+      mCurrentSettingsStack.Pop();
+      mCurrentSettingsStack.Push(slicerSettingsBase);
     }
   }
 }

@@ -17,14 +17,14 @@ namespace M3D.Spooling.Common
 
     public Accessories(Accessories rhs)
     {
-      this.BedStatus = new HeatedBed(rhs.BedStatus);
-      this.SDCardStatus = new SDCard(rhs.SDCardStatus);
+      BedStatus = new HeatedBed(rhs.BedStatus);
+      SDCardStatus = new SDCard(rhs.SDCardStatus);
     }
 
     public Accessories()
     {
-      this.BedStatus = new HeatedBed();
-      this.SDCardStatus = new SDCard();
+      BedStatus = new HeatedBed();
+      SDCardStatus = new SDCard();
     }
   }
 }

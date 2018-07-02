@@ -29,105 +29,129 @@ namespace M3D.Spooling.ConnectionManager
     public PrinterConnectionManager(params VID_PID[] printer_vid_pid)
     {
       if (printer_vid_pid == null || printer_vid_pid.Length < 1)
+      {
         throw new ArgumentException("Constructor to PrinterConnectionManager must take at least one argument.");
+      }
+
       foreach (VID_PID vid_pid in printer_vid_pid)
-        this.printer_profiles.Add(new PrinterConnectionManager.PrinterTypeData(vid_pid));
-      this.printerFinder = (IUSBPrinterFinder) new WinUSBPrinterFinder();
+      {
+        printer_profiles.Add(new PrinterConnectionManager.PrinterTypeData(vid_pid));
+      }
+
+      printerFinder = (IUSBPrinterFinder) new WinUSBPrinterFinder();
     }
 
     public void Start(ThreadSafeVariable<bool> shared_shutdown)
     {
-      if (this.runThread != null)
+      if (runThread != null)
+      {
         return;
-      this.runThread = new SharedShutdownThread(new SharedShutdownThreadStart(this.Run), shared_shutdown);
-      this.runThread.DelayBetweenIterations = 600;
-      this.runThread.Name = nameof (PrinterConnectionManager);
-      this.runThread.IsBackground = false;
-      this.runThread.OnThreadAborted = new EventHandler<ThreadSafeVariable<bool>>(this.OnPrinterConnectionManagerStopped);
-      this.runThread.Start();
+      }
+
+      runThread = new SharedShutdownThread(new SharedShutdownThreadStart(Run), shared_shutdown)
+      {
+        DelayBetweenIterations = 600,
+        Name = nameof(PrinterConnectionManager),
+        IsBackground = false,
+        OnThreadAborted = new EventHandler<ThreadSafeVariable<bool>>(OnPrinterConnectionManagerStopped)
+      };
+      runThread.Start();
     }
 
     private void OnPrinterConnectionManagerStopped(object sender, ThreadSafeVariable<bool> shared_shutdown)
     {
-      foreach (KeyValuePair<string, PrinterConnection> printer in this.printers)
+      foreach (KeyValuePair<string, PrinterConnection> printer in printers)
+      {
         printer.Value.Shutdown();
+      }
     }
 
     private bool Run()
     {
       try
       {
-        List<string> stringList1 = new List<string>();
-        List<PrinterConnEventArgs> printerConnEventArgsList = new List<PrinterConnEventArgs>();
-        lock (this.printers)
+        var stringList1 = new List<string>();
+        var printerConnEventArgsList = new List<PrinterConnEventArgs>();
+        lock (printers)
         {
-          foreach (KeyValuePair<string, PrinterConnection> printer in this.printers)
+          foreach (KeyValuePair<string, PrinterConnection> printer in printers)
           {
             if (!stringList1.Contains(printer.Key))
+            {
               stringList1.Add(printer.Key);
+            }
           }
         }
-        foreach (PrinterConnectionManager.PrinterTypeData printerProfile in this.printer_profiles)
+        foreach (PrinterConnectionManager.PrinterTypeData printerProfile in printer_profiles)
         {
-          foreach (string str in this.printerFinder.UsbAttached(printerProfile.vid_pid.VID, printerProfile.vid_pid.PID))
+          foreach (var str in printerFinder.UsbAttached(printerProfile.vid_pid.VID, printerProfile.vid_pid.PID))
           {
             if (stringList1.Contains(str))
+            {
               stringList1.Remove(str);
+            }
           }
         }
-        lock (this.printers)
+        lock (printers)
         {
-          foreach (KeyValuePair<string, PrinterConnection> printer in this.printers)
+          foreach (KeyValuePair<string, PrinterConnection> printer in printers)
           {
             if (!printer.Value.IsAlive && !stringList1.Contains(printer.Key))
+            {
               stringList1.Add(printer.Key);
+            }
           }
         }
-        foreach (string key in stringList1)
+        foreach (var key in stringList1)
         {
           PrinterConnection printerToRemove;
-          lock (this.printers)
+          lock (printers)
           {
-            if (!this.printers.TryRemove(key, out printerToRemove))
+            if (!printers.TryRemove(key, out printerToRemove))
             {
-              string message = "Already removed this printer :" + key;
+              var message = "Already removed this printer :" + key;
               // ISSUE: reference to a compiler-generated field
-              if (this.LogEventHandler != null)
+              if (LogEventHandler != null)
               {
                 // ISSUE: reference to a compiler-generated field
-                this.LogEventHandler((object) this, new LogMessageEventArgs(message));
+                LogEventHandler((object) this, new LogMessageEventArgs(message));
               }
             }
           }
-          this.RemovePrinterHelper(printerToRemove);
+          RemovePrinterHelper(printerToRemove);
           Thread.Sleep(10);
         }
-        foreach (PrinterConnectionManager.PrinterTypeData printerProfile in this.printer_profiles)
+        foreach (PrinterConnectionManager.PrinterTypeData printerProfile in printer_profiles)
         {
-          List<string> stringList2 = this.printerFinder.UsbAttached(printerProfile.vid_pid.VID, printerProfile.vid_pid.PID);
-          lock (this.printers)
+          List<string> stringList2 = printerFinder.UsbAttached(printerProfile.vid_pid.VID, printerProfile.vid_pid.PID);
+          lock (printers)
           {
-            foreach (string str in stringList2)
+            foreach (var str in stringList2)
             {
-              if (!string.IsNullOrEmpty(str) && !this.printers.ContainsKey(str))
+              if (!string.IsNullOrEmpty(str) && !printers.ContainsKey(str))
+              {
                 printerConnEventArgsList.Add(new PrinterConnEventArgs(str, printerProfile.vid_pid));
+              }
             }
           }
         }
         foreach (PrinterConnEventArgs e in printerConnEventArgsList)
         {
-          lock (this.printers)
-            this.NewPrinterHelper(e);
+          lock (printers)
+          {
+            NewPrinterHelper(e);
+          }
+
           Thread.Sleep(10);
         }
       }
       catch (Exception ex)
       {
         // ISSUE: reference to a compiler-generated field
-        if (this.LogEventHandler != null)
+        if (LogEventHandler != null)
         {
           // ISSUE: reference to a compiler-generated field
-          this.LogEventHandler((object) this, new LogMessageEventArgs("Error: " + ex.Message));
+          LogEventHandler((object) this, new LogMessageEventArgs("Error: " + ex.Message));
         }
       }
       return true;
@@ -135,32 +159,36 @@ namespace M3D.Spooling.ConnectionManager
 
     private void NewPrinterHelper(PrinterConnEventArgs e)
     {
-      string comPort = e.com_port;
-      PrinterConnection printer = new PrinterConnection(comPort);
+      var comPort = e.com_port;
+      var printer = new PrinterConnection(comPort);
       lock (printer.SerialPort.ThreadSync)
       {
         if (!printer.ConnectTo())
         {
           // ISSUE: reference to a compiler-generated field
-          if (this.LogEventHandler == null)
+          if (LogEventHandler == null)
+          {
             return;
+          }
           // ISSUE: reference to a compiler-generated field
-          this.LogEventHandler((object) this, new LogMessageEventArgs("Could not connect to printer on port " + comPort));
+          LogEventHandler((object) this, new LogMessageEventArgs("Could not connect to printer on port " + comPort));
         }
         else
         {
           // ISSUE: reference to a compiler-generated field
-          if (this.LogEventHandler != null)
+          if (LogEventHandler != null)
           {
             // ISSUE: reference to a compiler-generated field
-            this.LogEventHandler((object) this, new LogMessageEventArgs("Successfully connected to printer on port " + comPort));
+            LogEventHandler((object) this, new LogMessageEventArgs("Successfully connected to printer on port " + comPort));
           }
-          this.printers.TryAdd(comPort, printer);
+          printers.TryAdd(comPort, printer);
           // ISSUE: reference to a compiler-generated field
-          if (this.PrinterConnectedEventHandler == null)
+          if (PrinterConnectedEventHandler == null)
+          {
             return;
+          }
           // ISSUE: reference to a compiler-generated field
-          this.PrinterConnectedEventHandler((object) this, new PrinterConnEventArgs(printer, comPort, e.vid_pid));
+          PrinterConnectedEventHandler((object) this, new PrinterConnEventArgs(printer, comPort, e.vid_pid));
         }
       }
     }
@@ -172,34 +200,36 @@ namespace M3D.Spooling.ConnectionManager
         if (printerToRemove.SerialPort != null)
         {
           // ISSUE: reference to a compiler-generated field
-          if (this.LogEventHandler != null)
+          if (LogEventHandler != null)
           {
             // ISSUE: reference to a compiler-generated field
-            this.LogEventHandler((object) this, new LogMessageEventArgs("Disconnecting from printer " + printerToRemove.SerialNumber + " on port " + printerToRemove.ComPort + "..."));
+            LogEventHandler((object) this, new LogMessageEventArgs("Disconnecting from printer " + printerToRemove.SerialNumber + " on port " + printerToRemove.ComPort + "..."));
           }
           printerToRemove.SerialPort.Dispose();
           // ISSUE: reference to a compiler-generated field
-          if (this.LogEventHandler != null)
+          if (LogEventHandler != null)
           {
             // ISSUE: reference to a compiler-generated field
-            this.LogEventHandler((object) this, new LogMessageEventArgs("Disconnected from printer " + printerToRemove.SerialNumber + " on port " + printerToRemove.ComPort ?? ""));
+            LogEventHandler((object) this, new LogMessageEventArgs("Disconnected from printer " + printerToRemove.SerialNumber + " on port " + printerToRemove.ComPort ?? ""));
           }
         }
       }
       catch (Exception ex)
       {
         // ISSUE: reference to a compiler-generated field
-        if (this.LogEventHandler != null)
+        if (LogEventHandler != null)
         {
           // ISSUE: reference to a compiler-generated field
-          this.LogEventHandler((object) this, new LogMessageEventArgs("Error: " + ex.Message));
+          LogEventHandler((object) this, new LogMessageEventArgs("Error: " + ex.Message));
         }
       }
       // ISSUE: reference to a compiler-generated field
-      if (this.PrinterDisconnectedEventHandler == null)
+      if (PrinterDisconnectedEventHandler == null)
+      {
         return;
+      }
       // ISSUE: reference to a compiler-generated field
-      this.PrinterDisconnectedEventHandler((object) this, new PrinterConnEventArgs(printerToRemove));
+      PrinterDisconnectedEventHandler((object) this, new PrinterConnEventArgs(printerToRemove));
     }
 
     internal class PrinterTypeData

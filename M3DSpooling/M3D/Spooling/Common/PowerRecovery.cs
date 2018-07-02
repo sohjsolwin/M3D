@@ -22,22 +22,22 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return (uint) this.PrintingStatus > 0U;
+        return (uint)PrintingStatus > 0U;
       }
     }
 
     public PowerRecovery(PowerRecovery rhs)
     {
-      this.PrintingStatus = rhs.PrintingStatus;
-      this.iRC_Code = rhs.iRC_Code;
-      this.iRR_Code = rhs.iRR_Code;
+      PrintingStatus = rhs.PrintingStatus;
+      iRC_Code = rhs.iRC_Code;
+      iRR_Code = rhs.iRR_Code;
     }
 
     public PowerRecovery()
     {
-      this.PrintingStatus = PowerRecovery.PowerResetState.NotPrinting;
-      this.iRC_Code = 0;
-      this.iRR_Code = 0;
+      PrintingStatus = PowerRecovery.PowerResetState.NotPrinting;
+      iRC_Code = 0;
+      iRR_Code = 0;
     }
 
     public enum PowerResetState

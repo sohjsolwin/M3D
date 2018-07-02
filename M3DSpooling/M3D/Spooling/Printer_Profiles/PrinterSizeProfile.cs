@@ -47,28 +47,28 @@ namespace M3D.Spooling.Printer_Profiles
 
     public PrinterSizeProfile()
     {
-      this.PrintableRegion = new StackedBoundingBox();
-      this.WarningRegion = new StackedBoundingBox();
-      this.G32ProbePoints = new SerializableDictionary<int, RectCoordinates>();
+      PrintableRegion = new StackedBoundingBox();
+      WarningRegion = new StackedBoundingBox();
+      G32ProbePoints = new SerializableDictionary<int, RectCoordinates>();
     }
 
     public PrinterSizeProfile(PrinterSizeProfile other)
     {
-      this.case_type = other.case_type;
-      this.shell_size = other.shell_size;
-      this.printBedSize = other.printBedSize;
-      this.fluff_height = other.fluff_height;
-      this.PrintableRegion = new StackedBoundingBox(other.PrintableRegion);
-      this.WarningRegion = new StackedBoundingBox(other.WarningRegion);
-      this.UnhomedSafeZRange = other.UnhomedSafeZRange;
-      this.HomeLocation = other.HomeLocation;
-      this.ABSWarningDim = other.ABSWarningDim;
-      this.ZAfterProbing = other.ZAfterProbing;
-      this.ZAfterG33 = other.ZAfterG33;
-      this.BackCornerPosition = other.BackCornerPosition;
-      this.BackCornerPositionBoxTop = other.BackCornerPositionBoxTop;
-      this.BoxTopLimitZ = other.BoxTopLimitZ;
-      this.G32ProbePoints = new SerializableDictionary<int, RectCoordinates>((Dictionary<int, RectCoordinates>) other.G32ProbePoints);
+      case_type = other.case_type;
+      shell_size = other.shell_size;
+      printBedSize = other.printBedSize;
+      fluff_height = other.fluff_height;
+      PrintableRegion = new StackedBoundingBox(other.PrintableRegion);
+      WarningRegion = new StackedBoundingBox(other.WarningRegion);
+      UnhomedSafeZRange = other.UnhomedSafeZRange;
+      HomeLocation = other.HomeLocation;
+      ABSWarningDim = other.ABSWarningDim;
+      ZAfterProbing = other.ZAfterProbing;
+      ZAfterG33 = other.ZAfterG33;
+      BackCornerPosition = other.BackCornerPosition;
+      BackCornerPositionBoxTop = other.BackCornerPositionBoxTop;
+      BoxTopLimitZ = other.BoxTopLimitZ;
+      G32ProbePoints = new SerializableDictionary<int, RectCoordinates>((Dictionary<int, RectCoordinates>) other.G32ProbePoints);
     }
 
     public PrinterSizeProfile(PrinterSizeProfile.CaseType case_type, Vector3D shell_size, Vector2D printBedSize, float fluff_height, StackedBoundingBox WarningRegion, StackedBoundingBox PrintableRegion, Range UnhomedSafeZRange, Vector3D HomeLocation, Vector2D BackCornerPosition, Vector2D BackCornerPositionBoxTop, float BoxTopLimitZ, float ABSWarningDim, float ZAfterProbing, float ZAfterG33, SerializableDictionary<int, RectCoordinates> G32ProbePoints)

@@ -19,12 +19,12 @@ namespace M3D.GUI.Views.Library_View
 
     public LibraryRecord()
     {
-      this.ID = ++LibraryRecord.nextID;
+      ID = ++LibraryRecord.nextID;
     }
 
     public LibraryRecord(LibraryRecord other)
     {
-      this.ID = other.ID;
+      ID = other.ID;
     }
   }
 }

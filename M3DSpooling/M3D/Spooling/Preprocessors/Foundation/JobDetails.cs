@@ -18,7 +18,7 @@ namespace M3D.Spooling.Preprocessors.Foundation
     {
       get
       {
-        return this.jobParams.filament_type;
+        return jobParams.filament_type;
       }
     }
   }

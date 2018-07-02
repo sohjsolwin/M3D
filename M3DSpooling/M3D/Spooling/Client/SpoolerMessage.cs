@@ -29,11 +29,11 @@ namespace M3D.Spooling.Client
 
     public SpoolerMessage(MessageType type, PrinterSerialNumber serialnumber, string message, string pluginID, string state)
     {
-      this.Type = type;
-      this.SerialNumber = serialnumber;
-      this.Message = message;
-      this.PlugInID = pluginID;
-      this.State = state;
+      Type = type;
+      SerialNumber = serialnumber;
+      Message = message;
+      PlugInID = pluginID;
+      State = state;
     }
 
     public SpoolerMessage()
@@ -53,33 +53,35 @@ namespace M3D.Spooling.Client
 
     public SpoolerMessage(string serialization)
     {
-      using (TextReader textReader = (TextReader) new StringReader(serialization))
+      using (var textReader = (TextReader) new StringReader(serialization))
       {
         try
         {
-          SpoolerMessage spoolerMessage = (SpoolerMessage) SpoolerMessage.ClassSerializer.Deserialize(textReader);
-          this.Type = spoolerMessage.Type;
-          this.SerialNumber = spoolerMessage.SerialNumber;
-          this.Message = spoolerMessage.Message;
-          this.State = spoolerMessage.State;
-          this.PlugInID = spoolerMessage.PlugInID;
+          var spoolerMessage = (SpoolerMessage) SpoolerMessage.ClassSerializer.Deserialize(textReader);
+          Type = spoolerMessage.Type;
+          SerialNumber = spoolerMessage.SerialNumber;
+          Message = spoolerMessage.Message;
+          State = spoolerMessage.State;
+          PlugInID = spoolerMessage.PlugInID;
         }
         catch (Exception ex)
         {
-          this.Type = MessageType.ErrorUndefinedMessage;
-          this.SerialNumber = new PrinterSerialNumber("0");
-          this.Message = (string) null;
+          Type = MessageType.ErrorUndefinedMessage;
+          SerialNumber = new PrinterSerialNumber("0");
+          Message = (string) null;
         }
       }
     }
 
     public string Serialize()
     {
-      XmlWriterSettings settings = new XmlWriterSettings();
-      settings.OmitXmlDeclaration = true;
-      StringWriter stringWriter = new StringWriter();
-      XmlWriter xmlWriter = XmlWriter.Create((TextWriter) stringWriter, settings);
-      XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+      var settings = new XmlWriterSettings
+      {
+        OmitXmlDeclaration = true
+      };
+      var stringWriter = new StringWriter();
+      var xmlWriter = XmlWriter.Create((TextWriter) stringWriter, settings);
+      var namespaces = new XmlSerializerNamespaces();
       namespaces.Add("", "");
       try
       {
@@ -88,7 +90,10 @@ namespace M3D.Spooling.Client
       catch (Exception ex)
       {
         if (Debugger.IsAttached)
+        {
           Debugger.Break();
+        }
+
         throw;
       }
       return stringWriter.ToString();
@@ -96,21 +101,24 @@ namespace M3D.Spooling.Client
 
     public byte[] GetRawData()
     {
-      if (this.Type == MessageType.RawData)
-        return Convert.FromBase64String(this.Message);
+      if (Type == MessageType.RawData)
+      {
+        return Convert.FromBase64String(Message);
+      }
+
       return (byte[]) null;
     }
 
     public override string ToString()
     {
-      switch (this.Type)
+      switch (Type)
       {
         case MessageType.PrinterConnected:
           return "The new printer is ready.";
         case MessageType.JobComplete:
-          return "Finished printing " + this.Message;
+          return "Finished printing " + Message;
         case MessageType.JobCanceled:
-          return "Cancelled job " + this.Message;
+          return "Cancelled job " + Message;
         case MessageType.FirmwareUpdateComplete:
           return "Your printer has been updated. You're ready to go.";
         case MessageType.FirmwareUpdateFailed:
@@ -119,25 +127,34 @@ namespace M3D.Spooling.Client
         case MessageType.FirmwareErrorCyclePower:
           return "Unable to connect to the printer. Try resetting or reconnecting your printer.";
         case MessageType.UserDefined:
-          return this.Message;
+          return Message;
         case MessageType.RawData:
           return "Raw Serial Data";
         case MessageType.PrinterNotConnected:
           return "Sorry. Please make sure that a M3D printer has been connected.";
         case MessageType.BedLocationMustBeCalibrated:
-          if (string.IsNullOrEmpty(this.Message))
+          if (string.IsNullOrEmpty(Message))
+          {
             return "The Z location of your printer has been lost. Please clear the print bed. \n\nCalibrate bed location now?";
-          return this.Message;
+          }
+
+          return Message;
         case MessageType.BedOrientationMustBeCalibrated:
-          if (string.IsNullOrEmpty(this.Message))
+          if (string.IsNullOrEmpty(Message))
+          {
             return "Sorry. There is a problem with your factory gantry values. You will not be able to print until you calibrate your printer. \n\nCalibrate gantry now?";
-          return this.Message;
+          }
+
+          return Message;
         case MessageType.MicroMotionControllerFailed:
-          if (string.IsNullOrEmpty(this.Message))
+          if (string.IsNullOrEmpty(Message))
+          {
             return "Sorry. There seems to be a problem with your Micro-motion chip.";
-          return this.Message;
+          }
+
+          return Message;
         case MessageType.InvalidZ:
-          return "Sorry. Your printer has lost its Z location. This can happen if the printer loses power either during a print or soon after a print has completed. You can not safely print with the printer in this state." + this.Message;
+          return "Sorry. Your printer has lost its Z location. This can happen if the printer loses power either during a print or soon after a print has completed. You can not safely print with the printer in this state." + Message;
         case MessageType.ModelOutOfPrintableBounds:
           return "Sorry. Your model cannot be printed because it is out of the printable bounds of the printer.";
         case MessageType.PrinterTimeout:
@@ -159,9 +176,9 @@ namespace M3D.Spooling.Client
         case MessageType.MultiPointCalibrationNotSupported:
           return "Sorry, but five-point calibration is not currently supported on this printer";
         case MessageType.RPCError:
-          return "A message sent to print spooler was invalid." + this.Message;
+          return "A message sent to print spooler was invalid." + Message;
         default:
-          return this.Type.ToString() + " - " + this.Message;
+          return Type.ToString() + " - " + Message;
       }
     }
 
@@ -170,11 +187,11 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.Type.ToString();
+        return Type.ToString();
       }
       set
       {
-        this.Type = (MessageType) Enum.Parse(typeof (MessageType), value, false);
+        Type = (MessageType) Enum.Parse(typeof (MessageType), value, false);
       }
     }
 
@@ -183,11 +200,11 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.SerialNumber.ToString();
+        return SerialNumber.ToString();
       }
       set
       {
-        this.SerialNumber = new PrinterSerialNumber(value);
+        SerialNumber = new PrinterSerialNumber(value);
       }
     }
 
@@ -196,7 +213,10 @@ namespace M3D.Spooling.Client
       get
       {
         if (SpoolerMessage.__class_serializer == null)
+        {
           SpoolerMessage.__class_serializer = new XmlSerializer(typeof (SpoolerMessage));
+        }
+
         return SpoolerMessage.__class_serializer;
       }
     }

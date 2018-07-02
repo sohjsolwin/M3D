@@ -18,14 +18,14 @@ namespace M3D.Spooling.Common.Utils
     public CircularBuffer(int capacity)
     {
       this.capacity = capacity;
-      this.buffer = new Queue<T>(capacity);
+      buffer = new Queue<T>(capacity);
     }
 
     public int Capacity
     {
       get
       {
-        return this.capacity;
+        return capacity;
       }
     }
 
@@ -33,7 +33,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return this.buffer.Count;
+        return buffer.Count;
       }
     }
 
@@ -41,29 +41,32 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return this.buffer.ToArray()[index];
+        return buffer.ToArray()[index];
       }
     }
 
     public virtual T Add(T item)
     {
-      T obj = default (T);
-      if (this.buffer.Count == this.capacity)
-        obj = this.buffer.Dequeue();
-      this.buffer.Enqueue(item);
+      var obj = default (T);
+      if (buffer.Count == capacity)
+      {
+        obj = buffer.Dequeue();
+      }
+
+      buffer.Enqueue(item);
       return obj;
     }
 
     public virtual void Clear()
     {
-      this.buffer.Clear();
+      buffer.Clear();
     }
 
     int ICollection<T>.Count
     {
       get
       {
-        return this.Count;
+        return Count;
       }
     }
 
@@ -77,7 +80,7 @@ namespace M3D.Spooling.Common.Utils
 
     void ICollection<T>.Add(T item)
     {
-      this.Add(item);
+      Add(item);
     }
 
     bool ICollection<T>.Remove(T item)
@@ -87,24 +90,24 @@ namespace M3D.Spooling.Common.Utils
 
     bool ICollection<T>.Contains(T item)
     {
-      return this.buffer.Contains(item);
+      return buffer.Contains(item);
     }
 
     void ICollection<T>.CopyTo(T[] array, int arrayIndex)
     {
-      this.buffer.CopyTo(array, arrayIndex);
+      buffer.CopyTo(array, arrayIndex);
     }
 
     IEnumerator<T> IEnumerable<T>.GetEnumerator()
     {
-      return (IEnumerator<T>) this.buffer.GetEnumerator();
+      return (IEnumerator<T>)buffer.GetEnumerator();
     }
 
     int ICollection.Count
     {
       get
       {
-        return this.Count;
+        return Count;
       }
     }
 
@@ -126,12 +129,12 @@ namespace M3D.Spooling.Common.Utils
 
     void ICollection.CopyTo(Array array, int arrayIndex)
     {
-      this.buffer.CopyTo((T[]) array, arrayIndex);
+      buffer.CopyTo((T[]) array, arrayIndex);
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator) this.buffer.GetEnumerator();
+      return (IEnumerator)buffer.GetEnumerator();
     }
   }
 }

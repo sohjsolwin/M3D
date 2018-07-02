@@ -39,122 +39,145 @@ namespace M3D.GUI.SettingsPages
       this.host = host;
       this.spooler_connection = spooler_connection;
       this.messagebox = messagebox;
-      string manualcontrolsframeTabbuttons = Resources.manualcontrolsframe_tabbuttons;
-      this.Init(host, manualcontrolsframeTabbuttons, new ButtonCallback(this.tabsFrameButtonCallback));
-      this.gCodeButton = (ButtonWidget) this.FindChildElement(3);
-      this.advancedHeatedBedButton = (ButtonWidget) this.FindChildElement(4);
-      this.basicButton = (ButtonWidget) this.FindChildElement(1);
-      this.sdCardButton = (ButtonWidget) this.FindChildElement(5);
-      this.TabFrame = (HorizontalLayout) this.FindChildElement(1004);
-      this.Visible = false;
-      this.Enabled = false;
-      this.RelativeWidth = 1f;
-      this.RelativeHeight = 1f;
-      this.basicControlsFrame = (XMLFrame) new BasicControlsFrame(1001, host, messagebox, spooler_connection);
-      this.AddChildElement((Element2D) this.basicControlsFrame);
-      this.basicControlsFrame.Refresh();
-      this.diagnosticsFrame = (XMLFrame) new DiagnosticsFrame(1002, host, spooler_connection);
-      this.AddChildElement((Element2D) this.diagnosticsFrame);
-      this.diagnosticsFrame.Refresh();
-      this.advancedHeatedBedFrame = (XMLFrame) new AdvancedFrame(1004, host, messagebox, spooler_connection);
-      this.AddChildElement((Element2D) this.advancedHeatedBedFrame);
-      this.advancedHeatedBedFrame.Refresh();
-      this.sdCardFrame = (XMLFrame) new SDCardFrame(1004, host, messagebox, spooler_connection, settingsManager);
-      this.AddChildElement((Element2D) this.sdCardFrame);
-      this.sdCardFrame.Refresh();
-      this.gCodesFrame = (XMLFrame) new GCodeFrame(1003, host, messagebox, spooler_connection);
-      this.AddChildElement((Element2D) this.gCodesFrame);
-      this.gCodesFrame.Refresh();
-      this.active_frame = (Frame) this.basicControlsFrame;
+      var manualcontrolsframeTabbuttons = Resources.manualcontrolsframe_tabbuttons;
+      Init(host, manualcontrolsframeTabbuttons, new ButtonCallback(tabsFrameButtonCallback));
+      gCodeButton = (ButtonWidget)FindChildElement(3);
+      advancedHeatedBedButton = (ButtonWidget)FindChildElement(4);
+      basicButton = (ButtonWidget)FindChildElement(1);
+      sdCardButton = (ButtonWidget)FindChildElement(5);
+      TabFrame = (HorizontalLayout)FindChildElement(1004);
+      Visible = false;
+      Enabled = false;
+      RelativeWidth = 1f;
+      RelativeHeight = 1f;
+      basicControlsFrame = (XMLFrame) new BasicControlsFrame(1001, host, messagebox, spooler_connection);
+      AddChildElement((Element2D)basicControlsFrame);
+      basicControlsFrame.Refresh();
+      diagnosticsFrame = (XMLFrame) new DiagnosticsFrame(1002, host, spooler_connection);
+      AddChildElement((Element2D)diagnosticsFrame);
+      diagnosticsFrame.Refresh();
+      advancedHeatedBedFrame = (XMLFrame) new AdvancedFrame(1004, host, messagebox, spooler_connection);
+      AddChildElement((Element2D)advancedHeatedBedFrame);
+      advancedHeatedBedFrame.Refresh();
+      sdCardFrame = (XMLFrame) new SDCardFrame(1004, host, messagebox, spooler_connection, settingsManager);
+      AddChildElement((Element2D)sdCardFrame);
+      sdCardFrame.Refresh();
+      gCodesFrame = (XMLFrame) new GCodeFrame(1003, host, messagebox, spooler_connection);
+      AddChildElement((Element2D)gCodesFrame);
+      gCodesFrame.Refresh();
+      active_frame = (Frame)basicControlsFrame;
     }
 
     public override void SetVisible(bool bVisible)
     {
       if (!bVisible)
-        this.host.SetFocus((Element2D) null);
+      {
+        host.SetFocus((Element2D) null);
+      }
+
       base.SetVisible(bVisible);
     }
 
     public override void OnUpdate()
     {
       base.OnUpdate();
-      PrinterObject selectedPrinter = this.spooler_connection.SelectedPrinter;
+      PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
       if (selectedPrinter != null && selectedPrinter.isConnected())
       {
-        if (selectedPrinter.isBusy && this.controls_enabled)
+        if (selectedPrinter.isBusy && controls_enabled)
         {
-          this.controls_enabled = false;
-          this.DisableGroup(10001);
+          controls_enabled = false;
+          DisableGroup(10001);
           if (!selectedPrinter.Info.FirmwareIsInvalid)
-            this.DisableGroup(10003);
-        }
-        else if (!selectedPrinter.isBusy && !this.controls_enabled)
-        {
-          this.controls_enabled = true;
-          this.EnableGroup(10001);
-          this.EnableGroup(10003);
-        }
-        if (selectedPrinter.Info.FirmwareIsInvalid)
-          this.EnableGroup(10003);
-        if (selectedPrinter.Info.Status == PrinterStatus.Firmware_IsWaitingToPause || selectedPrinter.Info.Status == PrinterStatus.Firmware_PrintingPausedProcessing || selectedPrinter.Info.Status == PrinterStatus.Firmware_PrintingPaused)
-        {
-          this.controls_enabled = false;
-          this.DisableGroup(10001);
-          this.DisableGroup(10003);
-        }
-        this.EnableGroup(10002);
-        if (!selectedPrinter.HasHeatedBed)
-        {
-          if (this.TabFrame.ChildList.Contains((Element2D) this.advancedHeatedBedButton))
           {
-            if (this.advancedHeatedBedButton.Checked)
-              this.basicButton.Checked = true;
-            this.TabFrame.RemoveChildElement((Element2D) this.advancedHeatedBedButton);
-            this.advancedHeatedBedButton.Enabled = false;
+            DisableGroup(10003);
           }
         }
-        else if (selectedPrinter.HasHeatedBed && !this.TabFrame.ChildList.Contains((Element2D) this.advancedHeatedBedButton))
+        else if (!selectedPrinter.isBusy && !controls_enabled)
         {
-          this.TabFrame.AddChildElement((Element2D) this.advancedHeatedBedButton);
-          this.advancedHeatedBedButton.Enabled = true;
-          this.TabFrame.RemoveChildElement((Element2D) this.gCodeButton);
-          this.TabFrame.AddChildElement((Element2D) this.gCodeButton);
+          controls_enabled = true;
+          EnableGroup(10001);
+          EnableGroup(10003);
+        }
+        if (selectedPrinter.Info.FirmwareIsInvalid)
+        {
+          EnableGroup(10003);
+        }
+
+        if (selectedPrinter.Info.Status == PrinterStatus.Firmware_IsWaitingToPause || selectedPrinter.Info.Status == PrinterStatus.Firmware_PrintingPausedProcessing || selectedPrinter.Info.Status == PrinterStatus.Firmware_PrintingPaused)
+        {
+          controls_enabled = false;
+          DisableGroup(10001);
+          DisableGroup(10003);
+        }
+        EnableGroup(10002);
+        if (!selectedPrinter.HasHeatedBed)
+        {
+          if (TabFrame.ChildList.Contains((Element2D)advancedHeatedBedButton))
+          {
+            if (advancedHeatedBedButton.Checked)
+            {
+              basicButton.Checked = true;
+            }
+
+            TabFrame.RemoveChildElement((Element2D)advancedHeatedBedButton);
+            advancedHeatedBedButton.Enabled = false;
+          }
+        }
+        else if (selectedPrinter.HasHeatedBed && !TabFrame.ChildList.Contains((Element2D)advancedHeatedBedButton))
+        {
+          TabFrame.AddChildElement((Element2D)advancedHeatedBedButton);
+          advancedHeatedBedButton.Enabled = true;
+          TabFrame.RemoveChildElement((Element2D)gCodeButton);
+          TabFrame.AddChildElement((Element2D)gCodeButton);
         }
         if (!selectedPrinter.SDCardExtension.Available)
         {
-          if (!this.TabFrame.ChildList.Contains((Element2D) this.sdCardButton))
+          if (!TabFrame.ChildList.Contains((Element2D)sdCardButton))
+          {
             return;
-          if (this.sdCardButton.Checked)
-            this.basicButton.Checked = true;
-          this.TabFrame.RemoveChildElement((Element2D) this.sdCardButton);
-          this.sdCardButton.Enabled = false;
+          }
+
+          if (sdCardButton.Checked)
+          {
+            basicButton.Checked = true;
+          }
+
+          TabFrame.RemoveChildElement((Element2D)sdCardButton);
+          sdCardButton.Enabled = false;
         }
         else
         {
-          if (!selectedPrinter.SDCardExtension.Available || this.TabFrame.ChildList.Contains((Element2D) this.sdCardButton))
+          if (!selectedPrinter.SDCardExtension.Available || TabFrame.ChildList.Contains((Element2D)sdCardButton))
+          {
             return;
-          this.TabFrame.AddChildElement((Element2D) this.sdCardButton);
-          this.sdCardButton.Enabled = true;
-          this.TabFrame.RemoveChildElement((Element2D) this.gCodeButton);
-          this.TabFrame.AddChildElement((Element2D) this.gCodeButton);
+          }
+
+          TabFrame.AddChildElement((Element2D)sdCardButton);
+          sdCardButton.Enabled = true;
+          TabFrame.RemoveChildElement((Element2D)gCodeButton);
+          TabFrame.AddChildElement((Element2D)gCodeButton);
         }
       }
       else
       {
-        this.controls_enabled = false;
-        this.DisableGroup(10001);
-        this.DisableGroup(10002);
-        this.DisableGroup(10003);
+        controls_enabled = false;
+        DisableGroup(10001);
+        DisableGroup(10002);
+        DisableGroup(10003);
       }
     }
 
     private void TurnOffActiveFrame()
     {
-      if (this.active_frame == null)
+      if (active_frame == null)
+      {
         return;
-      this.active_frame.Visible = false;
-      this.active_frame.Enabled = false;
-      this.active_frame = (Frame) null;
+      }
+
+      active_frame.Visible = false;
+      active_frame.Enabled = false;
+      active_frame = (Frame) null;
     }
 
     public void tabsFrameButtonCallback(ButtonWidget button)
@@ -162,33 +185,33 @@ namespace M3D.GUI.SettingsPages
       switch (button.ID)
       {
         case 1:
-          this.TurnOffActiveFrame();
-          this.active_frame = (Frame) this.basicControlsFrame;
+          TurnOffActiveFrame();
+          active_frame = (Frame)basicControlsFrame;
           break;
         case 2:
-          this.TurnOffActiveFrame();
-          this.active_frame = (Frame) this.diagnosticsFrame;
+          TurnOffActiveFrame();
+          active_frame = (Frame)diagnosticsFrame;
           break;
         case 3:
-          this.TurnOffActiveFrame();
-          this.active_frame = (Frame) this.gCodesFrame;
+          TurnOffActiveFrame();
+          active_frame = (Frame)gCodesFrame;
           break;
         case 4:
-          this.TurnOffActiveFrame();
-          this.active_frame = (Frame) this.advancedHeatedBedFrame;
+          TurnOffActiveFrame();
+          active_frame = (Frame)advancedHeatedBedFrame;
           break;
         case 5:
-          this.TurnOffActiveFrame();
-          this.active_frame = (Frame) this.sdCardFrame;
+          TurnOffActiveFrame();
+          active_frame = (Frame)sdCardFrame;
           break;
       }
-      if (this.active_frame != null)
+      if (active_frame != null)
       {
-        this.active_frame.Enabled = true;
-        this.active_frame.Visible = true;
-        this.host.SetFocus((Element2D) this.active_frame);
+        active_frame.Enabled = true;
+        active_frame.Visible = true;
+        host.SetFocus((Element2D)active_frame);
       }
-      this.Refresh();
+      Refresh();
     }
 
     private enum TabButtons

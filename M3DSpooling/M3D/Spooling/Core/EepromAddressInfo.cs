@@ -20,10 +20,10 @@ namespace M3D.Spooling.Core
 
     public EepromAddressInfo(string name, ushort eepromAddr, int size, Type type)
     {
-      this.Name = name;
-      this.EepromAddr = eepromAddr;
-      this.Size = size;
-      this.Type = type;
+      Name = name;
+      EepromAddr = eepromAddr;
+      Size = size;
+      Type = type;
     }
   }
 }

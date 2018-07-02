@@ -21,7 +21,10 @@ namespace M3D
     private static void Main(string[] args)
     {
       if (!FileAssociationSingleInstance.RegisterAsSingleInstance() && args.Length != 0 && (args.Length <= 1 || !(args[1] == "OPEN")) && FileAssociationSingleInstance.SendParametersToSingleInstance(args))
+      {
         return;
+      }
+
       Directory.SetCurrentDirectory(Paths.AssemblyDirectory);
       try
       {
@@ -37,15 +40,15 @@ namespace M3D
       }
       catch (Exception ex)
       {
-        int num = (int) MessageBox.Show("Unable to create application folder. \"" + Paths.PublicDataFolder + "\"" + ex.Message);
+        var num = (int) MessageBox.Show("Unable to create application folder. \"" + Paths.PublicDataFolder + "\"" + ex.Message);
         return;
       }
-      string path = Path.Combine(Paths.PublicDataFolder, "version.info");
+      var path = Path.Combine(Paths.PublicDataFolder, "version.info");
       Program.runfirst_start = false;
       try
       {
-        BinaryReader binaryReader = new BinaryReader((Stream) new FileStream(path, FileMode.Open, FileAccess.Read));
-        uint num1 = binaryReader.ReadUInt32();
+        var binaryReader = new BinaryReader((Stream) new FileStream(path, FileMode.Open, FileAccess.Read));
+        var num1 = binaryReader.ReadUInt32();
         uint num2;
         try
         {
@@ -74,7 +77,10 @@ namespace M3D
           num4 = 0U;
         }
         if ((int) num1 != (int) M3D.Spooling.Version.Client_Version.major || (int) num2 != (int) M3D.Spooling.Version.Client_Version.minor || ((int) num3 != (int) M3D.Spooling.Version.Client_Version.build || (int) num4 != (int) M3D.Spooling.Version.Client_Version.hotfix))
+        {
           Program.runfirst_start = true;
+        }
+
         binaryReader.Close();
       }
       catch (Exception ex)
@@ -84,7 +90,10 @@ namespace M3D
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       if (Program.runfirst_start)
+      {
         Application.Run((Form) new SplashFormFirstRun());
+      }
+
       Application.Run((Form) new Form1(new SplashForm(), args));
     }
 

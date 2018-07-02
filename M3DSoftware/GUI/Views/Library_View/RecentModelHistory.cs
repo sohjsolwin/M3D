@@ -19,32 +19,37 @@ namespace M3D.GUI.Views.Library_View
 
     public RecentModelHistory()
     {
-      this.LoadRecentData();
-      this.SaveRecentData();
+      LoadRecentData();
+      SaveRecentData();
     }
 
     private bool Matches(string word, string filter)
     {
-      string str1 = filter;
+      var str1 = filter;
       char[] chArray = new char[1]{ ' ' };
-      foreach (string str2 in str1.Split(chArray))
+      foreach (var str2 in str1.Split(chArray))
       {
         if (word.IndexOf(str2, 0, StringComparison.OrdinalIgnoreCase) >= 0)
+        {
           return true;
+        }
       }
       return false;
     }
 
     public QueryResults<RecentModelHistory.RecentRecord> QuereyRecords(string filter)
     {
-      if (this.m_thedatabaseRecent.Count < 1)
-        return (QueryResults<RecentModelHistory.RecentRecord>) null;
-      QueryResults<RecentModelHistory.RecentRecord> queryResults = new QueryResults<RecentModelHistory.RecentRecord>();
-      foreach (RecentModelHistory.RecentRecord other in this.m_thedatabaseRecent)
+      if (m_thedatabaseRecent.Count < 1)
       {
-        if (string.IsNullOrEmpty(filter) || this.Matches(other._3dmodelfilename, filter))
+        return (QueryResults<RecentModelHistory.RecentRecord>) null;
+      }
+
+      var queryResults = new QueryResults<RecentModelHistory.RecentRecord>();
+      foreach (RecentModelHistory.RecentRecord other in m_thedatabaseRecent)
+      {
+        if (string.IsNullOrEmpty(filter) || Matches(other._3dmodelfilename, filter))
         {
-          RecentModelHistory.RecentRecord recentRecord = new RecentModelHistory.RecentRecord(other);
+          var recentRecord = new RecentModelHistory.RecentRecord(other);
           queryResults.records.Add(recentRecord);
         }
       }
@@ -53,85 +58,91 @@ namespace M3D.GUI.Views.Library_View
 
     public RecentModelHistory.RecentRecord GetRecord(string filename)
     {
-      for (int index = 0; index < this.m_thedatabaseRecent.Count; ++index)
+      for (var index = 0; index < m_thedatabaseRecent.Count; ++index)
       {
-        if (this.m_thedatabaseRecent[index].cachefilename == filename)
-          return new RecentModelHistory.RecentRecord(this.m_thedatabaseRecent[index]);
+        if (m_thedatabaseRecent[index].cachefilename == filename)
+        {
+          return new RecentModelHistory.RecentRecord(m_thedatabaseRecent[index]);
+        }
       }
       return (RecentModelHistory.RecentRecord) null;
     }
 
     public bool AddModelToRecent(string fileName, string icon)
     {
-      SplitFileName splitFileName = new SplitFileName(fileName);
-      RecentModelHistory.RecentRecord recentRecord = new RecentModelHistory.RecentRecord(fileName, splitFileName.name + "." + splitFileName.ext, icon);
-      for (int index = 0; index < this.m_thedatabaseRecent.Count; ++index)
+      var splitFileName = new SplitFileName(fileName);
+      var recentRecord = new RecentModelHistory.RecentRecord(fileName, splitFileName.name + "." + splitFileName.ext, icon);
+      for (var index = 0; index < m_thedatabaseRecent.Count; ++index)
       {
-        if (this.m_thedatabaseRecent[index].cachefilename != null && this.m_thedatabaseRecent[index].cachefilename.Equals(recentRecord.cachefilename, StringComparison.OrdinalIgnoreCase))
+        if (m_thedatabaseRecent[index].cachefilename != null && m_thedatabaseRecent[index].cachefilename.Equals(recentRecord.cachefilename, StringComparison.OrdinalIgnoreCase))
         {
-          if (string.IsNullOrEmpty(icon) && !string.IsNullOrEmpty(this.m_thedatabaseRecent[index].iconfilename))
-            recentRecord.iconfilename = this.m_thedatabaseRecent[index].iconfilename;
-          else if (!string.IsNullOrEmpty(this.m_thedatabaseRecent[index].iconfilename) && !this.m_thedatabaseRecent[index].iconfilename.Equals(recentRecord.iconfilename))
+          if (string.IsNullOrEmpty(icon) && !string.IsNullOrEmpty(m_thedatabaseRecent[index].iconfilename))
           {
-            if (File.Exists(this.m_thedatabaseRecent[index].iconfilename))
+            recentRecord.iconfilename = m_thedatabaseRecent[index].iconfilename;
+          }
+          else if (!string.IsNullOrEmpty(m_thedatabaseRecent[index].iconfilename) && !m_thedatabaseRecent[index].iconfilename.Equals(recentRecord.iconfilename))
+          {
+            if (File.Exists(m_thedatabaseRecent[index].iconfilename))
             {
               try
               {
-                File.Delete(this.m_thedatabaseRecent[index].iconfilename);
+                File.Delete(m_thedatabaseRecent[index].iconfilename);
               }
               catch (IOException ex)
               {
               }
             }
           }
-          this.m_thedatabaseRecent.RemoveAt(index);
+          m_thedatabaseRecent.RemoveAt(index);
           break;
         }
       }
-      this.m_thedatabaseRecent.Insert(0, recentRecord);
-      this.SaveRecentData();
+      m_thedatabaseRecent.Insert(0, recentRecord);
+      SaveRecentData();
       return true;
     }
 
     public void RemoveFileFromRecent(ulong ID)
     {
-      for (int index = 0; index < this.m_thedatabaseRecent.Count; ++index)
+      for (var index = 0; index < m_thedatabaseRecent.Count; ++index)
       {
-        if ((long) this.m_thedatabaseRecent[index].ID == (long) ID)
+        if ((long)m_thedatabaseRecent[index].ID == (long) ID)
         {
-          this.m_thedatabaseRecent.RemoveAt(index);
+          m_thedatabaseRecent.RemoveAt(index);
           break;
         }
       }
-      this.SaveRecentData();
+      SaveRecentData();
     }
 
     public void RemoveFileFromRecent(string filename)
     {
-      for (int index = 0; index < this.m_thedatabaseRecent.Count; ++index)
+      for (var index = 0; index < m_thedatabaseRecent.Count; ++index)
       {
-        if (this.m_thedatabaseRecent[index].cachefilename.Equals(filename, StringComparison.OrdinalIgnoreCase))
+        if (m_thedatabaseRecent[index].cachefilename.Equals(filename, StringComparison.OrdinalIgnoreCase))
         {
-          this.m_thedatabaseRecent.RemoveAt(index);
+          m_thedatabaseRecent.RemoveAt(index);
           break;
         }
       }
-      this.SaveRecentData();
+      SaveRecentData();
     }
 
     private void LoadRecentData()
     {
       try
       {
-        using (StreamReader streamReader = new StreamReader(Paths.RecentDBPath))
+        using (var streamReader = new StreamReader(Paths.RecentDBPath))
         {
-          using (XmlReader xmlReader = XmlReader.Create((TextReader) streamReader))
-            this.m_thedatabaseRecent = (List<RecentModelHistory.RecentRecord>) new XmlSerializer(typeof (List<RecentModelHistory.RecentRecord>), new XmlRootAttribute("Recent")).Deserialize(xmlReader);
+          using (var xmlReader = XmlReader.Create((TextReader) streamReader))
+          {
+            m_thedatabaseRecent = (List<RecentModelHistory.RecentRecord>) new XmlSerializer(typeof (List<RecentModelHistory.RecentRecord>), new XmlRootAttribute("Recent")).Deserialize(xmlReader);
+          }
         }
       }
       catch (Exception ex)
       {
-        this.m_thedatabaseRecent = new List<RecentModelHistory.RecentRecord>();
+        m_thedatabaseRecent = new List<RecentModelHistory.RecentRecord>();
       }
     }
 
@@ -139,12 +150,12 @@ namespace M3D.GUI.Views.Library_View
     {
       try
       {
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<RecentModelHistory.RecentRecord>), new XmlRootAttribute("Recent"));
-        XmlSerializerNamespaces serializerNamespaces = new XmlSerializerNamespaces();
+        var xmlSerializer = new XmlSerializer(typeof (List<RecentModelHistory.RecentRecord>), new XmlRootAttribute("Recent"));
+        var serializerNamespaces = new XmlSerializerNamespaces();
         serializerNamespaces.Add("", "");
-        StreamWriter streamWriter1 = new StreamWriter(Paths.RecentDBPath);
+        var streamWriter1 = new StreamWriter(Paths.RecentDBPath);
         StreamWriter streamWriter2 = streamWriter1;
-        List<RecentModelHistory.RecentRecord> thedatabaseRecent = this.m_thedatabaseRecent;
+        List<RecentModelHistory.RecentRecord> thedatabaseRecent = m_thedatabaseRecent;
         XmlSerializerNamespaces namespaces = serializerNamespaces;
         xmlSerializer.Serialize((TextWriter) streamWriter2, (object) thedatabaseRecent, namespaces);
         streamWriter1.Close();
@@ -156,8 +167,8 @@ namespace M3D.GUI.Views.Library_View
 
     private string GenerateCacheFileName(string filename)
     {
-      SplitFileName splitFileName = new SplitFileName(filename);
-      Guid guid = Guid.NewGuid();
+      var splitFileName = new SplitFileName(filename);
+      var guid = Guid.NewGuid();
       return splitFileName.name + guid.ToString().Substring(0, 18) + splitFileName.ext;
     }
 
@@ -187,9 +198,9 @@ namespace M3D.GUI.Views.Library_View
       public RecentRecord(RecentModelHistory.RecentRecord other)
         : base((LibraryRecord) other)
       {
-        this.cachefilename = other.cachefilename;
-        this._3dmodelfilename = other._3dmodelfilename;
-        this.iconfilename = other.iconfilename;
+        cachefilename = other.cachefilename;
+        _3dmodelfilename = other._3dmodelfilename;
+        iconfilename = other.iconfilename;
       }
 
       [XmlAttribute("location")]
@@ -209,9 +220,12 @@ namespace M3D.GUI.Views.Library_View
       {
         get
         {
-          string directoryName = Path.GetDirectoryName(this.cachefilename);
+          var directoryName = Path.GetDirectoryName(cachefilename);
           if (!string.IsNullOrEmpty(directoryName))
+          {
             return directoryName + (!directoryName.EndsWith(Path.DirectorySeparatorChar.ToString()) ? Path.DirectorySeparatorChar.ToString() : "");
+          }
+
           return "";
         }
         set

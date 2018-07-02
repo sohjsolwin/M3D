@@ -20,23 +20,25 @@ namespace M3D.Spooling.Sockets
 
     public SocketServer()
     {
-      this.client_addresses = new Dictionary<Guid, SocketServer.IPAddressInfo>();
+      client_addresses = new Dictionary<Guid, SocketServer.IPAddressInfo>();
     }
 
     public void BroadcastMessage(string message)
     {
       message = "<SocketBroadcast>" + message + "</SocketBroadcast><EOF>";
-      List<Guid> guidList = new List<Guid>();
-      lock (this.client_addresses)
+      var guidList = new List<Guid>();
+      lock (client_addresses)
       {
-        foreach (KeyValuePair<Guid, SocketServer.IPAddressInfo> clientAddress in this.client_addresses)
+        foreach (KeyValuePair<Guid, SocketServer.IPAddressInfo> clientAddress in client_addresses)
+        {
           guidList.Add(clientAddress.Key);
+        }
       }
       foreach (Guid client_guid in guidList)
       {
         try
         {
-          this.SendMessageToClient(client_guid, message);
+          SendMessageToClient(client_guid, message);
         }
         catch (InvalidOperationException ex)
         {
@@ -50,28 +52,32 @@ namespace M3D.Spooling.Sockets
 
     public void RemoveClient(Guid guid)
     {
-      lock (this.client_addresses)
+      lock (client_addresses)
       {
-        if (this.client_addresses.ContainsKey(guid))
-          this.client_addresses.Remove(guid);
+        if (client_addresses.ContainsKey(guid))
+        {
+          client_addresses.Remove(guid);
+        }
       }
-      this.OnClientRemoved(guid);
+      OnClientRemoved(guid);
     }
 
     public void SendMessageToClient(Guid client_guid, string message)
     {
-      ThreadPool.QueueUserWorkItem(new WaitCallback(this.SendMessageToClientInternal), (object) new SocketServer.SendMessageData(client_guid, message));
+      ThreadPool.QueueUserWorkItem(new WaitCallback(SendMessageToClientInternal), (object) new SocketServer.SendMessageData(client_guid, message));
     }
 
     public int ClientCount
     {
       get
       {
-        int num = 0;
-        if (this.client_addresses != null)
+        var num = 0;
+        if (client_addresses != null)
         {
-          lock (this.client_addresses)
-            num = this.client_addresses.Count;
+          lock (client_addresses)
+          {
+            num = client_addresses.Count;
+          }
         }
         return num;
       }
@@ -81,17 +87,26 @@ namespace M3D.Spooling.Sockets
     {
       try
       {
-        SocketServer.ParsedMessage parsedMessage = new SocketServer.ParsedMessage(data);
+        var parsedMessage = new SocketServer.ParsedMessage(data);
         if (!parsedMessage.message.Contains("UpdatePrinterList"))
+        {
           parsedMessage.message.Contains("InitialConnect");
-        SocketServer.IPAddressInfo remoteIP = new SocketServer.IPAddressInfo((IPAddress) null, parsedMessage.port);
-        IPEndPoint remoteEndPoint = handler.RemoteEndPoint as IPEndPoint;
+        }
+
+        var remoteIP = new SocketServer.IPAddressInfo((IPAddress) null, parsedMessage.port);
+        var remoteEndPoint = handler.RemoteEndPoint as IPEndPoint;
         if (remoteEndPoint != null)
+        {
           remoteIP.ip = remoteEndPoint.Address;
-        this.ProcessGUIDPortPair(parsedMessage.guid, remoteIP);
-        string str = this.onClientMessage(parsedMessage.guid, parsedMessage.message);
+        }
+
+        ProcessGUIDPortPair(parsedMessage.guid, remoteIP);
+        var str = onClientMessage(parsedMessage.guid, parsedMessage.message);
         if (string.IsNullOrEmpty(str))
+        {
           str = "OK";
+        }
+
         byte[] bytes = Encoding.UTF8.GetBytes(str + "<EOF>");
         handler.Send(bytes);
       }
@@ -120,45 +135,58 @@ namespace M3D.Spooling.Sockets
 
     private void ProcessGUIDPortPair(Guid guid, SocketServer.IPAddressInfo remoteIP)
     {
-      lock (this.client_addresses)
+      lock (client_addresses)
       {
-        if (!this.client_addresses.ContainsKey(guid))
+        if (!client_addresses.ContainsKey(guid))
         {
-          this.client_addresses.Add(guid, remoteIP);
-          this.onNewClientConnection(guid);
+          client_addresses.Add(guid, remoteIP);
+          onNewClientConnection(guid);
         }
         else
-          this.client_addresses[guid] = remoteIP;
+        {
+          client_addresses[guid] = remoteIP;
+        }
       }
     }
 
     private void SendMessageToClientInternal(object state)
     {
-      SocketServer.SendMessageData sendMessageData = (SocketServer.SendMessageData) state;
+      var sendMessageData = (SocketServer.SendMessageData) state;
       Guid clientGuid = sendMessageData.client_guid;
-      string message = sendMessageData.message;
-      for (int index = 0; index < 10; ++index)
+      var message = sendMessageData.message;
+      for (var index = 0; index < 10; ++index)
       {
-        if (this.SendMessageToClientInternal(clientGuid, message) == 1)
+        if (SendMessageToClientInternal(clientGuid, message) == 1)
+        {
           return;
+        }
+
         Thread.Sleep((index + 1) * 200);
       }
-      this.RemoveClient(clientGuid);
+      RemoveClient(clientGuid);
     }
 
     private int SendMessageToClientInternal(Guid client_guid, string message)
     {
-      int num = 1;
+      var num = 1;
       if (!message.StartsWith("<SocketBroadcast>"))
-        message = "<SocketBroadcast>" + message + "</SocketBroadcast><EOF>";
-      SocketServer.IPAddressInfo ipAddressInfo = (SocketServer.IPAddressInfo) null;
-      lock (this.client_addresses)
       {
-        if (this.client_addresses.ContainsKey(client_guid))
-          ipAddressInfo = this.client_addresses[client_guid];
+        message = "<SocketBroadcast>" + message + "</SocketBroadcast><EOF>";
+      }
+
+      var ipAddressInfo = (SocketServer.IPAddressInfo) null;
+      lock (client_addresses)
+      {
+        if (client_addresses.ContainsKey(client_guid))
+        {
+          ipAddressInfo = client_addresses[client_guid];
+        }
       }
       if (ipAddressInfo == null)
+      {
         return 0;
+      }
+
       IPAddress ipAddress = ipAddressInfo.ip;
       if (ipAddress == null)
       {
@@ -171,20 +199,25 @@ namespace M3D.Spooling.Sockets
           }
         }
         if (ipAddress == null)
+        {
           return 0;
+        }
       }
-      IPEndPoint ipEndPoint = new IPEndPoint(ipAddressInfo.ip, ipAddressInfo.port);
-      Socket socket = (Socket) null;
+      var ipEndPoint = new IPEndPoint(ipAddressInfo.ip, ipAddressInfo.port);
+      var socket = (Socket) null;
       try
       {
         if (socket == null)
+        {
           socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        }
+
         socket.SendTimeout = 500;
         socket.ReceiveTimeout = 500;
         socket.Connect((EndPoint) ipEndPoint);
         byte[] bytes = Encoding.UTF8.GetBytes(message);
         socket.Send(bytes);
-        int length = bytes.Length;
+        var length = bytes.Length;
         Thread.Sleep(100);
       }
       catch (ThreadAbortException ex)
@@ -220,10 +253,10 @@ namespace M3D.Spooling.Sockets
 
       public ParsedMessage(string message)
       {
-        int length = message.IndexOf("::");
-        this.guid = new Guid(message.Substring(0, length));
-        int num = message.IndexOf("::", length + 2);
-        this.port = int.Parse(message.Substring(length + 2, num - (length + 2)));
+        var length = message.IndexOf("::");
+        guid = new Guid(message.Substring(0, length));
+        var num = message.IndexOf("::", length + 2);
+        port = int.Parse(message.Substring(length + 2, num - (length + 2)));
         this.message = message.Substring(num + 2, message.IndexOf("<EOF>") - (num + 2));
       }
     }

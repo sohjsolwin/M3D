@@ -17,8 +17,8 @@ namespace M3D.Spooling.Common
 
     public BondingPreprocessorData(BondingPreprocessorData other)
     {
-      this.FirstLayerTemp = other.FirstLayerTemp;
-      this.SecondLayerTemp = other.SecondLayerTemp;
+      FirstLayerTemp = other.FirstLayerTemp;
+      SecondLayerTemp = other.SecondLayerTemp;
     }
   }
 }

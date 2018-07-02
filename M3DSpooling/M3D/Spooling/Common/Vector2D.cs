@@ -23,8 +23,8 @@ namespace M3D.Spooling.Common
 
     public Vector2D(Vector2D other)
     {
-      this.x = other.x;
-      this.y = other.y;
+      x = other.x;
+      y = other.y;
     }
   }
 }

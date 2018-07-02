@@ -27,65 +27,81 @@ namespace M3D.Spooling.Common.Utils
     public GCodeBufferedFileReader(string gcodefilename, ulong ulFastForward, out float fEStartingLocation)
     {
       fEStartingLocation = 0.0f;
-      this.m_oInternalReader = new GCodeFileReader(gcodefilename);
-      if (!this.m_oInternalReader.IsOpen)
+      m_oInternalReader = new GCodeFileReader(gcodefilename);
+      if (!m_oInternalReader.IsOpen)
+      {
         return;
+      }
+
       for (ulong index = 0; index < ulFastForward; ++index)
       {
-        GCode nextLine = this.m_oInternalReader.GetNextLine(true);
+        GCode nextLine = m_oInternalReader.GetNextLine(true);
         if (nextLine == null)
         {
-          this.m_oInternalReader.Close();
+          m_oInternalReader.Close();
           return;
         }
         if (nextLine.hasE)
+        {
           fEStartingLocation = nextLine.E;
+        }
       }
-      this.m_iCurPage = 0;
-      this.m_iCurrentLineInPage = 0;
-      this.m_agGcodeBuffer = new GCode[8, 1024];
-      this.m_aiGcodeInBuffer = new int[8];
-      for (int index = 0; index < 8; ++index)
-        this.m_aiGcodeInBuffer[index] = 0;
-      this.m_otFillThread = (Thread) null;
-      this.m_aoFillThreadSync = new object[8];
-      for (int index = 0; index < 8; ++index)
-        this.m_aoFillThreadSync[index] = new object();
-      this.StartRefillThread();
+      m_iCurPage = 0;
+      m_iCurrentLineInPage = 0;
+      m_agGcodeBuffer = new GCode[8, 1024];
+      m_aiGcodeInBuffer = new int[8];
+      for (var index = 0; index < 8; ++index)
+      {
+        m_aiGcodeInBuffer[index] = 0;
+      }
+
+      m_otFillThread = (Thread) null;
+      m_aoFillThreadSync = new object[8];
+      for (var index = 0; index < 8; ++index)
+      {
+        m_aoFillThreadSync[index] = new object();
+      }
+
+      StartRefillThread();
     }
 
     public void Close()
     {
       try
       {
-        if (this.m_otFillThread != null)
-          this.m_otFillThread.Abort();
+        if (m_otFillThread != null)
+        {
+          m_otFillThread.Abort();
+        }
       }
       catch (Exception ex)
       {
       }
-      this.m_otFillThread = (Thread) null;
-      this.m_oInternalReader.Close();
+      m_otFillThread = (Thread) null;
+      m_oInternalReader.Close();
     }
 
     public GCode GetNextLine(bool excludeComments)
     {
-      lock (this.m_aoFillThreadSync[this.m_iCurPage])
+      lock (m_aoFillThreadSync[m_iCurPage])
       {
-        if (this.m_iCurrentLineInPage >= 1024)
+        if (m_iCurrentLineInPage >= 1024)
         {
-          this.m_iCurPage = (this.m_iCurPage + 1) % 8;
-          this.m_iCurrentLineInPage = 0;
+          m_iCurPage = (m_iCurPage + 1) % 8;
+          m_iCurrentLineInPage = 0;
         }
       }
-      int num1 = this.m_aiGcodeInBuffer[this.m_iCurPage];
-      int currentLineInPage = this.m_iCurrentLineInPage;
-      int num2 = 0;
+      var num1 = m_aiGcodeInBuffer[m_iCurPage];
+      var currentLineInPage = m_iCurrentLineInPage;
+      var num2 = 0;
       if (num1 <= num2)
+      {
         return (GCode) null;
-      GCode gcode = this.m_agGcodeBuffer[this.m_iCurPage, currentLineInPage];
-      ++this.m_iCurrentLineInPage;
-      --this.m_aiGcodeInBuffer[this.m_iCurPage];
+      }
+
+      GCode gcode = m_agGcodeBuffer[m_iCurPage, currentLineInPage];
+      ++m_iCurrentLineInPage;
+      --m_aiGcodeInBuffer[m_iCurPage];
       return gcode;
     }
 
@@ -93,7 +109,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return this.m_oInternalReader.MaxLines;
+        return m_oInternalReader.MaxLines;
       }
     }
 
@@ -101,19 +117,24 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return this.m_oInternalReader.IsOpen;
+        return m_oInternalReader.IsOpen;
       }
     }
 
     private void StartRefillThread()
     {
-      this.m_iCurPage = 0;
-      for (int pagenumber = 0; pagenumber < 8; ++pagenumber)
-        this.FillBuffer(pagenumber);
-      this.m_otFillThread = new Thread(new ThreadStart(this.FillBufferThread));
-      this.m_otFillThread.Name = "Job Filler";
-      this.m_otFillThread.IsBackground = true;
-      this.m_otFillThread.Start();
+      m_iCurPage = 0;
+      for (var pagenumber = 0; pagenumber < 8; ++pagenumber)
+      {
+        FillBuffer(pagenumber);
+      }
+
+      m_otFillThread = new Thread(new ThreadStart(FillBufferThread))
+      {
+        Name = "Job Filler",
+        IsBackground = true
+      };
+      m_otFillThread.Start();
     }
 
     private void FillBufferThread()
@@ -121,14 +142,14 @@ namespace M3D.Spooling.Common.Utils
       Thread.CurrentThread.CurrentCulture = PrinterCompatibleString.PRINTER_CULTURE;
       try
       {
-        while (!this.EndOfFIle)
+        while (!EndOfFIle)
         {
-          for (int index = 1; index < 8; ++index)
+          for (var index = 1; index < 8; ++index)
           {
-            int pagenumber = (this.m_iCurPage + index) % 8;
-            if (this.m_aiGcodeInBuffer[pagenumber] == 0)
+            var pagenumber = (m_iCurPage + index) % 8;
+            if (m_aiGcodeInBuffer[pagenumber] == 0)
             {
-              this.FillBuffer(pagenumber);
+              FillBuffer(pagenumber);
               Thread.Sleep(1);
             }
           }
@@ -147,35 +168,39 @@ namespace M3D.Spooling.Common.Utils
 
     private void FillBuffer(int pagenumber)
     {
-      lock (this.m_aoFillThreadSync[pagenumber])
+      lock (m_aoFillThreadSync[pagenumber])
       {
-        while (!this.EndOfFIle && this.m_aiGcodeInBuffer[pagenumber] < 1024)
+        while (!EndOfFIle && m_aiGcodeInBuffer[pagenumber] < 1024)
         {
-          GCode nextLine = this.m_oInternalReader.GetNextLine(true);
+          GCode nextLine = m_oInternalReader.GetNextLine(true);
           if (nextLine == null)
-            this.EndOfFIle = true;
+          {
+            EndOfFIle = true;
+          }
           else
-            this.AddGCodeToBuffer(nextLine, pagenumber);
+          {
+            AddGCodeToBuffer(nextLine, pagenumber);
+          }
         }
       }
     }
 
     private void AddGCodeToBuffer(GCode new_code, int pagenumber)
     {
-      int index = this.m_aiGcodeInBuffer[pagenumber];
-      this.m_agGcodeBuffer[pagenumber, index] = new_code;
-      ++this.m_aiGcodeInBuffer[pagenumber];
+      var index = m_aiGcodeInBuffer[pagenumber];
+      m_agGcodeBuffer[pagenumber, index] = new_code;
+      ++m_aiGcodeInBuffer[pagenumber];
     }
 
     public bool EndOfFIle
     {
       get
       {
-        return this.m_bEndreached.Value;
+        return m_bEndreached.Value;
       }
       set
       {
-        this.m_bEndreached.Value = value;
+        m_bEndreached.Value = value;
       }
     }
   }

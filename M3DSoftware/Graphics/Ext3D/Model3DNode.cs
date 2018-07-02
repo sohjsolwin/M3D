@@ -37,25 +37,28 @@ namespace M3D.Graphics.Ext3D
     public Model3DNode(int ID, Element3D parent)
       : base(ID, parent)
     {
-      this.Brightness = 1f;
+      Brightness = 1f;
     }
 
     public override void Render3D()
     {
-      if (this.Show)
+      if (Show)
       {
-        if (this.Highlight)
-          this.DrawOutline();
-        Color4 @params = new Color4(this.Diffuse.R * this.Brightness, this.Diffuse.G * this.Brightness, this.Diffuse.B * this.Brightness, this.Diffuse.A);
-        GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Ambient, this.Ambient);
+        if (Highlight)
+        {
+          DrawOutline();
+        }
+
+        var @params = new Color4(Diffuse.R * Brightness, Diffuse.G * Brightness, Diffuse.B * Brightness, Diffuse.A);
+        GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Ambient, Ambient);
         GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Diffuse, @params);
-        GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Specular, this.Specular);
-        GL.Material(MaterialFace.Front, MaterialParameter.Shininess, this.Shininess);
+        GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Specular, Specular);
+        GL.Material(MaterialFace.Front, MaterialParameter.Shininess, Shininess);
         GL.DepthMask(true);
-        if (this.geometryData != null)
+        if (geometryData != null)
         {
           GL.BindTexture(TextureTarget.Texture2D, 0);
-          this.geometryData.Draw();
+          geometryData.Draw();
         }
       }
       base.Render3D();
@@ -64,93 +67,103 @@ namespace M3D.Graphics.Ext3D
     private void DrawOutline2()
     {
       GL.PushMatrix();
-      Matrix4 scale = Matrix4.CreateScale(1.06f);
+      var scale = Matrix4.CreateScale(1.06f);
       GL.MultMatrix(ref scale);
-      int num = GL.IsEnabled(EnableCap.Lighting) ? 1 : 0;
+      var num = GL.IsEnabled(EnableCap.Lighting) ? 1 : 0;
       if (num != 0)
+      {
         GL.Disable(EnableCap.Lighting);
+      }
+
       GL.Color4(new Color4(byte.MaxValue, (byte) 128, (byte) 0, byte.MaxValue));
       GL.DepthMask(false);
-      if (this.geometryData != null)
+      if (geometryData != null)
       {
         GL.BindTexture(TextureTarget.Texture2D, 0);
-        this.geometryData.Draw();
+        geometryData.Draw();
       }
       if (num != 0)
+      {
         GL.Enable(EnableCap.Lighting);
+      }
+
       GL.PopMatrix();
     }
 
     private void DrawOutline()
     {
-      int num = GL.IsEnabled(EnableCap.Lighting) ? 1 : 0;
+      var num = GL.IsEnabled(EnableCap.Lighting) ? 1 : 0;
       if (num != 0)
+      {
         GL.Disable(EnableCap.Lighting);
+      }
+
       GL.Color4(new Color4(byte.MaxValue, (byte) 128, (byte) 0, byte.MaxValue));
       GL.LineWidth(4f);
       GL.PolygonMode(MaterialFace.Front, PolygonMode.Line);
       GL.DepthMask(false);
-      if (this.geometryData != null)
+      if (geometryData != null)
       {
         GL.BindTexture(TextureTarget.Texture2D, 0);
-        this.geometryData.Draw();
+        geometryData.Draw();
       }
       GL.PolygonMode(MaterialFace.Front, PolygonMode.Fill);
       if (num == 0)
+      {
         return;
+      }
+
       GL.Enable(EnableCap.Lighting);
     }
 
     public List<M3D.Model.Utils.Vector3> CalculateBoundingUsingTransformMatric(Matrix4 matrix)
     {
-      return this.modelData.CalculateHullPointsUsingTransformMatrix(matrix);
+      return modelData.CalculateHullPointsUsingTransformMatrix(matrix);
     }
 
     public void TranslateModelData(float x, float y, float z)
     {
-      this.modelData.Translate(new M3D.Model.Utils.Vector3(x, y, z));
-      this.geometryData.Translate(x, y, z);
-      this.geometryData.Reset();
+      modelData.Translate(new M3D.Model.Utils.Vector3(x, y, z));
+      geometryData.Translate(x, y, z);
+      geometryData.Reset();
     }
 
     public void Scale(float scalex, float scaley, float scalez)
     {
-      this.modelData.Scale(new M3D.Model.Utils.Vector3(scalex, scaley, scalez));
-      this.geometryData.Scale(scalex, scaley, scalez);
-      this.geometryData.Reset();
+      modelData.Scale(new M3D.Model.Utils.Vector3(scalex, scaley, scalez));
+      geometryData.Scale(scalex, scaley, scalez);
+      geometryData.Reset();
     }
 
     public virtual void SetModel(M3D.Graphics.Ext3D.ModelRendering.Model model)
     {
-      this.modelData = model.modelData;
-      this.geometryData = model.geometryData;
-      this.fileName = model.fileName;
-      this.zipFileName = model.zipFileName;
+      modelData = model.modelData;
+      geometryData = model.geometryData;
+      fileName = model.fileName;
+      zipFileName = model.zipFileName;
     }
 
     public ModelSize CalculateMinMax()
     {
-      return new ModelSize(this.modelData.Min, this.modelData.Max);
+      return new ModelSize(modelData.Min, modelData.Max);
     }
 
     public ModelSize CalculateMinMax(Matrix4 matrix)
     {
-      M3D.Model.Utils.Vector3 min;
-      M3D.Model.Utils.Vector3 max;
-      this.modelData.GetMinMaxWithTransform(matrix, out min, out max);
+      modelData.GetMinMaxWithTransform(matrix, out Model.Utils.Vector3 min, out Model.Utils.Vector3 max);
       return new ModelSize(min, max);
     }
 
     public M3D.Graphics.Ext3D.ModelRendering.Model GetModelInfo()
     {
-      return new M3D.Graphics.Ext3D.ModelRendering.Model(this.modelData, this.geometryData, this.fileName, this.zipFileName);
+      return new M3D.Graphics.Ext3D.ModelRendering.Model(modelData, geometryData, fileName, zipFileName);
     }
 
     public M3D.Model.Utils.Vector3 Ext
     {
       get
       {
-        return this.CalculateMinMax().Ext;
+        return CalculateMinMax().Ext;
       }
     }
 
@@ -166,7 +179,7 @@ namespace M3D.Graphics.Ext3D
     {
       get
       {
-        return this.modelData;
+        return modelData;
       }
     }
 

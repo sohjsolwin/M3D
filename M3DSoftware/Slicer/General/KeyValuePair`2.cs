@@ -16,8 +16,8 @@ namespace M3D.Slicer.General
     public KeyValuePair(K key, V value)
     {
       this = new KeyValuePair<K, V>();
-      this.Key = key;
-      this.Value = value;
+      Key = key;
+      Value = value;
     }
 
     [XmlAttribute("Key")]

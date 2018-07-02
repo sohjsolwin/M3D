@@ -19,31 +19,37 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     public SettingsItemFillPatternTypeCura()
       : base(typeof (FillPaternCura))
     {
-      this.value = FillPaternCura.Automatic;
+      value = FillPaternCura.Automatic;
     }
 
     public SettingsItemFillPatternTypeCura(FillPaternCura _value)
       : base(typeof (FillPaternCura))
     {
-      this.value = _value;
+      value = _value;
     }
 
     protected override bool SetFromSlicerValue(string val)
     {
-      this.formatError = false;
+      formatError = false;
       if (val == "Automatic" || val == "0")
-        this.value = FillPaternCura.Automatic;
+      {
+        value = FillPaternCura.Automatic;
+      }
       else if (val == "Grid" || val == "1")
-        this.value = FillPaternCura.Grid;
+      {
+        value = FillPaternCura.Grid;
+      }
       else if (val == "Lines" || val == "2")
-        this.value = FillPaternCura.Lines;
+      {
+        value = FillPaternCura.Lines;
+      }
       else if (val == "Concentric" || val == "3")
       {
-        this.value = FillPaternCura.Concentric;
+        value = FillPaternCura.Concentric;
       }
       else
       {
-        this.formatError = true;
+        formatError = true;
         return false;
       }
       return true;
@@ -56,26 +62,36 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override string TranslateToSlicerValue()
     {
-      return ((int) this.value).ToString();
+      return ((int)value).ToString();
     }
 
     public override string TranslateToUserValue()
     {
-      return this.value.ToString();
+      return value.ToString();
     }
 
     public override void ParseUserValue(string val)
     {
       if (val == "Automatic")
-        this.value = FillPaternCura.Automatic;
+      {
+        value = FillPaternCura.Automatic;
+      }
       else if (val == "Grid")
-        this.value = FillPaternCura.Grid;
+      {
+        value = FillPaternCura.Grid;
+      }
       else if (val == "Lines")
-        this.value = FillPaternCura.Lines;
+      {
+        value = FillPaternCura.Lines;
+      }
       else if (val == "Concentric")
-        this.value = FillPaternCura.Concentric;
+      {
+        value = FillPaternCura.Concentric;
+      }
       else
-        this.formatError = true;
+      {
+        formatError = true;
+      }
     }
 
     public override bool HasWarning
@@ -88,7 +104,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemFillPatternTypeCura(this.value);
+      return (SlicerSettingsItem) new SettingsItemFillPatternTypeCura(value);
     }
   }
 }

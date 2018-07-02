@@ -28,11 +28,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return (object) this.Text;
+        return (object)Text;
       }
       set
       {
-        this.Text = value.ToString();
+        Text = value.ToString();
       }
     }
   }

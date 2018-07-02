@@ -55,11 +55,14 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
     this.portThreadSync = portThreadSync;
     lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
         if (portConfig == null)
+        {
           throw new ArgumentNullException(nameof (portConfig));
-        this._port = new SerialPort(portConfig.Name, portConfig.BaudRate, portConfig.Parity, portConfig.DataBits, portConfig.StopBits)
+        }
+
+        _port = new SerialPort(portConfig.Name, portConfig.BaudRate, portConfig.Parity, portConfig.DataBits, portConfig.StopBits)
         {
           RtsEnable = portConfig.RtsEnable,
           DtrEnable = portConfig.DtrEnable,
@@ -72,115 +75,140 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
 
   public string ReadLine()
   {
-    lock (this.threadsync)
+    lock (threadsync)
     {
-      if (!this._isAlive)
+      if (!_isAlive)
+      {
         throw new Exception("The port has been disposed;");
-      return this._port.ReadTo(Environment.NewLine);
+      }
+
+      return _port.ReadTo(Environment.NewLine);
     }
   }
 
   public void WriteLine(string text)
   {
-    lock (this.portThreadSync)
+    lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
-        if (!this._isAlive)
+        if (!_isAlive)
+        {
           throw new Exception("The port has been disposed;");
-        this._port.Write(text);
-        this._port.Write("\r");
+        }
+
+        _port.Write(text);
+        _port.Write("\r");
       }
     }
   }
 
   public void Write(byte[] command, int offset, int count)
   {
-    lock (this.portThreadSync)
+    lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
-        if (!this._isAlive)
+        if (!_isAlive)
+        {
           throw new Exception("The port has been disposed;");
-        this._port.Write(command, offset, count);
+        }
+
+        _port.Write(command, offset, count);
       }
     }
   }
 
   public byte ReadByte()
   {
-    lock (this.portThreadSync)
+    lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
-        if (!this._isAlive)
+        if (!_isAlive)
+        {
           throw new Exception("The port has been disposed;");
-        return (byte) this._port.ReadByte();
+        }
+
+        return (byte)_port.ReadByte();
       }
     }
   }
 
   public int Read(byte[] bytes, int offset, int count)
   {
-    lock (this.portThreadSync)
+    lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
-        if (!this._isAlive)
+        if (!_isAlive)
+        {
           throw new Exception("The port has been disposed;");
-        return this._port.Read(bytes, offset, count);
+        }
+
+        return _port.Read(bytes, offset, count);
       }
     }
   }
 
   public string ReadExisting()
   {
-    lock (this.portThreadSync)
+    lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
-        if (!this._isAlive)
+        if (!_isAlive)
+        {
           throw new Exception("The port has been disposed;");
-        return this._port.ReadExisting();
+        }
+
+        return _port.ReadExisting();
       }
     }
   }
 
   public void Open()
   {
-    lock (this.portThreadSync)
+    lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
-        if (!this._isAlive)
+        if (!_isAlive)
+        {
           throw new Exception("The port has been disposed;");
+        }
+
         try
         {
-          SerialPortFixer.Execute(this._port.PortName);
+          SerialPortFixer.Execute(_port.PortName);
         }
         catch (Exception ex)
         {
         }
-        this._port.Open();
+        _port.Open();
         try
         {
-          this._internalSerialStream = this._port.BaseStream;
-          this._port.DiscardInBuffer();
-          this._port.DiscardOutBuffer();
+          _internalSerialStream = _port.BaseStream;
+          _port.DiscardInBuffer();
+          _port.DiscardOutBuffer();
         }
         catch (Exception ex)
         {
-          Stream internalSerialStream = this._internalSerialStream;
+          Stream internalSerialStream = _internalSerialStream;
           if (internalSerialStream == null)
           {
             FieldInfo field = typeof (SerialPort).GetField("internalSerialStream", BindingFlags.Instance | BindingFlags.NonPublic);
             if (field == (FieldInfo) null)
+            {
               throw;
+            }
             else
-              internalSerialStream = (Stream) field.GetValue((object) this._port);
+            {
+              internalSerialStream = (Stream) field.GetValue((object)_port);
+            }
           }
-          this.logMessage = this.logMessage + "\nAn error occurred while constructing the serial port adaptor:" + ex.ToString();
-          this.SafeDisconnect(this._port, internalSerialStream);
+          logMessage = logMessage + "\nAn error occurred while constructing the serial port adaptor:" + ex.ToString();
+          SafeDisconnect(_port, internalSerialStream);
           throw;
         }
       }
@@ -189,38 +217,47 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
 
   public void Dispose()
   {
-    lock (this.portThreadSync)
+    lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
-        if (!this._isAlive)
+        if (!_isAlive)
+        {
           return;
-        this.SafeDisconnect(this._port, this._internalSerialStream);
+        }
+
+        SafeDisconnect(_port, _internalSerialStream);
         GC.SuppressFinalize((object) this);
-        this._isAlive = false;
+        _isAlive = false;
       }
     }
   }
 
   private void SafeDisconnect()
   {
-    this.SafeDisconnect(this._port, this._internalSerialStream);
+    SafeDisconnect(_port, _internalSerialStream);
   }
 
   private void SafeDisconnect(SerialPort port, Stream internalSerialStream)
   {
-    lock (this.portThreadSync)
+    lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
-        if (!this._isAlive)
+        if (!_isAlive)
+        {
           return;
+        }
+
         if (port != null)
+        {
           GC.SuppressFinalize((object) port);
+        }
+
         if (internalSerialStream != null)
         {
           GC.SuppressFinalize((object) internalSerialStream);
-          this.ShutdownEventLoopHandler(internalSerialStream);
+          ShutdownEventLoopHandler(internalSerialStream);
         }
         try
         {
@@ -242,24 +279,30 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
 
   private void ShutdownEventLoopHandler(Stream internalSerialStream)
   {
-    lock (this.portThreadSync)
+    lock (portThreadSync)
     {
-      lock (this.threadsync)
+      lock (threadsync)
       {
         try
         {
           FieldInfo field1 = internalSerialStream.GetType().GetField("eventRunner", BindingFlags.Instance | BindingFlags.NonPublic);
           if (field1 == (FieldInfo) null)
+          {
             return;
-          object obj = field1.GetValue((object) internalSerialStream);
+          }
+
+          var obj = field1.GetValue((object) internalSerialStream);
           Type type = obj.GetType();
           FieldInfo field2 = type.GetField("endEventLoop", BindingFlags.Instance | BindingFlags.NonPublic);
           FieldInfo field3 = type.GetField("eventLoopEndedSignal", BindingFlags.Instance | BindingFlags.NonPublic);
           FieldInfo field4 = type.GetField("waitCommEventWaitHandle", BindingFlags.Instance | BindingFlags.NonPublic);
           if (field2 == (FieldInfo) null || field3 == (FieldInfo) null || field4 == (FieldInfo) null)
+          {
             return;
-          WaitHandle waitHandle = (WaitHandle) field3.GetValue(obj);
-          ManualResetEvent manualResetEvent = (ManualResetEvent) field4.GetValue(obj);
+          }
+
+          var waitHandle = (WaitHandle) field3.GetValue(obj);
+          var manualResetEvent = (ManualResetEvent) field4.GetValue(obj);
           field2.SetValue(obj, (object) true);
           do
           {
@@ -278,11 +321,11 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      return this._port.PortName;
+      return _port.PortName;
     }
     set
     {
-      this._port.PortName = value;
+      _port.PortName = value;
     }
   }
 
@@ -290,13 +333,16 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.BytesToRead;
+          }
+
+          return _port.BytesToRead;
         }
       }
     }
@@ -306,13 +352,16 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.BytesToWrite;
+          }
+
+          return _port.BytesToWrite;
         }
       }
     }
@@ -322,13 +371,16 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.WriteBufferSize;
+          }
+
+          return _port.WriteBufferSize;
         }
       }
     }
@@ -338,25 +390,31 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.BaudRate;
+          }
+
+          return _port.BaudRate;
         }
       }
     }
     set
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          this._port.BaudRate = value;
+          }
+
+          _port.BaudRate = value;
         }
       }
     }
@@ -366,25 +424,31 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.Parity;
+          }
+
+          return _port.Parity;
         }
       }
     }
     set
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          this._port.Parity = value;
+          }
+
+          _port.Parity = value;
         }
       }
     }
@@ -394,25 +458,31 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.StopBits;
+          }
+
+          return _port.StopBits;
         }
       }
     }
     set
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          this._port.StopBits = value;
+          }
+
+          _port.StopBits = value;
         }
       }
     }
@@ -422,25 +492,31 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.Handshake;
+          }
+
+          return _port.Handshake;
         }
       }
     }
     set
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          this._port.Handshake = value;
+          }
+
+          _port.Handshake = value;
         }
       }
     }
@@ -450,13 +526,16 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             return false;
-          return this._port.IsOpen;
+          }
+
+          return _port.IsOpen;
         }
       }
     }
@@ -466,25 +545,31 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.DtrEnable;
+          }
+
+          return _port.DtrEnable;
         }
       }
     }
     set
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          this._port.DtrEnable = value;
+          }
+
+          _port.DtrEnable = value;
         }
       }
     }
@@ -494,25 +579,31 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.WriteTimeout;
+          }
+
+          return _port.WriteTimeout;
         }
       }
     }
     set
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          this._port.WriteTimeout = value;
+          }
+
+          _port.WriteTimeout = value;
         }
       }
     }
@@ -522,25 +613,31 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          return this._port.ReadTimeout;
+          }
+
+          return _port.ReadTimeout;
         }
       }
     }
     set
     {
-      lock (this.portThreadSync)
+      lock (portThreadSync)
       {
-        lock (this.threadsync)
+        lock (threadsync)
         {
-          if (!this._isAlive)
+          if (!_isAlive)
+          {
             throw new Exception("The port has been disposed;");
-          this._port.ReadTimeout = value;
+          }
+
+          _port.ReadTimeout = value;
         }
       }
     }
@@ -550,7 +647,7 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      return this._isAlive;
+      return _isAlive;
     }
   }
 
@@ -558,7 +655,7 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
   {
     get
     {
-      return this.threadsync;
+      return threadsync;
     }
   }
 

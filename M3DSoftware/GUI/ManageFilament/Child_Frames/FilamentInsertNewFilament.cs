@@ -26,48 +26,57 @@ namespace M3D.GUI.ManageFilament.Child_Frames
     public override void MyButtonCallback(ButtonWidget button)
     {
       if (button.ID != 9)
+      {
         return;
-      this.MainWindow.ResetToStartup();
+      }
+
+      MainWindow.ResetToStartup();
     }
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("Load New 3D Ink", "Insert your new 3D Ink into the external feed port.\n\nWait a few moments until the new 3D Ink begins\n exiting the nozzle.", true, false, true, false, false, false);
-      this.insert_filament_text = (TextWidget) this.FindChildElement(3);
-      this.progressBar = (ProgressBarWidget) this.FindChildElement(4);
+      CreateManageFilamentFrame("Load New 3D Ink", "Insert your new 3D Ink into the external feed port.\n\nWait a few moments until the new 3D Ink begins\n exiting the nozzle.", true, false, true, false, false, false);
+      insert_filament_text = (TextWidget)FindChildElement(3);
+      progressBar = (ProgressBarWidget)FindChildElement(4);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
     {
       base.OnActivate(details);
-      this.insert_filament_text.Text = this.CurrentDetails.current_spool.filament_location != FilamentSpool.Location.Internal ? "Insert your new 3D Ink into the external feed port.\n\nWait a few moments until the new 3D Ink begins\n exiting the nozzle." : "The printer is now loading 3D Ink through it's internal port.\nYou may need to continue to push the 3D Ink into the 3D Ink tube to make sure it is in all of the way.\n\nWait a few moments until the new 3D Ink begins exiting the nozzle.";
-      if (this.CurrentDetails.current_spool.filament_type == FilamentSpool.TypeEnum.CAM)
-        this.insert_filament_text.Text = "\n\nWarning: Chameleon Ink may appear white when heated and exiting nozzle.";
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+      insert_filament_text.Text = CurrentDetails.current_spool.filament_location != FilamentSpool.Location.Internal ? "Insert your new 3D Ink into the external feed port.\n\nWait a few moments until the new 3D Ink begins\n exiting the nozzle." : "The printer is now loading 3D Ink through it's internal port.\nYou may need to continue to push the 3D Ink into the 3D Ink tube to make sure it is in all of the way.\n\nWait a few moments until the new 3D Ink begins exiting the nozzle.";
+      if (CurrentDetails.current_spool.filament_type == FilamentSpool.TypeEnum.CAM)
+      {
+        insert_filament_text.Text = "\n\nWarning: Chameleon Ink may appear white when heated and exiting nozzle.";
+      }
+
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
       if (selectedPrinter == null)
+      {
         return;
-      int num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(this.DoNextExtrusionStep), (object) new FilamentInsertNewFilament.ExtrusionProcessData(this.progressBar, selectedPrinter, 0), "G90", "G92");
+      }
+
+      var num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(DoNextExtrusionStep), (object) new FilamentInsertNewFilament.ExtrusionProcessData(progressBar, selectedPrinter, 0), "G90", "G92");
     }
 
     private void DoNextExtrusionStep(IAsyncCallResult ar)
     {
       if (ar.CallResult != CommandResult.Success)
       {
-        this.MainWindow.ResetToStartup();
+        MainWindow.ResetToStartup();
       }
       else
       {
-        FilamentInsertNewFilament.ExtrusionProcessData asyncState = ar.AsyncState as FilamentInsertNewFilament.ExtrusionProcessData;
-        float num1 = (float) asyncState.amount_extruded / 80f;
+        var asyncState = ar.AsyncState as FilamentInsertNewFilament.ExtrusionProcessData;
+        var num1 = (float) asyncState.amount_extruded / 80f;
         asyncState.progressBar.PercentComplete = num1;
         if ((double) asyncState.amount_extruded == 80.0)
         {
-          this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page5_HasFilamentExited, this.CurrentDetails);
+          MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page5_HasFilamentExited, CurrentDetails);
         }
         else
         {
           asyncState.amount_extruded += 10;
-          int num2 = (int) asyncState.printer.SendManualGCode(new AsyncCallback(this.DoNextExtrusionStep), (object) asyncState, PrinterCompatibleString.Format("G0 F450 E{0}", (object) asyncState.amount_extruded));
+          var num2 = (int) asyncState.printer.SendManualGCode(new AsyncCallback(DoNextExtrusionStep), (object) asyncState, PrinterCompatibleString.Format("G0 F450 E{0}", (object) asyncState.amount_extruded));
         }
       }
     }

@@ -13,14 +13,14 @@ namespace M3D.Spooling.Common
     public PLA_FilamentProfile(FilamentSpool spool, PrinterProfile printer_profile)
       : base(spool)
     {
-      this.preprocessor.initialPrint.StartingTemp = this.filament.filament_temperature;
-      this.preprocessor.initialPrint.StartingFanValue = (int) byte.MaxValue;
-      this.preprocessor.initialPrint.StartingTempStabilizationDelay = 15;
-      this.preprocessor.bonding.FirstLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(this.filament.filament_temperature + 10);
-      this.preprocessor.bonding.SecondLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(this.filament.filament_temperature + 5);
-      this.preprocessor.initialPrint.PrimeAmount = 19;
-      this.preprocessor.initialPrint.FirstRaftLayerTemperature = printer_profile.TemperatureConstants.GetBoundedTemp(this.filament.filament_temperature + 10);
-      this.preprocessor.initialPrint.SecondRaftResetTemp = false;
+      preprocessor.initialPrint.StartingTemp = filament.filament_temperature;
+      preprocessor.initialPrint.StartingFanValue = (int) byte.MaxValue;
+      preprocessor.initialPrint.StartingTempStabilizationDelay = 15;
+      preprocessor.bonding.FirstLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature + 10);
+      preprocessor.bonding.SecondLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature + 5);
+      preprocessor.initialPrint.PrimeAmount = 19;
+      preprocessor.initialPrint.FirstRaftLayerTemperature = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature + 10);
+      preprocessor.initialPrint.SecondRaftResetTemp = false;
     }
 
     public override bool TestSizeWarning(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)

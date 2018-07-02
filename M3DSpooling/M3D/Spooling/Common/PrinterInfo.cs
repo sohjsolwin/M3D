@@ -52,7 +52,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.Status >= PrinterStatus.Bootloader_Ready;
+        return Status >= PrinterStatus.Bootloader_Ready;
       }
     }
 
@@ -61,8 +61,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        if (this.Status >= PrinterStatus.Firmware_Ready)
-          return this.Status < PrinterStatus.Bootloader_Ready;
+        if (Status >= PrinterStatus.Firmware_Ready)
+        {
+          return Status < PrinterStatus.Bootloader_Ready;
+        }
+
         return false;
       }
     }
@@ -72,8 +75,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        if (this.Status != PrinterStatus.Bootloader_InvalidFirmware)
-          return this.Status == PrinterStatus.Bootloader_FirmwareUpdateFailed;
+        if (Status != PrinterStatus.Bootloader_InvalidFirmware)
+        {
+          return Status == PrinterStatus.Bootloader_FirmwareUpdateFailed;
+        }
+
         return true;
       }
     }
@@ -83,7 +89,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return (uint) this.filament_info.filament_type > 0U;
+        return (uint)filament_info.filament_type > 0U;
       }
     }
 
@@ -92,51 +98,54 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        if (this.Status != PrinterStatus.Firmware_Idle && this.Status != PrinterStatus.Firmware_PrintingPaused)
-          return this.Status == PrinterStatus.Bootloader_Ready;
+        if (Status != PrinterStatus.Firmware_Idle && Status != PrinterStatus.Firmware_PrintingPaused)
+        {
+          return Status == PrinterStatus.Bootloader_Ready;
+        }
+
         return true;
       }
     }
 
     public PrinterInfo(PrinterInfo other)
     {
-      this.CopyFrom(other);
+      CopyFrom(other);
     }
 
     public PrinterInfo(string serialization)
       : this()
     {
-      this.Deserialize(serialization);
+      Deserialize(serialization);
     }
 
     public PrinterInfo()
     {
-      this.current_job = (JobInfo) null;
-      this.serial_number = new PrinterSerialNumber("0");
-      this.filament_info = new FilamentSpool();
-      this.extruder = new Extruder();
-      this.hardware = new Hardware();
-      this.calibration = new Calibration();
-      this.synchronization = new Synchronization();
-      this.statistics = new Statistics();
-      this.supportedFeatures = new SupportedFeatures();
-      this.accessories = new Accessories();
-      this.persistantData = new PersistantData();
-      this.powerRecovery = new PowerRecovery();
+      current_job = (JobInfo) null;
+      serial_number = new PrinterSerialNumber("0");
+      filament_info = new FilamentSpool();
+      extruder = new Extruder();
+      hardware = new Hardware();
+      calibration = new Calibration();
+      synchronization = new Synchronization();
+      statistics = new Statistics();
+      supportedFeatures = new SupportedFeatures();
+      accessories = new Accessories();
+      persistantData = new PersistantData();
+      powerRecovery = new PowerRecovery();
     }
 
     public void Deserialize(string serialization)
     {
-      using (TextReader textReader = (TextReader) new StringReader(serialization))
+      using (var textReader = (TextReader) new StringReader(serialization))
       {
         try
         {
-          this.CopyFrom((PrinterInfo) PrinterInfo.ClassSerializer.Deserialize(textReader));
+          CopyFrom((PrinterInfo) PrinterInfo.ClassSerializer.Deserialize(textReader));
         }
         catch (Exception ex)
         {
           ErrorLogger.LogErrorMsg("Loading XML Exception: " + ex.Message + (ex.InnerException != null ? "\nInner Exception: " + ex.InnerException.Message : ""));
-          this.CopyFrom(new PrinterInfo());
+          CopyFrom(new PrinterInfo());
         }
       }
     }
@@ -144,17 +153,20 @@ namespace M3D.Spooling.Common
     public string Serialize()
     {
       PrinterInfo.settings.OmitXmlDeclaration = true;
-      StringWriter stringWriter = new StringWriter();
-      XmlWriter xmlWriter = XmlWriter.Create((TextWriter) stringWriter, PrinterInfo.settings);
-      this.ns.Add("", "");
+      var stringWriter = new StringWriter();
+      var xmlWriter = XmlWriter.Create((TextWriter) stringWriter, PrinterInfo.settings);
+      ns.Add("", "");
       try
       {
-        PrinterInfo.ClassSerializer.Serialize(xmlWriter, (object) this, this.ns);
+        PrinterInfo.ClassSerializer.Serialize(xmlWriter, (object) this, ns);
       }
       catch (Exception ex)
       {
         if (Debugger.IsAttached)
+        {
           Debugger.Break();
+        }
+
         throw;
       }
       return stringWriter.ToString();
@@ -162,20 +174,20 @@ namespace M3D.Spooling.Common
 
     public void CopyFrom(PrinterInfo other)
     {
-      this.serial_number = new PrinterSerialNumber(other.serial_number.ToString());
-      this.Status = other.Status;
-      this.filament_info = new FilamentSpool(other.filament_info);
-      this.current_job = other.current_job == null ? (JobInfo) null : new JobInfo(other.current_job);
-      this.extruder = new Extruder(other.extruder);
-      this.hardware = new Hardware(other.hardware);
-      this.calibration = new Calibration(other.calibration);
-      this.synchronization = new Synchronization(other.synchronization);
-      this.supportedFeatures = new SupportedFeatures(other.supportedFeatures);
-      this.accessories = new Accessories(other.accessories);
-      this.statistics = new Statistics(other.statistics);
-      this.persistantData = new PersistantData(other.persistantData);
-      this.powerRecovery = new PowerRecovery(other.powerRecovery);
-      this.ProfileName = other.ProfileName;
+      serial_number = new PrinterSerialNumber(other.serial_number.ToString());
+      Status = other.Status;
+      filament_info = new FilamentSpool(other.filament_info);
+      current_job = other.current_job == null ? (JobInfo) null : new JobInfo(other.current_job);
+      extruder = new Extruder(other.extruder);
+      hardware = new Hardware(other.hardware);
+      calibration = new Calibration(other.calibration);
+      synchronization = new Synchronization(other.synchronization);
+      supportedFeatures = new SupportedFeatures(other.supportedFeatures);
+      accessories = new Accessories(other.accessories);
+      statistics = new Statistics(other.statistics);
+      persistantData = new PersistantData(other.persistantData);
+      powerRecovery = new PowerRecovery(other.powerRecovery);
+      ProfileName = other.ProfileName;
     }
 
     [XmlAttribute("Serialnumber")]
@@ -183,11 +195,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.serial_number.ToString();
+        return serial_number.ToString();
       }
       set
       {
-        this.serial_number = new PrinterSerialNumber(value);
+        serial_number = new PrinterSerialNumber(value);
       }
     }
 
@@ -196,11 +208,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.Status.ToString();
+        return Status.ToString();
       }
       set
       {
-        this.Status = (PrinterStatus) Enum.Parse(typeof (PrinterStatus), value, false);
+        Status = (PrinterStatus) Enum.Parse(typeof (PrinterStatus), value, false);
       }
     }
 
@@ -209,7 +221,10 @@ namespace M3D.Spooling.Common
       get
       {
         if (PrinterInfo.__class_serializer == null)
+        {
           PrinterInfo.__class_serializer = new XmlSerializer(typeof (PrinterInfo));
+        }
+
         return PrinterInfo.__class_serializer;
       }
     }

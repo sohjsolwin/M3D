@@ -19,14 +19,17 @@ namespace M3D.Graphics.Ext3D.ModelRendering
 
     public GraphicsModelData(List<VertexTNV> vertex_list)
     {
-      this.faces = new TriangleFace[vertex_list.Count / 3];
-      this.dataTNV = new VertexTNV[vertex_list.Count];
-      int num = 0;
+      faces = new TriangleFace[vertex_list.Count / 3];
+      dataTNV = new VertexTNV[vertex_list.Count];
+      var num = 0;
       while (num < vertex_list.Count)
       {
-        for (int index = num; index < num + 3; ++index)
-          this.dataTNV[index] = vertex_list[index];
-        this.faces[num / 3] = new TriangleFace((uint) num, (uint) (num + 1), (uint) (num + 2));
+        for (var index = num; index < num + 3; ++index)
+        {
+          dataTNV[index] = vertex_list[index];
+        }
+
+        faces[num / 3] = new TriangleFace((uint) num, (uint) (num + 1), (uint) (num + 2));
         num += 3;
       }
     }
@@ -34,39 +37,39 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     public GraphicsModelData(ModelData modelData, bool smoothing)
     {
       smoothing = true;
-      int faceCount = modelData.getFaceCount();
-      this.faces = new TriangleFace[faceCount];
-      this.dataTNV = new VertexTNV[faceCount * 3];
-      for (int index = 0; index < faceCount; ++index)
+      var faceCount = modelData.GetFaceCount();
+      faces = new TriangleFace[faceCount];
+      dataTNV = new VertexTNV[faceCount * 3];
+      for (var index = 0; index < faceCount; ++index)
       {
-        ModelData.Face face = modelData.getFace(index);
-        Vector3 position1 = modelData[face.index1];
-        Vector3 position2 = modelData[face.index2];
-        Vector3 position3 = modelData[face.index3];
+        ModelData.Face face = modelData.GetFace(index);
+        Vector3 position1 = modelData[face.Index1];
+        Vector3 position2 = modelData[face.Index2];
+        Vector3 position3 = modelData[face.Index3];
         if (smoothing)
         {
-          this.dataTNV[3 * index] = new VertexTNV(this.cheatSmoothing(modelData.getVertex(face.index1), face.Normal), position1);
-          this.dataTNV[3 * index + 1] = new VertexTNV(this.cheatSmoothing(modelData.getVertex(face.index2), face.Normal), position2);
-          this.dataTNV[3 * index + 2] = new VertexTNV(this.cheatSmoothing(modelData.getVertex(face.index3), face.Normal), position3);
+          dataTNV[3 * index] = new VertexTNV(cheatSmoothing(modelData.GetVertex(face.Index1), face.Normal), position1);
+          dataTNV[3 * index + 1] = new VertexTNV(cheatSmoothing(modelData.GetVertex(face.Index2), face.Normal), position2);
+          dataTNV[3 * index + 2] = new VertexTNV(cheatSmoothing(modelData.GetVertex(face.Index3), face.Normal), position3);
         }
         else
         {
-          this.dataTNV[3 * index] = new VertexTNV(face.Normal, position1);
-          this.dataTNV[3 * index + 1] = new VertexTNV(face.Normal, position2);
-          this.dataTNV[3 * index + 2] = new VertexTNV(face.Normal, position3);
+          dataTNV[3 * index] = new VertexTNV(face.Normal, position1);
+          dataTNV[3 * index + 1] = new VertexTNV(face.Normal, position2);
+          dataTNV[3 * index + 2] = new VertexTNV(face.Normal, position3);
         }
-        this.faces[index] = new TriangleFace((uint) (3 * index), (uint) (3 * index + 1), (uint) (3 * index + 2));
+        faces[index] = new TriangleFace((uint) (3 * index), (uint) (3 * index + 1), (uint) (3 * index + 2));
       }
     }
 
     private Vector3 cheatSmoothing(ModelData.Vertex vertex, Vector3 faceNormal)
     {
-      Vector3 vector3 = new Vector3(0.0f, 0.0f, 0.0f);
+      var vector3 = new Vector3(0.0f, 0.0f, 0.0f);
       uint num1 = 0;
-      for (int index = 0; index < vertex.Faces.Count; ++index)
+      for (var index = 0; index < vertex.Faces.Count; ++index)
       {
         Vector3 normal = vertex.Faces[index].Normal;
-        float num2 = Math.Abs(faceNormal.Dot(normal) / (faceNormal.Length() * normal.Length()));
+        var num2 = Math.Abs(faceNormal.Dot(normal) / (faceNormal.Length() * normal.Length()));
         if ((double) num2 >= 0.698131680488586)
         {
           vector3 += normal * num2;

@@ -15,14 +15,14 @@ namespace M3D.Slicer.General
 
     public PrintSettings()
     {
-      this.transformation = new Matrix4x4();
-      this.SetPrintDefaults();
+      transformation = new Matrix4x4();
+      SetPrintDefaults();
     }
 
     public void SetPrintDefaults()
     {
-      this.transformation.Identity();
-      this.filament_info = new FilamentSpool();
+      transformation.Identity();
+      filament_info = new FilamentSpool();
     }
   }
 }

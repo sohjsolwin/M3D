@@ -22,9 +22,9 @@ namespace M3D.Spooler.Core
 
     public static SpoolerSettings LoadSettings()
     {
-      string path = Path.Combine(Paths.SpoolerStorage, "settings.db3");
-      SpoolerSettings spoolerSettings = (SpoolerSettings) null;
-      TextReader textReader = (TextReader) null;
+      var path = Path.Combine(Paths.SpoolerStorage, "settings.db3");
+      var spoolerSettings = (SpoolerSettings) null;
+      var textReader = (TextReader) null;
       lock (SpoolerSettings.threadsync)
       {
         try
@@ -45,14 +45,14 @@ namespace M3D.Spooler.Core
 
     public static bool SaveSettings(SpoolerSettings settings, bool bShuttingDownSoCatchAllExceptions)
     {
-      string str = Path.Combine(Paths.SpoolerStorage, "settings.db3");
-      bool flag = true;
-      TextWriter textWriter1 = (TextWriter) null;
+      var str = Path.Combine(Paths.SpoolerStorage, "settings.db3");
+      var flag = true;
+      var textWriter1 = (TextWriter) null;
       lock (SpoolerSettings.threadsync)
       {
         try
         {
-          XmlSerializerNamespaces serializerNamespaces = new XmlSerializerNamespaces();
+          var serializerNamespaces = new XmlSerializerNamespaces();
           serializerNamespaces.Add(string.Empty, string.Empty);
           XmlSerializer classSerializer = SpoolerSettings.ClassSerializer;
           textWriter1 = (TextWriter) new StreamWriter(str);
@@ -68,9 +68,13 @@ namespace M3D.Spooler.Core
         catch (Exception ex) when (ex is UnauthorizedAccessException || ex is SecurityException || (ex is ArgumentException || ex is ArgumentNullException) || ex is PathTooLongException)
         {
           if (bShuttingDownSoCatchAllExceptions)
+          {
             flag = false;
+          }
           else
+          {
             throw;
+          }
         }
         finally
         {
@@ -89,7 +93,10 @@ namespace M3D.Spooler.Core
       get
       {
         if (SpoolerSettings.__class_serializer == null)
+        {
           SpoolerSettings.__class_serializer = new XmlSerializer(typeof (SpoolerSettings));
+        }
+
         return SpoolerSettings.__class_serializer;
       }
     }

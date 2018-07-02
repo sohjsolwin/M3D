@@ -12,69 +12,86 @@ namespace M3D.Graphics
 
     public int AddCharToEnd(char ch)
     {
-      this.buffer += ch.ToString();
+      buffer += ch.ToString();
       return 1;
     }
 
     public int AddCharAt(char ch, int at)
     {
-      if (at >= this.buffer.Length)
-        at = this.buffer.Length;
+      if (at >= buffer.Length)
+      {
+        at = buffer.Length;
+      }
+
       if (at < 0)
+      {
         at = 0;
-      this.buffer = this.buffer.Insert(at, ch.ToString());
+      }
+
+      buffer = buffer.Insert(at, ch.ToString());
       return 1;
     }
 
     public int AddStringAt(string ch, int at)
     {
-      if (at >= this.buffer.Length)
-        at = this.buffer.Length;
+      if (at >= buffer.Length)
+      {
+        at = buffer.Length;
+      }
+
       if (at < 0)
+      {
         at = 0;
-      this.buffer = this.buffer.Insert(at, ch);
+      }
+
+      buffer = buffer.Insert(at, ch);
       return 1;
     }
 
     public void DeleteAt(int at)
     {
-      if (at > 0 && at < this.buffer.Length - 1)
-        this.buffer = this.buffer.Substring(0, at) + this.buffer.Substring(at + 1);
-      else if (at == this.buffer.Length - 1)
+      if (at > 0 && at < buffer.Length - 1)
       {
-        this.buffer = this.buffer.Substring(0, at);
+        buffer = buffer.Substring(0, at) + buffer.Substring(at + 1);
+      }
+      else if (at == buffer.Length - 1)
+      {
+        buffer = buffer.Substring(0, at);
       }
       else
       {
-        if (at != 0 || this.buffer.Length <= 0)
+        if (at != 0 || buffer.Length <= 0)
+        {
           return;
-        this.buffer = this.buffer.Substring(1);
+        }
+
+        buffer = buffer.Substring(1);
       }
     }
 
     public void DeleteRegion(int start, int end)
     {
-      this.buffer = this.buffer.Remove(start, end - start);
+      buffer = buffer.Remove(start, end - start);
     }
 
     public void SetText(string szString)
     {
-      this.buffer = szString;
+      buffer = szString;
     }
 
     public string GetText()
     {
-      return this.buffer;
+      return buffer;
     }
 
     public int GetSize()
     {
-      return this.buffer.Length;
+      return buffer.Length;
     }
 
     public void Clear()
     {
-      this.buffer = "";
+      buffer = "";
     }
   }
 }

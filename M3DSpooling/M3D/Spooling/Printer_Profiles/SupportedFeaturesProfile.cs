@@ -18,32 +18,38 @@ namespace M3D.Spooling.Printer_Profiles
     public SupportedFeaturesProfile(Dictionary<string, int> mapping)
       : this()
     {
-      this.m_supportedFeatureMapping.Value = new Dictionary<string, int>((IDictionary<string, int>) mapping);
+      m_supportedFeatureMapping.Value = new Dictionary<string, int>((IDictionary<string, int>) mapping);
     }
 
     public SupportedFeaturesProfile()
     {
-      this.m_supportedFeatureMapping = new WriteOnce<Dictionary<string, int>>((Dictionary<string, int>) null);
+      m_supportedFeatureMapping = new WriteOnce<Dictionary<string, int>>((Dictionary<string, int>) null);
     }
 
     public SupportedFeaturesProfile(SupportedFeaturesProfile other)
     {
-      this.m_supportedFeatureMapping = new WriteOnce<Dictionary<string, int>>();
+      m_supportedFeatureMapping = new WriteOnce<Dictionary<string, int>>();
       if (other.m_supportedFeatureMapping.Value == null)
+      {
         return;
-      this.m_supportedFeatureMapping.Value = new Dictionary<string, int>((IDictionary<string, int>) other.m_supportedFeatureMapping.Value);
+      }
+
+      m_supportedFeatureMapping.Value = new Dictionary<string, int>((IDictionary<string, int>) other.m_supportedFeatureMapping.Value);
     }
 
     public int GetFeatureSlot(string featureName)
     {
-      if (this.m_supportedFeatureMapping.Value.ContainsKey(featureName))
-        return this.m_supportedFeatureMapping.Value[featureName];
+      if (m_supportedFeatureMapping.Value.ContainsKey(featureName))
+      {
+        return m_supportedFeatureMapping.Value[featureName];
+      }
+
       return -1;
     }
 
     public IEnumerable<KeyValuePair<string, int>> EnumerateList()
     {
-      return (IEnumerable<KeyValuePair<string, int>>) this.SupportedFeatureMapping;
+      return (IEnumerable<KeyValuePair<string, int>>)SupportedFeatureMapping;
     }
 
     [XmlIgnore]
@@ -51,8 +57,11 @@ namespace M3D.Spooling.Printer_Profiles
     {
       get
       {
-        if (this.m_supportedFeatureMapping.Value != null)
-          return this.m_supportedFeatureMapping.Value.Count > 0;
+        if (m_supportedFeatureMapping.Value != null)
+        {
+          return m_supportedFeatureMapping.Value.Count > 0;
+        }
+
         return false;
       }
     }
@@ -61,15 +70,18 @@ namespace M3D.Spooling.Printer_Profiles
     {
       get
       {
-        if (this.m_supportedFeatureMapping.Value != null)
-          return new SerializableDictionary<string, int>(this.m_supportedFeatureMapping.Value);
+        if (m_supportedFeatureMapping.Value != null)
+        {
+          return new SerializableDictionary<string, int>(m_supportedFeatureMapping.Value);
+        }
+
         return (SerializableDictionary<string, int>) null;
       }
       set
       {
         try
         {
-          this.m_supportedFeatureMapping.Value = (Dictionary<string, int>) value;
+          m_supportedFeatureMapping.Value = (Dictionary<string, int>) value;
         }
         catch (InvalidOperationException ex)
         {

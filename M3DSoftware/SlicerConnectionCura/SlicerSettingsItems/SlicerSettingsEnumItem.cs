@@ -14,20 +14,20 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public SlicerSettingsEnumItem(Type enumType)
     {
-      this.EnumType = enumType;
+      EnumType = enumType;
     }
 
     public override bool HasError
     {
       get
       {
-        return this.formatError;
+        return formatError;
       }
     }
 
     public override string GetErrorMsg()
     {
-      return this.HasError ? "invalid option" : "";
+      return HasError ? "invalid option" : "";
     }
 
     public Type EnumType { get; set; }

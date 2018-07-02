@@ -21,27 +21,31 @@ namespace M3D.Graphics.TextLocalization
 
     public static Dictionary<string, string> GetLanguageList(string path)
     {
-      Dictionary<string, string> dictionary = new Dictionary<string, string>();
-      foreach (string file in Directory.GetFiles(path, "*.locale.xml"))
+      var dictionary = new Dictionary<string, string>();
+      foreach (var file in Directory.GetFiles(path, "*.locale.xml"))
       {
-        string langaugeFromFile = Locale.GetLangaugeFromFile(file);
+        var langaugeFromFile = Locale.GetLangaugeFromFile(file);
         if (!string.IsNullOrEmpty(langaugeFromFile))
+        {
           dictionary.Add(langaugeFromFile, file);
+        }
       }
       return dictionary;
     }
 
     private static string GetLangaugeFromFile(string filename)
     {
-      string str = "";
+      var str = "";
       try
       {
-        using (XmlReader xmlReader = XmlReader.Create(filename))
+        using (var xmlReader = XmlReader.Create(filename))
         {
           while (xmlReader.Read())
           {
             if (xmlReader.IsStartElement() && xmlReader.Name == nameof (Locale))
+            {
               str = xmlReader.GetAttribute("language");
+            }
           }
         }
       }
@@ -53,31 +57,36 @@ namespace M3D.Graphics.TextLocalization
 
     public Locale(string resource)
     {
-      this.stringtable = new Dictionary<string, string>();
+      stringtable = new Dictionary<string, string>();
       try
       {
-        using (XmlReader xmlReader = XmlReader.Create(resource))
+        using (var xmlReader = XmlReader.Create(resource))
         {
           while (xmlReader.Read())
           {
             if (xmlReader.IsStartElement())
             {
-              string name = xmlReader.Name;
+              var name = xmlReader.Name;
               if (!(name == "T"))
               {
                 if (name == nameof (Locale))
                 {
-                  this.language_name = xmlReader.GetAttribute("language");
-                  this.fontfamily = xmlReader.GetAttribute("font");
-                  this.fontfile = xmlReader.GetAttribute("file");
-                  if (this.fontfile != null)
-                    this.fontfile = Path.Combine(Path.GetDirectoryName(resource), this.fontfile);
-                  this.characterset = xmlReader.GetAttribute(nameof (characterset));
-                  this.characterset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.:,;'\"(!?)+-*/=_{}[]@~#\\<>|^%$£&" + this.characterset;
+                  language_name = xmlReader.GetAttribute("language");
+                  fontfamily = xmlReader.GetAttribute("font");
+                  fontfile = xmlReader.GetAttribute("file");
+                  if (fontfile != null)
+                  {
+                    fontfile = Path.Combine(Path.GetDirectoryName(resource), fontfile);
+                  }
+
+                  characterset = xmlReader.GetAttribute(nameof (characterset));
+                  characterset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.:,;'\"(!?)+-*/=_{}[]@~#\\<>|^%$£&" + characterset;
                 }
               }
               else
-                this.stringtable.Add(xmlReader.GetAttribute("key"), xmlReader.GetAttribute("text"));
+              {
+                stringtable.Add(xmlReader.GetAttribute("key"), xmlReader.GetAttribute("text"));
+              }
             }
           }
         }
@@ -91,7 +100,7 @@ namespace M3D.Graphics.TextLocalization
     {
       try
       {
-        return this.stringtable[key].Replace("\\n", "\n");
+        return stringtable[key].Replace("\\n", "\n");
       }
       catch (KeyNotFoundException ex)
       {
@@ -101,22 +110,22 @@ namespace M3D.Graphics.TextLocalization
 
     public string GetLanguageName()
     {
-      return this.language_name;
+      return language_name;
     }
 
     public string GetCharacterSet()
     {
-      return this.characterset;
+      return characterset;
     }
 
     public string GetFontFamily()
     {
-      return this.fontfamily;
+      return fontfamily;
     }
 
     public string GetFontFile()
     {
-      return this.fontfile;
+      return fontfile;
     }
   }
 }

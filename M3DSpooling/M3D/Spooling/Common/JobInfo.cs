@@ -27,24 +27,24 @@ namespace M3D.Spooling.Common
 
     public JobInfo(JobInfo other)
     {
-      this.jobname = other.jobname;
-      this.user = other.user;
-      this.status = other.status;
-      this.percent_complete = other.percent_complete;
-      this.time = other.time;
-      this.preview_image_file_name = other.preview_image_file_name;
-      this.param = other.param;
+      jobname = other.jobname;
+      user = other.user;
+      status = other.status;
+      percent_complete = other.percent_complete;
+      time = other.time;
+      preview_image_file_name = other.preview_image_file_name;
+      param = other.param;
     }
 
     public JobInfo()
     {
-      this.jobname = "";
-      this.user = "";
-      this.status = JobStatus.Cancelled;
-      this.percent_complete = 0.0f;
-      this.time = 0.0f;
-      this.preview_image_file_name = "";
-      this.param = new JobParams("", "", "", FilamentSpool.TypeEnum.NoFilament, 0.0f, 0.0f);
+      jobname = "";
+      user = "";
+      status = JobStatus.Cancelled;
+      percent_complete = 0.0f;
+      time = 0.0f;
+      preview_image_file_name = "";
+      param = new JobParams("", "", "", FilamentSpool.TypeEnum.NoFilament, 0.0f, 0.0f);
     }
 
     public JobInfo(string jobname, string user, JobStatus status, string preview_image_file_name, float percent_complete, float time_remaining, JobParams jobParams)
@@ -54,8 +54,8 @@ namespace M3D.Spooling.Common
       this.status = status;
       this.preview_image_file_name = !string.IsNullOrEmpty(preview_image_file_name) ? preview_image_file_name : "null";
       this.percent_complete = percent_complete;
-      this.time = time_remaining;
-      this.param = jobParams;
+      time = time_remaining;
+      param = jobParams;
     }
 
     [XmlAttribute("JobName")]
@@ -63,11 +63,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.jobname;
+        return jobname;
       }
       set
       {
-        this.jobname = value;
+        jobname = value;
       }
     }
 
@@ -76,11 +76,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.user;
+        return user;
       }
       set
       {
-        this.user = value;
+        user = value;
       }
     }
 
@@ -89,11 +89,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.percent_complete;
+        return percent_complete;
       }
       set
       {
-        this.percent_complete = value;
+        percent_complete = value;
       }
     }
 
@@ -102,11 +102,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.time;
+        return time;
       }
       set
       {
-        this.time = value;
+        time = value;
       }
     }
 
@@ -115,13 +115,16 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        if (string.IsNullOrEmpty(this.preview_image_file_name))
+        if (string.IsNullOrEmpty(preview_image_file_name))
+        {
           return "null";
-        return this.preview_image_file_name;
+        }
+
+        return preview_image_file_name;
       }
       set
       {
-        this.preview_image_file_name = value;
+        preview_image_file_name = value;
       }
     }
 
@@ -130,11 +133,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.status;
+        return status;
       }
       set
       {
-        this.status = value;
+        status = value;
       }
     }
 
@@ -143,11 +146,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.param;
+        return param;
       }
       set
       {
-        this.param = value;
+        param = value;
       }
     }
   }

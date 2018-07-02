@@ -21,22 +21,24 @@ namespace M3D.Spooling.ConnectionManager
 
     public override List<string> UsbAttached(uint VID, uint PID)
     {
-      this.usbVendor = (int) VID;
-      this.usbProduct = (int) PID;
-      lock (this.com_ports)
+      usbVendor = (int) VID;
+      usbProduct = (int) PID;
+      lock (com_ports)
       {
-        this.com_ports.Clear();
+        com_ports.Clear();
         try
         {
-          if (!this.refreshComPorts(out this.com_ports))
+          if (!refreshComPorts(out com_ports))
+          {
             return new List<string>();
+          }
         }
         catch (Exception ex)
         {
           ErrorLogger.LogErrorMsg("Error in USB: " + ex.Message);
         }
       }
-      return new List<string>((IEnumerable<string>) this.com_ports);
+      return new List<string>((IEnumerable<string>)com_ports);
     }
 
     [DllImport("MacUSB.so", CallingConvention = CallingConvention.Cdecl)]
@@ -44,19 +46,22 @@ namespace M3D.Spooling.ConnectionManager
 
     public bool refreshComPorts(out List<string> comPorts)
     {
-      StringBuilder buffer = new StringBuilder(this.BUFFER_LENGTH);
+      var buffer = new StringBuilder(BUFFER_LENGTH);
       comPorts = (List<string>) null;
       MacUSBPrinterFinder.RefType refType;
       do
       {
-        int capacity = buffer.Capacity;
-        refType = MacUSBPrinterFinder.refreshComPorts(this.usbVendor, this.usbProduct, buffer, ref capacity);
+        var capacity = buffer.Capacity;
+        refType = MacUSBPrinterFinder.refreshComPorts(usbVendor, usbProduct, buffer, ref capacity);
         if (refType == MacUSBPrinterFinder.RefType.Failure)
+        {
           return false;
+        }
+
         if (refType == MacUSBPrinterFinder.RefType.BufferToSmall)
         {
-          this.BUFFER_LENGTH = capacity;
-          buffer = new StringBuilder(this.BUFFER_LENGTH + 1);
+          BUFFER_LENGTH = capacity;
+          buffer = new StringBuilder(BUFFER_LENGTH + 1);
         }
       }
       while (refType != MacUSBPrinterFinder.RefType.Success);

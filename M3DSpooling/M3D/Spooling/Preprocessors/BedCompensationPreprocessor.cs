@@ -49,7 +49,7 @@ namespace M3D.Spooling.Preprocessors
     {
       get
       {
-        return new Vector(this.backRight);
+        return new Vector(backRight);
       }
     }
 
@@ -57,7 +57,7 @@ namespace M3D.Spooling.Preprocessors
     {
       get
       {
-        return new Vector(this.backLeft);
+        return new Vector(backLeft);
       }
     }
 
@@ -65,7 +65,7 @@ namespace M3D.Spooling.Preprocessors
     {
       get
       {
-        return new Vector(this.frontLeft);
+        return new Vector(frontLeft);
       }
     }
 
@@ -73,7 +73,7 @@ namespace M3D.Spooling.Preprocessors
     {
       get
       {
-        return new Vector(this.frontRight);
+        return new Vector(frontRight);
       }
     }
 
@@ -81,44 +81,44 @@ namespace M3D.Spooling.Preprocessors
     {
       get
       {
-        return new Vector(this.center);
+        return new Vector(center);
       }
     }
 
     public void UpdateConfigurations(Calibration calibration, PrinterSizeProfile sizeprofile)
     {
-      this.UpdateConfigurations(calibration, sizeprofile, false);
+      UpdateConfigurations(calibration, sizeprofile, false);
     }
 
     public void UpdateConfigurations(Calibration calibration, PrinterSizeProfile sizeprofile, bool bUseSpecialPrintTestPoints)
     {
-      this.entire_z_height_offset = calibration.ENTIRE_Z_HEIGHT_OFFSET;
-      this.corner_height_back_right = calibration.CORNER_HEIGHT_BACK_RIGHT + calibration.CORNER_HEIGHT_BACK_RIGHT_OFFSET;
-      this.corner_height_back_left = calibration.CORNER_HEIGHT_BACK_LEFT + calibration.CORNER_HEIGHT_BACK_LEFT_OFFSET;
-      this.corner_height_front_left = calibration.CORNER_HEIGHT_FRONT_LEFT + calibration.CORNER_HEIGHT_FRONT_LEFT_OFFSET;
-      this.corner_height_front_right = calibration.CORNER_HEIGHT_FRONT_RIGHT + calibration.CORNER_HEIGHT_FRONT_RIGHT_OFFSET;
-      this.g32_version = calibration.G32_VERSION;
-      RectCoordinates rectCoordinates = !bUseSpecialPrintTestPoints || !sizeprofile.G32ProbePoints.ContainsKey((int) byte.MaxValue) ? (!sizeprofile.G32ProbePoints.ContainsKey(this.g32_version) ? sizeprofile.G32ProbePoints.First<KeyValuePair<int, RectCoordinates>>().Value : sizeprofile.G32ProbePoints[this.g32_version]) : sizeprofile.G32ProbePoints[(int) byte.MaxValue];
-      this.backRight = new Vector(rectCoordinates.right, rectCoordinates.back, this.corner_height_back_right);
-      this.backLeft = new Vector(rectCoordinates.left, rectCoordinates.back, this.corner_height_back_left);
-      this.frontLeft = new Vector(rectCoordinates.left, rectCoordinates.front, this.corner_height_front_left);
-      this.frontRight = new Vector(rectCoordinates.right, rectCoordinates.front, this.corner_height_front_right);
-      this.center = new Vector(sizeprofile.HomeLocation.x, sizeprofile.HomeLocation.y, 0.0f);
+      entire_z_height_offset = calibration.ENTIRE_Z_HEIGHT_OFFSET;
+      corner_height_back_right = calibration.CORNER_HEIGHT_BACK_RIGHT + calibration.CORNER_HEIGHT_BACK_RIGHT_OFFSET;
+      corner_height_back_left = calibration.CORNER_HEIGHT_BACK_LEFT + calibration.CORNER_HEIGHT_BACK_LEFT_OFFSET;
+      corner_height_front_left = calibration.CORNER_HEIGHT_FRONT_LEFT + calibration.CORNER_HEIGHT_FRONT_LEFT_OFFSET;
+      corner_height_front_right = calibration.CORNER_HEIGHT_FRONT_RIGHT + calibration.CORNER_HEIGHT_FRONT_RIGHT_OFFSET;
+      g32_version = calibration.G32_VERSION;
+      RectCoordinates rectCoordinates = !bUseSpecialPrintTestPoints || !sizeprofile.G32ProbePoints.ContainsKey((int) byte.MaxValue) ? (!sizeprofile.G32ProbePoints.ContainsKey(g32_version) ? sizeprofile.G32ProbePoints.First<KeyValuePair<int, RectCoordinates>>().Value : sizeprofile.G32ProbePoints[g32_version]) : sizeprofile.G32ProbePoints[(int) byte.MaxValue];
+      backRight = new Vector(rectCoordinates.right, rectCoordinates.back, corner_height_back_right);
+      backLeft = new Vector(rectCoordinates.left, rectCoordinates.back, corner_height_back_left);
+      frontLeft = new Vector(rectCoordinates.left, rectCoordinates.front, corner_height_front_left);
+      frontRight = new Vector(rectCoordinates.right, rectCoordinates.front, corner_height_front_right);
+      center = new Vector(sizeprofile.HomeLocation.x, sizeprofile.HomeLocation.y, 0.0f);
     }
 
     internal override bool ProcessGCode(GCodeFileReader input_reader, GCodeFileWriter output_writer, Calibration calibration, JobDetails jobdetails, InternalPrinterProfile printerProfile)
     {
-      this.UpdateConfigurations(calibration, printerProfile.PrinterSizeConstants);
-      bool flag1 = true;
-      bool flag2 = true;
-      bool flag3 = false;
-      bool flag4 = false;
-      int num1 = 0;
-      int num2 = 0;
-      double num3 = 0.0;
-      Position position = new Position();
-      float num4 = (float) num3;
-      float num5 = 0.0f;
+      UpdateConfigurations(calibration, printerProfile.PrinterSizeConstants);
+      var flag1 = true;
+      var flag2 = true;
+      var flag3 = false;
+      var flag4 = false;
+      var num1 = 0;
+      var num2 = 0;
+      var num3 = 0.0;
+      var position = new Position();
+      var num4 = (float) num3;
+      var num5 = 0.0f;
       while (true)
       {
         GCode nextLine = input_reader.GetNextLine(false);
@@ -127,13 +127,19 @@ namespace M3D.Spooling.Preprocessors
           if (nextLine.hasG && (nextLine.G == (ushort) 0 || nextLine.G == (ushort) 1) && !flag1)
           {
             if (nextLine.hasX || nextLine.hasY)
+            {
               flag4 = true;
+            }
+
             if (nextLine.hasZ)
-              nextLine.Z += this.entire_z_height_offset;
-            float num6 = !nextLine.hasX ? 0.0f : nextLine.X - position.relativeX;
-            float num7 = !nextLine.hasY ? 0.0f : nextLine.Y - position.relativeY;
-            float num8 = !nextLine.hasZ ? 0.0f : nextLine.Z - position.relativeZ;
-            float num9 = !nextLine.hasE ? 0.0f : nextLine.E - position.relativeE;
+            {
+              nextLine.Z += entire_z_height_offset;
+            }
+
+            var num6 = !nextLine.hasX ? 0.0f : nextLine.X - position.relativeX;
+            var num7 = !nextLine.hasY ? 0.0f : nextLine.Y - position.relativeY;
+            var num8 = !nextLine.hasZ ? 0.0f : nextLine.Z - position.relativeZ;
+            var num9 = !nextLine.hasE ? 0.0f : nextLine.E - position.relativeE;
             position.absoluteX += num6;
             position.absoluteY += num7;
             position.absoluteZ += num8;
@@ -143,35 +149,49 @@ namespace M3D.Spooling.Preprocessors
             position.relativeZ += num8;
             position.relativeE += num9;
             if (nextLine.hasF)
+            {
               position.F = nextLine.F;
+            }
+
             if ((double) num8 > 1.40129846432482E-45 || (double) num8 < -1.40129846432482E-45)
             {
               if (!flag3)
+              {
                 num2 = 1;
+              }
               else
+              {
                 ++num2;
+              }
+
               flag2 = num2 == 0 || num2 == 1;
             }
-            float num10 = (float) Math.Sqrt((double) num6 * (double) num6 + (double) num7 * (double) num7);
-            int num11 = 1;
+            var num10 = (float) Math.Sqrt((double) num6 * (double) num6 + (double) num7 * (double) num7);
+            var num11 = 1;
             if ((double) num10 > 2.0)
+            {
               num11 = (int) ((double) num10 / 2.0);
-            float num12 = position.absoluteX - num6;
-            float num13 = position.absoluteY - num7;
-            float num14 = position.relativeX - num6;
-            float num15 = position.relativeY - num7;
-            float num16 = position.relativeZ - num8;
-            float num17 = position.relativeE - num9;
-            float num18 = num6 / num10;
-            float num19 = num7 / num10;
-            float num20 = num8 / num10;
-            float num21 = num9 / num10;
-            if ((double) num9 > 0.0)
-              flag3 = true;
-            int num22 = flag2 ? 1 : 0;
+            }
+
+            var num12 = position.absoluteX - num6;
+            var num13 = position.absoluteY - num7;
+            var num14 = position.relativeX - num6;
+            var num15 = position.relativeY - num7;
+            var num16 = position.relativeZ - num8;
+            var num17 = position.relativeE - num9;
+            var num18 = num6 / num10;
+            var num19 = num7 / num10;
+            var num20 = num8 / num10;
+            var num21 = num9 / num10;
             if ((double) num9 > 0.0)
             {
-              for (int index = 1; index < num11 + 1; ++index)
+              flag3 = true;
+            }
+
+            var num22 = flag2 ? 1 : 0;
+            if ((double) num9 > 0.0)
+            {
+              for (var index = 1; index < num11 + 1; ++index)
               {
                 float x;
                 float y;
@@ -197,21 +217,37 @@ namespace M3D.Spooling.Preprocessors
                   num25 = num16 + (float) index * 2f * num20;
                   num26 = num17 + (float) index * 2f * num21;
                 }
-                float adjustmentRequired = this.GetHeightAdjustmentRequired(x, y);
+                var adjustmentRequired = GetHeightAdjustmentRequired(x, y);
                 if (index != num11)
                 {
-                  GCode code = new GCode();
-                  code.G = nextLine.G;
+                  var code = new GCode
+                  {
+                    G = nextLine.G
+                  };
                   if (nextLine.hasX)
+                  {
                     code.X = (float) ((double) position.relativeX - (double) num6 + ((double) num23 - (double) num14));
+                  }
+
                   if (nextLine.hasY)
+                  {
                     code.Y = (float) ((double) position.relativeY - (double) num7 + ((double) num24 - (double) num15));
+                  }
+
                   if (nextLine.hasF && index == 1)
+                  {
                     code.F = nextLine.F;
+                  }
+
                   if (flag4)
+                  {
                     code.Z = (float) ((double) position.relativeZ - (double) num8 + ((double) num25 - (double) num16)) + adjustmentRequired;
+                  }
                   else if (nextLine.hasZ && ((double) num8 > 1.40129846432482E-45 || (double) num8 < -1.40129846432482E-45))
+                  {
                     code.Z = (float) ((double) position.relativeZ - (double) num8 + ((double) num25 - (double) num16));
+                  }
+
                   code.E = (float) ((double) position.relativeE - (double) num9 + ((double) num26 - (double) num17)) + num4;
                   output_writer.Write(code);
                 }
@@ -220,9 +256,13 @@ namespace M3D.Spooling.Preprocessors
                   if (flag4)
                   {
                     if (nextLine.hasZ)
+                    {
                       nextLine.Z += adjustmentRequired;
+                    }
                     else
+                    {
                       nextLine.Z = num16 + num8 + adjustmentRequired;
+                    }
                   }
                   nextLine.E += num4;
                 }
@@ -233,30 +273,48 @@ namespace M3D.Spooling.Preprocessors
             {
               if (flag4)
               {
-                int num23 = flag2 ? 1 : 0;
-                float adjustmentRequired = this.GetHeightAdjustmentRequired(position.absoluteX, position.absoluteY);
+                var num23 = flag2 ? 1 : 0;
+                var adjustmentRequired = GetHeightAdjustmentRequired(position.absoluteX, position.absoluteY);
                 if (nextLine.hasZ)
+                {
                   nextLine.Z += adjustmentRequired;
+                }
                 else
+                {
                   nextLine.Z = position.relativeZ + adjustmentRequired;
+                }
               }
               if (nextLine.hasE)
+              {
                 nextLine.E += num4;
+              }
+
               num5 = position.relativeE;
             }
           }
           else if (nextLine.hasG && nextLine.G == (ushort) 92)
           {
             if (nextLine.hasE)
+            {
               position.relativeE = nextLine.E;
+            }
+
             if (printerProfile.OptionsConstants.G92WorksOnAllAxes)
             {
               if (nextLine.hasX)
+              {
                 position.relativeX = nextLine.X;
+              }
+
               if (nextLine.hasY)
+              {
                 position.relativeY = nextLine.Y;
+              }
+
               if (nextLine.hasZ)
+              {
                 position.relativeZ = nextLine.Z;
+              }
             }
             if (!nextLine.hasE && !nextLine.hasX && (!nextLine.hasY && !nextLine.hasZ))
             {
@@ -270,9 +328,13 @@ namespace M3D.Spooling.Preprocessors
             }
           }
           else if (nextLine.hasG && nextLine.G == (ushort) 90)
+          {
             flag1 = false;
+          }
           else if (nextLine.hasG && nextLine.G == (ushort) 91)
+          {
             flag1 = true;
+          }
           else if (nextLine.hasG && nextLine.G == (ushort) 28)
           {
             position.relativeX = position.absoluteX = 54f;
@@ -282,7 +344,9 @@ namespace M3D.Spooling.Preprocessors
           ++num1;
         }
         else
+        {
           break;
+        }
       }
       return true;
     }
@@ -291,59 +355,85 @@ namespace M3D.Spooling.Preprocessors
     {
       if (!false)
       {
-        int num = 2;
-        int length = 2;
+        var num = 2;
+        var length = 2;
         Vector[][] vectorArray = new Vector[2][];
-        for (int index = 0; index < num; ++index)
-          vectorArray[index] = new Vector[length];
-        vectorArray[1][1] = this.backRight;
-        vectorArray[1][0] = this.backLeft;
-        vectorArray[0][1] = this.frontRight;
-        vectorArray[0][0] = this.frontLeft;
-        Vector planeEquation1 = this.generatePlaneEquation(this.backLeft, this.backRight, this.center);
-        Vector planeEquation2 = this.generatePlaneEquation(this.backLeft, this.frontLeft, this.center);
-        Vector planeEquation3 = this.generatePlaneEquation(this.backRight, this.frontRight, this.center);
-        Vector planeEquation4 = this.generatePlaneEquation(this.frontLeft, this.frontRight, this.center);
-        float x1 = this.frontLeft.x;
-        float x2 = this.frontRight.x;
-        float y1 = this.frontLeft.y;
-        float y2 = this.backRight.y;
-        Vector vector = new Vector(x, y, 0.0f);
-        if ((double) x <= (double) x1 && (double) y >= (double) y2)
-          vector.z = (float) (((double) this.GetZFromXYAndPlane(vector, planeEquation1) + (double) this.GetZFromXYAndPlane(vector, planeEquation2)) / 2.0);
-        else if ((double) x <= (double) x1 && (double) y <= (double) y1)
-          vector.z = (float) (((double) this.GetZFromXYAndPlane(vector, planeEquation4) + (double) this.GetZFromXYAndPlane(vector, planeEquation2)) / 2.0);
-        else if ((double) x >= (double) x2 && (double) y <= (double) y1)
-          vector.z = (float) (((double) this.GetZFromXYAndPlane(vector, planeEquation4) + (double) this.GetZFromXYAndPlane(vector, planeEquation3)) / 2.0);
-        else if ((double) x >= (double) x2 && (double) y >= (double) y2)
-          vector.z = (float) (((double) this.GetZFromXYAndPlane(vector, planeEquation1) + (double) this.GetZFromXYAndPlane(vector, planeEquation3)) / 2.0);
-        else if ((double) x <= (double) x1)
-          vector.z = this.GetZFromXYAndPlane(vector, planeEquation2);
-        else if ((double) x >= (double) x2)
-          vector.z = this.GetZFromXYAndPlane(vector, planeEquation3);
-        else if ((double) y >= (double) y2)
-          vector.z = this.GetZFromXYAndPlane(vector, planeEquation1);
-        else if ((double) y <= (double) y1)
-          vector.z = this.GetZFromXYAndPlane(vector, planeEquation4);
-        else if (this.IsPointInTriangle(vector, this.center, this.frontLeft, this.backLeft))
-          vector.z = this.GetZFromXYAndPlane(vector, planeEquation2);
-        else if (this.IsPointInTriangle(vector, this.center, this.frontRight, this.backRight))
-          vector.z = this.GetZFromXYAndPlane(vector, planeEquation3);
-        else if (this.IsPointInTriangle(vector, this.center, this.backLeft, this.backRight))
+        for (var index = 0; index < num; ++index)
         {
-          vector.z = this.GetZFromXYAndPlane(vector, planeEquation1);
+          vectorArray[index] = new Vector[length];
+        }
+
+        vectorArray[1][1] = backRight;
+        vectorArray[1][0] = backLeft;
+        vectorArray[0][1] = frontRight;
+        vectorArray[0][0] = frontLeft;
+        Vector planeEquation1 = generatePlaneEquation(backLeft, backRight, center);
+        Vector planeEquation2 = generatePlaneEquation(backLeft, frontLeft, center);
+        Vector planeEquation3 = generatePlaneEquation(backRight, frontRight, center);
+        Vector planeEquation4 = generatePlaneEquation(frontLeft, frontRight, center);
+        var x1 = frontLeft.x;
+        var x2 = frontRight.x;
+        var y1 = frontLeft.y;
+        var y2 = backRight.y;
+        var vector = new Vector(x, y, 0.0f);
+        if ((double) x <= (double) x1 && (double) y >= (double) y2)
+        {
+          vector.z = (float) (((double)GetZFromXYAndPlane(vector, planeEquation1) + (double)GetZFromXYAndPlane(vector, planeEquation2)) / 2.0);
+        }
+        else if ((double) x <= (double) x1 && (double) y <= (double) y1)
+        {
+          vector.z = (float) (((double)GetZFromXYAndPlane(vector, planeEquation4) + (double)GetZFromXYAndPlane(vector, planeEquation2)) / 2.0);
+        }
+        else if ((double) x >= (double) x2 && (double) y <= (double) y1)
+        {
+          vector.z = (float) (((double)GetZFromXYAndPlane(vector, planeEquation4) + (double)GetZFromXYAndPlane(vector, planeEquation3)) / 2.0);
+        }
+        else if ((double) x >= (double) x2 && (double) y >= (double) y2)
+        {
+          vector.z = (float) (((double)GetZFromXYAndPlane(vector, planeEquation1) + (double)GetZFromXYAndPlane(vector, planeEquation3)) / 2.0);
+        }
+        else if ((double) x <= (double) x1)
+        {
+          vector.z = GetZFromXYAndPlane(vector, planeEquation2);
+        }
+        else if ((double) x >= (double) x2)
+        {
+          vector.z = GetZFromXYAndPlane(vector, planeEquation3);
+        }
+        else if ((double) y >= (double) y2)
+        {
+          vector.z = GetZFromXYAndPlane(vector, planeEquation1);
+        }
+        else if ((double) y <= (double) y1)
+        {
+          vector.z = GetZFromXYAndPlane(vector, planeEquation4);
+        }
+        else if (IsPointInTriangle(vector, center, frontLeft, backLeft))
+        {
+          vector.z = GetZFromXYAndPlane(vector, planeEquation2);
+        }
+        else if (IsPointInTriangle(vector, center, frontRight, backRight))
+        {
+          vector.z = GetZFromXYAndPlane(vector, planeEquation3);
+        }
+        else if (IsPointInTriangle(vector, center, backLeft, backRight))
+        {
+          vector.z = GetZFromXYAndPlane(vector, planeEquation1);
         }
         else
         {
-          if (!this.IsPointInTriangle(vector, this.center, this.frontLeft, this.frontRight))
+          if (!IsPointInTriangle(vector, center, frontLeft, frontRight))
+          {
             throw new Exception("not possible");
-          vector.z = this.GetZFromXYAndPlane(vector, planeEquation4);
+          }
+
+          vector.z = GetZFromXYAndPlane(vector, planeEquation4);
         }
         return vector.z + 0.0f;
       }
       float num1;
       float num2;
-      if (this.g32_version == 1)
+      if (g32_version == 1)
       {
         num1 = 90f;
         num2 = 90f;
@@ -353,20 +443,20 @@ namespace M3D.Spooling.Preprocessors
         num1 = 109f;
         num2 = 103f;
       }
-      double num3 = ((double) this.corner_height_back_left - (double) this.corner_height_front_left) / (double) num1;
-      float num4 = (this.corner_height_back_right - this.corner_height_front_right) / num2;
-      double num5 = (double) y - (double) this.frontLeft.y;
-      float num6 = (float) (num3 * num5) + this.corner_height_front_left;
-      return (float) (((double) num4 * ((double) y - (double) this.frontLeft.y) + (double) this.corner_height_front_right - (double) num6) / (double) num1 * ((double) x - (double) this.frontLeft.x) + (double) num6 + 0.0);
+      var num3 = ((double)corner_height_back_left - (double)corner_height_front_left) / (double) num1;
+      var num4 = (corner_height_back_right - corner_height_front_right) / num2;
+      var num5 = (double) y - (double)frontLeft.y;
+      var num6 = (float) (num3 * num5) + corner_height_front_left;
+      return (float) (((double) num4 * ((double) y - (double)frontLeft.y) + (double)corner_height_front_right - (double) num6) / (double) num1 * ((double) x - (double)frontLeft.x) + (double) num6 + 0.0);
     }
 
     public float GetZFromXYAndPlane(Vector point, Vector planeABC)
     {
-      double num1 = (double) planeABC[0];
-      float num2 = planeABC[1];
-      float num3 = planeABC[2];
-      float num4 = planeABC[3];
-      double x = (double) point.x;
+      var num1 = (double) planeABC[0];
+      var num2 = planeABC[1];
+      var num3 = planeABC[2];
+      var num4 = planeABC[3];
+      var x = (double) point.x;
       return (float) ((num1 * x + (double) num2 * (double) point.y + (double) num4) / -(double) num3);
     }
 
@@ -379,8 +469,8 @@ namespace M3D.Spooling.Preprocessors
 
     private Vector generatePlaneEquation(Vector v1, Vector v2, Vector v3)
     {
-      Vector vector = new Vector();
-      Vector planeNormalVector = this.CalculatePlaneNormalVector(v1, v2, v3);
+      var vector = new Vector();
+      Vector planeNormalVector = CalculatePlaneNormalVector(v1, v2, v3);
       vector[0] = planeNormalVector[0];
       vector[1] = planeNormalVector[1];
       vector[2] = planeNormalVector[2];
@@ -395,7 +485,7 @@ namespace M3D.Spooling.Preprocessors
 
     private bool IsPointInTriangle(Vector pt, Vector v1, Vector v2, Vector v3)
     {
-      float num1 = 0.01f;
+      var num1 = 0.01f;
       Vector vector1 = v1 - v2 + (v1 - v3);
       vector1.Normalize();
       Vector vector2 = v1 + vector1 * num1;
@@ -405,12 +495,15 @@ namespace M3D.Spooling.Preprocessors
       Vector vector5 = v3 - v1 + (v3 - v2);
       vector5.Normalize();
       Vector vector6 = v3 + vector5 * num1;
-      int num2 = (double) this.sign(pt, vector2, vector4) < 0.0 ? 1 : 0;
-      bool flag1 = (double) this.sign(pt, vector4, vector6) < 0.0;
-      bool flag2 = (double) this.sign(pt, vector6, vector2) < 0.0;
-      int num3 = flag1 ? 1 : 0;
+      var num2 = (double)sign(pt, vector2, vector4) < 0.0 ? 1 : 0;
+      var flag1 = (double)sign(pt, vector4, vector6) < 0.0;
+      var flag2 = (double)sign(pt, vector6, vector2) < 0.0;
+      var num3 = flag1 ? 1 : 0;
       if (num2 == num3)
+      {
         return flag1 == flag2;
+      }
+
       return false;
     }
   }

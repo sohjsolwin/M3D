@@ -13,7 +13,7 @@ namespace M3D.Spooling.Common
     public ABS_R_FilamentProfile(FilamentSpool spool, PrinterProfile printer_profile)
       : base(spool, printer_profile)
     {
-      this.preprocessor.bonding.FirstLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(this.filament.filament_temperature - 15);
+      preprocessor.bonding.FirstLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature - 15);
     }
 
     public override string ShortName

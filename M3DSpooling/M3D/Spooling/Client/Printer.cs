@@ -56,261 +56,304 @@ namespace M3D.Spooling.Client
     public Printer(string printer_serial_number, PrinterProfile profile, SpoolerClient client)
       : this(profile, client)
     {
-      this.printer_info = new PrinterInfo();
-      this.printer_info.serial_number = new PrinterSerialNumber(printer_serial_number);
+      printer_info = new PrinterInfo
+      {
+        serial_number = new PrinterSerialNumber(printer_serial_number)
+      };
     }
 
     public Printer(PrinterInfo info, PrinterProfile profile, SpoolerClient client)
       : this(profile, client)
     {
-      this.printer_info = new PrinterInfo(info);
+      printer_info = new PrinterInfo(info);
     }
 
     private Printer(PrinterProfile profile, SpoolerClient client)
     {
       this.client = client;
-      this.mylockID = Guid.Empty;
-      this.m_printer_profile.Value = profile;
-      this.thread_sync = new object();
-      this.spool_lock = new object();
-      this.spool_up_to_date = false;
-      this.incoming_data = (byte[]) null;
-      this.Found = new ThreadSafeVariable<bool>();
-      this.Found.Value = false;
-      this._connected = new ThreadSafeVariable<bool>();
-      this._connected.Value = false;
-      this.log = new CircularArray<string>(200);
-      this.LogWaits = true;
-      this.LogFeedback = true;
-      this.waiting_object = (AsyncCallObject) null;
-      this.waiting_object_lock = new object();
-      this.lockstatus = new ThreadSafeVariable<PrinterLockStatus>(PrinterLockStatus.Unlocked);
-      this.lockstepmode = new ThreadSafeVariable<bool>(true);
-      this.lockTimeOutSeconds = new ThreadSafeVariable<int>(0);
-      this.keeplockalive_clock = new Stopwatch();
-      this.keeplockalive_limit_clock = new Stopwatch();
-      this.finished_lock = new object();
-      this.m_ChangedKeyValuePairs = new ConcurrentDictionary<string, string>();
+      mylockID = Guid.Empty;
+      m_printer_profile.Value = profile;
+      thread_sync = new object();
+      spool_lock = new object();
+      spool_up_to_date = false;
+      incoming_data = (byte[]) null;
+      Found = new ThreadSafeVariable<bool>
+      {
+        Value = false
+      };
+      _connected = new ThreadSafeVariable<bool>
+      {
+        Value = false
+      };
+      log = new CircularArray<string>(200);
+      LogWaits = true;
+      LogFeedback = true;
+      waiting_object = (AsyncCallObject) null;
+      waiting_object_lock = new object();
+      lockstatus = new ThreadSafeVariable<PrinterLockStatus>(PrinterLockStatus.Unlocked);
+      lockstepmode = new ThreadSafeVariable<bool>(true);
+      lockTimeOutSeconds = new ThreadSafeVariable<int>(0);
+      keeplockalive_clock = new Stopwatch();
+      keeplockalive_limit_clock = new Stopwatch();
+      finished_lock = new object();
+      m_ChangedKeyValuePairs = new ConcurrentDictionary<string, string>();
     }
 
     public SpoolerResult PrintModel(AsyncCallback callback, object state, JobParams jobParams)
     {
-      int spooler = (int) this.SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, "AddPrintJob", (object) Environment.UserName, (object) jobParams);
+      var spooler = (int)SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, "AddPrintJob", (object) Environment.UserName, (object) jobParams);
       if (spooler != 0)
+      {
         return (SpoolerResult) spooler;
-      this.mylockID = Guid.Empty;
-      this.lockstatus.Value = PrinterLockStatus.Unlocked;
+      }
+
+      mylockID = Guid.Empty;
+      lockstatus.Value = PrinterLockStatus.Unlocked;
       return (SpoolerResult) spooler;
     }
 
     public SpoolerResult SendManualGCode(AsyncCallback callback, object state, params string[] gcode)
     {
-      return this.SendRPCToSpooler(callback, state, "WriteManualCommands", (object) "", (object) gcode);
+      return SendRPCToSpooler(callback, state, "WriteManualCommands", (object) "", (object) gcode);
     }
 
     public SpoolerResult PausePrint(AsyncCallback callback, object state)
     {
-      return this.SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (PausePrint));
+      return SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (PausePrint));
     }
 
     public SpoolerResult ContinuePrint(AsyncCallback callback, object state)
     {
-      int spooler = (int) this.SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, nameof (ContinuePrint));
+      var spooler = (int)SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, nameof (ContinuePrint));
       if (spooler != 0)
+      {
         return (SpoolerResult) spooler;
-      this.mylockID = Guid.Empty;
-      this.lockstatus.Value = PrinterLockStatus.Unlocked;
+      }
+
+      mylockID = Guid.Empty;
+      lockstatus.Value = PrinterLockStatus.Unlocked;
       return (SpoolerResult) spooler;
     }
 
     public SpoolerResult AbortPrint(AsyncCallback callback, object state)
     {
-      return this.SendRPCToSpooler(callback, state, CallBackType.CallID, true, nameof (AbortPrint));
+      return SendRPCToSpooler(callback, state, CallBackType.CallID, true, nameof (AbortPrint));
     }
 
     public SpoolerResult ClearCurrentWarning(AsyncCallback callback, object state)
     {
-      return this.SendRPCToSpooler(callback, state, "ClearWarning", new object[0]);
+      return SendRPCToSpooler(callback, state, "ClearWarning", new object[0]);
     }
 
     public SpoolerResult PrintBacklashPrint(AsyncCallback callback, object state)
     {
-      int spooler = (int) this.SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, nameof (PrintBacklashPrint), (object) Environment.UserName);
+      var spooler = (int)SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, nameof (PrintBacklashPrint), (object) Environment.UserName);
       if (spooler != 0)
+      {
         return (SpoolerResult) spooler;
-      this.mylockID = Guid.Empty;
-      this.lockstatus.Value = PrinterLockStatus.Unlocked;
+      }
+
+      mylockID = Guid.Empty;
+      lockstatus.Value = PrinterLockStatus.Unlocked;
       return (SpoolerResult) spooler;
     }
 
     public SpoolerResult CancelQueuedPrint(AsyncCallback callback, object state)
     {
-      return this.SendRPCToSpooler(callback, state, "KillJobs", new object[0]);
+      return SendRPCToSpooler(callback, state, "KillJobs", new object[0]);
     }
 
     public SpoolerResult DoFirmwareUpdate(AsyncCallback callback, object state)
     {
-      this.switching_modes = true;
-      this.inRequestedMode = true;
-      int spooler = (int) this.SendRPCToSpooler(callback, state, CallBackType.FirmwareMode, false, "UpdateFirmware");
+      switching_modes = true;
+      inRequestedMode = true;
+      var spooler = (int)SendRPCToSpooler(callback, state, CallBackType.FirmwareMode, false, "UpdateFirmware");
       if (spooler != 0)
       {
-        this.switching_modes = false;
+        switching_modes = false;
         return (SpoolerResult) spooler;
       }
-      this.mylockID = Guid.Empty;
-      this.lockstatus.Value = PrinterLockStatus.Unlocked;
+      mylockID = Guid.Empty;
+      lockstatus.Value = PrinterLockStatus.Unlocked;
       return (SpoolerResult) spooler;
     }
 
     public SpoolerResult SetCalibrationOffset(AsyncCallback callback, object state, float offset)
     {
-      if (!this.Info.calibration.UsesCalibrationOffset)
+      if (!Info.calibration.UsesCalibrationOffset)
+      {
         return SpoolerResult.Fail_NotAvailable;
-      return this.SendRPCToSpooler(callback, state, nameof (SetCalibrationOffset), (object) offset);
+      }
+
+      return SendRPCToSpooler(callback, state, nameof (SetCalibrationOffset), (object) offset);
     }
 
     public SpoolerResult SetOffsetInfo(AsyncCallback callback, object state, BedOffsets offsets)
     {
-      return this.SendRPCToSpooler(callback, state, "SetOffsetInformation", (object) offsets);
+      return SendRPCToSpooler(callback, state, "SetOffsetInformation", (object) offsets);
     }
 
     public SpoolerResult SetBacklash(AsyncCallback callback, object state, BacklashSettings backlash)
     {
-      return this.SendRPCToSpooler(callback, state, "SetBacklashValues", (object) backlash);
+      return SendRPCToSpooler(callback, state, "SetBacklashValues", (object) backlash);
     }
 
     public SpoolerResult SetNozzleWidth(AsyncCallback callback, object state, int iNozzleWidthMicrons)
     {
-      return this.SendRPCToSpooler(callback, state, nameof (SetNozzleWidth), (object) iNozzleWidthMicrons);
+      return SendRPCToSpooler(callback, state, nameof (SetNozzleWidth), (object) iNozzleWidthMicrons);
     }
 
     public SpoolerResult AddUpdateKeyValuePair(AsyncCallback callback, object state, string key, string value)
     {
-      if (this.m_ChangedKeyValuePairs.ContainsKey(key))
-        this.m_ChangedKeyValuePairs[key] = value;
+      if (m_ChangedKeyValuePairs.ContainsKey(key))
+      {
+        m_ChangedKeyValuePairs[key] = value;
+      }
       else
-        this.m_ChangedKeyValuePairs.TryAdd(key, value);
-      return this.SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (AddUpdateKeyValuePair), (object) key, (object) value);
+      {
+        m_ChangedKeyValuePairs.TryAdd(key, value);
+      }
+
+      return SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (AddUpdateKeyValuePair), (object) key, (object) value);
     }
 
     public string GetValidatedValueFromPrinter(string key)
     {
-      if (this.m_ChangedKeyValuePairs.ContainsKey(key))
-        return this.m_ChangedKeyValuePairs[key];
-      if (this.Info.persistantData.SavedData.ContainsKey(key))
-        return this.Info.persistantData.SavedData[key];
+      if (m_ChangedKeyValuePairs.ContainsKey(key))
+      {
+        return m_ChangedKeyValuePairs[key];
+      }
+
+      if (Info.persistantData.SavedData.ContainsKey(key))
+      {
+        return Info.persistantData.SavedData[key];
+      }
+
       return (string) null;
     }
 
     public SpoolerResult SendEmergencyStop(AsyncCallback callback, object state)
     {
-      return this.SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (SendEmergencyStop));
+      return SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (SendEmergencyStop));
     }
 
     public SpoolerResult SetFilamentInfo(AsyncCallback callback, object state, FilamentSpool info)
     {
       if (info == (FilamentSpool) null)
-        return this.SetFilamentToNone(callback, state);
-      this.current_spool = new FilamentSpool(info);
-      this.spool_up_to_date = true;
-      return this.SendRPCToSpooler(callback, state, "SetFilamentInformation", (object) info);
+      {
+        return SetFilamentToNone(callback, state);
+      }
+
+      current_spool = new FilamentSpool(info);
+      spool_up_to_date = true;
+      return SendRPCToSpooler(callback, state, "SetFilamentInformation", (object) info);
     }
 
     public SpoolerResult SetFilamentToNone(AsyncCallback callback, object state)
     {
-      this.current_spool = new FilamentSpool();
-      this.spool_up_to_date = true;
-      return this.SetFilamentInfo(callback, state, this.current_spool);
+      current_spool = new FilamentSpool();
+      spool_up_to_date = true;
+      return SetFilamentInfo(callback, state, current_spool);
     }
 
     public SpoolerResult SetFilamentUID(AsyncCallback callback, object state, uint filamentUID)
     {
-      this.current_spool.filament_uid = filamentUID;
-      this.spool_up_to_date = true;
-      return this.SendRPCToSpooler(callback, state, nameof (SetFilamentUID), (object) filamentUID);
+      current_spool.filament_uid = filamentUID;
+      spool_up_to_date = true;
+      return SendRPCToSpooler(callback, state, nameof (SetFilamentUID), (object) filamentUID);
     }
 
     public SpoolerResult SetTemperatureWhilePrinting(AsyncCallback callback, object state, int temperature)
     {
-      return this.SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (SetTemperatureWhilePrinting), (object) temperature);
+      return SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (SetTemperatureWhilePrinting), (object) temperature);
     }
 
     public SpoolerResult SendSerialData(AsyncCallback callback, object state, byte[] data)
     {
-      return this.SendRPCToSpooler(callback, state, CallBackType.Special, false, "WriteSerialdata", (object) Convert.ToBase64String(data));
+      return SendRPCToSpooler(callback, state, CallBackType.Special, false, "WriteSerialdata", (object) Convert.ToBase64String(data));
     }
 
     public byte[] SendSerialDataWaitForResponse(byte[] data, int bytesToReceive)
     {
-      this.incoming_data = (byte[]) null;
-      if (this.SendRPCToSpooler((AsyncCallback) null, (object) null, "WriteSerialdata", (object) Convert.ToBase64String(data), (object) bytesToReceive) != SpoolerResult.OK)
+      incoming_data = (byte[]) null;
+      if (SendRPCToSpooler((AsyncCallback) null, (object) null, "WriteSerialdata", (object) Convert.ToBase64String(data), (object) bytesToReceive) != SpoolerResult.OK)
+      {
         return (byte[]) null;
-      byte[] numArray = (byte[]) null;
+      }
+
+      var numArray = (byte[]) null;
       while (numArray == null)
       {
-        lock (this.thread_sync)
-          numArray = this.incoming_data;
+        lock (thread_sync)
+        {
+          numArray = incoming_data;
+        }
+
         if (numArray == null)
+        {
           Thread.Sleep(0);
+        }
       }
       return numArray;
     }
 
     public SpoolerResult ClearPowerRecoveryFault(AsyncCallback callback, object state)
     {
-      return this.SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, nameof (ClearPowerRecoveryFault));
+      return SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, nameof (ClearPowerRecoveryFault));
     }
 
     public SpoolerResult RecoveryPrintFromPowerFailure(AsyncCallback callback, object state, bool bHomingRequired)
     {
-      return this.SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, nameof (RecoveryPrintFromPowerFailure), (object) bHomingRequired);
+      return SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, nameof (RecoveryPrintFromPowerFailure), (object) bHomingRequired);
     }
 
     private SpoolerResult SendRPCToSpooler(AsyncCallback callback, object state, string function_name, params object[] options)
     {
-      return this.SendRPCToSpooler(callback, state, CallBackType.CallID, false, function_name, options);
+      return SendRPCToSpooler(callback, state, CallBackType.CallID, false, function_name, options);
     }
 
     private SpoolerResult SendRPCToSpooler(AsyncCallback callback, object state, CallBackType callbacktype, bool always_send, string function_name, params object[] options)
     {
-      if (!this.HasLock && !always_send)
+      if (!HasLock && !always_send)
       {
         if (callback != null)
         {
-          IAsyncCallResult ar = (IAsyncCallResult) new SimpleAsyncCallResult(state, CommandResult.Failed_PrinterDoesNotHaveLock);
+          var ar = (IAsyncCallResult) new SimpleAsyncCallResult(state, CommandResult.Failed_PrinterDoesNotHaveLock);
           callback(ar);
         }
         return SpoolerResult.Fail_DoesNotHaveLock;
       }
-      AsyncCallObject newWaitingObject = this.CreateNewWaitingObject(callback, state, this.LockStepMode && !always_send);
+      AsyncCallObject newWaitingObject = CreateNewWaitingObject(callback, state, LockStepMode && !always_send);
       if (newWaitingObject == null)
       {
         if (callback != null)
+        {
           callback((IAsyncCallResult) new AsyncCallObject(callback, state, (IPrinter) this)
           {
             callresult = CommandResult.Failed_PreviousCommandNotCompleted
           });
+        }
+
         return SpoolerResult.Fail_PreviousCommandNotComplete;
       }
       newWaitingObject.callbackType = callbacktype;
-      return this.SendRPCToSpooler(function_name, newWaitingObject.callID, options);
+      return SendRPCToSpooler(function_name, newWaitingObject.callID, options);
     }
 
     private SpoolerResult SendRPCToSpooler(string function_name, uint callID, params object[] options)
     {
-      return this.client.SendSpoolerMessageRPCAsync(new RPCInvoker.RPC(this.printer_info.serial_number, this.mylockID, callID, function_name, options));
+      return client.SendSpoolerMessageRPCAsync(new RPCInvoker.RPC(printer_info.serial_number, mylockID, callID, function_name, options));
     }
 
     public bool RegisterPlugin(string ID, IPrinterPlugin plugin)
     {
-      if (!this.m_odPluginDictionary.ContainsKey(ID))
+      if (!m_odPluginDictionary.ContainsKey(ID))
       {
-        this.m_odPluginDictionary.Add(ID, plugin);
-        if (this.Info.InFirmwareMode)
+        m_odPluginDictionary.Add(ID, plugin);
+        if (Info.InFirmwareMode)
         {
-          int num = (int) this.client.SendSpoolerMessageRPC(new RPCInvoker.RPC(this.Info.serial_number, Guid.Empty, 0U, "RegisterExternalPluginGCodes", new object[2]{ (object) ID, (object) plugin.GetGCodes() }));
-          this.m_bPluginsRegistered = true;
+          var num = (int)client.SendSpoolerMessageRPC(new RPCInvoker.RPC(Info.serial_number, Guid.Empty, 0U, "RegisterExternalPluginGCodes", new object[2]{ (object) ID, (object) plugin.GetGCodes() }));
+          m_bPluginsRegistered = true;
           return true;
         }
       }
@@ -319,58 +362,64 @@ namespace M3D.Spooling.Client
 
     public IPrinterPlugin GetPrinterPlugin(string ID)
     {
-      if (this.m_odPluginDictionary.ContainsKey(ID))
-        return this.m_odPluginDictionary[ID];
+      if (m_odPluginDictionary.ContainsKey(ID))
+      {
+        return m_odPluginDictionary[ID];
+      }
+
       return (IPrinterPlugin) null;
     }
 
     private void DoPluginRegistration()
     {
-      foreach (KeyValuePair<string, IPrinterPlugin> odPlugin in this.m_odPluginDictionary)
+      foreach (KeyValuePair<string, IPrinterPlugin> odPlugin in m_odPluginDictionary)
       {
-        string key = odPlugin.Key;
+        var key = odPlugin.Key;
         IPrinterPlugin printerPlugin = odPlugin.Value;
-        int num = (int) this.client.SendSpoolerMessageRPC(new RPCInvoker.RPC(this.Info.serial_number, Guid.Empty, 0U, "RegisterExternalPluginGCodes", new object[2]{ (object) key, (object) printerPlugin.GetGCodes() }));
+        var num = (int)client.SendSpoolerMessageRPC(new RPCInvoker.RPC(Info.serial_number, Guid.Empty, 0U, "RegisterExternalPluginGCodes", new object[2]{ (object) key, (object) printerPlugin.GetGCodes() }));
       }
-      this.m_bPluginsRegistered = true;
+      m_bPluginsRegistered = true;
     }
 
     private void ProcessPluginMessageFromSpooler(SpoolerMessage message)
     {
-      if (!this.m_odPluginDictionary.ContainsKey(message.PlugInID))
+      if (!m_odPluginDictionary.ContainsKey(message.PlugInID))
+      {
         return;
-      this.m_odPluginDictionary[message.PlugInID].OnReceivedPluginMessage(message.State, message.Message);
+      }
+
+      m_odPluginDictionary[message.PlugInID].OnReceivedPluginMessage(message.State, message.Message);
     }
 
     public bool LockStepMode
     {
       get
       {
-        return this.lockstepmode.Value;
+        return lockstepmode.Value;
       }
       set
       {
-        this.lockstepmode.Value = value;
+        lockstepmode.Value = value;
       }
     }
 
     private AsyncCallObject CreateNewWaitingObject(AsyncCallback callback, object state, bool lockstepmode)
     {
-      AsyncCallObject asyncCallObject = (AsyncCallObject) null;
-      lock (this.waiting_object_lock)
+      var asyncCallObject = (AsyncCallObject) null;
+      lock (waiting_object_lock)
       {
-        if (!lockstepmode && this.waiting_object != null)
+        if (!lockstepmode && waiting_object != null)
         {
-          AsyncCallObject waitingObject = this.waiting_object;
+          AsyncCallObject waitingObject = waiting_object;
           waitingObject.callresult = CommandResult.OverridedByNonLockStepCall;
-          ThreadPool.QueueUserWorkItem(new WaitCallback(this.DoAsyncCallBack), (object) waitingObject);
-          this.waiting_object = (AsyncCallObject) null;
+          ThreadPool.QueueUserWorkItem(new WaitCallback(DoAsyncCallBack), (object) waitingObject);
+          waiting_object = (AsyncCallObject) null;
         }
-        if (this.waiting_object == null)
+        if (waiting_object == null)
         {
-          this.waiting_object = new AsyncCallObject(callback, state, (IPrinter) this);
-          this.can_check_idle.Value = false;
-          asyncCallObject = this.waiting_object;
+          waiting_object = new AsyncCallObject(callback, state, (IPrinter) this);
+          can_check_idle.Value = false;
+          asyncCallObject = waiting_object;
         }
       }
       return asyncCallObject;
@@ -378,17 +427,17 @@ namespace M3D.Spooling.Client
 
     public SpoolerResult BreakLock(AsyncCallback callback, object state)
     {
-      return this.SendRPCToSpooler(callback, state, CallBackType.Special, true, nameof (BreakLock));
+      return SendRPCToSpooler(callback, state, CallBackType.Special, true, nameof (BreakLock));
     }
 
     public SpoolerResult AcquireLock(AsyncCallback callback, object state)
     {
-      return this.AcquireLock(callback, state, (EventLockTimeOutCallBack) null, 0);
+      return AcquireLock(callback, state, (EventLockTimeOutCallBack) null, 0);
     }
 
     public SpoolerResult AcquireLock(AsyncCallback callback, object state, EventLockTimeOutCallBack LockTimeOutCallBack, int locktimeoutseconds)
     {
-      if (this.HasLock && callback != null)
+      if (HasLock && callback != null)
       {
         callback((IAsyncCallResult) new AsyncCallObject(callback, state, (IPrinter) this)
         {
@@ -396,52 +445,71 @@ namespace M3D.Spooling.Client
         });
         return SpoolerResult.OK;
       }
-      AsyncCallObject newWaitingObject = this.CreateNewWaitingObject(callback, state, false);
+      AsyncCallObject newWaitingObject = CreateNewWaitingObject(callback, state, false);
       if (newWaitingObject == null)
+      {
         return SpoolerResult.Fail_PreviousCommandNotComplete;
+      }
+
       newWaitingObject.callbackType = CallBackType.Special;
-      this.lockstatus.Value = PrinterLockStatus.OurLockPending;
-      this.lockTimeOutSeconds.Value = locktimeoutseconds;
-      lock (this.timeout_lock_sync)
-        this.__LockTimeOutCallBack = LockTimeOutCallBack;
-      return this.SendRPCToSpooler(nameof (AcquireLock), newWaitingObject.callID);
+      lockstatus.Value = PrinterLockStatus.OurLockPending;
+      lockTimeOutSeconds.Value = locktimeoutseconds;
+      lock (timeout_lock_sync)
+      {
+        __LockTimeOutCallBack = LockTimeOutCallBack;
+      }
+
+      return SendRPCToSpooler(nameof (AcquireLock), newWaitingObject.callID);
     }
 
     public SpoolerResult ReleaseLock(AsyncCallback callback, object state)
     {
-      AsyncCallObject newWaitingObject = this.CreateNewWaitingObject(callback, state, false);
+      AsyncCallObject newWaitingObject = CreateNewWaitingObject(callback, state, false);
       if (newWaitingObject == null)
+      {
         return SpoolerResult.Fail_PreviousCommandNotComplete;
+      }
+
       newWaitingObject.callbackType = CallBackType.Special;
-      this.lockstatus.Value = PrinterLockStatus.OurReleasePending;
-      return this.SendRPCToSpooler(nameof (ReleaseLock), newWaitingObject.callID);
+      lockstatus.Value = PrinterLockStatus.OurReleasePending;
+      return SendRPCToSpooler(nameof (ReleaseLock), newWaitingObject.callID);
     }
 
     public void AddCommandToRunOnFinish(AsyncCallback callback)
     {
-      lock (this.finished_lock)
-        this.AllCommandsFinished += callback;
+      lock (finished_lock)
+      {
+        AllCommandsFinished += callback;
+      }
     }
 
     public void ClearAsyncCallbacks()
     {
-      lock (this.waiting_object_lock)
-        this.waiting_object = (AsyncCallObject) null;
+      lock (waiting_object_lock)
+      {
+        waiting_object = (AsyncCallObject) null;
+      }
     }
 
     private void DoAsyncCallBack(object o)
     {
-      AsyncCallObject asyncCallObject = o as AsyncCallObject;
+      var asyncCallObject = o as AsyncCallObject;
       if (asyncCallObject.callback == null)
+      {
         return;
+      }
+
       asyncCallObject.callback((IAsyncCallResult) asyncCallObject);
     }
 
     private void DoTimeoutCallBack(object o)
     {
-      Printer.TimeoutProperties timeoutProperties = o as Printer.TimeoutProperties;
+      var timeoutProperties = o as Printer.TimeoutProperties;
       if (timeoutProperties.callback == null)
+      {
         return;
+      }
+
       timeoutProperties.callback(timeoutProperties.printer);
     }
 
@@ -449,8 +517,11 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        if (!this.Info.synchronization.Locked)
-          return this.HasLock;
+        if (!Info.synchronization.Locked)
+        {
+          return HasLock;
+        }
+
         return true;
       }
     }
@@ -459,8 +530,10 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        lock (this.waiting_object_lock)
-          return this.waiting_object != null;
+        lock (waiting_object_lock)
+        {
+          return waiting_object != null;
+        }
       }
     }
 
@@ -468,7 +541,7 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.mylockID != Guid.Empty;
+        return mylockID != Guid.Empty;
       }
     }
 
@@ -476,37 +549,48 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        if (this.HasLock)
+        if (HasLock)
+        {
           return PrinterLockStatus.WeOwnLocked;
-        if (this.Info.synchronization.Locked)
+        }
+
+        if (Info.synchronization.Locked)
+        {
           return PrinterLockStatus.LockedByOther;
-        return this.lockstatus.Value;
+        }
+
+        return lockstatus.Value;
       }
     }
 
     public FilamentSpool GetCurrentFilament()
     {
-      FilamentSpool filamentSpool = (FilamentSpool) null;
-      lock (this.spool_lock)
+      var filamentSpool = (FilamentSpool) null;
+      lock (spool_lock)
       {
-        if (this.current_spool != (FilamentSpool) null)
-          filamentSpool = new FilamentSpool(this.current_spool);
+        if (current_spool != (FilamentSpool) null)
+        {
+          filamentSpool = new FilamentSpool(current_spool);
+        }
       }
       if (filamentSpool != (FilamentSpool) null && filamentSpool.filament_type == FilamentSpool.TypeEnum.NoFilament)
+      {
         return (FilamentSpool) null;
+      }
+
       return filamentSpool;
     }
 
     public bool isConnected()
     {
-      return this.Connected;
+      return Connected;
     }
 
     public bool Connected
     {
       get
       {
-        return this._connected.Value;
+        return _connected.Value;
       }
     }
 
@@ -514,7 +598,7 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.printer_info.InBootloaderMode;
+        return printer_info.InBootloaderMode;
       }
     }
 
@@ -522,44 +606,55 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.switching_modes;
+        return switching_modes;
       }
     }
 
     public void UpdateData(PrinterInfo info)
     {
-      this.printer_info.CopyFrom(info);
-      this.current_job = this.printer_info.current_job == null ? (JobInfo) null : new JobInfo(this.printer_info.current_job);
-      FilamentSpool other = new FilamentSpool(this.printer_info.filament_info);
-      if (this.spool_up_to_date)
+      printer_info.CopyFrom(info);
+      current_job = printer_info.current_job == null ? (JobInfo) null : new JobInfo(printer_info.current_job);
+      var other = new FilamentSpool(printer_info.filament_info);
+      if (spool_up_to_date)
       {
-        if (other == this.current_spool)
-          this.spool_up_to_date = false;
+        if (other == current_spool)
+        {
+          spool_up_to_date = false;
+        }
       }
       else
-        this.current_spool = new FilamentSpool(other);
-      this.CheckForUpdatedValues();
-      AsyncCallObject asyncCallObject = (AsyncCallObject) null;
-      bool flag1 = false;
-      bool flag2 = false;
-      lock (this.waiting_object_lock)
       {
-        if (this.waiting_object != null)
+        current_spool = new FilamentSpool(other);
+      }
+
+      CheckForUpdatedValues();
+      var asyncCallObject = (AsyncCallObject) null;
+      var flag1 = false;
+      var flag2 = false;
+      lock (waiting_object_lock)
+      {
+        if (waiting_object != null)
         {
-          uint lastCompletedRpcid = this.Info.synchronization.LastCompletedRPCID;
-          if (this.Info.Status == PrinterStatus.Firmware_Idle && this.can_check_idle.Value)
+          var lastCompletedRpcid = Info.synchronization.LastCompletedRPCID;
+          if (Info.Status == PrinterStatus.Firmware_Idle && can_check_idle.Value)
+          {
             flag1 = true;
-          if (this.waiting_object.callbackType == CallBackType.FirmwareMode && !this.Info.InFirmwareMode || this.waiting_object.callbackType == CallBackType.BootloaderMode && !this.Info.InBootloaderMode)
-            this.inRequestedMode = false;
-          if (this.waiting_object.callbackType == CallBackType.CallID && (int) this.waiting_object.callID == (int) lastCompletedRpcid || !this.inRequestedMode && (this.waiting_object.callbackType == CallBackType.FirmwareMode && this.Info.InFirmwareMode || this.waiting_object.callbackType == CallBackType.BootloaderMode && this.Info.InBootloaderMode))
+          }
+
+          if (waiting_object.callbackType == CallBackType.FirmwareMode && !Info.InFirmwareMode || waiting_object.callbackType == CallBackType.BootloaderMode && !Info.InBootloaderMode)
+          {
+            inRequestedMode = false;
+          }
+
+          if (waiting_object.callbackType == CallBackType.CallID && (int)waiting_object.callID == (int) lastCompletedRpcid || !inRequestedMode && (waiting_object.callbackType == CallBackType.FirmwareMode && Info.InFirmwareMode || waiting_object.callbackType == CallBackType.BootloaderMode && Info.InBootloaderMode))
           {
             flag2 = true;
             flag1 = false;
           }
           if (flag1 | flag2)
           {
-            asyncCallObject = this.waiting_object;
-            this.waiting_object = (AsyncCallObject) null;
+            asyncCallObject = waiting_object;
+            waiting_object = (AsyncCallObject) null;
           }
         }
       }
@@ -567,101 +662,127 @@ namespace M3D.Spooling.Client
       {
         asyncCallObject.callresult = CommandResult.Success;
         asyncCallObject.idle_callback = flag1;
-        ThreadPool.QueueUserWorkItem(new WaitCallback(this.DoAsyncCallBack), (object) asyncCallObject);
-        lock (this.finished_lock)
+        ThreadPool.QueueUserWorkItem(new WaitCallback(DoAsyncCallBack), (object) asyncCallObject);
+        lock (finished_lock)
         {
-          if (this.AllCommandsFinished != null)
-            this.AllCommandsFinished((IAsyncCallResult) new SimpleAsyncCallResult((object) this, CommandResult.Success));
+          if (AllCommandsFinished != null)
+          {
+            AllCommandsFinished((IAsyncCallResult) new SimpleAsyncCallResult((object) this, CommandResult.Success));
+          }
         }
       }
-      if (this.HasLock && this.Info.IsIdle)
+      if (HasLock && Info.IsIdle)
       {
-        int num = this.lockTimeOutSeconds.Value;
-        if (!this.keeplockalive_clock.IsRunning)
-          this.keeplockalive_clock.Restart();
-        if (!this.keeplockalive_limit_clock.IsRunning && num > 0)
-          this.keeplockalive_limit_clock.Restart();
-        if (this.keeplockalive_clock.Elapsed.TotalSeconds > 15.0 && (num <= 0 || this.keeplockalive_limit_clock.Elapsed.TotalSeconds < (double) num))
+        var num = lockTimeOutSeconds.Value;
+        if (!keeplockalive_clock.IsRunning)
         {
-          int spooler = (int) this.SendRPCToSpooler("KeepLockAlive", 0U);
-          this.keeplockalive_clock.Restart();
+          keeplockalive_clock.Restart();
+        }
+
+        if (!keeplockalive_limit_clock.IsRunning && num > 0)
+        {
+          keeplockalive_limit_clock.Restart();
+        }
+
+        if (keeplockalive_clock.Elapsed.TotalSeconds > 15.0 && (num <= 0 || keeplockalive_limit_clock.Elapsed.TotalSeconds < (double) num))
+        {
+          var spooler = (int)SendRPCToSpooler("KeepLockAlive", 0U);
+          keeplockalive_clock.Restart();
         }
       }
-      else if (this.keeplockalive_clock.IsRunning)
+      else if (keeplockalive_clock.IsRunning)
       {
-        this.keeplockalive_clock.Stop();
-        this.keeplockalive_limit_clock.Stop();
+        keeplockalive_clock.Stop();
+        keeplockalive_limit_clock.Stop();
       }
-      if (this.Info.InBootloaderMode)
-        this.m_bPluginsRegistered = false;
-      else if (!this.m_bPluginsRegistered)
-        this.DoPluginRegistration();
-      if (this.OnUpdateData == null)
+      if (Info.InBootloaderMode)
+      {
+        m_bPluginsRegistered = false;
+      }
+      else if (!m_bPluginsRegistered)
+      {
+        DoPluginRegistration();
+      }
+
+      if (OnUpdateData == null)
+      {
         return;
-      this.OnUpdateData(info);
+      }
+
+      OnUpdateData(info);
     }
 
     private void CheckForUpdatedValues()
     {
-      foreach (KeyValuePair<string, string> keyValuePair in (Dictionary<string, string>) this.Info.persistantData.SavedData)
+      foreach (KeyValuePair<string, string> keyValuePair in (Dictionary<string, string>)Info.persistantData.SavedData)
       {
-        if (this.m_ChangedKeyValuePairs.ContainsKey(keyValuePair.Key) && keyValuePair.Value == this.m_ChangedKeyValuePairs[keyValuePair.Key])
+        if (m_ChangedKeyValuePairs.ContainsKey(keyValuePair.Key) && keyValuePair.Value == m_ChangedKeyValuePairs[keyValuePair.Key])
         {
-          string str;
-          this.m_ChangedKeyValuePairs.TryRemove(keyValuePair.Key, out str);
+          m_ChangedKeyValuePairs.TryRemove(keyValuePair.Key, out var str);
         }
       }
     }
 
     public void ProcessSpoolerMessage(SpoolerMessage message)
     {
-      AsyncCallObject asyncCallObject = (AsyncCallObject) null;
-      bool flag = false;
+      var asyncCallObject = (AsyncCallObject) null;
+      var flag = false;
       if (message.Type == MessageType.RawData)
       {
-        lock (this.thread_sync)
-          this.incoming_data = message.GetRawData();
+        lock (thread_sync)
+        {
+          incoming_data = message.GetRawData();
+        }
       }
       else if (message.Type == MessageType.PluginMessage)
-        this.ProcessPluginMessageFromSpooler(message);
+      {
+        ProcessPluginMessageFromSpooler(message);
+      }
       else if (message.Type == MessageType.LoggingMessage)
       {
-        this.AddMessageToLog(Base64Convert.Base64Decode(message.Message));
-        lock (this.log)
-          this.log_updated = true;
+        AddMessageToLog(Base64Convert.Base64Decode(message.Message));
+        lock (log)
+        {
+          log_updated = true;
+        }
       }
       else if (message.Type == MessageType.FullLoggingData)
       {
         string[] strArray = Base64Convert.Base64Decode(message.Message).Split('\n');
-        this.log.Clear();
-        foreach (string message1 in strArray)
-          this.AddMessageToLog(message1);
-        lock (this.log)
-          this.log_updated = true;
+        log.Clear();
+        foreach (var message1 in strArray)
+        {
+          AddMessageToLog(message1);
+        }
+
+        lock (log)
+        {
+          log_updated = true;
+        }
       }
       else if (message.Type == MessageType.BedLocationMustBeCalibrated || message.Type == MessageType.BedOrientationMustBeCalibrated || message.Type == MessageType.CheckGantryClips)
       {
-        this.mylockID = Guid.Empty;
-        this.lockstatus.Value = PrinterLockStatus.Unlocked;
-        lock (this.waiting_object_lock)
+        mylockID = Guid.Empty;
+        lockstatus.Value = PrinterLockStatus.Unlocked;
+        lock (waiting_object_lock)
         {
-          if (this.waiting_object != null)
+          if (waiting_object != null)
           {
-            asyncCallObject = this.waiting_object;
-            this.waiting_object = (AsyncCallObject) null;
+            asyncCallObject = waiting_object;
+            waiting_object = (AsyncCallObject) null;
             asyncCallObject.callresult = CommandResult.Failed_GantryClipsOrInvalidZ;
           }
         }
       }
-      else if ((message.Type == MessageType.LockConfirmed || message.Type == MessageType.LockResult) && message.SerialNumber == this.Info.serial_number)
+      else if ((message.Type == MessageType.LockConfirmed || message.Type == MessageType.LockResult) && message.SerialNumber == Info.serial_number)
       {
         uint num = 0;
         EventLockTimeOutCallBack callback = (EventLockTimeOutCallBack) null;
         CommandResult commandResult;
         if (message.Type == MessageType.LockResult)
         {
-          string s = message.Message.Substring(0, 8);
-          string str = message.Message.Substring(8);
+          var s = message.Message.Substring(0, 8);
+          var str = message.Message.Substring(8);
           try
           {
             num = uint.Parse(s);
@@ -673,122 +794,146 @@ namespace M3D.Spooling.Client
           }
           if (commandResult == CommandResult.Success)
           {
-            this.can_check_idle.Value = true;
+            can_check_idle.Value = true;
             return;
           }
           if (commandResult == CommandResult.Pending)
           {
-            this.lockstatus.Value = PrinterLockStatus.OurLockPending;
+            lockstatus.Value = PrinterLockStatus.OurLockPending;
             return;
           }
           if (commandResult == CommandResult.LockForcedOpen)
-            this.lockstatus.Value = PrinterLockStatus.Unlocked;
+          {
+            lockstatus.Value = PrinterLockStatus.Unlocked;
+          }
           else if (commandResult == CommandResult.LockLost_TimedOut)
           {
-            lock (this.timeout_lock_sync)
+            lock (timeout_lock_sync)
             {
-              callback = this.__LockTimeOutCallBack;
-              this.__LockTimeOutCallBack = (EventLockTimeOutCallBack) null;
+              callback = __LockTimeOutCallBack;
+              __LockTimeOutCallBack = (EventLockTimeOutCallBack) null;
             }
           }
           if (commandResult != CommandResult.CommandInterruptedByM0)
+          {
             flag = true;
+          }
         }
         else
         {
-          this.mylockID = Guid.Parse(message.Message);
+          mylockID = Guid.Parse(message.Message);
           commandResult = CommandResult.Success_LockAcquired;
-          this.lockstatus.Value = PrinterLockStatus.WeOwnLocked;
+          lockstatus.Value = PrinterLockStatus.WeOwnLocked;
         }
-        lock (this.waiting_object_lock)
+        lock (waiting_object_lock)
         {
-          if (this.waiting_object != null)
+          if (waiting_object != null)
           {
             if (commandResult == CommandResult.SuccessfullyReceived)
             {
-              if (this.waiting_object.callbackType != CallBackType.SuccessfullyReceived)
+              if (waiting_object.callbackType != CallBackType.SuccessfullyReceived)
+              {
                 goto label_59;
+              }
             }
-            asyncCallObject = this.waiting_object;
-            this.waiting_object = (AsyncCallObject) null;
+            asyncCallObject = waiting_object;
+            waiting_object = (AsyncCallObject) null;
           }
         }
 label_59:
         if (flag)
         {
-          this.mylockID = Guid.Empty;
-          this.lockstatus.Value = PrinterLockStatus.Unlocked;
+          mylockID = Guid.Empty;
+          lockstatus.Value = PrinterLockStatus.Unlocked;
         }
         if (asyncCallObject != null)
         {
           if (num != 0U && (int) num != (int) asyncCallObject.callID)
+          {
             commandResult = CommandResult.Failed_AsyncCallbackError;
+          }
+
           asyncCallObject.callresult = commandResult;
         }
         if (callback != null)
-          ThreadPool.QueueUserWorkItem(new WaitCallback(this.DoTimeoutCallBack), (object) new Printer.TimeoutProperties(callback, (IPrinter) this));
+        {
+          ThreadPool.QueueUserWorkItem(new WaitCallback(DoTimeoutCallBack), (object) new Printer.TimeoutProperties(callback, (IPrinter) this));
+        }
       }
       if (asyncCallObject != null)
-        ThreadPool.QueueUserWorkItem(new WaitCallback(this.DoAsyncCallBack), (object) asyncCallObject);
-      if (this.OnProcessSpoolerMessage == null)
+      {
+        ThreadPool.QueueUserWorkItem(new WaitCallback(DoAsyncCallBack), (object) asyncCallObject);
+      }
+
+      if (OnProcessSpoolerMessage == null)
+      {
         return;
-      this.OnProcessSpoolerMessage(message);
+      }
+
+      OnProcessSpoolerMessage(message);
     }
 
     public bool LogUpdated
     {
       get
       {
-        lock (this.log)
-          return this.log_updated;
+        lock (log)
+        {
+          return log_updated;
+        }
       }
     }
 
     public List<string> GetLog()
     {
-      List<string> stringList = (List<string>) null;
-      lock (this.log)
+      var stringList = (List<string>) null;
+      lock (log)
       {
-        stringList = new List<string>((IEnumerable<string>) this.log);
-        this.log_updated = false;
+        stringList = new List<string>((IEnumerable<string>)log);
+        log_updated = false;
       }
       return stringList;
     }
 
     public List<string> GetNextLogItems()
     {
-      List<string> stringList = (List<string>) null;
-      lock (this.log)
+      var stringList = (List<string>) null;
+      lock (log)
       {
-        stringList = new List<string>((IEnumerable<string>) this.log);
-        this.log.Clear();
-        this.log_updated = false;
+        stringList = new List<string>((IEnumerable<string>)log);
+        log.Clear();
+        log_updated = false;
       }
       return stringList;
     }
 
     public void ClearLog()
     {
-      lock (this.log)
+      lock (log)
       {
-        this.log.Clear();
-        this.log_updated = true;
+        log.Clear();
+        log_updated = true;
       }
     }
 
     private void AddMessageToLog(string message)
     {
-      if (!this.LogWaits && message == ">> wait" || message.StartsWith(">> T:") && !this.LogFeedback)
+      if (!LogWaits && message == ">> wait" || message.StartsWith(">> T:") && !LogFeedback)
+      {
         return;
-      lock (this.log)
-        this.log.Enqueue(message);
+      }
+
+      lock (log)
+      {
+        log.Enqueue(message);
+      }
     }
 
     public PrinterProfile MyPrinterProfile
     {
       get
       {
-        return this.m_printer_profile.Value;
+        return m_printer_profile.Value;
       }
     }
 
@@ -796,7 +941,7 @@ label_59:
     {
       get
       {
-        return this.printer_info;
+        return printer_info;
       }
     }
 

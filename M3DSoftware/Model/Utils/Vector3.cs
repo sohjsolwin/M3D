@@ -17,11 +17,11 @@ namespace M3D.Model.Utils
     {
       get
       {
-        return (float) this.position[0];
+        return (float)position[0];
       }
       set
       {
-        this.position[0] = (double) value;
+        position[0] = (double) value;
       }
     }
 
@@ -29,11 +29,11 @@ namespace M3D.Model.Utils
     {
       get
       {
-        return (float) this.position[1];
+        return (float)position[1];
       }
       set
       {
-        this.position[1] = (double) value;
+        position[1] = (double) value;
       }
     }
 
@@ -41,19 +41,19 @@ namespace M3D.Model.Utils
     {
       get
       {
-        return (float) this.position[2];
+        return (float)position[2];
       }
       set
       {
-        this.position[2] = (double) value;
+        position[2] = (double) value;
       }
     }
 
     public Vector3()
     {
-      this.x = 0.0f;
-      this.y = 0.0f;
-      this.z = 0.0f;
+      x = 0.0f;
+      y = 0.0f;
+      z = 0.0f;
     }
 
     public Vector3(float x, float y, float z)
@@ -65,9 +65,9 @@ namespace M3D.Model.Utils
 
     public Vector3(Vector3 v)
     {
-      this.x = v.x;
-      this.y = v.y;
-      this.z = v.z;
+      x = v.x;
+      y = v.y;
+      z = v.z;
     }
 
     public static uint SizeInBytes
@@ -81,24 +81,24 @@ namespace M3D.Model.Utils
     public override bool Equals(object obj)
     {
       Vector3 vector3_1 = this;
-      Vector3 vector3_2 = obj as Vector3;
+      var vector3_2 = obj as Vector3;
       return (object) vector3_1 == null && (object) vector3_2 == null || (object) vector3_1 != null && (object) vector3_2 != null && ((double) vector3_1.x == (double) vector3_2.x && (double) vector3_1.y == (double) vector3_2.y) && (double) vector3_1.z == (double) vector3_2.z;
     }
 
     public bool Equals(Vector3 other)
     {
-      return (double) this.x == (double) other.x && (double) this.y == (double) other.y && (double) this.z == (double) other.z;
+      return (double)x == (double) other.x && (double)y == (double) other.y && (double)z == (double) other.z;
     }
 
     public override int GetHashCode()
     {
-      float num1 = this.x;
-      int hashCode1 = num1.GetHashCode();
-      num1 = this.y;
-      int hashCode2 = num1.GetHashCode();
-      int num2 = hashCode1 ^ hashCode2;
-      num1 = this.z;
-      int hashCode3 = num1.GetHashCode();
+      var num1 = x;
+      var hashCode1 = num1.GetHashCode();
+      num1 = y;
+      var hashCode2 = num1.GetHashCode();
+      var num2 = hashCode1 ^ hashCode2;
+      num1 = z;
+      var hashCode3 = num1.GetHashCode();
       return num2 ^ hashCode3;
     }
 
@@ -159,7 +159,7 @@ namespace M3D.Model.Utils
 
     public static Vector3 operator /(Vector3 a, float b)
     {
-      float num = 1f / b;
+      var num = 1f / b;
       return new Vector3(a.x * num, a.y * num, a.z * num);
     }
 
@@ -170,33 +170,33 @@ namespace M3D.Model.Utils
 
     public float SqLength()
     {
-      return (float) ((double) this.x * (double) this.x + (double) this.y * (double) this.y + (double) this.z * (double) this.z);
+      return (float) ((double)x * (double)x + (double)y * (double)y + (double)z * (double)z);
     }
 
     public float Length()
     {
-      return (float) Math.Sqrt((double) this.x * (double) this.x + (double) this.y * (double) this.y + (double) this.z * (double) this.z);
+      return (float) Math.Sqrt((double)x * (double)x + (double)y * (double)y + (double)z * (double)z);
     }
 
     public float Dot(Vector3 v)
     {
-      return (float) ((double) this.x * (double) v.x + (double) this.y * (double) v.y + (double) this.z * (double) v.z);
+      return (float) ((double)x * (double) v.x + (double)y * (double) v.y + (double)z * (double) v.z);
     }
 
     public Vector3 Normalize()
     {
-      return this * (1f / this.Length());
+      return this * (1f / Length());
     }
 
     public static Vector3 Normalize(Vector3 vector)
     {
-      float num = 1f / vector.Length();
+      var num = 1f / vector.Length();
       return vector * num;
     }
 
     public Vector3 Cross(Vector3 v)
     {
-      return new Vector3((float) ((double) this.y * (double) v.z - (double) this.z * (double) v.y), (float) ((double) this.z * (double) v.x - (double) this.x * (double) v.z), (float) ((double) this.x * (double) v.y - (double) this.y * (double) v.x));
+      return new Vector3((float) ((double)y * (double) v.z - (double)z * (double) v.y), (float) ((double)z * (double) v.x - (double)x * (double) v.z), (float) ((double)x * (double) v.y - (double)y * (double) v.x));
     }
 
     public float Distance(Vector3 vector2)
@@ -206,30 +206,33 @@ namespace M3D.Model.Utils
 
     public Vector3 Inverse()
     {
-      return new Vector3(-this.x, -this.y, -this.z);
+      return new Vector3(-x, -y, -z);
     }
 
     public void RotateVector(float angle, bool x, bool y, bool z)
     {
       if (x)
       {
-        float num = (float) ((double) this.z * Math.Cos((double) angle) - (double) this.y * Math.Sin((double) angle));
+        var num = (float) ((double) this.z * Math.Cos((double) angle) - (double) this.y * Math.Sin((double) angle));
         this.y = (float) ((double) this.z * Math.Sin((double) angle) + (double) this.y * Math.Cos((double) angle));
         this.z = num;
       }
       else if (y)
       {
-        float num1 = (float) ((double) this.x * Math.Cos((double) angle) - (double) this.z * Math.Sin((double) angle));
-        float num2 = (float) ((double) this.x * Math.Sin((double) angle) + (double) this.z * Math.Cos((double) angle));
+        var num1 = (float) ((double) this.x * Math.Cos((double) angle) - (double) this.z * Math.Sin((double) angle));
+        var num2 = (float) ((double) this.x * Math.Sin((double) angle) + (double) this.z * Math.Cos((double) angle));
         this.x = num1;
         this.z = num2;
       }
       else
       {
         if (!z)
+        {
           return;
-        float num1 = (float) ((double) this.x * Math.Cos((double) angle) - (double) this.y * Math.Sin((double) angle));
-        float num2 = (float) ((double) this.x * Math.Sin((double) angle) + (double) this.y * Math.Cos((double) angle));
+        }
+
+        var num1 = (float) ((double) this.x * Math.Cos((double) angle) - (double) this.y * Math.Sin((double) angle));
+        var num2 = (float) ((double) this.x * Math.Sin((double) angle) + (double) this.y * Math.Cos((double) angle));
         this.x = num1;
         this.y = num2;
       }
@@ -237,22 +240,25 @@ namespace M3D.Model.Utils
 
     public static Vector3 MatrixProduct(Matrix4 matrix, Vector3 vector)
     {
-      Vector4 vector4 = Vector4.Transform(new Vector4(vector.x, vector.y, vector.z, 1f), matrix);
+      var vector4 = Vector4.Transform(new Vector4(vector.x, vector.y, vector.z, 1f), matrix);
       return new Vector3(vector4.X, vector4.Y, vector4.Z);
     }
 
     public void MatrixProduct(Matrix4 matrix)
     {
-      Vector4 vector4 = Vector4.Transform(new Vector4(this.x, this.y, this.z, 1f), matrix);
-      this.x = vector4.X;
-      this.y = vector4.Y;
-      this.z = vector4.Z;
+      var vector4 = Vector4.Transform(new Vector4(x, y, z, 1f), matrix);
+      x = vector4.X;
+      y = vector4.Y;
+      z = vector4.Z;
     }
 
     public bool isZero()
     {
-      if ((double) this.x == 0.0 && (double) this.y == 0.0)
-        return (double) this.z == 0.0;
+      if ((double)x == 0.0 && (double)y == 0.0)
+      {
+        return (double)z == 0.0;
+      }
+
       return false;
     }
 
@@ -260,13 +266,16 @@ namespace M3D.Model.Utils
     {
       get
       {
-        return this.position;
+        return position;
       }
       set
       {
         if (value.Length != 3)
+        {
           throw new Exception("Must be a length 3 array");
-        this.position = value;
+        }
+
+        position = value;
       }
     }
   }

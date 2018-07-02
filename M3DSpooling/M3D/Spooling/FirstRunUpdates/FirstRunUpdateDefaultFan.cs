@@ -17,18 +17,21 @@ namespace M3D.Spooling.FirstRunUpdates
     {
       try
       {
-        int serialDate = this.GetSerialDate(serial_number);
+        var serialDate = GetSerialDate(serial_number);
         switch (eeprom[(int) printerProfile.EEPROMConstants.GetEepromInfo("FANTYPE").EepromAddr])
         {
           case 0:
           case byte.MaxValue:
             FanConstValues.FanType index = FanConstValues.FanType.HengLiXin;
             if (serialDate >= 150602)
+            {
               index = FanConstValues.FanType.Shenzhew;
+            }
+
             FanConstValues.FanValues fanConstant = FanConstValues.FanConstants[index];
-            byte num = (byte) index;
-            int offset = fanConstant.Offset;
-            float scale = fanConstant.Scale;
+            var num = (byte) index;
+            var offset = fanConstant.Offset;
+            var scale = fanConstant.Scale;
             bootloader_conn.WriteToEEPROM(printerProfile.EEPROMConstants.GetEepromInfo("FANTYPE").EepromAddr, BitConverter.GetBytes((short) num));
             bootloader_conn.WriteToEEPROM(printerProfile.EEPROMConstants.GetEepromInfo("FANOFFSET").EepromAddr, BitConverter.GetBytes(offset));
             bootloader_conn.WriteToEEPROM(printerProfile.EEPROMConstants.GetEepromInfo("FANSCALE").EepromAddr, BitConverter.GetBytes(scale));

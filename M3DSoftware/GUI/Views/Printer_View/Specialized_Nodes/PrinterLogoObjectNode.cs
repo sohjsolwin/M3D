@@ -30,45 +30,45 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     public PrinterLogoObjectNode(string texture_name, int ID, Element3D parent, Vector3 position, Vector3 size)
       : base(ID, parent)
     {
-      int texture = 0;
-      Bitmap bitmap = new Bitmap(texture_name);
+      var texture = 0;
+      var bitmap = new Bitmap(texture_name);
       Element3D.CreateTexture(ref texture, bitmap);
       bitmap.Dispose();
-      this.plate = new FrontFacingPlaneNode(ID, (Element3D) this);
-      this.logo = new FrontFacingPlaneNode(ID, (Element3D) this);
-      this.plate.Create(position, size.x, size.z, 0);
-      this.plate.Emission = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
-      this.logo.Create(position, size.x - 1f, size.z - 1f, texture);
-      this.logo.Emission = new Color4(1f, 1f, 1f, 1f);
+      plate = new FrontFacingPlaneNode(ID, (Element3D) this);
+      logo = new FrontFacingPlaneNode(ID, (Element3D) this);
+      plate.Create(position, size.x, size.z, 0);
+      plate.Emission = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
+      logo.Create(position, size.x - 1f, size.z - 1f, texture);
+      logo.Emission = new Color4(1f, 1f, 1f, 1f);
     }
 
     public override void Render3D()
     {
       GL.DepthMask(true);
-      this.plate.Render3D();
+      plate.Render3D();
       GL.PushMatrix();
       GL.Translate(0.0, -0.1, 0.0);
       GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-      this.logo.Render3D();
+      logo.Render3D();
       GL.PopMatrix();
       base.Render3D();
     }
 
     public void Rescale(float x, float y, float z)
     {
-      this.plate.Rescale(x, y, z);
-      this.logo.Rescale(x, y, z);
+      plate.Rescale(x, y, z);
+      logo.Rescale(x, y, z);
     }
 
     public Color4 Ambient
     {
       get
       {
-        return this.plate.Ambient;
+        return plate.Ambient;
       }
       set
       {
-        this.plate.Ambient = value;
+        plate.Ambient = value;
       }
     }
 
@@ -76,11 +76,11 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     {
       get
       {
-        return this.plate.Diffuse;
+        return plate.Diffuse;
       }
       set
       {
-        this.plate.Diffuse = value;
+        plate.Diffuse = value;
       }
     }
 
@@ -88,11 +88,11 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     {
       get
       {
-        return this.plate.Specular;
+        return plate.Specular;
       }
       set
       {
-        this.plate.Specular = value;
+        plate.Specular = value;
       }
     }
 
@@ -100,11 +100,11 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     {
       get
       {
-        return this.plate.Shininess;
+        return plate.Shininess;
       }
       set
       {
-        this.plate.Shininess = value;
+        plate.Shininess = value;
       }
     }
   }

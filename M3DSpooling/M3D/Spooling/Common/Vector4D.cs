@@ -22,26 +22,26 @@ namespace M3D.Spooling.Common
 
     public Vector4D(Vector4D other)
     {
-      this.X = other.X;
-      this.Y = other.Y;
-      this.Z = other.Z;
-      this.E = other.E;
+      X = other.X;
+      Y = other.Y;
+      Z = other.Z;
+      E = other.E;
     }
 
     public Vector4D(float x, float y, float z, float e)
     {
-      this.X = x;
-      this.Y = y;
-      this.Z = z;
-      this.E = e;
+      X = x;
+      Y = y;
+      Z = z;
+      E = e;
     }
 
     public void Reset()
     {
-      this.X = 0.0f;
-      this.Y = 0.0f;
-      this.Z = 0.0f;
-      this.E = 0.0f;
+      X = 0.0f;
+      Y = 0.0f;
+      Z = 0.0f;
+      E = 0.0f;
     }
 
     public float this[int key]
@@ -51,13 +51,13 @@ namespace M3D.Spooling.Common
         switch (key)
         {
           case 0:
-            return this.X;
+            return X;
           case 1:
-            return this.Y;
+            return Y;
           case 2:
-            return this.Z;
+            return Z;
           case 3:
-            return this.E;
+            return E;
           default:
             throw new IndexOutOfRangeException();
         }
@@ -67,16 +67,16 @@ namespace M3D.Spooling.Common
         switch (key)
         {
           case 0:
-            this.X = value;
+            X = value;
             break;
           case 1:
-            this.Y = value;
+            Y = value;
             break;
           case 2:
-            this.Z = value;
+            Z = value;
             break;
           case 3:
-            this.E = value;
+            E = value;
             break;
           default:
             throw new IndexOutOfRangeException();

@@ -21,18 +21,18 @@ namespace M3D.Spooling.Common
 
     public Statistics(Statistics rhs)
     {
-      this.isMetering = rhs.isMetering;
-      this.AvgCMDsBeforeRS = rhs.AvgCMDsBeforeRS;
-      this.AvgRSDelay = rhs.AvgRSDelay;
-      this.RSDelayStandardDeviation = rhs.RSDelayStandardDeviation;
+      isMetering = rhs.isMetering;
+      AvgCMDsBeforeRS = rhs.AvgCMDsBeforeRS;
+      AvgRSDelay = rhs.AvgRSDelay;
+      RSDelayStandardDeviation = rhs.RSDelayStandardDeviation;
     }
 
     public Statistics()
     {
-      this.isMetering = false;
-      this.AvgCMDsBeforeRS = 0.0;
-      this.AvgRSDelay = 0.0;
-      this.RSDelayStandardDeviation = 0.0;
+      isMetering = false;
+      AvgCMDsBeforeRS = 0.0;
+      AvgRSDelay = 0.0;
+      RSDelayStandardDeviation = 0.0;
     }
   }
 }

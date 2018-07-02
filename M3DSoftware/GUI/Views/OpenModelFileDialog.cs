@@ -12,12 +12,12 @@ namespace M3D.GUI.Views
   {
     public static string RunOpenModelDialog(OpenModelFileDialog.FileType fileType)
     {
-      string str1 = "";
-      OpenFileDialog openFileDialog = new OpenFileDialog();
+      var str1 = "";
+      var openFileDialog = new OpenFileDialog();
       switch (fileType)
       {
         case OpenModelFileDialog.FileType.Models:
-          string str2 = str1 + "Supported Files|*.stl;*.obj;*.zip|" + "STL File (.stl)|*.stl|" + "OBJ File (.obj)|*.obj|" + "ZIP File (.zip)|*.zip|" + "All Files (*.*)|*.*";
+          var str2 = str1 + "Supported Files|*.stl;*.obj;*.zip|" + "STL File (.stl)|*.stl|" + "OBJ File (.obj)|*.obj|" + "ZIP File (.zip)|*.zip|" + "All Files (*.*)|*.*";
           openFileDialog.Filter = str2;
           openFileDialog.FilterIndex = 1;
           break;
@@ -28,7 +28,10 @@ namespace M3D.GUI.Views
       }
       openFileDialog.Multiselect = false;
       if (openFileDialog.ShowDialog() == DialogResult.OK)
+      {
         return openFileDialog.FileName;
+      }
+
       return (string) null;
     }
 

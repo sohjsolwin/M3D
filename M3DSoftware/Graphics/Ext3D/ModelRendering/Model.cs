@@ -21,9 +21,9 @@ namespace M3D.Graphics.Ext3D.ModelRendering
       this.modelData = modelData;
       this.fileName = fileName;
       modelData.Translate(-modelData.Center);
-      Stopwatch stopwatch = new Stopwatch();
+      var stopwatch = new Stopwatch();
       stopwatch.Start();
-      this.geometryData = new OpenGLRendererObject(modelData);
+      geometryData = new OpenGLRendererObject(modelData);
       stopwatch.Stop();
     }
 

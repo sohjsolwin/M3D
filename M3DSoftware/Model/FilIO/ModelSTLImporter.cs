@@ -18,12 +18,12 @@ namespace M3D.Model.FilIO
     {
       try
       {
-        bool flag = false;
-        using (StreamReader streamReader = new StreamReader(filename))
+        var flag = false;
+        using (var streamReader = new StreamReader(filename))
         {
-          for (int index = 0; index < 4; ++index)
+          for (var index = 0; index < 4; ++index)
           {
-            string str = streamReader.ReadLine();
+            var str = streamReader.ReadLine();
             if (str != null && str != null)
             {
               if (str.Contains("facet"))
@@ -33,13 +33,18 @@ namespace M3D.Model.FilIO
               }
             }
             else
+            {
               break;
+            }
           }
           streamReader.Close();
         }
         if (flag)
-          return this.LoadSTLASCII(filename);
-        return this.LoadSTLBinary(filename);
+        {
+          return LoadSTLASCII(filename);
+        }
+
+        return LoadSTLBinary(filename);
       }
       catch (Exception ex)
       {
@@ -51,10 +56,10 @@ namespace M3D.Model.FilIO
     {
       try
       {
-        LinkedList<Vector3> verticies = new LinkedList<Vector3>();
-        using (StreamReader streamReader = new StreamReader(filename))
+        var verticies = new LinkedList<Vector3>();
+        using (var streamReader = new StreamReader(filename))
         {
-          int num1 = 0;
+          var num1 = 0;
           float[] numArray = new float[3];
           string str;
           while ((str = streamReader.ReadLine()) != null)
@@ -62,16 +67,20 @@ namespace M3D.Model.FilIO
             if (str.Contains("vertex"))
             {
               string[] strArray = str.Substring(str.IndexOf("vertex") + 7).Split(' ');
-              int num2 = 0;
-              for (int index = 0; index < strArray.Length; ++index)
+              var num2 = 0;
+              for (var index = 0; index < strArray.Length; ++index)
               {
                 if (strArray[index].Length > 0)
+                {
                   numArray[num2++] = float.Parse(strArray[index], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE);
+                }
               }
               verticies.AddLast(new Vector3(numArray[0], numArray[1], numArray[2]));
             }
             else if (str.Contains("endfacet"))
+            {
               ++num1;
+            }
           }
           streamReader.Close();
         }
@@ -87,21 +96,21 @@ namespace M3D.Model.FilIO
     {
       try
       {
-        LinkedList<Vector3> verticies = new LinkedList<Vector3>();
+        var verticies = new LinkedList<Vector3>();
         byte[] buffer = new byte[80];
-        using (FileStream fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+        using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
         {
-          using (BinaryReader binaryReader = new BinaryReader((Stream) fileStream))
+          using (var binaryReader = new BinaryReader((Stream) fileStream))
           {
             binaryReader.Read(buffer, 0, 80);
-            int num1 = binaryReader.ReadInt32();
-            for (int index = 0; index < num1; ++index)
+            var num1 = binaryReader.ReadInt32();
+            for (var index = 0; index < num1; ++index)
             {
               binaryReader.BaseStream.Seek(12L, SeekOrigin.Current);
               verticies.AddLast(new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()));
               verticies.AddLast(new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()));
               verticies.AddLast(new Vector3(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle()));
-              int num2 = (int) binaryReader.ReadInt16();
+              var num2 = (int) binaryReader.ReadInt16();
             }
             binaryReader.Close();
           }

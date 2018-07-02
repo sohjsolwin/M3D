@@ -29,33 +29,33 @@ namespace M3D.Spooling.Common
 
     public SpoolerInfo()
     {
-      this.SupportPrinterProfiles = new List<EmbeddedFirmwareSummary>();
-      this.PrinterProfileList = new List<PrinterProfile>();
+      SupportPrinterProfiles = new List<EmbeddedFirmwareSummary>();
+      PrinterProfileList = new List<PrinterProfile>();
     }
 
     public SpoolerInfo(SpoolerInfo other)
     {
-      this.CopyFrom(other);
+      CopyFrom(other);
     }
 
     public SpoolerInfo(string serialization)
       : this()
     {
-      this.Deserialize(serialization);
+      Deserialize(serialization);
     }
 
     public void Deserialize(string serialization)
     {
-      using (TextReader textReader = (TextReader) new StringReader(serialization))
+      using (var textReader = (TextReader) new StringReader(serialization))
       {
         try
         {
-          this.CopyFrom((SpoolerInfo) SpoolerInfo.ClassSerializer.Deserialize(textReader));
+          CopyFrom((SpoolerInfo) SpoolerInfo.ClassSerializer.Deserialize(textReader));
         }
         catch (Exception ex)
         {
           ErrorLogger.LogErrorMsg("Loading XML Exception: " + ex.Message + (ex.InnerException != null ? "\nInner Exception: " + ex.InnerException.Message : ""));
-          this.CopyFrom(new SpoolerInfo());
+          CopyFrom(new SpoolerInfo());
         }
       }
     }
@@ -63,17 +63,20 @@ namespace M3D.Spooling.Common
     public string Serialize()
     {
       SpoolerInfo.settings.OmitXmlDeclaration = true;
-      StringWriter stringWriter = new StringWriter();
-      XmlWriter xmlWriter = XmlWriter.Create((TextWriter) stringWriter, SpoolerInfo.settings);
-      this.ns.Add("", "");
+      var stringWriter = new StringWriter();
+      var xmlWriter = XmlWriter.Create((TextWriter) stringWriter, SpoolerInfo.settings);
+      ns.Add("", "");
       try
       {
-        SpoolerInfo.ClassSerializer.Serialize(xmlWriter, (object) this, this.ns);
+        SpoolerInfo.ClassSerializer.Serialize(xmlWriter, (object) this, ns);
       }
       catch (Exception ex)
       {
         if (Debugger.IsAttached)
+        {
           Debugger.Break();
+        }
+
         throw;
       }
       return stringWriter.ToString();
@@ -81,14 +84,14 @@ namespace M3D.Spooling.Common
 
     public void CopyFrom(SpoolerInfo other)
     {
-      this.Version = other.Version;
-      this.SupportPrinterProfiles = new List<EmbeddedFirmwareSummary>((IEnumerable<EmbeddedFirmwareSummary>) other.SupportPrinterProfiles);
-      this.PrinterProfileList = new List<PrinterProfile>((IEnumerable<PrinterProfile>) other.PrinterProfileList);
+      Version = other.Version;
+      SupportPrinterProfiles = new List<EmbeddedFirmwareSummary>((IEnumerable<EmbeddedFirmwareSummary>) other.SupportPrinterProfiles);
+      PrinterProfileList = new List<PrinterProfile>((IEnumerable<PrinterProfile>) other.PrinterProfileList);
     }
 
     public EmbeddedFirmwareSummary GetProfileByName(string name)
     {
-      return this.SupportPrinterProfiles.Find((Predicate<EmbeddedFirmwareSummary>) (x => x.Name == name));
+      return SupportPrinterProfiles.Find((Predicate<EmbeddedFirmwareSummary>) (x => x.Name == name));
     }
 
     private static XmlSerializer ClassSerializer
@@ -96,7 +99,10 @@ namespace M3D.Spooling.Common
       get
       {
         if (SpoolerInfo.__class_serializer == null)
+        {
           SpoolerInfo.__class_serializer = new XmlSerializer(typeof (SpoolerInfo));
+        }
+
         return SpoolerInfo.__class_serializer;
       }
     }

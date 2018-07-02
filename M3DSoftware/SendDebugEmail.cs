@@ -34,7 +34,7 @@ namespace M3D
 
     public SendDebugEmail(string debugText)
     {
-      this.InitializeComponent();
+      InitializeComponent();
       this.debugText = debugText;
     }
 
@@ -42,8 +42,8 @@ namespace M3D
     {
       try
       {
-        MailMessage message = new MailMessage();
-        SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
+        var message = new MailMessage();
+        var smtpClient = new SmtpClient("smtp.gmail.com");
         message.From = new MailAddress(email);
         message.To.Add(SendDebugEmail.m3dSupportEmailAddress);
         message.Subject = subject;
@@ -60,118 +60,121 @@ namespace M3D
 
     private void button1_Click(object sender, EventArgs e)
     {
-      if (this.textBox1.Text == "" || this.textBox2.Text == "" || this.textBox3.Text == "")
+      if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "")
       {
-        int num = (int) MessageBox.Show("Please fill in all the fields.", "Send Debug Log Error", MessageBoxButtons.OK);
+        var num = (int) MessageBox.Show("Please fill in all the fields.", "Send Debug Log Error", MessageBoxButtons.OK);
       }
       else
       {
-        this.Send(this.textBox1.Text, this.textBox2.Text, this.textBox3.Text, "M3D user debug log", this.debugText);
-        this.DialogResult = DialogResult.OK;
+        Send(textBox1.Text, textBox2.Text, textBox3.Text, "M3D user debug log", debugText);
+        DialogResult = DialogResult.OK;
       }
     }
 
     private void buttonClose_Click(object sender, EventArgs e)
     {
-      this.DialogResult = DialogResult.Cancel;
+      DialogResult = DialogResult.Cancel;
     }
 
     protected override void Dispose(bool disposing)
     {
-      if (disposing && this.components != null)
-        this.components.Dispose();
+      if (disposing && components != null)
+      {
+        components.Dispose();
+      }
+
       base.Dispose(disposing);
     }
 
     private void InitializeComponent()
     {
-      this.label4 = new Label();
-      this.label3 = new Label();
-      this.label2 = new Label();
-      this.label1 = new Label();
-      this.textBox3 = new TextBox();
-      this.textBox2 = new TextBox();
-      this.textBox1 = new TextBox();
-      this.button1 = new Button();
-      this.buttonClose = new Button();
-      this.pictureBox1 = new PictureBox();
-      ((ISupportInitialize) this.pictureBox1).BeginInit();
-      this.SuspendLayout();
-      this.label4.AutoSize = true;
-      this.label4.Location = new Point(12, 71);
-      this.label4.Name = "label4";
-      this.label4.Size = new Size(35, 13);
-      this.label4.TabIndex = 27;
-      this.label4.Text = "Email:";
-      this.label3.AutoSize = true;
-      this.label3.Location = new Point(227, 45);
-      this.label3.Name = "label3";
-      this.label3.Size = new Size(61, 13);
-      this.label3.TabIndex = 26;
-      this.label3.Text = "Last Name:";
-      this.label2.AutoSize = true;
-      this.label2.Location = new Point(12, 45);
-      this.label2.Name = "label2";
-      this.label2.Size = new Size(60, 13);
-      this.label2.TabIndex = 25;
-      this.label2.Text = "First Name:";
-      this.label1.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
-      this.label1.Location = new Point(9, 10);
-      this.label1.Name = "label1";
-      this.label1.Size = new Size(449, 16);
-      this.label1.TabIndex = 24;
-      this.label1.Text = "Please enter your name and email address so that we can get back to you.";
-      this.textBox3.Location = new Point(89, 68);
-      this.textBox3.Name = "textBox3";
-      this.textBox3.Size = new Size(121, 20);
-      this.textBox3.TabIndex = 23;
-      this.textBox2.Location = new Point(294, 42);
-      this.textBox2.Name = "textBox2";
-      this.textBox2.Size = new Size(125, 20);
-      this.textBox2.TabIndex = 22;
-      this.textBox1.Location = new Point(89, 42);
-      this.textBox1.Name = "textBox1";
-      this.textBox1.Size = new Size(121, 20);
-      this.textBox1.TabIndex = 21;
-      this.button1.Location = new Point(302, 132);
-      this.button1.Name = "button1";
-      this.button1.Size = new Size(78, 28);
-      this.button1.TabIndex = 20;
-      this.button1.Text = "Send";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new EventHandler(this.button1_Click);
-      this.buttonClose.Location = new Point(386, 132);
-      this.buttonClose.Name = "buttonClose";
-      this.buttonClose.Size = new Size(78, 28);
-      this.buttonClose.TabIndex = 19;
-      this.buttonClose.Text = "Cancel";
-      this.buttonClose.UseVisualStyleBackColor = true;
-      this.buttonClose.Click += new EventHandler(this.buttonClose_Click);
-      this.pictureBox1.Image = (Image) Resources.m3dlogo;
-      this.pictureBox1.InitialImage = (Image) Resources.m3dlogo;
-      this.pictureBox1.Location = new Point(12, 126);
-      this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new Size(133, 34);
-      this.pictureBox1.TabIndex = 28;
-      this.pictureBox1.TabStop = false;
-      this.AutoScaleDimensions = new SizeF(6f, 13f);
-      this.AutoScaleMode = AutoScaleMode.Font;
-      this.ClientSize = new Size(477, 176);
-      this.Controls.Add((Control) this.pictureBox1);
-      this.Controls.Add((Control) this.label4);
-      this.Controls.Add((Control) this.label3);
-      this.Controls.Add((Control) this.label2);
-      this.Controls.Add((Control) this.label1);
-      this.Controls.Add((Control) this.textBox3);
-      this.Controls.Add((Control) this.textBox2);
-      this.Controls.Add((Control) this.textBox1);
-      this.Controls.Add((Control) this.button1);
-      this.Controls.Add((Control) this.buttonClose);
-      this.Name = nameof (SendDebugEmail);
-      this.Text = nameof (SendDebugEmail);
-      ((ISupportInitialize) this.pictureBox1).EndInit();
-      this.ResumeLayout(false);
-      this.PerformLayout();
+      label4 = new Label();
+      label3 = new Label();
+      label2 = new Label();
+      label1 = new Label();
+      textBox3 = new TextBox();
+      textBox2 = new TextBox();
+      textBox1 = new TextBox();
+      button1 = new Button();
+      buttonClose = new Button();
+      pictureBox1 = new PictureBox();
+      ((ISupportInitialize)pictureBox1).BeginInit();
+      SuspendLayout();
+      label4.AutoSize = true;
+      label4.Location = new Point(12, 71);
+      label4.Name = "label4";
+      label4.Size = new Size(35, 13);
+      label4.TabIndex = 27;
+      label4.Text = "Email:";
+      label3.AutoSize = true;
+      label3.Location = new Point(227, 45);
+      label3.Name = "label3";
+      label3.Size = new Size(61, 13);
+      label3.TabIndex = 26;
+      label3.Text = "Last Name:";
+      label2.AutoSize = true;
+      label2.Location = new Point(12, 45);
+      label2.Name = "label2";
+      label2.Size = new Size(60, 13);
+      label2.TabIndex = 25;
+      label2.Text = "First Name:";
+      label1.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      label1.Location = new Point(9, 10);
+      label1.Name = "label1";
+      label1.Size = new Size(449, 16);
+      label1.TabIndex = 24;
+      label1.Text = "Please enter your name and email address so that we can get back to you.";
+      textBox3.Location = new Point(89, 68);
+      textBox3.Name = "textBox3";
+      textBox3.Size = new Size(121, 20);
+      textBox3.TabIndex = 23;
+      textBox2.Location = new Point(294, 42);
+      textBox2.Name = "textBox2";
+      textBox2.Size = new Size(125, 20);
+      textBox2.TabIndex = 22;
+      textBox1.Location = new Point(89, 42);
+      textBox1.Name = "textBox1";
+      textBox1.Size = new Size(121, 20);
+      textBox1.TabIndex = 21;
+      button1.Location = new Point(302, 132);
+      button1.Name = "button1";
+      button1.Size = new Size(78, 28);
+      button1.TabIndex = 20;
+      button1.Text = "Send";
+      button1.UseVisualStyleBackColor = true;
+      button1.Click += new EventHandler(button1_Click);
+      buttonClose.Location = new Point(386, 132);
+      buttonClose.Name = "buttonClose";
+      buttonClose.Size = new Size(78, 28);
+      buttonClose.TabIndex = 19;
+      buttonClose.Text = "Cancel";
+      buttonClose.UseVisualStyleBackColor = true;
+      buttonClose.Click += new EventHandler(buttonClose_Click);
+      pictureBox1.Image = (Image) Resources.m3dlogo;
+      pictureBox1.InitialImage = (Image) Resources.m3dlogo;
+      pictureBox1.Location = new Point(12, 126);
+      pictureBox1.Name = "pictureBox1";
+      pictureBox1.Size = new Size(133, 34);
+      pictureBox1.TabIndex = 28;
+      pictureBox1.TabStop = false;
+      AutoScaleDimensions = new SizeF(6f, 13f);
+      AutoScaleMode = AutoScaleMode.Font;
+      ClientSize = new Size(477, 176);
+      Controls.Add((Control)pictureBox1);
+      Controls.Add((Control)label4);
+      Controls.Add((Control)label3);
+      Controls.Add((Control)label2);
+      Controls.Add((Control)label1);
+      Controls.Add((Control)textBox3);
+      Controls.Add((Control)textBox2);
+      Controls.Add((Control)textBox1);
+      Controls.Add((Control)button1);
+      Controls.Add((Control)buttonClose);
+      Name = nameof (SendDebugEmail);
+      Text = nameof (SendDebugEmail);
+      ((ISupportInitialize)pictureBox1).EndInit();
+      ResumeLayout(false);
+      PerformLayout();
     }
   }
 }

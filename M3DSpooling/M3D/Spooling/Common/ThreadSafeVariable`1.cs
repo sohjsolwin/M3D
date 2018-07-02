@@ -13,26 +13,30 @@ namespace M3D.Spooling.Common
 
     public ThreadSafeVariable()
     {
-      this.thread_lock = new object();
+      thread_lock = new object();
     }
 
     public ThreadSafeVariable(T default_val)
       : this()
     {
-      this.__value = default_val;
+      __value = default_val;
     }
 
     public T Value
     {
       get
       {
-        lock (this.thread_lock)
-          return this.__value;
+        lock (thread_lock)
+        {
+          return __value;
+        }
       }
       set
       {
-        lock (this.thread_lock)
-          this.__value = value;
+        lock (thread_lock)
+        {
+          __value = value;
+        }
       }
     }
   }

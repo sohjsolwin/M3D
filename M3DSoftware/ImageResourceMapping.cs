@@ -12,8 +12,11 @@ namespace M3D
     {
       sn = sn.Substring(0, 2);
       if (!string.IsNullOrEmpty(sn))
+      {
         sn = sn.ToUpperInvariant();
-      ImageResourceMapping.PixelCoordinate pixelCoordinate = new ImageResourceMapping.PixelCoordinate();
+      }
+
+      var pixelCoordinate = new ImageResourceMapping.PixelCoordinate();
       switch (sn)
       {
         case "0R":

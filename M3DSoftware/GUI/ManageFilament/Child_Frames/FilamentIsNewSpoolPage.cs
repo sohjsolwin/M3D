@@ -26,36 +26,44 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     public override void MyButtonCallback(ButtonWidget button)
     {
-      if (this.MainWindow.GetSelectedPrinter() == null)
+      if (MainWindow.GetSelectedPrinter() == null)
+      {
         return;
+      }
+
       if (button.ID == 9)
       {
-        this.MainWindow.ResetToStartup();
+        MainWindow.ResetToStartup();
       }
       else
       {
-        this.CurrentDetails.current_spool.estimated_filament_length_printed = 0.0f;
-        this.CurrentDetails.current_spool.filament_uid = FilamentSpool.GenerateUID();
+        CurrentDetails.current_spool.estimated_filament_length_printed = 0.0f;
+        CurrentDetails.current_spool.filament_uid = FilamentSpool.GenerateUID();
         if (button.ID == 6)
         {
-          FilamentSpool filamentSpool = this.SearchForFilamentDuplicate();
+          FilamentSpool filamentSpool = SearchForFilamentDuplicate();
           if (filamentSpool != (FilamentSpool) null)
           {
-            if ((double) filamentSpool.estimated_filament_length_printed > (double) this.CurrentDetails.current_spool.estimated_filament_length_printed)
-              this.CurrentDetails.current_spool.estimated_filament_length_printed = filamentSpool.estimated_filament_length_printed;
-            this.CurrentDetails.current_spool.filament_uid = filamentSpool.filament_uid;
-            this.infobox.AddMessageToQueue("Using saved 3D Ink history.");
+            if ((double) filamentSpool.estimated_filament_length_printed > (double)CurrentDetails.current_spool.estimated_filament_length_printed)
+            {
+              CurrentDetails.current_spool.estimated_filament_length_printed = filamentSpool.estimated_filament_length_printed;
+            }
+
+            CurrentDetails.current_spool.filament_uid = filamentSpool.filament_uid;
+            infobox.AddMessageToQueue("Using saved 3D Ink history.");
           }
           else
-            this.infobox.AddMessageToQueue("Matching 3D Ink history not found. Treating as a new spool.");
+          {
+            infobox.AddMessageToQueue("Matching 3D Ink history not found. Treating as a new spool.");
+          }
         }
-        this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page13_FilamentLocation, this.CurrentDetails);
+        MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page13_FilamentLocation, CurrentDetails);
       }
     }
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("3D Ink Details", "Is this a new filament spool?", true, true, false, false, false, false);
+      CreateManageFilamentFrame("3D Ink Details", "Is this a new filament spool?", true, true, false, false, false, false);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
@@ -65,7 +73,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     private FilamentSpool SearchForFilamentDuplicate()
     {
-      return this.settingsManager.FindMatchingUsedSpool(this.CurrentDetails.current_spool);
+      return settingsManager.FindMatchingUsedSpool(CurrentDetails.current_spool);
     }
   }
 }

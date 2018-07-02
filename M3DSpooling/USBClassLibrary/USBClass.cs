@@ -27,33 +27,39 @@ namespace USBClassLibrary
     {
       get
       {
-        return !(this.deviceEventHandle == IntPtr.Zero);
+        return !(deviceEventHandle == IntPtr.Zero);
       }
     }
 
     public bool RegisterForDeviceChange(bool Register, IntPtr WindowsHandle)
     {
-      bool flag = false;
+      var flag = false;
       if (Register)
       {
-        USBClass.Win32Wrapper.DEV_BROADCAST_DEVICEINTERFACE structure = new USBClass.Win32Wrapper.DEV_BROADCAST_DEVICEINTERFACE();
-        int cb = Marshal.SizeOf<USBClass.Win32Wrapper.DEV_BROADCAST_DEVICEINTERFACE>(structure);
+        var structure = new USBClass.Win32Wrapper.DEV_BROADCAST_DEVICEINTERFACE();
+        var cb = Marshal.SizeOf<USBClass.Win32Wrapper.DEV_BROADCAST_DEVICEINTERFACE>(structure);
         structure.dbcc_size = cb;
         structure.dbcc_devicetype = 5;
-        IntPtr num1 = new IntPtr();
+        var num1 = new IntPtr();
         IntPtr num2 = Marshal.AllocHGlobal(cb);
         Marshal.StructureToPtr<USBClass.Win32Wrapper.DEV_BROADCAST_DEVICEINTERFACE>(structure, num2, true);
-        this.deviceEventHandle = USBClass.Win32Wrapper.RegisterDeviceNotification(WindowsHandle, num2, 4);
-        flag = this.deviceEventHandle != IntPtr.Zero;
+        deviceEventHandle = Win32Wrapper.RegisterDeviceNotification(WindowsHandle, num2, 4);
+        flag = deviceEventHandle != IntPtr.Zero;
         if (!flag)
+        {
           Marshal.GetLastWin32Error();
+        }
+
         Marshal.FreeHGlobal(num2);
       }
       else
       {
-        if (this.deviceEventHandle != IntPtr.Zero)
-          flag = USBClass.Win32Wrapper.UnregisterDeviceNotification(this.deviceEventHandle);
-        this.deviceEventHandle = IntPtr.Zero;
+        if (deviceEventHandle != IntPtr.Zero)
+        {
+          flag = Win32Wrapper.UnregisterDeviceNotification(deviceEventHandle);
+        }
+
+        deviceEventHandle = IntPtr.Zero;
       }
       return flag;
     }
@@ -61,29 +67,40 @@ namespace USBClassLibrary
     public void ProcessWindowsMessage(int Msg, IntPtr WParam, IntPtr LParam, ref bool handled)
     {
       if (Msg != 537)
+      {
         return;
+      }
+
       switch (WParam.ToInt32())
       {
         case 32768:
           if (Marshal.ReadInt32(LParam, 4) != 5)
+          {
             break;
+          }
+
           handled = true;
           // ISSUE: reference to a compiler-generated field
-          this.USBDeviceAttached((object) this, new USBClass.USBDeviceEventArgs());
+          USBDeviceAttached((object) this, new USBClass.USBDeviceEventArgs());
           break;
         case 32769:
           if (Marshal.ReadInt32(LParam, 4) != 5)
+          {
             break;
+          }
+
           handled = true;
           // ISSUE: reference to a compiler-generated field
-          this.USBDeviceQueryRemove((object) this, new USBClass.USBDeviceEventArgs());
+          USBDeviceQueryRemove((object) this, new USBClass.USBDeviceEventArgs());
           break;
         case 32772:
           handled = true;
           if (Marshal.ReadInt32(LParam, 4) != 5)
+          {
             break;
+          }
           // ISSUE: reference to a compiler-generated field
-          this.USBDeviceRemoved((object) this, new USBClass.USBDeviceEventArgs());
+          USBDeviceRemoved((object) this, new USBClass.USBDeviceEventArgs());
           break;
       }
     }
@@ -95,16 +112,19 @@ namespace USBClassLibrary
       DPList.Clear();
       try
       {
-        string Enumerator = "USB";
-        string empty = string.Empty;
-        string str = string.Empty;
-        string lowerInvariant1 = ("VID_" + VID.ToString("X4") + "&PID_" + PID.ToString("X4")).ToLowerInvariant();
+        var Enumerator = "USB";
+        var empty = string.Empty;
+        var str = string.Empty;
+        var lowerInvariant1 = ("VID_" + VID.ToString("X4") + "&PID_" + PID.ToString("X4")).ToLowerInvariant();
         if (MI.HasValue)
+        {
           str = ("MI_" + MI.Value.ToString("X2")).ToLowerInvariant();
-        num2 = USBClass.Win32Wrapper.SetupDiGetClassDevs(IntPtr.Zero, Enumerator, IntPtr.Zero, 6);
+        }
+
+        num2 = Win32Wrapper.SetupDiGetClassDevs(IntPtr.Zero, Enumerator, IntPtr.Zero, 6);
         if (num2.ToInt64() != -1L)
         {
-          bool flag = true;
+          var flag = true;
           uint MemberIndex = 0;
           while (flag)
           {
@@ -112,58 +132,86 @@ namespace USBClassLibrary
             {
               uint RequiredSize = 0;
               uint PropertyRegDataType = 0;
-              USBClass.Win32Wrapper.SP_DEVINFO_DATA DeviceInfoData = new USBClass.Win32Wrapper.SP_DEVINFO_DATA();
+              var DeviceInfoData = new USBClass.Win32Wrapper.SP_DEVINFO_DATA();
               DeviceInfoData.cbSize = (uint) Marshal.SizeOf<USBClass.Win32Wrapper.SP_DEVINFO_DATA>(DeviceInfoData);
-              flag = USBClass.Win32Wrapper.SetupDiEnumDeviceInfo(num2, MemberIndex, ref DeviceInfoData);
+              flag = Win32Wrapper.SetupDiEnumDeviceInfo(num2, MemberIndex, ref DeviceInfoData);
               if (flag)
               {
-                USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 1U, ref PropertyRegDataType, IntPtr.Zero, 0U, ref RequiredSize);
-                if (Marshal.GetLastWin32Error() == 122 && RequiredSize <= 1024U && USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 1U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 1U, ref PropertyRegDataType, IntPtr.Zero, 0U, ref RequiredSize);
+                if (Marshal.GetLastWin32Error() == 122 && RequiredSize <= 1024U && Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 1U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
                 {
-                  string lowerInvariant2 = Marshal.PtrToStringAuto(num1).ToLowerInvariant();
+                  var lowerInvariant2 = Marshal.PtrToStringAuto(num1).ToLowerInvariant();
                   if (lowerInvariant2.Contains(lowerInvariant1) && (MI.HasValue && lowerInvariant2.Contains(str) || !MI.HasValue && !lowerInvariant2.Contains("mi")))
                   {
-                    USBClass.DeviceProperties deviceProperties = new USBClass.DeviceProperties();
-                    deviceProperties.FriendlyName = string.Empty;
-                    if (USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 12U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    var deviceProperties = new DeviceProperties
+                    {
+                      FriendlyName = string.Empty
+                    };
+                    if (Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 12U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    {
                       deviceProperties.FriendlyName = Marshal.PtrToStringAuto(num1);
+                    }
+
                     deviceProperties.DeviceType = string.Empty;
-                    if (USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 25U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    if (Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 25U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    {
                       deviceProperties.DeviceType = Marshal.PtrToStringAuto(num1);
+                    }
+
                     deviceProperties.DeviceClass = string.Empty;
-                    if (USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 7U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    if (Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 7U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    {
                       deviceProperties.DeviceClass = Marshal.PtrToStringAuto(num1);
+                    }
+
                     deviceProperties.DeviceManufacturer = string.Empty;
-                    if (USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 11U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    if (Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 11U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    {
                       deviceProperties.DeviceManufacturer = Marshal.PtrToStringAuto(num1);
+                    }
+
                     deviceProperties.DeviceLocation = string.Empty;
-                    if (USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 13U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    if (Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 13U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    {
                       deviceProperties.DeviceLocation = Marshal.PtrToStringAuto(num1);
+                    }
+
                     deviceProperties.DevicePath = string.Empty;
-                    if (USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 35U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    if (Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 35U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    {
                       deviceProperties.DevicePath = Marshal.PtrToStringAuto(num1);
+                    }
+
                     deviceProperties.DevicePhysicalObjectName = string.Empty;
-                    if (USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 14U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    if (Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 14U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    {
                       deviceProperties.DevicePhysicalObjectName = Marshal.PtrToStringAuto(num1);
+                    }
+
                     deviceProperties.DeviceDescription = string.Empty;
-                    if (USBClass.Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 0U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    if (Win32Wrapper.SetupDiGetDeviceRegistryProperty(num2, ref DeviceInfoData, 0U, ref PropertyRegDataType, num1, 1024U, ref RequiredSize))
+                    {
                       deviceProperties.DeviceDescription = Marshal.PtrToStringAuto(num1);
+                    }
+
                     deviceProperties.COMPort = string.Empty;
                     if (GetCOMPort)
                     {
-                      IntPtr hKey = USBClass.Win32Wrapper.SetupDiOpenDevRegKey(num2, ref DeviceInfoData, 1U, 0U, 1U, 131097U);
+                      IntPtr hKey = Win32Wrapper.SetupDiOpenDevRegKey(num2, ref DeviceInfoData, 1U, 0U, 1U, 131097U);
                       if (hKey.ToInt32() == -1)
                       {
                         deviceProperties.COMPort = (string) null;
                       }
                       else
                       {
-                        uint lpType = 0;
-                        StringBuilder lpData = new StringBuilder(1024);
-                        uint capacity = (uint) lpData.Capacity;
-                        if (USBClass.Win32Wrapper.RegQueryValueEx(hKey, "PortName", 0U, out lpType, lpData, ref capacity) == 0)
+                        var lpData = new StringBuilder(1024);
+                        var capacity = (uint) lpData.Capacity;
+                        if (Win32Wrapper.RegQueryValueEx(hKey, "PortName", 0U, out var lpType, lpData, ref capacity) == 0)
+                        {
                           deviceProperties.COMPort = lpData.ToString();
-                        USBClass.Win32Wrapper.RegCloseKey(hKey);
+                        }
+
+                        Win32Wrapper.RegCloseKey(hKey);
                       }
                     }
                     DPList.Add(deviceProperties);
@@ -173,7 +221,7 @@ namespace USBClassLibrary
             }
             else
             {
-              long lastWin32Error = (long) Marshal.GetLastWin32Error();
+              var lastWin32Error = (long) Marshal.GetLastWin32Error();
             }
             ++MemberIndex;
           }
@@ -186,14 +234,14 @@ namespace USBClassLibrary
       }
       finally
       {
-        USBClass.Win32Wrapper.SetupDiDestroyDeviceInfoList(num2);
+        Win32Wrapper.SetupDiDestroyDeviceInfoList(num2);
         Marshal.FreeHGlobal(num1);
       }
     }
 
     ~USBClass()
     {
-      this.RegisterForDeviceChange(false, IntPtr.Zero);
+      RegisterForDeviceChange(false, IntPtr.Zero);
     }
 
     private class Win32Wrapper
@@ -490,9 +538,9 @@ namespace USBClassLibrary
 
         public DevBroadcastDeviceInterfaceBuffer(int deviceType)
         {
-          this.dbch_size = Marshal.SizeOf(typeof (USBClass.Win32Wrapper.DevBroadcastDeviceInterfaceBuffer));
-          this.dbch_devicetype = deviceType;
-          this.dbch_reserved = 0;
+          dbch_size = Marshal.SizeOf(typeof (USBClass.Win32Wrapper.DevBroadcastDeviceInterfaceBuffer));
+          dbch_devicetype = deviceType;
+          dbch_reserved = 0;
         }
       }
 
@@ -566,8 +614,8 @@ namespace USBClassLibrary
 
       public USBDeviceEventArgs()
       {
-        this.Cancel = false;
-        this.HookQueryRemove = false;
+        Cancel = false;
+        HookQueryRemove = false;
       }
     }
 

@@ -112,60 +112,77 @@ namespace M3D.Spooling.Client
     public SpoolerResult StartInternalSpoolerSession()
     {
       Trace.WriteLine("SpoolerClient2.StartSession");
-      this.MyDebugLogger.Add("SpoolerClientInternal::StartSession", "Starting", DebugLogger.LogType.Secondary);
+      MyDebugLogger.Add("SpoolerClientInternal::StartSession", "Starting", DebugLogger.LogType.Secondary);
       SpoolerResult spoolerResult = SpoolerResult.Fail_Connect;
       try
       {
-        InternalSpoolerConnection spoolerConnection = new InternalSpoolerConnection();
-        spoolerConnection.XMLProcessor = new OnReceiveXMLFromSpooler(((SpoolerClient) this).ProcessXMLFromServer);
+        var spoolerConnection = new InternalSpoolerConnection
+        {
+          XMLProcessor = new OnReceiveXMLFromSpooler(((SpoolerClient)this).ProcessXMLFromServer)
+        };
         if (!spoolerConnection.StartServer(42345))
+        {
           return SpoolerResult.Fail_Connect;
-        spoolerConnection.OnReceivedSpoolerShutdownMessage = new EventHandler<EventArgs>(this.ReceivedSpoolerShutdownMessage);
-        spoolerConnection.OnReceivedSpoolerShowMessage = new EventHandler<EventArgs>(this.ReceivedSpoolerShowMessage);
-        spoolerConnection.OnReceivedSpoolerHideMessage = new EventHandler<EventArgs>(this.ReceivedSpoolerHideMessage);
-        this.spooler_connection = (ISpoolerConnection) spoolerConnection;
-        spoolerResult = this.InitialConnect();
+        }
+
+        spoolerConnection.OnReceivedSpoolerShutdownMessage = new EventHandler<EventArgs>(ReceivedSpoolerShutdownMessage);
+        spoolerConnection.OnReceivedSpoolerShowMessage = new EventHandler<EventArgs>(ReceivedSpoolerShowMessage);
+        spoolerConnection.OnReceivedSpoolerHideMessage = new EventHandler<EventArgs>(ReceivedSpoolerHideMessage);
+        spooler_connection = (ISpoolerConnection) spoolerConnection;
+        spoolerResult = InitialConnect();
         Trace.WriteLine(string.Format("SpoolerClient2.StartSession Completed {0}", (object) spoolerResult));
-        this.MyDebugLogger.Add("SpoolerClientInternal::StartSession", "Connected to Spooler", DebugLogger.LogType.Secondary);
+        MyDebugLogger.Add("SpoolerClientInternal::StartSession", "Connected to Spooler", DebugLogger.LogType.Secondary);
       }
       catch (Exception ex)
       {
         ErrorLogger.LogException("Exception in SpoolerClient2.StartSession " + ex.Message, ex);
-        this.spooler_connection = (ISpoolerConnection) null;
-        this.CloseSession();
+        spooler_connection = (ISpoolerConnection) null;
+        CloseSession();
       }
-      if (this.spooler_connection != null)
-        this.StartThreads();
-      this.MyDebugLogger.Add("SpoolerClientInternal::StartSession", "SpoolerClient threads created", DebugLogger.LogType.Secondary);
+      if (spooler_connection != null)
+      {
+        StartThreads();
+      }
+
+      MyDebugLogger.Add("SpoolerClientInternal::StartSession", "SpoolerClient threads created", DebugLogger.LogType.Secondary);
       return spoolerResult;
     }
 
     public PublicPrinterConnection UnsafeFindPrinterConnection(PrinterSerialNumber serialnumber)
     {
-      if (this.spooler_connection == null || !(this.spooler_connection is InternalSpoolerConnection))
+      if (spooler_connection == null || !(spooler_connection is InternalSpoolerConnection))
+      {
         return (PublicPrinterConnection) null;
-      return (PublicPrinterConnection) ((InternalSpoolerConnection) this.spooler_connection).SpoolerServer.GetPrinterConnection(serialnumber);
+      }
+
+      return (PublicPrinterConnection) ((InternalSpoolerConnection)spooler_connection).SpoolerServer.GetPrinterConnection(serialnumber);
     }
 
     public bool ConnectInternalSpoolerToWindow(IntPtr hwnd)
     {
-      if (this.spooler_connection == null || !(this.spooler_connection is InternalSpoolerConnection))
+      if (spooler_connection == null || !(spooler_connection is InternalSpoolerConnection))
+      {
         return false;
-      return ((InternalSpoolerConnection) this.spooler_connection).ConnectToWindow(hwnd);
+      }
+
+      return ((InternalSpoolerConnection)spooler_connection).ConnectToWindow(hwnd);
     }
 
     public bool CanShutdown()
     {
-      if (this.spooler_connection == null || !(this.spooler_connection is InternalSpoolerConnection))
+      if (spooler_connection == null || !(spooler_connection is InternalSpoolerConnection))
+      {
         return true;
-      return !this.IsBusy;
+      }
+
+      return !IsBusy;
     }
 
     public bool DisconnectAllPrinters()
     {
-      if (this.spooler_connection != null && this.spooler_connection is InternalSpoolerConnection)
+      if (spooler_connection != null && spooler_connection is InternalSpoolerConnection)
       {
-        InternalSpoolerConnection spoolerConnection = (InternalSpoolerConnection) this.spooler_connection;
+        var spoolerConnection = (InternalSpoolerConnection)spooler_connection;
         if (spoolerConnection.SpoolerServer != null)
         {
           spoolerConnection.SpoolerServer.DisconnectAll();
@@ -179,11 +196,13 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        if (this.spooler_connection != null && this.spooler_connection is InternalSpoolerConnection)
+        if (spooler_connection != null && spooler_connection is InternalSpoolerConnection)
         {
-          InternalSpoolerConnection spoolerConnection = (InternalSpoolerConnection) this.spooler_connection;
+          var spoolerConnection = (InternalSpoolerConnection)spooler_connection;
           if (spoolerConnection.SpoolerServer != null)
+          {
             return spoolerConnection.SpoolerServer.ClientCount;
+          }
         }
         return 0;
       }
@@ -191,11 +210,17 @@ namespace M3D.Spooling.Client
 
     public void BroadcastMessage(string message)
     {
-      if (this.spooler_connection == null || !(this.spooler_connection is InternalSpoolerConnection))
+      if (spooler_connection == null || !(spooler_connection is InternalSpoolerConnection))
+      {
         return;
-      InternalSpoolerConnection spoolerConnection = (InternalSpoolerConnection) this.spooler_connection;
+      }
+
+      var spoolerConnection = (InternalSpoolerConnection)spooler_connection;
       if (spoolerConnection.SpoolerServer == null)
+      {
         return;
+      }
+
       spoolerConnection.SpoolerServer.BroadcastMessage(message);
     }
 
@@ -203,14 +228,17 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        if (this.spooler_connection != null && this.spooler_connection is InternalSpoolerConnection)
+        if (spooler_connection != null && spooler_connection is InternalSpoolerConnection)
         {
-          InternalSpoolerConnection spoolerConnection = (InternalSpoolerConnection) this.spooler_connection;
+          var spoolerConnection = (InternalSpoolerConnection)spooler_connection;
           if (spoolerConnection.SpoolerServer != null)
           {
             SpoolerServer spoolerServer = spoolerConnection.SpoolerServer;
             if (spoolerServer.NumActiveAndQueuedJobs <= 0)
+            {
               return spoolerServer.ArePrintersDoingWork;
+            }
+
             return true;
           }
         }
@@ -221,28 +249,34 @@ namespace M3D.Spooling.Client
     private void ReceivedSpoolerShutdownMessage(object sender, EventArgs e)
     {
       // ISSUE: reference to a compiler-generated field
-      if (this.OnReceivedSpoolerShutdownMessage == null)
+      if (OnReceivedSpoolerShutdownMessage == null)
+      {
         return;
+      }
       // ISSUE: reference to a compiler-generated field
-      this.OnReceivedSpoolerShutdownMessage(sender, e);
+      OnReceivedSpoolerShutdownMessage(sender, e);
     }
 
     private void ReceivedSpoolerShowMessage(object sender, EventArgs e)
     {
       // ISSUE: reference to a compiler-generated field
-      if (this.OnReceivedSpoolerShowMessage == null)
+      if (OnReceivedSpoolerShowMessage == null)
+      {
         return;
+      }
       // ISSUE: reference to a compiler-generated field
-      this.OnReceivedSpoolerShowMessage(sender, e);
+      OnReceivedSpoolerShowMessage(sender, e);
     }
 
     private void ReceivedSpoolerHideMessage(object sender, EventArgs e)
     {
       // ISSUE: reference to a compiler-generated field
-      if (this.OnReceivedSpoolerHideMessage == null)
+      if (OnReceivedSpoolerHideMessage == null)
+      {
         return;
+      }
       // ISSUE: reference to a compiler-generated field
-      this.OnReceivedSpoolerHideMessage(sender, e);
+      OnReceivedSpoolerHideMessage(sender, e);
     }
   }
 }

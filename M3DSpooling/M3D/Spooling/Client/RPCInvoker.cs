@@ -29,20 +29,29 @@ namespace M3D.Spooling.Client
       if (call.parameters != null)
       {
         Type[] types = new Type[call.parameters.Length];
-        for (int index = 0; index < call.parameters.Length; ++index)
+        for (var index = 0; index < call.parameters.Length; ++index)
+        {
           types[index] = call.parameters[index].GetType();
+        }
+
         method = object_instance.GetType().GetMethod(call.name, types);
       }
       else
+      {
         method = object_instance.GetType().GetMethod(call.name);
+      }
+
       if (method == (MethodInfo) null)
+      {
         throw new MissingMethodException("the method is not in the class");
+      }
+
       return method.Invoke(object_instance, call.parameters);
     }
 
     public object CallMethod(RPCInvoker.RPC call)
     {
-      return this.CallMethod(this.class_instance, call);
+      return CallMethod(class_instance, call);
     }
 
     public struct RPC
@@ -81,7 +90,7 @@ namespace M3D.Spooling.Client
       public RPC(PrinterSerialNumber serialnumber, Guid lockID, uint callID, string name, params object[] param)
       {
         this.name = name;
-        this.parameters = param;
+        parameters = param;
         this.serialnumber = serialnumber;
         this.lockID = lockID;
         this.callID = callID;
@@ -89,11 +98,13 @@ namespace M3D.Spooling.Client
 
       public string Serialize()
       {
-        XmlWriterSettings settings = new XmlWriterSettings();
-        settings.OmitXmlDeclaration = true;
-        StringWriter stringWriter = new StringWriter();
-        XmlWriter xmlWriter = XmlWriter.Create((TextWriter) stringWriter, settings);
-        XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+        var settings = new XmlWriterSettings
+        {
+          OmitXmlDeclaration = true
+        };
+        var stringWriter = new StringWriter();
+        var xmlWriter = XmlWriter.Create((TextWriter) stringWriter, settings);
+        var namespaces = new XmlSerializerNamespaces();
         namespaces.Add("", "");
         try
         {
@@ -102,7 +113,10 @@ namespace M3D.Spooling.Client
         catch (Exception ex)
         {
           if (Debugger.IsAttached)
+          {
             Debugger.Break();
+          }
+
           throw;
         }
         return stringWriter.ToString();
@@ -110,8 +124,10 @@ namespace M3D.Spooling.Client
 
       public void Deserialize(string serialization)
       {
-        using (TextReader textReader = (TextReader) new StringReader(serialization))
+        using (var textReader = (TextReader) new StringReader(serialization))
+        {
           this = (RPCInvoker.RPC) RPCInvoker.RPC.ClassSerializer.Deserialize(textReader);
+        }
       }
 
       [XmlAttribute("printer")]
@@ -119,13 +135,16 @@ namespace M3D.Spooling.Client
       {
         get
         {
-          if (!(this.serialnumber != (PrinterSerialNumber) null))
+          if (!(serialnumber != (PrinterSerialNumber) null))
+          {
             return (string) null;
-          return this.serialnumber.ToString();
+          }
+
+          return serialnumber.ToString();
         }
         set
         {
-          this.serialnumber = new PrinterSerialNumber(value);
+          serialnumber = new PrinterSerialNumber(value);
         }
       }
 
@@ -134,11 +153,11 @@ namespace M3D.Spooling.Client
       {
         get
         {
-          return this.lockID.ToString();
+          return lockID.ToString();
         }
         set
         {
-          this.lockID = Guid.Parse(value);
+          lockID = Guid.Parse(value);
         }
       }
 
@@ -147,7 +166,10 @@ namespace M3D.Spooling.Client
         get
         {
           if (RPCInvoker.RPC.__class_serializer == null)
+          {
             RPCInvoker.RPC.__class_serializer = new XmlSerializer(typeof (RPCInvoker.RPC));
+          }
+
           return RPCInvoker.RPC.__class_serializer;
         }
       }

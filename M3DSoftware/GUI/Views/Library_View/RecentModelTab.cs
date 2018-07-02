@@ -28,7 +28,7 @@ namespace M3D.GUI.Views.Library_View
 
     public RecentModelTab(LibraryView libraryView, ModelLoadingManager model_loading_manager, MessagePopUp infobox, GLControl glControl)
     {
-      this.libraryData = new RecentModelHistory();
+      libraryData = new RecentModelHistory();
       this.model_loading_manager = model_loading_manager;
       this.libraryView = libraryView;
       this.glControl = glControl;
@@ -59,25 +59,33 @@ namespace M3D.GUI.Views.Library_View
     {
       LibraryGrid.Clear();
       Sprite.pixel_perfect = false;
-      QueryResults<RecentModelHistory.RecentRecord> queryResults = this.libraryData.QuereyRecords(filter);
+      QueryResults<RecentModelHistory.RecentRecord> queryResults = libraryData.QuereyRecords(filter);
       if (queryResults == null)
+      {
         return;
-      int num = 0;
+      }
+
+      var num = 0;
       foreach (RecentModelHistory.RecentRecord record in queryResults.records)
       {
-        ButtonWidget buttonWidget = new ButtonWidget(1064 + num, (Element2D) null);
+        var buttonWidget = new ButtonWidget(1064 + num, (Element2D) null);
         if (string.IsNullOrEmpty(record.iconfilename) || !File.Exists(record.iconfilename))
+        {
           buttonWidget.Init(host, "null.png");
+        }
         else
+        {
           buttonWidget.Init(host, record.iconfilename);
+        }
+
         buttonWidget.DontMove = true;
-        string str1 = record._3dmodelfilename;
+        var str1 = record._3dmodelfilename;
         if (str1.Length > 30)
         {
-          string str2 = str1.Substring(0, 15);
-          string str3 = str1.Substring(str1.Length - 15, 15);
-          string str4 = " ... ";
-          string str5 = str3;
+          var str2 = str1.Substring(0, 15);
+          var str3 = str1.Substring(str1.Length - 15, 15);
+          var str4 = " ... ";
+          var str5 = str3;
           str1 = str2 + str4 + str5;
         }
         buttonWidget.Text = str1;
@@ -85,7 +93,7 @@ namespace M3D.GUI.Views.Library_View
         buttonWidget.Size = FontSize.Small;
         buttonWidget.VAlignment = TextVerticalAlignment.Bottom;
         buttonWidget.Data = (object) record;
-        buttonWidget.SetCallback(new ButtonCallback(this.MyButtonCallback));
+        buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
         buttonWidget.SetFullyDraggable();
         LibraryGrid.AddChildElement((Element2D) buttonWidget);
         ++num;
@@ -95,59 +103,65 @@ namespace M3D.GUI.Views.Library_View
     public void MyButtonCallback(ButtonWidget button)
     {
       if (button.ID < 1064 || !(button.Data is RecentModelHistory.RecentRecord))
+      {
         return;
-      this.LoadRecord((LibraryRecord) button.Data);
+      }
+
+      LoadRecord((LibraryRecord) button.Data);
     }
 
     public void LoadRecord(LibraryRecord record)
     {
       if (!string.IsNullOrEmpty(record.cachefilename))
       {
-        this.model_loading_manager.LoadModelIntoPrinter(record, new ModelLoadingManager.LoadFailedCallback(this.OnLoadFailure));
+        model_loading_manager.LoadModelIntoPrinter(record, new ModelLoadingManager.LoadFailedCallback(OnLoadFailure));
       }
       else
       {
-        this.libraryData.RemoveFileFromRecent(record.ID);
-        this.libraryView.ScheduleRefresh();
-        this.infobox.AddMessageToQueue("Unable to load model from previous software.");
+        libraryData.RemoveFileFromRecent(record.ID);
+        libraryView.ScheduleRefresh();
+        infobox.AddMessageToQueue("Unable to load model from previous software.");
       }
     }
 
     private void OnLoadFailure(string name)
     {
-      this.libraryData.RemoveFileFromRecent(name);
-      this.libraryView.ScheduleRefresh();
+      libraryData.RemoveFileFromRecent(name);
+      libraryView.ScheduleRefresh();
     }
 
     public void RemoveRecord(LibraryRecord record)
     {
-      this.libraryData.RemoveFileFromRecent(record.ID);
+      libraryData.RemoveFileFromRecent(record.ID);
     }
 
     public void GenerateIconForLibrary(ModelTransformPair model_transform)
     {
-      string zipFileName = model_transform.modelNode.zipFileName;
+      var zipFileName = model_transform.modelNode.zipFileName;
       if (!string.IsNullOrEmpty(zipFileName))
       {
         if (zipFileName == "313a13a6-9edf-44c7-a81d-50b914e423cc-6bb0e036-df11-4d66-82b3-8b7f0de03d2c")
+        {
           return;
-        RecentModelHistory.RecentRecord record = this.libraryData.GetRecord(zipFileName);
+        }
+
+        RecentModelHistory.RecentRecord record = libraryData.GetRecord(zipFileName);
         if (record != null && !string.IsNullOrEmpty(record.iconfilename))
         {
-          this.ImageGenerated(zipFileName, record.iconfilename);
+          ImageGenerated(zipFileName, record.iconfilename);
           return;
         }
       }
-      string iconFileName = this.GenerateIconFileName(model_transform.modelNode.fileName);
-      ImageCapture.GenerateAndSaveIcon(model_transform, iconFileName, new Vector2(400f, 400f), new Color4(0.8431373f, 0.8901961f, 0.9921569f, 1f), this.glControl, new ImageCapture.PreviewImageCallback(this.ImageGenerated));
+      var iconFileName = GenerateIconFileName(model_transform.modelNode.fileName);
+      ImageCapture.GenerateAndSaveIcon(model_transform, iconFileName, new Vector2(400f, 400f), new Color4(0.8431373f, 0.8901961f, 0.9921569f, 1f), glControl, new ImageCapture.PreviewImageCallback(ImageGenerated));
     }
 
     public void CopyAndAssignIconForLibrary(string fileName, string sourceIconFile)
     {
-      string str = (string) null;
+      var str = (string) null;
       if (!string.IsNullOrEmpty(sourceIconFile))
       {
-        str = this.GenerateIconFileName(fileName);
+        str = GenerateIconFileName(fileName);
         try
         {
           File.Copy(sourceIconFile, str);
@@ -157,23 +171,26 @@ namespace M3D.GUI.Views.Library_View
           str = (string) null;
         }
       }
-      this.ImageGenerated(fileName, str);
+      ImageGenerated(fileName, str);
     }
 
     private string GenerateIconFileName(string modelname)
     {
-      SplitFileName splitFileName = new SplitFileName(modelname);
-      string str = Path.Combine(Paths.PublicDataFolder, "MyLibrary", "Icons");
+      var splitFileName = new SplitFileName(modelname);
+      var str = Path.Combine(Paths.PublicDataFolder, "MyLibrary", "Icons");
       if (!Directory.Exists(str))
+      {
         Directory.CreateDirectory(str);
-      long num = DateTime.Now.Ticks / 10000L;
+      }
+
+      var num = DateTime.Now.Ticks / 10000L;
       return Path.Combine(str, splitFileName.name + num.ToString() + ".png");
     }
 
     private void ImageGenerated(string fileName, string iconFile)
     {
-      this.libraryData.AddModelToRecent(fileName, iconFile);
-      this.libraryView.ScheduleRefresh();
+      libraryData.AddModelToRecent(fileName, iconFile);
+      libraryView.ScheduleRefresh();
     }
   }
 }

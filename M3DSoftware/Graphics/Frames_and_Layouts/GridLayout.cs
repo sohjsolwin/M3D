@@ -33,105 +33,141 @@ namespace M3D.Graphics.Frames_and_Layouts
     public GridLayout(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.element_list = new List<Element2D>();
-      this.border_width = 10;
-      this.border_height = 10;
-      this.column_width = 100;
-      this.row_height = 100;
+      element_list = new List<Element2D>();
+      border_width = 10;
+      border_height = 10;
+      column_width = 100;
+      row_height = 100;
     }
 
     public override void OnParentResize()
     {
-      this.RecalcChildSizes();
+      RecalcChildSizes();
       base.OnParentResize();
     }
 
     public Element2D GetElementAt(int index)
     {
-      if (index >= 0 && index < this.element_list.Count)
-        return this.element_list[index];
+      if (index >= 0 && index < element_list.Count)
+      {
+        return element_list[index];
+      }
+
       return (Element2D) null;
     }
 
     public override void Clear()
     {
-      this.cur_page = 0;
-      this.element_list.Clear();
+      cur_page = 0;
+      element_list.Clear();
       base.Clear();
     }
 
     private void RecalcChildSizes()
     {
-      if (this.Count < 1)
-        return;
-      int numColumns1 = this.NumColumns;
-      int numRows = this.NumRows;
-      if (numColumns1 <= 0 || numRows <= 0 || (this.Width > 100000 || this.Width < 0))
-        return;
-      int num1 = (this.Width - numColumns1 * this.ColumnWidth) / (numColumns1 + 1);
-      int num2 = (this.Height - numRows * this.RowHeight) / (numRows + 1);
-      int num3 = this.CurPage * this.ElementsPerPage;
-      int num4 = num3 + this.ElementsPerPage - 1;
-      this.last_start = num3;
-      if (num4 >= this.element_list.Count)
-        num4 = this.element_list.Count - 1;
-      for (int index = 0; index < num3; ++index)
+      if (Count < 1)
       {
-        if (this.element_list[index].Active)
-          this.element_list[index].Active = false;
-        if (this.element_list[index].Visible)
-          this.element_list[index].Visible = false;
+        return;
       }
-      for (int index = num4 + 1; index < this.element_list.Count; ++index)
+
+      var numColumns1 = NumColumns;
+      var numRows = NumRows;
+      if (numColumns1 <= 0 || numRows <= 0 || (Width > 100000 || Width < 0))
       {
-        if (this.element_list[index].Active)
-          this.element_list[index].Active = false;
-        if (this.element_list[index].Visible)
-          this.element_list[index].Visible = false;
+        return;
       }
-      int numColumns2 = this.NumColumns;
-      int num5 = 0;
-      int x = num1;
-      int y = num2;
-      for (int index = num3; index <= num4; ++index)
+
+      var num1 = (Width - numColumns1 * ColumnWidth) / (numColumns1 + 1);
+      var num2 = (Height - numRows * RowHeight) / (numRows + 1);
+      var num3 = CurPage * ElementsPerPage;
+      var num4 = num3 + ElementsPerPage - 1;
+      last_start = num3;
+      if (num4 >= element_list.Count)
+      {
+        num4 = element_list.Count - 1;
+      }
+
+      for (var index = 0; index < num3; ++index)
+      {
+        if (element_list[index].Active)
+        {
+          element_list[index].Active = false;
+        }
+
+        if (element_list[index].Visible)
+        {
+          element_list[index].Visible = false;
+        }
+      }
+      for (var index = num4 + 1; index < element_list.Count; ++index)
+      {
+        if (element_list[index].Active)
+        {
+          element_list[index].Active = false;
+        }
+
+        if (element_list[index].Visible)
+        {
+          element_list[index].Visible = false;
+        }
+      }
+      var numColumns2 = NumColumns;
+      var num5 = 0;
+      var x = num1;
+      var y = num2;
+      for (var index = num3; index <= num4; ++index)
       {
         if (num5 >= numColumns2)
         {
           num5 = 0;
           x = num1;
-          y += num2 + this.row_height;
+          y += num2 + row_height;
         }
-        this.element_list[index].SetPosition(x, y);
-        this.element_list[index].SetSize(this.column_width, this.row_height);
-        if (!this.element_list[index].Active)
-          this.element_list[index].Active = true;
-        if (!this.element_list[index].Visible)
-          this.element_list[index].Visible = true;
+        element_list[index].SetPosition(x, y);
+        element_list[index].SetSize(column_width, row_height);
+        if (!element_list[index].Active)
+        {
+          element_list[index].Active = true;
+        }
+
+        if (!element_list[index].Visible)
+        {
+          element_list[index].Visible = true;
+        }
+
         ++num5;
-        x += num1 + this.column_width;
+        x += num1 + column_width;
       }
     }
 
     public override void SetSize(int width, int height)
     {
       base.SetSize(width, height);
-      if (this.ElementsPerPage <= 0)
+      if (ElementsPerPage <= 0)
+      {
         return;
-      this.cur_page = this.last_start / this.ElementsPerPage;
+      }
+
+      cur_page = last_start / ElementsPerPage;
     }
 
     public override void AddChildElement(Element2D child)
     {
-      this.AddChildElement(child, this.element_list.Count);
+      AddChildElement(child, element_list.Count);
     }
 
     public void AddChildElement(Element2D child, int index)
     {
-      if (index > this.element_list.Count)
-        index = this.element_list.Count;
+      if (index > element_list.Count)
+      {
+        index = element_list.Count;
+      }
       else if (index < 0)
+      {
         index = 0;
-      this.element_list.Insert(index, child);
+      }
+
+      element_list.Insert(index, child);
       base.AddChildElement(child);
     }
 
@@ -139,7 +175,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.NumColumns * this.NumRows;
+        return NumColumns * NumRows;
       }
     }
 
@@ -147,16 +183,21 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.cur_page;
+        return cur_page;
       }
       set
       {
-        this.cur_page = value;
-        if (this.cur_page < 0)
-          this.cur_page = 0;
-        else if (this.cur_page >= this.PageCount)
-          this.cur_page = this.PageCount - 1;
-        this.RecalcChildSizes();
+        cur_page = value;
+        if (cur_page < 0)
+        {
+          cur_page = 0;
+        }
+        else if (cur_page >= PageCount)
+        {
+          cur_page = PageCount - 1;
+        }
+
+        RecalcChildSizes();
       }
     }
 
@@ -164,9 +205,12 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        if (this.element_list == null || this.element_list.Count == 0)
+        if (element_list == null || element_list.Count == 0)
+        {
           return 1;
-        return (int) Math.Ceiling((double) this.element_list.Count / (double) this.ElementsPerPage);
+        }
+
+        return (int) Math.Ceiling((double)element_list.Count / (double)ElementsPerPage);
       }
     }
 
@@ -174,7 +218,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return (this.Width - this.border_width) / (this.ColumnWidth + this.border_width);
+        return (Width - border_width) / (ColumnWidth + border_width);
       }
     }
 
@@ -182,7 +226,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return (this.Height - this.border_height) / (this.RowHeight + this.border_height);
+        return (Height - border_height) / (RowHeight + border_height);
       }
     }
 
@@ -190,14 +234,17 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.border_width;
+        return border_width;
       }
       set
       {
-        this.border_width = value;
-        if (this.border_width >= 0)
+        border_width = value;
+        if (border_width >= 0)
+        {
           return;
-        this.border_width = 0;
+        }
+
+        border_width = 0;
       }
     }
 
@@ -205,14 +252,17 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.border_height;
+        return border_height;
       }
       set
       {
-        this.border_height = value;
-        if (this.border_height >= 0)
+        border_height = value;
+        if (border_height >= 0)
+        {
           return;
-        this.border_height = 0;
+        }
+
+        border_height = 0;
       }
     }
 
@@ -220,14 +270,17 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.column_width;
+        return column_width;
       }
       set
       {
-        this.column_width = value;
-        if (this.column_width >= 50)
+        column_width = value;
+        if (column_width >= 50)
+        {
           return;
-        this.column_width = 50;
+        }
+
+        column_width = 50;
       }
     }
 
@@ -235,14 +288,17 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.row_height;
+        return row_height;
       }
       set
       {
-        this.row_height = value;
-        if (this.row_height >= 50)
+        row_height = value;
+        if (row_height >= 50)
+        {
           return;
-        this.row_height = 50;
+        }
+
+        row_height = 50;
       }
     }
 
@@ -250,7 +306,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return this.element_list.Count;
+        return element_list.Count;
       }
     }
   }

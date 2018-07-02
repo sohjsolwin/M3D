@@ -12,15 +12,22 @@ namespace M3D.Spooling.Common
   {
     public static string TranslateError(string received, out int error_code)
     {
-      string str1 = (string) null;
-      string str2 = (string) null;
-      int result = -1;
+      var str1 = (string) null;
+      var str2 = (string) null;
+      var result = -1;
       if (received.StartsWith("Error:") && received.Length > "Error:".Length)
+      {
         str1 = received.Substring("Error:".Length);
+      }
       else if (received.StartsWith("!!") && received.Length > "!!".Length)
+      {
         str1 = received.Substring("!!".Length);
+      }
       else if (received.StartsWith("e") && received.Length > "e".Length)
+      {
         str1 = received.Substring("e".Length);
+      }
+
       if (!string.IsNullOrEmpty(str1))
       {
         string[] strArray = str1.Split(new char[1]{ ' ' }, StringSplitOptions.None);
@@ -145,7 +152,10 @@ namespace M3D.Spooling.Common
         }
       }
       if (string.IsNullOrEmpty(str2))
+      {
         str2 = received;
+      }
+
       error_code = result;
       return str2;
     }

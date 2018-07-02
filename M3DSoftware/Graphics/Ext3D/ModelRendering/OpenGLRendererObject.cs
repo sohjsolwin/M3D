@@ -19,28 +19,28 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     private bool useTextures;
 
     public OpenGLRendererObject(ModelData model)
-      : this(new GraphicsModelData(model, model.getVertexCount() < 10000), false)
+      : this(new GraphicsModelData(model, model.GetVertexCount() < 10000), false)
     {
     }
 
     public OpenGLRendererObject(GraphicsModelData model, bool useTextures)
     {
       this.useTextures = useTextures;
-      this.graphicsModelData = model;
+      graphicsModelData = model;
     }
 
     public void Reset()
     {
       try
       {
-        this.Delete();
+        Delete();
       }
       catch (Exception ex)
       {
       }
       try
       {
-        this.Create();
+        Create();
       }
       catch (Exception ex)
       {
@@ -51,10 +51,13 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     {
       try
       {
-        if (this.openGLRender == null)
+        if (openGLRender == null)
+        {
           return;
-        this.openGLRender.Dispose();
-        this.openGLRender = (OpenGLRender) null;
+        }
+
+        openGLRender.Dispose();
+        openGLRender = (OpenGLRender) null;
       }
       catch (Exception ex)
       {
@@ -63,45 +66,54 @@ namespace M3D.Graphics.Ext3D.ModelRendering
 
     public void Create()
     {
-      this.Delete();
+      Delete();
       switch (OpenGLRendererObject.openGLRenderMode)
       {
         case OpenGLRendererObject.OpenGLRenderMode.VBOs:
-          this.openGLRender = (OpenGLRender) new OpenGLRendererVBOs(this.graphicsModelData);
+          openGLRender = (OpenGLRender) new OpenGLRendererVBOs(graphicsModelData);
           break;
         case OpenGLRendererObject.OpenGLRenderMode.ARBVBOs:
-          this.openGLRender = (OpenGLRender) new OpenGLRendererARBVBOs(this.graphicsModelData);
+          openGLRender = (OpenGLRender) new OpenGLRendererARBVBOs(graphicsModelData);
           break;
         default:
-          this.openGLRender = (OpenGLRender) new OpenGLRendererImmediateMode(this.graphicsModelData);
+          openGLRender = (OpenGLRender) new OpenGLRendererImmediateMode(graphicsModelData);
           break;
       }
-      this.openGLRender.Create();
+      openGLRender.Create();
     }
 
     public void Draw()
     {
       try
       {
-        if (this.openGLRender != null && this.openGLRender.RenderMode != OpenGLRendererObject.openGLRenderMode)
-          this.Delete();
-        if (this.openGLRender == null)
-          this.Create();
-        this.openGLRender.Draw();
+        if (openGLRender != null && openGLRender.RenderMode != OpenGLRendererObject.openGLRenderMode)
+        {
+          Delete();
+        }
+
+        if (openGLRender == null)
+        {
+          Create();
+        }
+
+        openGLRender.Draw();
       }
       catch (Exception ex)
       {
-        this.Reset();
+        Reset();
         if (OpenGLRendererObject.openGLRenderMode == OpenGLRendererObject.OpenGLRenderMode.ImmediateMode)
         {
-          ++this.try_count;
-          if (this.try_count <= 2)
+          ++try_count;
+          if (try_count <= 2)
+          {
             return;
+          }
+
           ExceptionForm.ShowExceptionForm(new Exception("VBOObject::Draw::Failure", ex));
         }
         else
         {
-          this.Reset();
+          Reset();
           OpenGLRendererObject.openGLRenderMode = OpenGLRendererObject.OpenGLRenderMode.ImmediateMode;
         }
       }
@@ -109,21 +121,21 @@ namespace M3D.Graphics.Ext3D.ModelRendering
 
     public void Translate(float x, float y, float z)
     {
-      for (int index = 0; index < this.graphicsModelData.dataTNV.Length; ++index)
+      for (var index = 0; index < graphicsModelData.dataTNV.Length; ++index)
       {
-        this.graphicsModelData.dataTNV[index].Position.X += x;
-        this.graphicsModelData.dataTNV[index].Position.Y += y;
-        this.graphicsModelData.dataTNV[index].Position.Z += z;
+        graphicsModelData.dataTNV[index].Position.X += x;
+        graphicsModelData.dataTNV[index].Position.Y += y;
+        graphicsModelData.dataTNV[index].Position.Z += z;
       }
     }
 
     public void Scale(float x, float y, float z)
     {
-      for (int index = 0; index < this.graphicsModelData.dataTNV.Length; ++index)
+      for (var index = 0; index < graphicsModelData.dataTNV.Length; ++index)
       {
-        this.graphicsModelData.dataTNV[index].Position.X *= x;
-        this.graphicsModelData.dataTNV[index].Position.Y *= y;
-        this.graphicsModelData.dataTNV[index].Position.Z *= z;
+        graphicsModelData.dataTNV[index].Position.X *= x;
+        graphicsModelData.dataTNV[index].Position.Y *= y;
+        graphicsModelData.dataTNV[index].Position.Z *= z;
       }
     }
 

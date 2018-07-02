@@ -18,17 +18,17 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public SettingsItemBoolType()
     {
-      this.value = false;
+      value = false;
     }
 
     public SettingsItemBoolType(bool _value)
     {
-      this.value = _value;
+      value = _value;
     }
 
     protected override bool SetFromSlicerValue(string val)
     {
-      this.value = !(val == "0");
+      value = !(val == "0");
       return true;
     }
 
@@ -39,20 +39,24 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override string TranslateToSlicerValue()
     {
-      return !this.value ? "0" : "1";
+      return !value ? "0" : "1";
     }
 
     public override string TranslateToUserValue()
     {
-      return !this.value ? "false" : "true";
+      return !value ? "false" : "true";
     }
 
     public override void ParseUserValue(string value)
     {
       if (value.ToLowerInvariant() == "true")
+      {
         this.value = true;
+      }
       else
+      {
         this.value = false;
+      }
     }
 
     public override bool HasWarning
@@ -78,7 +82,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemBoolType(this.value);
+      return (SlicerSettingsItem) new SettingsItemBoolType(value);
     }
   }
 }

@@ -24,34 +24,37 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     public override void MyButtonCallback(ButtonWidget button)
     {
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
       if (selectedPrinter == null)
+      {
         return;
+      }
+
       switch (button.ID)
       {
         case 5:
-          this.CurrentDetails.pageAfterWait = Manage3DInkMainWindow.PageID.Page0_StartupPage;
-          this.CurrentDetails.mode = Manage3DInkMainWindow.Mode.SetDetails;
+          CurrentDetails.pageAfterWait = Manage3DInkMainWindow.PageID.Page0_StartupPage;
+          CurrentDetails.mode = Manage3DInkMainWindow.Mode.SetDetails;
           FilamentWaitingPage.CurrentWaitingText = "Please wait. The printer is busy perfoming the requested actions.";
-          if (this.settingsManager != null)
+          if (settingsManager != null)
           {
-            this.settingsManager.DisassociateFilamentFromPrinter(selectedPrinter.Info.serial_number);
-            this.settingsManager.SaveSettings();
+            settingsManager.DisassociateFilamentFromPrinter(selectedPrinter.Info.serial_number);
+            settingsManager.SaveSettings();
           }
-          int none = (int) selectedPrinter.SetFilamentToNone(new AsyncCallback(this.MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(selectedPrinter, Manage3DInkMainWindow.PageID.Page8_WaitingPage, this.CurrentDetails));
+          var none = (int) selectedPrinter.SetFilamentToNone(new AsyncCallback(MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(selectedPrinter, Manage3DInkMainWindow.PageID.Page8_WaitingPage, CurrentDetails));
           break;
         case 6:
-          this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page2_RetractingFilament, this.CurrentDetails);
+          MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page2_RetractingFilament, CurrentDetails);
           break;
         case 9:
-          this.MainWindow.ResetToStartup();
+          MainWindow.ResetToStartup();
           break;
       }
     }
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("Retracting Current 3D Ink", "Has the current 3D Ink been released?", true, true, false, false, false, false);
+      CreateManageFilamentFrame("Retracting Current 3D Ink", "Has the current 3D Ink been released?", true, true, false, false, false, false);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)

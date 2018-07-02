@@ -61,199 +61,211 @@ namespace M3D.GUI.Views.Printer_View
       Sprite.texture_height_pixels = 1024;
       Sprite.texture_width_pixels = 1024;
       Sprite.pixel_perfect = true;
-      this.colorframe = new Frame();
-      this.colorframe.SetPosition(1, 4);
-      this.colorframe.BGColor = new Color4(0.5f, 0.5f, 0.5f, 0.56f);
-      this.AddChildElement((Element2D) this.colorframe);
-      this.buttonframe = new Frame();
-      this.buttonframe.SetPosition(1, 4);
-      this.AddChildElement((Element2D) this.buttonframe);
-      this.frameborder = new ImageWidget();
-      this.frameborder.Init(host, "extendedcontrols2", 8f, 939f, 58f, 994f);
-      this.frameborder.SetGrowableHeight(8, 8, 32);
-      this.frameborder.SetGrowableWidth(1, 8, 32);
-      this.frameborder.SetPosition(0, 0);
-      this.frameborder.RelativeWidth = 1f;
-      this.frameborder.RelativeHeight = 1f;
-      this.frameborder.Color = new Color4(1f, 1f, 1f, 0.5f);
-      this.AddChildElement((Element2D) this.frameborder);
-      this.CreateChildToolWindows(host);
-      this.AddDefaultButtons(host);
+      colorframe = new Frame();
+      colorframe.SetPosition(1, 4);
+      colorframe.BGColor = new Color4(0.5f, 0.5f, 0.5f, 0.56f);
+      AddChildElement((Element2D)colorframe);
+      buttonframe = new Frame();
+      buttonframe.SetPosition(1, 4);
+      AddChildElement((Element2D)buttonframe);
+      frameborder = new ImageWidget();
+      frameborder.Init(host, "extendedcontrols2", 8f, 939f, 58f, 994f);
+      frameborder.SetGrowableHeight(8, 8, 32);
+      frameborder.SetGrowableWidth(1, 8, 32);
+      frameborder.SetPosition(0, 0);
+      frameborder.RelativeWidth = 1f;
+      frameborder.RelativeHeight = 1f;
+      frameborder.Color = new Color4(1f, 1f, 1f, 0.5f);
+      AddChildElement((Element2D)frameborder);
+      CreateChildToolWindows(host);
+      AddDefaultButtons(host);
     }
 
     private void AddDefaultButtons(GUIHost host)
     {
-      this.translation_button = new ButtonWidget(2);
-      this.translation_button.Init(host, "guicontrols", 704f, 128f, 760f, 183f, 768f, 128f, 824f, 183f, 832f, 128f, 888f, 183f, 449f, 705f, 505f, 760f);
-      this.translation_button.Text = "";
-      this.translation_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.translation_button.DontMove = true;
-      this.translation_button.ClickType = ButtonType.Checkable;
-      this.translation_button.CanClickOff = true;
-      this.translation_button.GroupID = 2002;
-      this.translation_button.tag = "ToolBar::Default::TranslateButton";
-      this.translation_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_TRANSLATE");
-      this.AddButton(this.translation_button);
-      this.scaling_button = new ButtonWidget(1);
-      this.scaling_button.Init(host, "guicontrols", 704f, 192f, 760f, 247f, 768f, 192f, 824f, 247f, 832f, 192f, 888f, 247f, 513f, 705f, 569f, 760f);
-      this.scaling_button.Text = "";
-      this.scaling_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.scaling_button.DontMove = true;
-      this.scaling_button.ClickType = ButtonType.Checkable;
-      this.scaling_button.CanClickOff = true;
-      this.scaling_button.GroupID = 2002;
-      this.scaling_button.tag = "ToolBar::Default::ScaleButton";
-      this.scaling_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_SCALE");
-      this.AddButton(this.scaling_button);
-      this.rotation_button = new ButtonWidget(0);
-      this.rotation_button.Init(host, "guicontrols", 704f, 256f, 760f, 311f, 768f, 256f, 824f, 311f, 832f, 256f, 888f, 311f, 577f, 705f, 633f, 760f);
-      this.rotation_button.Text = "";
-      this.rotation_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.rotation_button.DontMove = true;
-      this.rotation_button.ClickType = ButtonType.Checkable;
-      this.rotation_button.CanClickOff = true;
-      this.rotation_button.GroupID = 2002;
-      this.rotation_button.tag = "ToolBar::Default::RotateButton";
-      this.rotation_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_ROTATE");
-      this.AddButton(this.rotation_button);
-      this.AddSpace(6);
-      this.modellist_button = new ButtonWidget(3);
-      this.modellist_button.Init(host, "extendedcontrols2", 67f, 975f, 116f, 1022f, 119f, 975f, 168f, 1022f, 171f, 975f, 220f, 1022f, 223f, 975f, 272f, 1022f);
-      this.modellist_button.Text = "";
-      this.modellist_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.modellist_button.DontMove = true;
-      this.modellist_button.ClickType = ButtonType.Checkable;
-      this.modellist_button.CanClickOff = true;
-      this.modellist_button.GroupID = 2003;
-      this.modellist_button.tag = "ToolBar::Default::ModelListButton";
-      this.modellist_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_MODELLIST");
-      this.AddButton(this.modellist_button);
-      this.AddSpace(6);
-      this.duplicate_button = new ButtonWidget(4);
-      this.duplicate_button.Init(host, "extendedcontrols2", 275f, 875f, 324f, 922f, 327f, 875f, 376f, 922f, 379f, 875f, 428f, 922f, 431f, 875f, 480f, 922f);
-      this.duplicate_button.Text = "";
-      this.duplicate_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.duplicate_button.DontMove = false;
-      this.duplicate_button.ClickType = ButtonType.Clickable;
-      this.duplicate_button.CanClickOff = true;
-      this.duplicate_button.tag = "ToolBar::Default::DuplicateButton";
-      this.duplicate_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_DUPLICATE");
-      this.duplicate_button.GroupID = 2004;
-      this.AddButton(this.duplicate_button);
-      this.remove_button = new ButtonWidget(5);
-      this.remove_button.Init(host, "extendedcontrols2", 275f, 925f, 324f, 972f, 327f, 925f, 376f, 972f, 379f, 925f, 428f, 972f, 431f, 925f, 480f, 972f);
-      this.remove_button.Text = "";
-      this.remove_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.remove_button.DontMove = false;
-      this.remove_button.ClickType = ButtonType.Clickable;
-      this.remove_button.tag = "ToolBar::Default::RemoveButton";
-      this.remove_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_REMOVE");
-      this.remove_button.GroupID = 2004;
-      this.AddButton(this.remove_button);
-      this.undo_button = new ButtonWidget(6);
-      this.undo_button.Init(host, "extendedcontrols2", 67f, 925f, 116f, 972f, 119f, 925f, 168f, 972f, 171f, 925f, 220f, 972f, 223f, 925f, 272f, 972f);
-      this.undo_button.Text = "";
-      this.undo_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.undo_button.DontMove = false;
-      this.undo_button.ClickType = ButtonType.Clickable;
-      this.undo_button.tag = "ToolBar::Default::UndoButton";
-      this.undo_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_UNDO");
-      this.undo_button.GroupID = 2004;
-      this.AddButton(this.undo_button);
-      this.redo_button = new ButtonWidget(7);
-      this.redo_button.Init(host, "extendedcontrols2", 67f, 875f, 116f, 922f, 119f, 875f, 168f, 922f, 171f, 875f, 220f, 922f, 223f, 875f, 272f, 922f);
-      this.redo_button.Text = "";
-      this.redo_button.Width = 50;
-      this.redo_button.Height = 48;
-      this.redo_button.SetPosition(0, 0);
-      this.redo_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.redo_button.DontMove = false;
-      this.redo_button.ClickType = ButtonType.Clickable;
-      this.redo_button.tag = "ToolBar::Default::RedoButton";
-      this.redo_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_REDO");
-      this.redo_button.GroupID = 2004;
-      this.AddButton(this.redo_button);
-      this.AddSpace(6);
-      this.save_button = new ButtonWidget(8);
-      this.save_button.Init(host, "extendedcontrols2", 275f, 975f, 324f, 1022f, 327f, 975f, 376f, 1022f, 379f, 975f, 428f, 1022f, 431f, 975f, 480f, 1022f);
-      this.save_button.Text = "";
-      this.save_button.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.save_button.DontMove = true;
-      this.save_button.ClickType = ButtonType.Clickable;
-      this.save_button.tag = "ToolBar::Default::SaveButton";
-      this.save_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_SAVE");
-      this.save_button.GroupID = 2005;
-      this.AddButton(this.save_button);
+      translation_button = new ButtonWidget(2);
+      translation_button.Init(host, "guicontrols", 704f, 128f, 760f, 183f, 768f, 128f, 824f, 183f, 832f, 128f, 888f, 183f, 449f, 705f, 505f, 760f);
+      translation_button.Text = "";
+      translation_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      translation_button.DontMove = true;
+      translation_button.ClickType = ButtonType.Checkable;
+      translation_button.CanClickOff = true;
+      translation_button.GroupID = 2002;
+      translation_button.tag = "ToolBar::Default::TranslateButton";
+      translation_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_TRANSLATE");
+      AddButton(translation_button);
+      scaling_button = new ButtonWidget(1);
+      scaling_button.Init(host, "guicontrols", 704f, 192f, 760f, 247f, 768f, 192f, 824f, 247f, 832f, 192f, 888f, 247f, 513f, 705f, 569f, 760f);
+      scaling_button.Text = "";
+      scaling_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      scaling_button.DontMove = true;
+      scaling_button.ClickType = ButtonType.Checkable;
+      scaling_button.CanClickOff = true;
+      scaling_button.GroupID = 2002;
+      scaling_button.tag = "ToolBar::Default::ScaleButton";
+      scaling_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_SCALE");
+      AddButton(scaling_button);
+      rotation_button = new ButtonWidget(0);
+      rotation_button.Init(host, "guicontrols", 704f, 256f, 760f, 311f, 768f, 256f, 824f, 311f, 832f, 256f, 888f, 311f, 577f, 705f, 633f, 760f);
+      rotation_button.Text = "";
+      rotation_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      rotation_button.DontMove = true;
+      rotation_button.ClickType = ButtonType.Checkable;
+      rotation_button.CanClickOff = true;
+      rotation_button.GroupID = 2002;
+      rotation_button.tag = "ToolBar::Default::RotateButton";
+      rotation_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_ROTATE");
+      AddButton(rotation_button);
+      AddSpace(6);
+      modellist_button = new ButtonWidget(3);
+      modellist_button.Init(host, "extendedcontrols2", 67f, 975f, 116f, 1022f, 119f, 975f, 168f, 1022f, 171f, 975f, 220f, 1022f, 223f, 975f, 272f, 1022f);
+      modellist_button.Text = "";
+      modellist_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      modellist_button.DontMove = true;
+      modellist_button.ClickType = ButtonType.Checkable;
+      modellist_button.CanClickOff = true;
+      modellist_button.GroupID = 2003;
+      modellist_button.tag = "ToolBar::Default::ModelListButton";
+      modellist_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_MODELLIST");
+      AddButton(modellist_button);
+      AddSpace(6);
+      duplicate_button = new ButtonWidget(4);
+      duplicate_button.Init(host, "extendedcontrols2", 275f, 875f, 324f, 922f, 327f, 875f, 376f, 922f, 379f, 875f, 428f, 922f, 431f, 875f, 480f, 922f);
+      duplicate_button.Text = "";
+      duplicate_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      duplicate_button.DontMove = false;
+      duplicate_button.ClickType = ButtonType.Clickable;
+      duplicate_button.CanClickOff = true;
+      duplicate_button.tag = "ToolBar::Default::DuplicateButton";
+      duplicate_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_DUPLICATE");
+      duplicate_button.GroupID = 2004;
+      AddButton(duplicate_button);
+      remove_button = new ButtonWidget(5);
+      remove_button.Init(host, "extendedcontrols2", 275f, 925f, 324f, 972f, 327f, 925f, 376f, 972f, 379f, 925f, 428f, 972f, 431f, 925f, 480f, 972f);
+      remove_button.Text = "";
+      remove_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      remove_button.DontMove = false;
+      remove_button.ClickType = ButtonType.Clickable;
+      remove_button.tag = "ToolBar::Default::RemoveButton";
+      remove_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_REMOVE");
+      remove_button.GroupID = 2004;
+      AddButton(remove_button);
+      undo_button = new ButtonWidget(6);
+      undo_button.Init(host, "extendedcontrols2", 67f, 925f, 116f, 972f, 119f, 925f, 168f, 972f, 171f, 925f, 220f, 972f, 223f, 925f, 272f, 972f);
+      undo_button.Text = "";
+      undo_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      undo_button.DontMove = false;
+      undo_button.ClickType = ButtonType.Clickable;
+      undo_button.tag = "ToolBar::Default::UndoButton";
+      undo_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_UNDO");
+      undo_button.GroupID = 2004;
+      AddButton(undo_button);
+      redo_button = new ButtonWidget(7);
+      redo_button.Init(host, "extendedcontrols2", 67f, 875f, 116f, 922f, 119f, 875f, 168f, 922f, 171f, 875f, 220f, 922f, 223f, 875f, 272f, 922f);
+      redo_button.Text = "";
+      redo_button.Width = 50;
+      redo_button.Height = 48;
+      redo_button.SetPosition(0, 0);
+      redo_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      redo_button.DontMove = false;
+      redo_button.ClickType = ButtonType.Clickable;
+      redo_button.tag = "ToolBar::Default::RedoButton";
+      redo_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_REDO");
+      redo_button.GroupID = 2004;
+      AddButton(redo_button);
+      AddSpace(6);
+      save_button = new ButtonWidget(8);
+      save_button.Init(host, "extendedcontrols2", 275f, 975f, 324f, 1022f, 327f, 975f, 376f, 1022f, 379f, 975f, 428f, 1022f, 431f, 975f, 480f, 1022f);
+      save_button.Text = "";
+      save_button.SetCallback(new ButtonCallback(MyButtonCallback));
+      save_button.DontMove = true;
+      save_button.ClickType = ButtonType.Clickable;
+      save_button.tag = "ToolBar::Default::SaveButton";
+      save_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_SAVE");
+      save_button.GroupID = 2005;
+      AddButton(save_button);
     }
 
     private void CreateChildToolWindows(GUIHost host)
     {
-      this.modelListToolbox = new ModelListToolbox(3, this.printerview);
-      this.modelListToolbox.Init(host);
-      this.modelListToolbox.SetSize(300, 170);
-      this.modelListToolbox.SetPosition(96, 200);
-      this.modelListToolbox.RelativeY = 0.175f;
-      this.printerview.AddChildElement((Element2D) this.modelListToolbox);
+      modelListToolbox = new ModelListToolbox(3, printerview);
+      modelListToolbox.Init(host);
+      modelListToolbox.SetSize(300, 170);
+      modelListToolbox.SetPosition(96, 200);
+      modelListToolbox.RelativeY = 0.175f;
+      printerview.AddChildElement((Element2D)modelListToolbox);
     }
 
     private void AddButton(ButtonWidget button)
     {
-      button.SetPosition(0, this.next_button_y);
+      button.SetPosition(0, next_button_y);
       button.SetSize(50, 48);
-      this.buttonframe.AddChildElement((Element2D) button);
-      this.next_button_y += 48;
-      this.SetSize(55, 8 + this.next_button_y);
+      buttonframe.AddChildElement((Element2D) button);
+      next_button_y += 48;
+      SetSize(55, 8 + next_button_y);
     }
 
     private void AddSpace(int amount)
     {
-      this.next_button_y += amount;
-      this.SetSize(55, 8 + this.next_button_y);
+      next_button_y += amount;
+      SetSize(55, 8 + next_button_y);
     }
 
     public override void OnUpdate()
     {
       base.OnUpdate();
-      if (this.printerview.ModelLoaded)
+      if (printerview.ModelLoaded)
       {
-        this.rotation_button.Enabled = true;
-        this.translation_button.Enabled = true;
-        this.scaling_button.Enabled = true;
-        this.duplicate_button.Enabled = true;
-        this.remove_button.Enabled = true;
-        this.modellist_button.Enabled = true;
-        this.save_button.Enabled = true;
+        rotation_button.Enabled = true;
+        translation_button.Enabled = true;
+        scaling_button.Enabled = true;
+        duplicate_button.Enabled = true;
+        remove_button.Enabled = true;
+        modellist_button.Enabled = true;
+        save_button.Enabled = true;
       }
       else
       {
-        this.DisableControlButton(this.rotation_button);
-        this.DisableControlButton(this.translation_button);
-        this.DisableControlButton(this.scaling_button);
-        this.DisableControlButton(this.modellist_button);
-        this.duplicate_button.Enabled = false;
-        this.remove_button.Enabled = false;
-        this.save_button.Enabled = false;
+        DisableControlButton(rotation_button);
+        DisableControlButton(translation_button);
+        DisableControlButton(scaling_button);
+        DisableControlButton(modellist_button);
+        duplicate_button.Enabled = false;
+        remove_button.Enabled = false;
+        save_button.Enabled = false;
       }
-      if (this.printerview.History.CanUndo)
-        this.undo_button.Enabled = true;
+      if (printerview.History.CanUndo)
+      {
+        undo_button.Enabled = true;
+      }
       else
-        this.undo_button.Enabled = false;
-      if (this.printerview.History.CanRedo)
-        this.redo_button.Enabled = true;
+      {
+        undo_button.Enabled = false;
+      }
+
+      if (printerview.History.CanRedo)
+      {
+        redo_button.Enabled = true;
+      }
       else
-        this.redo_button.Enabled = false;
+      {
+        redo_button.Enabled = false;
+      }
     }
 
     public void DeactivateModelAdjustDialog()
     {
-      this.ModelAdjustmentButtonClicked(false);
-      this.adjustmentsDialog.Deactivate();
+      ModelAdjustmentButtonClicked(false);
+      adjustmentsDialog.Deactivate();
     }
 
     private void DisableControlButton(ButtonWidget button)
     {
       if (button.Checked)
+      {
         button.Checked = false;
+      }
+
       button.Enabled = false;
     }
 
@@ -262,100 +274,117 @@ namespace M3D.GUI.Views.Printer_View
       switch (button.ID)
       {
         case 0:
-          this.RotateButtonClicked(button.Checked);
+          RotateButtonClicked(button.Checked);
           break;
         case 1:
-          this.ScaleButtonClicked(button.Checked);
+          ScaleButtonClicked(button.Checked);
           break;
         case 2:
-          this.TranslateButtonClicked(button.Checked);
+          TranslateButtonClicked(button.Checked);
           break;
         case 3:
-          this.ModelListButtonClicked(button.Checked);
+          ModelListButtonClicked(button.Checked);
           break;
         case 4:
-          this.DuplicateButtonClicked();
+          DuplicateButtonClicked();
           break;
         case 5:
-          this.RemoveButtonClicked();
+          RemoveButtonClicked();
           break;
         case 6:
-          this.UndoButtonClicked();
+          UndoButtonClicked();
           break;
         case 7:
-          this.RedoButtonClicked();
+          RedoButtonClicked();
           break;
         case 8:
-          this.SavePrintSettingsClicked();
+          SavePrintSettingsClicked();
           break;
       }
     }
 
     public override void SetSize(int width, int height)
     {
-      this.buttonframe.SetSize(width - 5, height - 8);
-      this.colorframe.SetSize(width - 5, height - 8);
+      buttonframe.SetSize(width - 5, height - 8);
+      colorframe.SetSize(width - 5, height - 8);
       base.SetSize(width, height);
     }
 
     private void RotateButtonClicked(bool clickedOn)
     {
-      this.ModelAdjustmentButtonClicked(clickedOn);
+      ModelAdjustmentButtonClicked(clickedOn);
       if (!clickedOn)
+      {
         return;
-      this.adjustmentsDialog.UseRotationSliders();
+      }
+
+      adjustmentsDialog.UseRotationSliders();
     }
 
     private void ScaleButtonClicked(bool clickedOn)
     {
-      this.ModelAdjustmentButtonClicked(clickedOn);
+      ModelAdjustmentButtonClicked(clickedOn);
       if (!clickedOn)
+      {
         return;
-      this.adjustmentsDialog.UseScaleSliders();
+      }
+
+      adjustmentsDialog.UseScaleSliders();
     }
 
     private void TranslateButtonClicked(bool clickedOn)
     {
-      this.ModelAdjustmentButtonClicked(clickedOn);
+      ModelAdjustmentButtonClicked(clickedOn);
       if (!clickedOn)
+      {
         return;
-      this.adjustmentsDialog.UseTranslationSliders();
+      }
+
+      adjustmentsDialog.UseTranslationSliders();
     }
 
     public override void SetVisible(bool bVisible)
     {
       if (!bVisible)
       {
-        this.adjustmentsDialog.Visible = false;
-        this.modelListToolbox.Visible = false;
+        adjustmentsDialog.Visible = false;
+        modelListToolbox.Visible = false;
       }
       else
       {
-        this.adjustmentsDialog.Visible = this.translation_button.Checked || this.rotation_button.Checked || this.scaling_button.Checked;
-        this.modelListToolbox.Visible = this.modellist_button.Checked;
+        adjustmentsDialog.Visible = translation_button.Checked || rotation_button.Checked || scaling_button.Checked;
+        modelListToolbox.Visible = modellist_button.Checked;
       }
       base.SetVisible(bVisible);
     }
 
     private void ModelListButtonClicked(bool clickedOn)
     {
-      this.modelListToolbox.Visible = clickedOn;
-      this.CheckDialogPositions();
+      modelListToolbox.Visible = clickedOn;
+      CheckDialogPositions();
     }
 
     private void SavePrintSettingsClicked()
     {
-      string str = "Untitled.zip";
-      SaveFileDialog saveFileDialog = new SaveFileDialog();
-      saveFileDialog.FileName = str;
-      saveFileDialog.DefaultExt = ".zip";
-      saveFileDialog.AddExtension = true;
-      saveFileDialog.Filter = "Zip (*.zip)|*.zip";
+      var str = "Untitled.zip";
+      var saveFileDialog = new SaveFileDialog
+      {
+        FileName = str,
+        DefaultExt = ".zip",
+        AddExtension = true,
+        Filter = "Zip (*.zip)|*.zip"
+      };
       if (saveFileDialog.ShowDialog() != DialogResult.OK)
+      {
         return;
-      RecentPrintsHistory.PrintHistory printHistory = this.GatherData();
+      }
+
+      RecentPrintsHistory.PrintHistory printHistory = GatherData();
       if (RecentPrintsHistory.SavePrintHistoryToZip(saveFileDialog.FileName, printHistory))
-        this.libraryview.RecentModels.CopyAndAssignIconForLibrary(saveFileDialog.FileName, printHistory.iconfilename);
+      {
+        libraryview.RecentModels.CopyAndAssignIconForLibrary(saveFileDialog.FileName, printHistory.iconfilename);
+      }
+
       try
       {
         Directory.Delete(printHistory.folder, true);
@@ -367,75 +396,89 @@ namespace M3D.GUI.Views.Printer_View
 
     private RecentPrintsHistory.PrintHistory GatherData()
     {
-      bool modelZTooSmall;
-      PrintJobDetails printJobDetails = this.printerview.CreatePrintJobDetails(out modelZTooSmall);
-      printJobDetails.GenerateSlicerSettings((PrinterObject) null, this.printerview);
-      SplitFileName splitFileName = new SplitFileName(printJobDetails.objectDetailsList[0].filename);
-      JobParams printerJob = new JobParams("", splitFileName.name + "." + splitFileName.ext, printJobDetails.preview_image, FilamentSpool.TypeEnum.NoFilament, 0.0f, 0.0f);
-      printerJob.options = printJobDetails.jobOptions;
-      printerJob.preprocessor = (FilamentPreprocessorData) null;
-      printerJob.filament_temperature = 0;
-      printerJob.autoprint = printJobDetails.autoPrint;
-      List<Slicer.General.KeyValuePair<string, string>> keyValuePairList = this.slicer_connection.SlicerSettings.GenerateUserKeyValuePairList();
+      PrintJobDetails printJobDetails = printerview.CreatePrintJobDetails(out var modelZTooSmall);
+      printJobDetails.GenerateSlicerSettings((PrinterObject) null, printerview);
+      var splitFileName = new SplitFileName(printJobDetails.objectDetailsList[0].filename);
+      var printerJob = new JobParams("", splitFileName.name + "." + splitFileName.ext, printJobDetails.preview_image, FilamentSpool.TypeEnum.NoFilament, 0.0f, 0.0f)
+      {
+        options = printJobDetails.jobOptions,
+        preprocessor = (FilamentPreprocessorData)null,
+        filament_temperature = 0,
+        autoprint = printJobDetails.autoPrint
+      };
+      List<Slicer.General.KeyValuePair<string, string>> keyValuePairList = slicer_connection.SlicerSettings.GenerateUserKeyValuePairList();
       foreach (PrintDetails.ObjectDetails objectDetails in printJobDetails.objectDetailsList)
       {
         if (printJobDetails.autoPrint)
+        {
           objectDetails.hidecontrols = true;
+        }
       }
-      RecentPrintsHistory.PrintHistory cph;
-      RecentPrintsHistory.CreatePrintHistoryFolder(printerJob, (PrinterObject) null, this.slicer_connection.SlicerSettings.ProfileName, keyValuePairList, printJobDetails.objectDetailsList, out cph);
+      RecentPrintsHistory.CreatePrintHistoryFolder(printerJob, (PrinterObject)null, slicer_connection.SlicerSettings.ProfileName, keyValuePairList, printJobDetails.objectDetailsList, out RecentPrintsHistory.PrintHistory cph);
       return cph;
     }
 
     private void ModelAdjustmentButtonClicked(bool clickedOn)
     {
-      this.adjustmentsDialog.SaveCurrentSliderInfo();
-      this.adjustmentsDialog.Visible = clickedOn;
-      this.CheckDialogPositions();
+      adjustmentsDialog.SaveCurrentSliderInfo();
+      adjustmentsDialog.Visible = clickedOn;
+      CheckDialogPositions();
     }
 
     private void CheckDialogPositions()
     {
-      if (this.adjustmentsDialog.Visible && this.modelListToolbox.Visible)
+      if (adjustmentsDialog.Visible && modelListToolbox.Visible)
       {
-        this.modelListToolbox.RelativeYAdj = this.adjustmentsDialog.Height + 10;
+        modelListToolbox.RelativeYAdj = adjustmentsDialog.Height + 10;
       }
       else
       {
-        if (!this.modelListToolbox.Visible)
+        if (!modelListToolbox.Visible)
+        {
           return;
-        this.modelListToolbox.RelativeYAdj = 0;
+        }
+
+        modelListToolbox.RelativeYAdj = 0;
       }
     }
 
     private void DuplicateButtonClicked()
     {
-      this.printerview.DuplicateSelection();
+      printerview.DuplicateSelection();
     }
 
     private void RemoveButtonClicked()
     {
-      this.printerview.RemoveSelectedModel();
+      printerview.RemoveSelectedModel();
     }
 
     private void UndoButtonClicked()
     {
-      this.printerview.History.Undo();
+      printerview.History.Undo();
     }
 
     private void RedoButtonClicked()
     {
-      this.printerview.History.Redo();
+      printerview.History.Redo();
     }
 
     public override void Refresh()
     {
-      if (this.translation_button.Checked)
-        this.adjustmentsDialog.UseTranslationSliders();
-      if (this.scaling_button.Checked)
-        this.adjustmentsDialog.UseScaleSliders();
-      if (this.rotation_button.Checked)
-        this.adjustmentsDialog.UseRotationSliders();
+      if (translation_button.Checked)
+      {
+        adjustmentsDialog.UseTranslationSliders();
+      }
+
+      if (scaling_button.Checked)
+      {
+        adjustmentsDialog.UseScaleSliders();
+      }
+
+      if (rotation_button.Checked)
+      {
+        adjustmentsDialog.UseRotationSliders();
+      }
+
       base.Refresh();
     }
 

@@ -24,7 +24,7 @@ namespace M3D.Model
     {
       get
       {
-        return this.Max - this.Min;
+        return Max - Min;
       }
     }
   }

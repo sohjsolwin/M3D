@@ -36,21 +36,22 @@ namespace M3D.Spooling.Common.Utils
 
     public static bool VerifyNumber(string number_string)
     {
-      float result;
-      return float.TryParse(number_string, out result);
+      return float.TryParse(number_string, out var result);
     }
 
     public static float ToFloatCurrentCulture(string number_string)
     {
-      float result;
-      if (float.TryParse(number_string, out result))
+      if (float.TryParse(number_string, out var result))
+      {
         return result;
+      }
+
       return float.NaN;
     }
 
     public static string RemoveIllegalCharacters(string text)
     {
-      HashSet<char> allowedCharacters = new HashSet<char>((IEnumerable<char>) "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-_");
+      var allowedCharacters = new HashSet<char>((IEnumerable<char>) "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-_");
       return new string(((IEnumerable<char>) text.ToCharArray()).Where<char>((Func<char, bool>) (c => allowedCharacters.Contains(c))).ToArray<char>());
     }
   }

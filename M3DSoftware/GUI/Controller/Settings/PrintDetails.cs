@@ -30,13 +30,13 @@ namespace M3D.GUI.Controller.Settings
 
       public M3DSettings(JobParams jobParams, PrinterObject printer, string profileName, List<Slicer.General.KeyValuePair<string, string>> curaSettings)
       {
-        this.printSettings.filament = printer == null ? new PrintDetails.Filament((FilamentProfile) null) : new PrintDetails.Filament(printer.MyFilamentProfile);
-        this.serialNumber = printer == null ? PrinterSerialNumber.Undefined.ToString() : printer.Info.MySerialNumber;
-        this.printSettings.options = jobParams.options;
-        this.printSettings.CuraSettings = curaSettings;
-        this.version = Version.VersionTextNoDate;
+        printSettings.filament = printer == null ? new PrintDetails.Filament((FilamentProfile) null) : new PrintDetails.Filament(printer.MyFilamentProfile);
+        serialNumber = printer == null ? PrinterSerialNumber.Undefined.ToString() : printer.Info.MySerialNumber;
+        printSettings.options = jobParams.options;
+        printSettings.CuraSettings = curaSettings;
+        version = Version.VersionTextNoDate;
         this.profileName = profileName;
-        this.jobGuid = "";
+        jobGuid = "";
       }
 
       public static XmlSerializer ClassSerializer
@@ -44,7 +44,10 @@ namespace M3D.GUI.Controller.Settings
         get
         {
           if (PrintDetails.M3DSettings.__class_serializer == null)
+          {
             PrintDetails.M3DSettings.__class_serializer = new XmlSerializer(typeof (PrintDetails.M3DSettings));
+          }
+
           return PrintDetails.M3DSettings.__class_serializer;
         }
       }
@@ -58,7 +61,7 @@ namespace M3D.GUI.Controller.Settings
 
       public PrintJobObjectViewDetails()
       {
-        this.objectList = new List<PrintDetails.ObjectDetails>();
+        objectList = new List<PrintDetails.ObjectDetails>();
       }
 
       public PrintJobObjectViewDetails(List<PrintDetails.ObjectDetails> objectList)
@@ -71,7 +74,10 @@ namespace M3D.GUI.Controller.Settings
         get
         {
           if (PrintDetails.PrintJobObjectViewDetails.__class_serializer == null)
+          {
             PrintDetails.PrintJobObjectViewDetails.__class_serializer = new XmlSerializer(typeof (PrintDetails.PrintJobObjectViewDetails));
+          }
+
           return PrintDetails.PrintJobObjectViewDetails.__class_serializer;
         }
       }
@@ -100,15 +106,15 @@ namespace M3D.GUI.Controller.Settings
       {
         if (profile != null)
         {
-          this.Color = FilamentConstants.ColorsToString(profile.Color);
-          this.Temperature = profile.Temperature;
-          this.Type = profile.Type.ToString();
+          Color = FilamentConstants.ColorsToString(profile.Color);
+          Temperature = profile.Temperature;
+          Type = profile.Type.ToString();
         }
         else
         {
-          this.Color = "";
-          this.Temperature = 0;
-          this.Type = "";
+          Color = "";
+          Temperature = 0;
+          Type = "";
         }
       }
     }
@@ -132,19 +138,22 @@ namespace M3D.GUI.Controller.Settings
 
       public ObjectDetails()
       {
-        this.UID = uint.MaxValue;
+        UID = uint.MaxValue;
       }
 
       public ObjectDetails(PrintDetails.ObjectDetails other)
         : this()
       {
-        this.filename = other.filename;
-        this.printerViewXMLFile = other.printerViewXMLFile;
-        this.printerSettingsXMLFile = other.printerSettingsXMLFile;
-        this.hidecontrols = other.hidecontrols;
+        filename = other.filename;
+        printerViewXMLFile = other.printerViewXMLFile;
+        printerSettingsXMLFile = other.printerSettingsXMLFile;
+        hidecontrols = other.hidecontrols;
         if (other.transform == null)
+        {
           return;
-        this.transform = new PrintDetails.Transform(other.transform);
+        }
+
+        transform = new PrintDetails.Transform(other.transform);
       }
 
       public ObjectDetails(string filename)
@@ -184,9 +193,9 @@ namespace M3D.GUI.Controller.Settings
 
       public Transform(PrintDetails.Transform other)
       {
-        this.translation = other.translation;
-        this.scale = other.scale;
-        this.rotation = other.rotation;
+        translation = other.translation;
+        scale = other.scale;
+        rotation = other.rotation;
       }
 
       public Transform(M3D.Model.Utils.Vector3 translation, M3D.Model.Utils.Vector3 scale, M3D.Model.Utils.Vector3 rotation)
@@ -223,7 +232,7 @@ namespace M3D.GUI.Controller.Settings
 
       public M3D.Model.Utils.Vector3 GUIVector()
       {
-        return new M3D.Model.Utils.Vector3(this.x, this.y, 0.0f);
+        return new M3D.Model.Utils.Vector3(x, y, 0.0f);
       }
     }
 
@@ -238,7 +247,7 @@ namespace M3D.GUI.Controller.Settings
 
       public M3D.Model.Utils.Vector3 GUIVector()
       {
-        return new M3D.Model.Utils.Vector3(this.x, this.y, this.z);
+        return new M3D.Model.Utils.Vector3(x, y, z);
       }
     }
   }

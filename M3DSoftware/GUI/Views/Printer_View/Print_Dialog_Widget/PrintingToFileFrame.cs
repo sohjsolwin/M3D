@@ -32,24 +32,24 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       : base(ID, printDialogWindow)
     {
       this.message_box = message_box;
-      this.ResetSlicerState();
-      this.Init(host);
+      ResetSlicerState();
+      Init(host);
     }
 
     public override void OnActivate(PrintJobDetails details)
     {
-      this.PrintDialogWindow.SetSize(480, 340);
-      this.PrintDialogWindow.Refresh();
-      this.ResetSlicerState();
-      this.bProcessingAndSavingModel = false;
-      this.bCanCheckForNoJob = false;
-      this.CurrentJobDetails = details;
-      this.CurrentJobDetails.Estimated_Filament = -1f;
-      this.CurrentJobDetails.Estimated_Print_Time = -1f;
-      this.Enabled = true;
-      this.status_text.Visible = true;
-      this.SetSize(480, 340);
-      this.StartSlicer(this.CurrentJobDetails.settings);
+      PrintDialogWindow.SetSize(480, 340);
+      PrintDialogWindow.Refresh();
+      ResetSlicerState();
+      bProcessingAndSavingModel = false;
+      bCanCheckForNoJob = false;
+      CurrentJobDetails = details;
+      CurrentJobDetails.Estimated_Filament = -1f;
+      CurrentJobDetails.Estimated_Print_Time = -1f;
+      Enabled = true;
+      status_text.Visible = true;
+      SetSize(480, 340);
+      StartSlicer(CurrentJobDetails.settings);
     }
 
     public override void OnDeactivate()
@@ -58,14 +58,16 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     public void Init(GUIHost host)
     {
-      string printToFileDialog = Resources.PrintToFileDialog;
-      XMLFrame xmlFrame = new XMLFrame(this.ID);
-      xmlFrame.RelativeWidth = 1f;
-      xmlFrame.RelativeHeight = 1f;
-      this.AddChildElement((Element2D) xmlFrame);
-      xmlFrame.Init(host, printToFileDialog, new ButtonCallback(this.MyButtonCallback));
-      this.status_text = (TextWidget) xmlFrame.FindChildElement("statustext");
-      Frame childElement = (Frame) xmlFrame.FindChildElement(1005);
+      var printToFileDialog = Resources.PrintToFileDialog;
+      var xmlFrame = new XMLFrame(ID)
+      {
+        RelativeWidth = 1f,
+        RelativeHeight = 1f
+      };
+      AddChildElement((Element2D) xmlFrame);
+      xmlFrame.Init(host, printToFileDialog, new ButtonCallback(MyButtonCallback));
+      status_text = (TextWidget) xmlFrame.FindChildElement("statustext");
+      var childElement = (Frame) xmlFrame.FindChildElement(1005);
       this.progressbar = new ProgressBarWidget(0);
       this.progressbar.Init(host, "guicontrols", 944f, 96f, 960f, 144f, 2, 2, 16, 2, 2, 16);
       this.progressbar.SetPosition(32, 64);
@@ -73,7 +75,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       this.progressbar.PercentComplete = 0.0f;
       ProgressBarWidget progressbar = this.progressbar;
       childElement.AddChildElement((Element2D) progressbar);
-      this.SetSize(480, 200);
+      SetSize(480, 200);
     }
 
     public void MyButtonCallback(ButtonWidget button)
@@ -82,101 +84,129 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     private void ReleasePrinterAfterCommand(IAsyncCallResult ar)
     {
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
+      var asyncState = ar.AsyncState as PrinterObject;
       if (asyncState == null)
+      {
         return;
-      int num = (int) asyncState.ReleaseLock((AsyncCallback) null, (object) null);
+      }
+
+      var num = (int) asyncState.ReleaseLock((AsyncCallback) null, (object) null);
     }
 
     private void FailedReleaseCallback(IAsyncCallResult ar)
     {
-      this.PrintDialogWindow.CloseWindow();
-      this.message_box.AddMessageToQueue(Locale.GlobalLocale.T("T_Failed_ErrorSendingToPrinter"), PopupMessageBox.MessageBoxButtons.OK);
+      PrintDialogWindow.CloseWindow();
+      message_box.AddMessageToQueue(Locale.GlobalLocale.T("T_Failed_ErrorSendingToPrinter"), PopupMessageBox.MessageBoxButtons.OK);
     }
 
     private void OnPrintJobStarted(IAsyncCallResult ar)
     {
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
+      var asyncState = ar.AsyncState as PrinterObject;
       if (asyncState == null)
+      {
         return;
+      }
+
       if (ar.CallResult != CommandResult.Success && ar.CallResult != CommandResult.SuccessfullyReceived)
       {
-        int num = (int) asyncState.ReleaseLock(new AsyncCallback(this.FailedReleaseCallback), (object) asyncState);
+        var num = (int) asyncState.ReleaseLock(new AsyncCallback(FailedReleaseCallback), (object) asyncState);
       }
       else
       {
-        this.bProcessingAndSavingModel = true;
-        this.bCanCheckForNoJob = false;
-        this.progressbar.Visible = false;
-        this.spoolerProcessingTimer.Restart();
+        bProcessingAndSavingModel = true;
+        bCanCheckForNoJob = false;
+        progressbar.Visible = false;
+        spoolerProcessingTimer.Restart();
       }
     }
 
     public override void OnUpdate()
     {
       base.OnUpdate();
-      if (!this.Visible)
+      if (!Visible)
+      {
         return;
-      this.OnProcess();
+      }
+
+      OnProcess();
     }
 
     public void OnProcess()
     {
-      if (!this.bProcessingAndSavingModel)
-        this.ProcessSlicing();
+      if (!bProcessingAndSavingModel)
+      {
+        ProcessSlicing();
+      }
       else
-        this.ProcessSpoolerProcessing();
+      {
+        ProcessSpoolerProcessing();
+      }
     }
 
     private void ProcessSlicing()
     {
-      this.status_text.Text = "Slicing Model ";
-      for (string str = this.ProcessNextSlicerMessage(); str != null; str = this.ProcessNextSlicerMessage())
+      status_text.Text = "Slicing Model ";
+      for (var str = ProcessNextSlicerMessage(); str != null; str = ProcessNextSlicerMessage())
       {
         if (str == "Slicer Started")
-          this.progressbar.PercentComplete = 0.0f;
-        else if (str == "Slicer Finished")
-          this.progressbar.PercentComplete = 1f;
-      }
-      if (this.bHasSlicingCompleted)
-      {
-        if ((double) this.CurrentJobDetails.Estimated_Print_Time < 0.0)
-          this.CurrentJobDetails.Estimated_Print_Time = (float) this.SlicerConnection.EstimatedPrintTimeSeconds;
-        else if ((double) this.CurrentJobDetails.Estimated_Filament < 0.0)
         {
-          this.CurrentJobDetails.Estimated_Filament = this.SlicerConnection.EstimatedFilament;
+          progressbar.PercentComplete = 0.0f;
+        }
+        else if (str == "Slicer Finished")
+        {
+          progressbar.PercentComplete = 1f;
+        }
+      }
+      if (bHasSlicingCompleted)
+      {
+        if ((double)CurrentJobDetails.Estimated_Print_Time < 0.0)
+        {
+          CurrentJobDetails.Estimated_Print_Time = (float)SlicerConnection.EstimatedPrintTimeSeconds;
+        }
+        else if ((double)CurrentJobDetails.Estimated_Filament < 0.0)
+        {
+          CurrentJobDetails.Estimated_Filament = SlicerConnection.EstimatedFilament;
         }
         else
         {
-          this.ResetSlicerState();
-          this.StartPrintingToFile();
+          ResetSlicerState();
+          StartPrintingToFile();
         }
       }
-      if (!this.bHasSlicerStarted)
+      if (!bHasSlicerStarted)
+      {
         return;
-      this.progressbar.PercentComplete = this.SlicerConnection.EstimatedPercentComplete;
-      this.progressbar.Visible = true;
+      }
+
+      progressbar.PercentComplete = SlicerConnection.EstimatedPercentComplete;
+      progressbar.Visible = true;
     }
 
     private void ProcessSpoolerProcessing()
     {
-      this.status_text.Text = "Preparing gcode for printer and saving ";
-      PrinterObject printer = this.CurrentJobDetails.printer;
+      status_text.Text = "Preparing gcode for printer and saving ";
+      PrinterObject printer = CurrentJobDetails.printer;
       if (printer != null)
       {
-        int num = printer.isHealthy ? 1 : 0;
+        var num = printer.isHealthy ? 1 : 0;
       }
       if (printer.Info.current_job != null)
-        this.bCanCheckForNoJob = true;
-      if (!this.bCanCheckForNoJob && this.spoolerProcessingTimer.ElapsedMilliseconds <= 30000L || printer.Info.current_job != null)
+      {
+        bCanCheckForNoJob = true;
+      }
+
+      if (!bCanCheckForNoJob && spoolerProcessingTimer.ElapsedMilliseconds <= 30000L || printer.Info.current_job != null)
+      {
         return;
-      this.PrintDialogWindow.CloseWindow();
-      this.message_box.AddMessageToQueue("File saved");
+      }
+
+      PrintDialogWindow.CloseWindow();
+      message_box.AddMessageToQueue("File saved");
     }
 
     private void StartPrintingToFile()
     {
-      this.PrintSlicedModel(this.CurrentJobDetails, (RecentPrintsTab) null, new AsyncCallback(this.OnPrintJobStarted));
+      PrintSlicedModel(CurrentJobDetails, (RecentPrintsTab) null, new AsyncCallback(OnPrintJobStarted));
     }
 
     private enum PrintDialogControlID

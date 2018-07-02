@@ -23,7 +23,7 @@ namespace M3D.GUI.Views.Printer_View.History.Nodes
     {
       get
       {
-        return this.objectID;
+        return objectID;
       }
     }
   }

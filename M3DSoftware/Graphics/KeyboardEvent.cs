@@ -35,7 +35,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.type;
+        return type;
       }
     }
 
@@ -43,7 +43,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.shift;
+        return shift;
       }
     }
 
@@ -51,7 +51,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.alt;
+        return alt;
       }
     }
 
@@ -59,7 +59,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.ctrl;
+        return ctrl;
       }
     }
 
@@ -67,7 +67,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return this.tab;
+        return tab;
       }
     }
   }

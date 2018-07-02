@@ -19,27 +19,29 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     public SettingsItemSupportPatternTypeCura()
       : base(typeof (SupportPatternCura))
     {
-      this.value = SupportPatternCura.Lines;
+      value = SupportPatternCura.Lines;
     }
 
     public SettingsItemSupportPatternTypeCura(SupportPatternCura _value)
       : base(typeof (SupportPatternCura))
     {
-      this.value = _value;
+      value = _value;
     }
 
     protected override bool SetFromSlicerValue(string val)
     {
-      this.formatError = false;
+      formatError = false;
       if (val == "Grid" || val == "0")
-        this.value = SupportPatternCura.Grid;
+      {
+        value = SupportPatternCura.Grid;
+      }
       else if (val == "Lines" || val == "1")
       {
-        this.value = SupportPatternCura.Lines;
+        value = SupportPatternCura.Lines;
       }
       else
       {
-        this.formatError = true;
+        formatError = true;
         return false;
       }
       return true;
@@ -52,23 +54,29 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override string TranslateToSlicerValue()
     {
-      return ((int) this.value).ToString();
+      return ((int)value).ToString();
     }
 
     public override string TranslateToUserValue()
     {
-      return this.value.ToString();
+      return value.ToString();
     }
 
     public override void ParseUserValue(string val)
     {
-      this.formatError = false;
+      formatError = false;
       if (val == "Grid")
-        this.value = SupportPatternCura.Grid;
+      {
+        value = SupportPatternCura.Grid;
+      }
       else if (val == "Lines")
-        this.value = SupportPatternCura.Lines;
+      {
+        value = SupportPatternCura.Lines;
+      }
       else
-        this.formatError = true;
+      {
+        formatError = true;
+      }
     }
 
     public override bool HasWarning
@@ -81,7 +89,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemSupportPatternTypeCura(this.value);
+      return (SlicerSettingsItem) new SettingsItemSupportPatternTypeCura(value);
     }
   }
 }

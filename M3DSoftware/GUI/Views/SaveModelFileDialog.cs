@@ -12,12 +12,12 @@ namespace M3D.GUI.Views
   {
     public static string RunSaveFileDialog(SaveModelFileDialog.FileType fileType)
     {
-      string str1 = "";
-      SaveFileDialog saveFileDialog = new SaveFileDialog();
+      var str1 = "";
+      var saveFileDialog = new SaveFileDialog();
       switch (fileType)
       {
         case SaveModelFileDialog.FileType.Models:
-          string str2 = str1 + "Supported Files|*.stl;*.obj;|" + "STL File (.stl)|*.stl|" + "OBJ File (.obj)|*.obj|";
+          var str2 = str1 + "Supported Files|*.stl;*.obj;|" + "STL File (.stl)|*.stl|" + "OBJ File (.obj)|*.obj|";
           saveFileDialog.Filter = str2;
           saveFileDialog.FilterIndex = 1;
           break;
@@ -27,7 +27,10 @@ namespace M3D.GUI.Views
           break;
       }
       if (saveFileDialog.ShowDialog() == DialogResult.OK)
+      {
         return saveFileDialog.FileName;
+      }
+
       return (string) null;
     }
 

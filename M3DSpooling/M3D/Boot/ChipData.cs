@@ -14,7 +14,7 @@ namespace M3D.Boot
     public ChipData(int PageSize, int NumberOfPagesTotal)
     {
       this.PageSize = PageSize;
-      this.TotalMemory = NumberOfPagesTotal * PageSize * 2;
+      TotalMemory = NumberOfPagesTotal * PageSize * 2;
     }
   }
 }

@@ -54,159 +54,181 @@ namespace M3D.Spooling.Client
 
     public SpoolerClient(DebugLogger logger)
     {
-      this.MyDebugLogger = logger;
-      this.thread_sync = new object();
-      this.tick_sync = new object();
-      this.new_printer_list_sync = new object();
-      this.HasNewPrinterList = new ThreadSafeVariable<bool>();
-      this.HasNewPrinterList.Value = false;
-      this.connected_printers = new List<Printer>();
-      this.connectedSpoolerInfo = new ThreadSafeVariable<SpoolerInfo>((SpoolerInfo) null);
-      this.message_queue = new ConcurrentQueue<RPCInvoker.RPC>();
-      this.message_thread = (Thread) null;
-      this.queue_lock = new object();
-      this.isprinting_lock = new object();
+      MyDebugLogger = logger;
+      thread_sync = new object();
+      tick_sync = new object();
+      new_printer_list_sync = new object();
+      HasNewPrinterList = new ThreadSafeVariable<bool>
+      {
+        Value = false
+      };
+      connected_printers = new List<Printer>();
+      connectedSpoolerInfo = new ThreadSafeVariable<SpoolerInfo>((SpoolerInfo) null);
+      message_queue = new ConcurrentQueue<RPCInvoker.RPC>();
+      message_thread = (Thread) null;
+      queue_lock = new object();
+      isprinting_lock = new object();
     }
 
     ~SpoolerClient()
     {
-      this.CloseSession();
+      CloseSession();
     }
 
     public List<PrinterInfo> GetPrinterInfo()
     {
-      List<PrinterInfo> printerInfoList = new List<PrinterInfo>();
-      lock (this.connected_printers)
+      var printerInfoList = new List<PrinterInfo>();
+      lock (connected_printers)
       {
-        foreach (Printer connectedPrinter in this.connected_printers)
+        foreach (Printer connectedPrinter in connected_printers)
+        {
           printerInfoList.Add(new PrinterInfo(connectedPrinter.Info));
+        }
       }
       return printerInfoList;
     }
 
     public IEnumerator<Printer> GetEnumerator()
     {
-      return (IEnumerator<Printer>) this.connected_printers.GetEnumerator();
+      return (IEnumerator<Printer>)connected_printers.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator) this.GetEnumerator();
+      return (IEnumerator)GetEnumerator();
     }
 
     public void Lock(SpoolerClient.Del d)
     {
-      lock (this.connected_printers)
+      lock (connected_printers)
+      {
         d();
+      }
     }
 
     public SpoolerResult StartSession(string spooler_app_and_path, string working_dir, string spooler_arguments, int start_delay)
     {
       Trace.WriteLine("SpoolerClient2.StartSession");
-      this.MyDebugLogger.Add("SpoolerClient::StartSession", "Starting", DebugLogger.LogType.Secondary);
+      MyDebugLogger.Add("SpoolerClient::StartSession", "Starting", DebugLogger.LogType.Secondary);
       SpoolerResult spoolerResult = SpoolerResult.Fail_Connect;
       try
       {
-        RemoteSpoolerConnection spoolerConnection = new RemoteSpoolerConnection(spooler_app_and_path, working_dir, spooler_arguments);
-        this.MyDebugLogger.Add("SpoolerClient::StartSession", "Remote Connection Object Created", DebugLogger.LogType.Secondary);
+        var spoolerConnection = new RemoteSpoolerConnection(spooler_app_and_path, working_dir, spooler_arguments);
+        MyDebugLogger.Add("SpoolerClient::StartSession", "Remote Connection Object Created", DebugLogger.LogType.Secondary);
         spoolerConnection.StartUpDelay = start_delay;
-        spoolerConnection.UseNoSpoolerMode = this.__use_no_spooler_mode;
-        spoolerConnection.XMLProcessor = new OnReceiveXMLFromSpooler(this.ProcessXMLFromServer);
+        spoolerConnection.UseNoSpoolerMode = __use_no_spooler_mode;
+        spoolerConnection.XMLProcessor = new OnReceiveXMLFromSpooler(ProcessXMLFromServer);
         spoolerConnection.StartUp(42345);
-        this.MyDebugLogger.Add("SpoolerClient::StartSession", "Socket Client Initialized", DebugLogger.LogType.Secondary);
-        this.spooler_connection = (ISpoolerConnection) spoolerConnection;
-        spoolerResult = this.InitialConnect();
+        MyDebugLogger.Add("SpoolerClient::StartSession", "Socket Client Initialized", DebugLogger.LogType.Secondary);
+        spooler_connection = (ISpoolerConnection) spoolerConnection;
+        spoolerResult = InitialConnect();
         Trace.WriteLine(string.Format("SpoolerClient2.StartSession Completed {0}", (object) spoolerResult));
-        this.MyDebugLogger.Add("SpoolerClient::StartSession", "Connected to Spooler", DebugLogger.LogType.Secondary);
+        MyDebugLogger.Add("SpoolerClient::StartSession", "Connected to Spooler", DebugLogger.LogType.Secondary);
       }
       catch (Exception ex)
       {
         ErrorLogger.LogException("Exception in SpoolerClient2.StartSession " + ex.Message, ex);
-        this.spooler_connection = (ISpoolerConnection) null;
-        this.CloseSession();
+        spooler_connection = (ISpoolerConnection) null;
+        CloseSession();
       }
-      if (this.spooler_connection != null)
-        this.StartThreads();
-      this.MyDebugLogger.Add("SpoolerClient::StartSession", "SpoolerClient threads created", DebugLogger.LogType.Secondary);
+      if (spooler_connection != null)
+      {
+        StartThreads();
+      }
+
+      MyDebugLogger.Add("SpoolerClient::StartSession", "SpoolerClient threads created", DebugLogger.LogType.Secondary);
       return spoolerResult;
     }
 
     public void CloseSession()
     {
-      this.MyDebugLogger.Add("SpoolerClient::CloseSession", "Closing Session", DebugLogger.LogType.Secondary);
-      this.threadsAborted.Value = true;
-      this.MyDebugLogger.Add("SpoolerClient::CloseSession", "Stopping Threads", DebugLogger.LogType.Secondary);
-      this.processing_thread = (Thread) null;
-      this.message_thread = (Thread) null;
-      if (this.spooler_connection != null)
+      MyDebugLogger.Add("SpoolerClient::CloseSession", "Closing Session", DebugLogger.LogType.Secondary);
+      threadsAborted.Value = true;
+      MyDebugLogger.Add("SpoolerClient::CloseSession", "Stopping Threads", DebugLogger.LogType.Secondary);
+      processing_thread = (Thread) null;
+      message_thread = (Thread) null;
+      if (spooler_connection != null)
       {
-        this.spooler_connection.ShutdownConnection();
-        this.MyDebugLogger.Add("SpoolerClient::CloseSession", "Connection Shutdown", DebugLogger.LogType.Secondary);
+        spooler_connection.ShutdownConnection();
+        MyDebugLogger.Add("SpoolerClient::CloseSession", "Connection Shutdown", DebugLogger.LogType.Secondary);
       }
-      if (this.connected_printers != null)
-        this.connected_printers.Clear();
-      if (this.new_connected_printers != null)
-        this.new_connected_printers.Clear();
-      this.spooler_connection = (ISpoolerConnection) null;
-      this.MyDebugLogger.Add("SpoolerClient::CloseSession", "Data Cleared", DebugLogger.LogType.Secondary);
+      if (connected_printers != null)
+      {
+        connected_printers.Clear();
+      }
+
+      if (new_connected_printers != null)
+      {
+        new_connected_printers.Clear();
+      }
+
+      spooler_connection = (ISpoolerConnection) null;
+      MyDebugLogger.Add("SpoolerClient::CloseSession", "Data Cleared", DebugLogger.LogType.Secondary);
     }
 
     public SpoolerResult InitialConnect()
     {
-      return this.SendSpoolerMessageRPC(nameof (InitialConnect), (object) M3D.Spooling.Version.Client_Version);
+      return SendSpoolerMessageRPC(nameof (InitialConnect), (object) M3D.Spooling.Version.Client_Version);
     }
 
     public SpoolerResult UpdatePrinterList()
     {
-      bool flag = true;
-      if (!this.AlwaysBlock)
+      var flag = true;
+      if (!AlwaysBlock)
       {
-        lock (this.queue_lock)
+        lock (queue_lock)
         {
-          flag = !this.update_in_queue || this.message_queue.Count == 0;
-          this.update_in_queue = true;
+          flag = !update_in_queue || message_queue.Count == 0;
+          update_in_queue = true;
         }
       }
       if (flag)
-        return this.SendSpoolerMessageRPCAsync(nameof (UpdatePrinterList), new object[0]);
+      {
+        return SendSpoolerMessageRPCAsync(nameof (UpdatePrinterList), new object[0]);
+      }
+
       return SpoolerResult.OK;
     }
 
     public SpoolerResult ForceSpoolerShutdown()
     {
-      return this.SendSpoolerMessageRPCAsync("ForceShutdownSpooler", new object[0]);
+      return SendSpoolerMessageRPCAsync("ForceShutdownSpooler", new object[0]);
     }
 
     public SpoolerResult HideSpooler()
     {
-      return this.SendSpoolerMessageRPCAsync(nameof (HideSpooler), new object[0]);
+      return SendSpoolerMessageRPCAsync(nameof (HideSpooler), new object[0]);
     }
 
     public SpoolerResult ShowSpooler()
     {
-      return this.SendSpoolerMessageRPCAsync(nameof (ShowSpooler), new object[0]);
+      return SendSpoolerMessageRPCAsync(nameof (ShowSpooler), new object[0]);
     }
 
     public List<PrinterSerialNumber> GetSerialNumbers()
     {
-      List<PrinterSerialNumber> printerSerialNumberList = new List<PrinterSerialNumber>();
-      lock (this.connected_printers)
+      var printerSerialNumberList = new List<PrinterSerialNumber>();
+      lock (connected_printers)
       {
-        foreach (Printer connectedPrinter in this.connected_printers)
+        foreach (Printer connectedPrinter in connected_printers)
+        {
           printerSerialNumberList.Add(connectedPrinter.Info.serial_number);
+        }
       }
       return printerSerialNumberList;
     }
 
     public Printer GetPrinter(int index)
     {
-      Printer printer = (Printer) null;
-      lock (this.connected_printers)
+      var printer = (Printer) null;
+      lock (connected_printers)
       {
         if (index >= 0)
         {
-          if (index < this.connected_printers.Count)
-            printer = this.connected_printers[index];
+          if (index < connected_printers.Count)
+          {
+            printer = connected_printers[index];
+          }
         }
       }
       return printer;
@@ -214,14 +236,14 @@ namespace M3D.Spooling.Client
 
     public Printer GetPrinter(PrinterSerialNumber sn)
     {
-      Printer printer = (Printer) null;
-      lock (this.connected_printers)
+      var printer = (Printer) null;
+      lock (connected_printers)
       {
-        for (int index = 0; index < this.connected_printers.Count; ++index)
+        for (var index = 0; index < connected_printers.Count; ++index)
         {
-          if (this.connected_printers[index].Info.serial_number == sn)
+          if (connected_printers[index].Info.serial_number == sn)
           {
-            printer = this.connected_printers[index];
+            printer = connected_printers[index];
             break;
           }
         }
@@ -233,8 +255,10 @@ namespace M3D.Spooling.Client
     {
       try
       {
-        if (this.connected_printers.Count > 0)
-          return this.connected_printers[0].Info.serial_number.ToString();
+        if (connected_printers.Count > 0)
+        {
+          return connected_printers[0].Info.serial_number.ToString();
+        }
       }
       catch (Exception ex)
       {
@@ -245,29 +269,38 @@ namespace M3D.Spooling.Client
 
     protected void StartThreads()
     {
-      if (this.spooler_connection == null)
+      if (spooler_connection == null)
+      {
         return;
-      this.message_thread = new Thread(new ThreadStart(this.MessageThread));
-      this.message_thread.Priority = ThreadPriority.Normal;
-      this.message_thread.IsBackground = true;
-      this.message_thread.Name = "Message";
-      this.message_thread.Start();
-      this.processing_thread = new Thread(new ThreadStart(this.ProcessingThread));
-      this.processing_thread.Name = "Processing";
-      this.processing_thread.IsBackground = true;
-      this.processing_thread.Start();
+      }
+
+      message_thread = new Thread(new ThreadStart(MessageThread))
+      {
+        Priority = ThreadPriority.Normal,
+        IsBackground = true,
+        Name = "Message"
+      };
+      message_thread.Start();
+      processing_thread = new Thread(new ThreadStart(ProcessingThread))
+      {
+        Name = "Processing",
+        IsBackground = true
+      };
+      processing_thread.Start();
     }
 
     private int GetPrinterIndexFromSerialNumber(PrinterSerialNumber sn)
     {
-      lock (this.connected_printers)
+      lock (connected_printers)
       {
         try
         {
-          for (int index = 0; index < this.connected_printers.Count; ++index)
+          for (var index = 0; index < connected_printers.Count; ++index)
           {
-            if (this.connected_printers[index].Info.serial_number == sn)
+            if (connected_printers[index].Info.serial_number == sn)
+            {
               return index;
+            }
           }
         }
         catch (Exception ex)
@@ -280,15 +313,17 @@ namespace M3D.Spooling.Client
 
     public bool IsPrinterConnected(string printer_serial_number)
     {
-      return this.GetPrinterIndexFromSerialNumber(new PrinterSerialNumber(printer_serial_number)) >= 0;
+      return GetPrinterIndexFromSerialNumber(new PrinterSerialNumber(printer_serial_number)) >= 0;
     }
 
     public bool IsPrinting
     {
       get
       {
-        lock (this.isprinting_lock)
-          return this._is_printing;
+        lock (isprinting_lock)
+        {
+          return _is_printing;
+        }
       }
     }
 
@@ -304,16 +339,23 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        if (this.spooler_connection != null)
-          return this.spooler_connection.UseNoSpoolerMode;
-        return this.__use_no_spooler_mode;
+        if (spooler_connection != null)
+        {
+          return spooler_connection.UseNoSpoolerMode;
+        }
+
+        return __use_no_spooler_mode;
       }
       set
       {
-        if (this.spooler_connection != null)
-          this.spooler_connection.UseNoSpoolerMode = value;
+        if (spooler_connection != null)
+        {
+          spooler_connection.UseNoSpoolerMode = value;
+        }
         else
-          this.__use_no_spooler_mode = value;
+        {
+          __use_no_spooler_mode = value;
+        }
       }
     }
 
@@ -321,7 +363,7 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this._printerDriverInstallCount.Value;
+        return _printerDriverInstallCount.Value;
       }
     }
 
@@ -329,8 +371,10 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        lock (this.connected_printers)
-          return this.connected_printers.Count;
+        lock (connected_printers)
+        {
+          return connected_printers.Count;
+        }
       }
     }
 
@@ -338,13 +382,17 @@ namespace M3D.Spooling.Client
     {
       set
       {
-        lock (this.thread_sync)
-          this._cleanupPrinterTime = value;
+        lock (thread_sync)
+        {
+          _cleanupPrinterTime = value;
+        }
       }
       get
       {
-        lock (this.thread_sync)
-          return this._cleanupPrinterTime;
+        lock (thread_sync)
+        {
+          return _cleanupPrinterTime;
+        }
       }
     }
 
@@ -352,13 +400,17 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        lock (this.tick_sync)
-          return this._updateTick;
+        lock (tick_sync)
+        {
+          return _updateTick;
+        }
       }
       set
       {
-        lock (this.tick_sync)
-          this._updateTick = value;
+        lock (tick_sync)
+        {
+          _updateTick = value;
+        }
       }
     }
 
@@ -366,11 +418,11 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this._ignoreConnectingPrinters.Value;
+        return _ignoreConnectingPrinters.Value;
       }
       set
       {
-        this._ignoreConnectingPrinters.Value = value;
+        _ignoreConnectingPrinters.Value = value;
       }
     }
 
@@ -378,20 +430,20 @@ namespace M3D.Spooling.Client
     {
       try
       {
-        while (!this.threadsAborted.Value)
+        while (!threadsAborted.Value)
         {
           try
           {
-            int num = (int) this.UpdatePrinterList();
+            var num = (int)UpdatePrinterList();
           }
           catch (Exception ex)
           {
             ErrorLogger.LogException("Exception in ProcessingThread.UpdatePrinterList " + ex.Message, ex);
           }
-          Thread.Sleep(this.UpdateTick);
+          Thread.Sleep(UpdateTick);
           try
           {
-            this.ProcessNewPrinterList();
+            ProcessNewPrinterList();
           }
           catch (Exception ex)
           {
@@ -399,7 +451,7 @@ namespace M3D.Spooling.Client
           }
           try
           {
-            this.CleanUpDisconnectedPrinters();
+            CleanUpDisconnectedPrinters();
           }
           catch (Exception ex)
           {
@@ -415,21 +467,21 @@ namespace M3D.Spooling.Client
 
     private void CleanUpDisconnectedPrinters()
     {
-      List<Printer> printerList = new List<Printer>();
-      lock (this.connected_printers)
+      var printerList = new List<Printer>();
+      lock (connected_printers)
       {
         try
         {
-          int index = 0;
-          while (index < this.connected_printers.Count)
+          var index = 0;
+          while (index < connected_printers.Count)
           {
-            if (!this.connected_printers[index].Connected)
+            if (!connected_printers[index].Connected)
             {
-              this.connected_printers[index].time_since_found += this.UpdateTick;
-              if (this.CleanUpDisconnectedPrinterTime > 0 && this.connected_printers[index].time_since_found >= this._cleanupPrinterTime)
+              connected_printers[index].time_since_found += UpdateTick;
+              if (CleanUpDisconnectedPrinterTime > 0 && connected_printers[index].time_since_found >= _cleanupPrinterTime)
               {
-                printerList.Add(this.connected_printers[index]);
-                this.connected_printers.RemoveAt(index);
+                printerList.Add(connected_printers[index]);
+                connected_printers.RemoveAt(index);
                 continue;
               }
             }
@@ -444,24 +496,26 @@ namespace M3D.Spooling.Client
           ErrorLogger.LogException("Exception in SpoolerClient2.CleanUpDisconnectedPrinters " + ex.Message, ex);
         }
       }
-      if (this.OnPrinterDisconnected != null)
+      if (OnPrinterDisconnected != null)
       {
         foreach (Printer new_printer in printerList)
-          this.OnPrinterDisconnected(new_printer);
+        {
+          OnPrinterDisconnected(new_printer);
+        }
       }
       printerList.Clear();
     }
 
     private void InternalOnReceivedMessage(SpoolerMessage message)
     {
-      Printer printer = (Printer) null;
-      if (this.connected_printers != null)
+      var printer = (Printer) null;
+      if (connected_printers != null)
       {
-        lock (this.connected_printers)
+        lock (connected_printers)
         {
           try
           {
-            foreach (Printer connectedPrinter in this.connected_printers)
+            foreach (Printer connectedPrinter in connected_printers)
             {
               if (connectedPrinter.printer_info.serial_number == message.SerialNumber || (message.Type == MessageType.FullLoggingData || message.Type == MessageType.LoggingMessage) && message.SerialNumber.ToString() == "00-00-00-00-00-000-000")
               {
@@ -480,37 +534,48 @@ namespace M3D.Spooling.Client
         }
       }
       printer?.ProcessSpoolerMessage(message);
-      if (this.OnReceivedMessage == null)
+      if (OnReceivedMessage == null)
+      {
         return;
-      this.OnReceivedMessage(message);
+      }
+
+      OnReceivedMessage(message);
     }
 
     private void ProcessDeviceInstallDetected(string xmlmessage)
     {
-      XmlReader xmlReader = XmlReader.Create((TextReader) new StringReader(xmlmessage));
+      var xmlReader = XmlReader.Create((TextReader) new StringReader(xmlmessage));
       if (!xmlReader.Read() || !xmlReader.HasAttributes)
+      {
         return;
-      int result = 0;
-      if (!int.TryParse(xmlReader.GetAttribute("count"), out result))
+      }
+
+      if (!int.TryParse(xmlReader.GetAttribute("count"), out var result))
+      {
         return;
-      this._printerDriverInstallCount.Value = result;
+      }
+
+      _printerDriverInstallCount.Value = result;
     }
 
     private void ProcessNewPrinterList()
     {
-      List<PrinterInfo> connected_printers = (List<PrinterInfo>) null;
-      bool flag = false;
-      lock (this.new_printer_list_sync)
+      var connected_printers = (List<PrinterInfo>) null;
+      var flag = false;
+      lock (new_printer_list_sync)
       {
-        if (this.HasNewPrinterList.Value)
+        if (HasNewPrinterList.Value)
         {
-          connected_printers = new List<PrinterInfo>((IEnumerable<PrinterInfo>) this.new_connected_printers);
-          this.HasNewPrinterList.Value = false;
+          connected_printers = new List<PrinterInfo>((IEnumerable<PrinterInfo>)new_connected_printers);
+          HasNewPrinterList.Value = false;
           flag = true;
         }
       }
       if (!flag)
+      {
         return;
+      }
+
       lock (this.connected_printers)
       {
         try
@@ -518,7 +583,9 @@ namespace M3D.Spooling.Client
           if (this.connected_printers != null)
           {
             foreach (Printer connectedPrinter in this.connected_printers)
+            {
               connectedPrinter.Found.Value = false;
+            }
           }
         }
         catch (InvalidOperationException ex)
@@ -531,42 +598,54 @@ namespace M3D.Spooling.Client
       }
       foreach (PrinterInfo info in connected_printers)
       {
-        if (info != null && !(info.serial_number == PrinterSerialNumber.Undefined) && (!this.IgnoreConnectingPrinters || info.Status != PrinterStatus.Connecting))
+        if (info != null && !(info.serial_number == PrinterSerialNumber.Undefined) && (!IgnoreConnectingPrinters || info.Status != PrinterStatus.Connecting))
         {
-          Printer printer = (Printer) null;
+          var printer = (Printer) null;
           lock (this.connected_printers)
           {
             foreach (Printer connectedPrinter in this.connected_printers)
             {
               if (info.serial_number == connectedPrinter.printer_info.serial_number)
+              {
                 printer = connectedPrinter;
+              }
             }
           }
           if (printer != null)
           {
             printer.UpdateData(info);
             if (printer.time_since_found != 0)
+            {
               printer.switching_modes = false;
+            }
             else if (printer.Info.Status == PrinterStatus.Bootloader_UpdatingFirmware)
+            {
               printer.switching_modes = true;
+            }
+
             printer.time_since_found = 0;
             printer.Found.Value = true;
             printer._connected.Value = true;
           }
           else
           {
-            Printer new_printer = new Printer(info, this.GetPrinterProfile(info.ProfileName), this);
+            var new_printer = new Printer(info, GetPrinterProfile(info.ProfileName), this);
             new_printer.Found.Value = true;
             new_printer._connected.Value = true;
             lock (this.connected_printers)
+            {
               this.connected_printers.Add(new_printer);
-            if (this.OnGotNewPrinter != null)
-              this.OnGotNewPrinter(new_printer);
+            }
+
+            if (OnGotNewPrinter != null)
+            {
+              OnGotNewPrinter(new_printer);
+            }
           }
         }
       }
-      int index = 0;
-      List<Printer> printerList = new List<Printer>();
+      var index = 0;
+      var printerList = new List<Printer>();
       lock (this.connected_printers)
       {
         while (index < this.connected_printers.Count)
@@ -584,59 +663,74 @@ namespace M3D.Spooling.Client
           ++index;
         }
       }
-      if (this.OnPrinterDisconnected != null && printerList.Count > 0)
+      if (OnPrinterDisconnected != null && printerList.Count > 0)
       {
         foreach (Printer new_printer in printerList)
-          this.OnPrinterDisconnected(new_printer);
+        {
+          OnPrinterDisconnected(new_printer);
+        }
       }
       printerList.Clear();
-      if (this.OnReceivedPrinterList == null)
+      if (OnReceivedPrinterList == null)
+      {
         return;
-      this.OnReceivedPrinterList(connected_printers);
+      }
+
+      OnReceivedPrinterList(connected_printers);
     }
 
     protected internal void ProcessXMLFromServer(string message)
     {
-      List<PrinterInfo> printerInfoList = new List<PrinterInfo>();
-      bool flag1 = false;
-      bool flag2 = false;
+      var printerInfoList = new List<PrinterInfo>();
+      var flag1 = false;
+      var flag2 = false;
       try
       {
         if (message != "OK")
         {
-          XmlDocument xmlDocument = new XmlDocument();
+          var xmlDocument = new XmlDocument();
           xmlDocument.LoadXml(message);
           foreach (XmlNode xmlNode in xmlDocument.SelectSingleNode("SocketBroadcast"))
           {
             if (xmlNode is XmlElement)
             {
-              XmlElement xmlElement = (XmlElement) xmlNode;
-              StringWriter stringWriter = new StringWriter();
+              var xmlElement = (XmlElement) xmlNode;
+              var stringWriter = new StringWriter();
               xmlElement.WriteTo((XmlWriter) new XmlTextWriter((TextWriter) stringWriter)
               {
                 Formatting = Formatting.Indented
               });
-              string str = stringWriter.ToString();
+              var str = stringWriter.ToString();
               if (xmlElement.Name == "PrinterInfo")
               {
-                PrinterInfo printerInfo = new PrinterInfo(str);
+                var printerInfo = new PrinterInfo(str);
                 printerInfoList.Add(printerInfo);
                 if (printerInfo.current_job != null)
                 {
                   flag2 = true;
-                  this.serial_number = printerInfo.MySerialNumber;
+                  serial_number = printerInfo.MySerialNumber;
                 }
-                if (this.OnProcessFromServer != null)
-                  this.OnProcessFromServer();
+                if (OnProcessFromServer != null)
+                {
+                  OnProcessFromServer();
+                }
               }
               else if (xmlElement.Name == "SpoolerInfo")
-                this.connectedSpoolerInfo.Value = new SpoolerInfo(str);
+              {
+                connectedSpoolerInfo.Value = new SpoolerInfo(str);
+              }
               else if (xmlElement.Name == "SpoolerMessage")
-                this.InternalOnReceivedMessage(new SpoolerMessage(str));
+              {
+                InternalOnReceivedMessage(new SpoolerMessage(str));
+              }
               else if (xmlElement.Name == "SPOOLER__ALL")
+              {
                 flag1 = true;
+              }
               else if (xmlElement.Name == "DeviceInstallDetected")
-                this.ProcessDeviceInstallDetected(str);
+              {
+                ProcessDeviceInstallDetected(str);
+              }
             }
           }
         }
@@ -644,69 +738,92 @@ namespace M3D.Spooling.Client
       catch (Exception ex)
       {
         ErrorLogger.LogException("Exception in SpoolerClient.ProcessFormServer " + ex.Message, ex);
-        int num = (int) this.ForceSpoolerShutdown();
+        var num = (int)ForceSpoolerShutdown();
       }
       if (!flag1)
-        return;
-      if (!flag2 && this._is_printing && this.OnPrintStopped != null)
-        this.OnPrintStopped(this.serial_number);
-      lock (this.isprinting_lock)
-        this._is_printing = flag2;
-      lock (this.new_printer_list_sync)
       {
-        this.HasNewPrinterList.Value = true;
-        this.new_connected_printers = new List<PrinterInfo>((IEnumerable<PrinterInfo>) printerInfoList);
+        return;
+      }
+
+      if (!flag2 && _is_printing && OnPrintStopped != null)
+      {
+        OnPrintStopped(serial_number);
+      }
+
+      lock (isprinting_lock)
+      {
+        _is_printing = flag2;
+      }
+
+      lock (new_printer_list_sync)
+      {
+        HasNewPrinterList.Value = true;
+        new_connected_printers = new List<PrinterInfo>((IEnumerable<PrinterInfo>) printerInfoList);
       }
     }
 
     public PrinterProfile GetPrinterProfile(string name)
     {
-      IEnumerable<PrinterProfile> source = this.ConnectedSpoolerInfo.PrinterProfileList.Where<PrinterProfile>((Func<PrinterProfile, bool>) (p => p.ProfileName == name));
+      IEnumerable<PrinterProfile> source = ConnectedSpoolerInfo.PrinterProfileList.Where<PrinterProfile>((Func<PrinterProfile, bool>) (p => p.ProfileName == name));
       if (source.Count<PrinterProfile>() > 0)
+      {
         return new PrinterProfile(source.First<PrinterProfile>());
+      }
+
       return (PrinterProfile) null;
     }
 
     public SpoolerResult SendSpoolerMessageRPC(string function_name, params object[] options)
     {
-      return this.SendSpoolerMessageRPC(new RPCInvoker.RPC(function_name, options));
+      return SendSpoolerMessageRPC(new RPCInvoker.RPC(function_name, options));
     }
 
     public SpoolerResult SendSpoolerMessageRPC(RPCInvoker.RPC rpc_call)
     {
-      return this.SendSpoolerMessage(rpc_call.Serialize());
+      return SendSpoolerMessage(rpc_call.Serialize());
     }
 
     public SpoolerResult SendSpoolerMessageRPCAsync(RPCInvoker.RPC rpc_call)
     {
-      if (this.AlwaysBlock)
-        return this.SendSpoolerMessageRPC(rpc_call);
-      if (this.MessagesInQueue > 128)
+      if (AlwaysBlock)
+      {
+        return SendSpoolerMessageRPC(rpc_call);
+      }
+
+      if (MessagesInQueue > 128)
+      {
         return SpoolerResult.Fail;
-      lock (this.queue_lock)
-        this.message_queue.Enqueue(rpc_call);
+      }
+
+      lock (queue_lock)
+      {
+        message_queue.Enqueue(rpc_call);
+      }
+
       return SpoolerResult.OK;
     }
 
     public SpoolerResult SendSpoolerMessageRPCAsync(string function_name, params object[] options)
     {
-      return this.SendSpoolerMessageRPCAsync(new RPCInvoker.RPC(function_name, options));
+      return SendSpoolerMessageRPCAsync(new RPCInvoker.RPC(function_name, options));
     }
 
     private void MessageThread()
     {
       try
       {
-        while (!this.threadsAborted.Value)
+        while (!threadsAborted.Value)
         {
-          RPCInvoker.RPC result = new RPCInvoker.RPC();
-          bool flag = false;
-          lock (this.queue_lock)
+          var result = new RPCInvoker.RPC();
+          var flag = false;
+          lock (queue_lock)
           {
             try
             {
-              if (this.message_queue.Count > 0)
-                flag = this.message_queue.TryDequeue(out result);
+              if (message_queue.Count > 0)
+              {
+                flag = message_queue.TryDequeue(out result);
+              }
             }
             catch (Exception ex)
             {
@@ -717,11 +834,11 @@ namespace M3D.Spooling.Client
           {
             if (result.name.Contains("UpdatePrinterList"))
             {
-              lock (this.queue_lock)
+              lock (queue_lock)
               {
                 try
                 {
-                  this.update_in_queue = false;
+                  update_in_queue = false;
                 }
                 catch (Exception ex)
                 {
@@ -729,10 +846,12 @@ namespace M3D.Spooling.Client
                 }
               }
             }
-            int num = (int) this.spooler_connection.SendSpoolerMessageInternal(result.Serialize());
+            var num = (int)spooler_connection.SendSpoolerMessageInternal(result.Serialize());
           }
           else
+          {
             Thread.Sleep(50);
+          }
         }
       }
       catch (Exception ex)
@@ -745,15 +864,20 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        lock (this.queue_lock)
-          return this.message_queue.Count;
+        lock (queue_lock)
+        {
+          return message_queue.Count;
+        }
       }
     }
 
     private SpoolerResult SendSpoolerMessage(string message)
     {
-      if (this.spooler_connection != null)
-        return this.spooler_connection.SendSpoolerMessageInternal(message);
+      if (spooler_connection != null)
+      {
+        return spooler_connection.SendSpoolerMessageInternal(message);
+      }
+
       return SpoolerResult.Fail;
     }
 
@@ -763,7 +887,7 @@ namespace M3D.Spooling.Client
     {
       get
       {
-        return this.connectedSpoolerInfo.Value;
+        return connectedSpoolerInfo.Value;
       }
     }
 

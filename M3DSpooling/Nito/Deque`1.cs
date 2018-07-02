@@ -23,20 +23,25 @@ namespace Nito
     public Deque(int capacity)
     {
       if (capacity < 1)
+      {
         throw new ArgumentOutOfRangeException(nameof (capacity), "Capacity must be greater than 0.");
-      this.buffer = new T[capacity];
+      }
+
+      buffer = new T[capacity];
     }
 
     public Deque(IEnumerable<T> collection)
     {
-      int collectionCount = collection.Count<T>();
+      var collectionCount = collection.Count();
       if (collectionCount > 0)
       {
-        this.buffer = new T[collectionCount];
-        this.DoInsertRange(0, collection, collectionCount);
+        buffer = new T[collectionCount];
+        DoInsertRange(0, collection, collectionCount);
       }
       else
-        this.buffer = new T[8];
+      {
+        buffer = new T[8];
+      }
     }
 
     public Deque()
@@ -56,36 +61,39 @@ namespace Nito
     {
       get
       {
-        Deque<T>.CheckExistingIndexArgument(this.Count, index);
-        return this.DoGetItem(index);
+        Deque<T>.CheckExistingIndexArgument(Count, index);
+        return DoGetItem(index);
       }
       set
       {
-        Deque<T>.CheckExistingIndexArgument(this.Count, index);
-        this.DoSetItem(index, value);
+        Deque<T>.CheckExistingIndexArgument(Count, index);
+        DoSetItem(index, value);
       }
     }
 
     public void Insert(int index, T item)
     {
-      Deque<T>.CheckNewIndexArgument(this.Count, index);
-      this.DoInsert(index, item);
+      Deque<T>.CheckNewIndexArgument(Count, index);
+      DoInsert(index, item);
     }
 
     public void RemoveAt(int index)
     {
-      Deque<T>.CheckExistingIndexArgument(this.Count, index);
-      this.DoRemoveAt(index);
+      Deque<T>.CheckExistingIndexArgument(Count, index);
+      DoRemoveAt(index);
     }
 
     public int IndexOf(T item)
     {
       EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
-      int num = 0;
+      var num = 0;
       foreach (T y in this)
       {
         if (equalityComparer.Equals(item, y))
+        {
           return num;
+        }
+
         ++num;
       }
       return -1;
@@ -93,7 +101,7 @@ namespace Nito
 
     void ICollection<T>.Add(T item)
     {
-      this.DoInsert(this.Count, item);
+      DoInsert(Count, item);
     }
 
     bool ICollection<T>.Contains(T item)
@@ -104,74 +112,101 @@ namespace Nito
     void ICollection<T>.CopyTo(T[] array, int arrayIndex)
     {
       if (array == null)
+      {
         throw new ArgumentNullException(nameof (array), "Array is null");
-      int count = this.Count;
+      }
+
+      var count = Count;
       Deque<T>.CheckRangeArguments(array.Length, arrayIndex, count);
-      for (int index = 0; index != count; ++index)
+      for (var index = 0; index != count; ++index)
+      {
         array[arrayIndex + index] = this[index];
+      }
     }
 
     public bool Remove(T item)
     {
-      int index = this.IndexOf(item);
+      var index = IndexOf(item);
       if (index == -1)
+      {
         return false;
-      this.DoRemoveAt(index);
+      }
+
+      DoRemoveAt(index);
       return true;
     }
 
     public IEnumerator<T> GetEnumerator()
     {
-      int count = this.Count;
-      for (int i = 0; i != count; ++i)
-        yield return this.DoGetItem(i);
+      var count = Count;
+      for (var i = 0; i != count; ++i)
+      {
+        yield return DoGetItem(i);
+      }
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator) this.GetEnumerator();
+      return (IEnumerator)GetEnumerator();
     }
 
     private bool ObjectIsT(object item)
     {
       if (item is T)
+      {
         return true;
+      }
+
       if (item == null)
       {
         Type type = typeof (T);
         if (type.IsClass && !type.IsPointer || type.IsInterface || type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>))
+        {
           return true;
+        }
       }
       return false;
     }
 
     int IList.Add(object value)
     {
-      if (!this.ObjectIsT(value))
+      if (!ObjectIsT(value))
+      {
         throw new ArgumentException("Item is not of the correct type.", nameof (value));
-      this.AddToBack((T) value);
-      return this.Count - 1;
+      }
+
+      AddToBack((T) value);
+      return Count - 1;
     }
 
     bool IList.Contains(object value)
     {
-      if (!this.ObjectIsT(value))
+      if (!ObjectIsT(value))
+      {
         throw new ArgumentException("Item is not of the correct type.", nameof (value));
+      }
+
       return this.Contains<T>((T) value);
     }
 
     int IList.IndexOf(object value)
     {
-      if (!this.ObjectIsT(value))
+      if (!ObjectIsT(value))
+      {
         throw new ArgumentException("Item is not of the correct type.", nameof (value));
-      return this.IndexOf((T) value);
+      }
+
+      return IndexOf((T) value);
     }
 
     void IList.Insert(int index, object value)
     {
-      if (!this.ObjectIsT(value))
+      if (!ObjectIsT(value))
+      {
         throw new ArgumentException("Item is not of the correct type.", nameof (value));
-      this.Insert(index, (T) value);
+      }
+
+      Insert(index, (T) value);
     }
 
     bool IList.IsFixedSize
@@ -192,9 +227,12 @@ namespace Nito
 
     void IList.Remove(object value)
     {
-      if (!this.ObjectIsT(value))
+      if (!ObjectIsT(value))
+      {
         throw new ArgumentException("Item is not of the correct type.", nameof (value));
-      this.Remove((T) value);
+      }
+
+      Remove((T) value);
     }
 
     object IList.this[int index]
@@ -205,8 +243,11 @@ namespace Nito
       }
       set
       {
-        if (!this.ObjectIsT(value))
+        if (!ObjectIsT(value))
+        {
           throw new ArgumentException("Item is not of the correct type.", nameof (value));
+        }
+
         this[index] = (T) value;
       }
     }
@@ -214,9 +255,12 @@ namespace Nito
     void ICollection.CopyTo(Array array, int index)
     {
       if (array == null)
+      {
         throw new ArgumentNullException(nameof (array), "Destination array cannot be null.");
-      Deque<T>.CheckRangeArguments(array.Length, index, this.Count);
-      for (int index1 = 0; index1 != this.Count; ++index1)
+      }
+
+      Deque<T>.CheckRangeArguments(array.Length, index, Count);
+      for (var index1 = 0; index1 != Count; ++index1)
       {
         try
         {
@@ -248,30 +292,42 @@ namespace Nito
     private static void CheckNewIndexArgument(int sourceLength, int index)
     {
       if (index < 0 || index > sourceLength)
+      {
         throw new ArgumentOutOfRangeException(nameof (index), "Invalid new index " + (object) index + " for source length " + (object) sourceLength);
+      }
     }
 
     private static void CheckExistingIndexArgument(int sourceLength, int index)
     {
       if (index < 0 || index >= sourceLength)
+      {
         throw new ArgumentOutOfRangeException(nameof (index), "Invalid existing index " + (object) index + " for source length " + (object) sourceLength);
+      }
     }
 
     private static void CheckRangeArguments(int sourceLength, int offset, int count)
     {
       if (offset < 0)
+      {
         throw new ArgumentOutOfRangeException(nameof (offset), "Invalid offset " + (object) offset);
+      }
+
       if (count < 0)
+      {
         throw new ArgumentOutOfRangeException(nameof (count), "Invalid count " + (object) count);
+      }
+
       if (sourceLength - offset < count)
+      {
         throw new ArgumentException("Invalid offset (" + (object) offset + ") or count + (" + (object) count + ") for source length " + (object) sourceLength);
+      }
     }
 
     private bool IsEmpty
     {
       get
       {
-        return this.Count == 0;
+        return Count == 0;
       }
     }
 
@@ -279,7 +335,7 @@ namespace Nito
     {
       get
       {
-        return this.Count == this.Capacity;
+        return Count == Capacity;
       }
     }
 
@@ -287,7 +343,7 @@ namespace Nito
     {
       get
       {
-        return this.offset > this.Capacity - this.Count;
+        return offset > Capacity - Count;
       }
     }
 
@@ -295,27 +351,39 @@ namespace Nito
     {
       get
       {
-        return this.buffer.Length;
+        return buffer.Length;
       }
       set
       {
         if (value < 1)
-          throw new ArgumentOutOfRangeException(nameof (value), "Capacity must be greater than 0.");
-        if (value < this.Count)
-          throw new InvalidOperationException("Capacity cannot be set to a value less than Count");
-        if (value == this.buffer.Length)
-          return;
-        T[] objArray = new T[value];
-        if (this.IsSplit)
         {
-          int num = this.Capacity - this.offset;
-          Array.Copy((Array) this.buffer, this.offset, (Array) objArray, 0, num);
-          Array.Copy((Array) this.buffer, 0, (Array) objArray, num, this.Count - num);
+          throw new ArgumentOutOfRangeException(nameof (value), "Capacity must be greater than 0.");
+        }
+
+        if (value < Count)
+        {
+          throw new InvalidOperationException("Capacity cannot be set to a value less than Count");
+        }
+
+        if (value == buffer.Length)
+        {
+          return;
+        }
+
+        T[] objArray = new T[value];
+        if (IsSplit)
+        {
+          var num = Capacity - offset;
+          Array.Copy((Array)buffer, offset, (Array) objArray, 0, num);
+          Array.Copy((Array)buffer, 0, (Array) objArray, num, Count - num);
         }
         else
-          Array.Copy((Array) this.buffer, this.offset, (Array) objArray, 0, this.Count);
-        this.buffer = objArray;
-        this.offset = 0;
+        {
+          Array.Copy((Array)buffer, offset, (Array) objArray, 0, Count);
+        }
+
+        buffer = objArray;
+        offset = 0;
       }
     }
 
@@ -323,200 +391,243 @@ namespace Nito
 
     private int DequeIndexToBufferIndex(int index)
     {
-      return (index + this.offset) % this.Capacity;
+      return (index + offset) % Capacity;
     }
 
     private T DoGetItem(int index)
     {
-      return this.buffer[this.DequeIndexToBufferIndex(index)];
+      return buffer[DequeIndexToBufferIndex(index)];
     }
 
     private void DoSetItem(int index, T item)
     {
-      this.buffer[this.DequeIndexToBufferIndex(index)] = item;
+      buffer[DequeIndexToBufferIndex(index)] = item;
     }
 
     private void DoInsert(int index, T item)
     {
-      this.EnsureCapacityForOneElement();
+      EnsureCapacityForOneElement();
       if (index == 0)
-        this.DoAddToFront(item);
-      else if (index == this.Count)
-        this.DoAddToBack(item);
+      {
+        DoAddToFront(item);
+      }
+      else if (index == Count)
+      {
+        DoAddToBack(item);
+      }
       else
-        this.DoInsertRange(index, (IEnumerable<T>) new T[1]
+      {
+        DoInsertRange(index, (IEnumerable<T>) new T[1]
         {
           item
         }, 1);
+      }
     }
 
     private void DoRemoveAt(int index)
     {
       if (index == 0)
-        this.DoRemoveFromFront();
-      else if (index == this.Count - 1)
-        this.DoRemoveFromBack();
+      {
+        DoRemoveFromFront();
+      }
+      else if (index == Count - 1)
+      {
+        DoRemoveFromBack();
+      }
       else
-        this.DoRemoveRange(index, 1);
+      {
+        DoRemoveRange(index, 1);
+      }
     }
 
     private int PostIncrement(int value)
     {
-      int offset = this.offset;
+      var offset = this.offset;
       this.offset += value;
-      this.offset %= this.Capacity;
+      this.offset %= Capacity;
       return offset;
     }
 
     private int PreDecrement(int value)
     {
-      this.offset -= value;
-      if (this.offset < 0)
-        this.offset += this.Capacity;
-      return this.offset;
+      offset -= value;
+      if (offset < 0)
+      {
+        offset += Capacity;
+      }
+
+      return offset;
     }
 
     private void DoAddToBack(T value)
     {
-      this.buffer[this.DequeIndexToBufferIndex(this.Count)] = value;
-      ++this.Count;
+      buffer[DequeIndexToBufferIndex(Count)] = value;
+      ++Count;
     }
 
     private void DoAddToFront(T value)
     {
-      this.buffer[this.PreDecrement(1)] = value;
-      ++this.Count;
+      buffer[PreDecrement(1)] = value;
+      ++Count;
     }
 
     private T DoRemoveFromBack()
     {
-      T obj = this.buffer[this.DequeIndexToBufferIndex(this.Count - 1)];
-      --this.Count;
+      T obj = buffer[DequeIndexToBufferIndex(Count - 1)];
+      --Count;
       return obj;
     }
 
     private T DoRemoveFromFront()
     {
-      --this.Count;
-      return this.buffer[this.PostIncrement(1)];
+      --Count;
+      return buffer[PostIncrement(1)];
     }
 
     private void DoInsertRange(int index, IEnumerable<T> collection, int collectionCount)
     {
-      if (index < this.Count / 2)
+      if (index < Count / 2)
       {
-        int num1 = index;
-        int num2 = this.Capacity - collectionCount;
-        for (int index1 = 0; index1 != num1; ++index1)
-          this.buffer[this.DequeIndexToBufferIndex(num2 + index1)] = this.buffer[this.DequeIndexToBufferIndex(index1)];
-        this.PreDecrement(collectionCount);
+        var num1 = index;
+        var num2 = Capacity - collectionCount;
+        for (var index1 = 0; index1 != num1; ++index1)
+        {
+          buffer[DequeIndexToBufferIndex(num2 + index1)] = buffer[DequeIndexToBufferIndex(index1)];
+        }
+
+        PreDecrement(collectionCount);
       }
       else
       {
-        int num1 = this.Count - index;
-        int num2 = index + collectionCount;
-        int num3 = 1;
-        for (int index1 = num1 - num3; index1 != -1; --index1)
-          this.buffer[this.DequeIndexToBufferIndex(num2 + index1)] = this.buffer[this.DequeIndexToBufferIndex(index + index1)];
+        var num1 = Count - index;
+        var num2 = index + collectionCount;
+        var num3 = 1;
+        for (var index1 = num1 - num3; index1 != -1; --index1)
+        {
+          buffer[DequeIndexToBufferIndex(num2 + index1)] = buffer[DequeIndexToBufferIndex(index + index1)];
+        }
       }
-      int index2 = index;
+      var index2 = index;
       foreach (T obj in collection)
       {
-        this.buffer[this.DequeIndexToBufferIndex(index2)] = obj;
+        buffer[DequeIndexToBufferIndex(index2)] = obj;
         ++index2;
       }
-      this.Count += collectionCount;
+      Count += collectionCount;
     }
 
     private void DoRemoveRange(int index, int collectionCount)
     {
       if (index == 0)
       {
-        this.PostIncrement(collectionCount);
-        this.Count -= collectionCount;
+        PostIncrement(collectionCount);
+        Count -= collectionCount;
       }
-      else if (index == this.Count - collectionCount)
+      else if (index == Count - collectionCount)
       {
-        this.Count -= collectionCount;
+        Count -= collectionCount;
       }
       else
       {
-        if (index + collectionCount / 2 < this.Count / 2)
+        if (index + collectionCount / 2 < Count / 2)
         {
-          int num1 = index;
-          int num2 = collectionCount;
-          int num3 = 1;
-          for (int index1 = num1 - num3; index1 != -1; --index1)
-            this.buffer[this.DequeIndexToBufferIndex(num2 + index1)] = this.buffer[this.DequeIndexToBufferIndex(index1)];
-          this.PostIncrement(collectionCount);
+          var num1 = index;
+          var num2 = collectionCount;
+          var num3 = 1;
+          for (var index1 = num1 - num3; index1 != -1; --index1)
+          {
+            buffer[DequeIndexToBufferIndex(num2 + index1)] = buffer[DequeIndexToBufferIndex(index1)];
+          }
+
+          PostIncrement(collectionCount);
         }
         else
         {
-          int num1 = this.Count - collectionCount - index;
-          int num2 = index + collectionCount;
-          for (int index1 = 0; index1 != num1; ++index1)
-            this.buffer[this.DequeIndexToBufferIndex(index + index1)] = this.buffer[this.DequeIndexToBufferIndex(num2 + index1)];
+          var num1 = Count - collectionCount - index;
+          var num2 = index + collectionCount;
+          for (var index1 = 0; index1 != num1; ++index1)
+          {
+            buffer[DequeIndexToBufferIndex(index + index1)] = buffer[DequeIndexToBufferIndex(num2 + index1)];
+          }
         }
-        this.Count -= collectionCount;
+        Count -= collectionCount;
       }
     }
 
     private void EnsureCapacityForOneElement()
     {
-      if (!this.IsFull)
+      if (!IsFull)
+      {
         return;
-      this.Capacity *= 2;
+      }
+
+      Capacity *= 2;
     }
 
     public void AddToBack(T value)
     {
-      this.EnsureCapacityForOneElement();
-      this.DoAddToBack(value);
+      EnsureCapacityForOneElement();
+      DoAddToBack(value);
     }
 
     public void AddToFront(T value)
     {
-      this.EnsureCapacityForOneElement();
-      this.DoAddToFront(value);
+      EnsureCapacityForOneElement();
+      DoAddToFront(value);
     }
 
     public void InsertRange(int index, IEnumerable<T> collection)
     {
-      int collectionCount = collection.Count<T>();
-      Deque<T>.CheckNewIndexArgument(this.Count, index);
-      if (collectionCount > this.Capacity - this.Count)
-        this.Capacity = checked (this.Count + collectionCount);
+      var collectionCount = collection.Count();
+      Deque<T>.CheckNewIndexArgument(Count, index);
+      if (collectionCount > Capacity - Count)
+      {
+        Capacity = checked (Count + collectionCount);
+      }
+
       if (collectionCount == 0)
+      {
         return;
-      this.DoInsertRange(index, collection, collectionCount);
+      }
+
+      DoInsertRange(index, collection, collectionCount);
     }
 
     public void RemoveRange(int offset, int count)
     {
-      Deque<T>.CheckRangeArguments(this.Count, offset, count);
+      Deque<T>.CheckRangeArguments(Count, offset, count);
       if (count == 0)
+      {
         return;
-      this.DoRemoveRange(offset, count);
+      }
+
+      DoRemoveRange(offset, count);
     }
 
     public T RemoveFromBack()
     {
-      if (this.IsEmpty)
+      if (IsEmpty)
+      {
         throw new InvalidOperationException("The deque is empty.");
-      return this.DoRemoveFromBack();
+      }
+
+      return DoRemoveFromBack();
     }
 
     public T RemoveFromFront()
     {
-      if (this.IsEmpty)
+      if (IsEmpty)
+      {
         throw new InvalidOperationException("The deque is empty.");
-      return this.DoRemoveFromFront();
+      }
+
+      return DoRemoveFromFront();
     }
 
     public void Clear()
     {
-      this.offset = 0;
-      this.Count = 0;
+      offset = 0;
+      Count = 0;
     }
 
     [DebuggerNonUserCode]
@@ -534,8 +645,8 @@ namespace Nito
       {
         get
         {
-          T[] array = new T[this.deque.Count];
-          ((ICollection<T>) this.deque).CopyTo(array, 0);
+          T[] array = new T[deque.Count];
+          ((ICollection<T>)deque).CopyTo(array, 0);
           return array;
         }
       }

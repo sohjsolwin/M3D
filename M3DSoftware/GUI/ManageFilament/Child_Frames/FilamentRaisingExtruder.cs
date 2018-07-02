@@ -36,66 +36,80 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("Positioning Print Head", "Please wait.\n\nMoving the print head to the proper place.\n\nBe careful. The nozzle might be hot.", false, false, false, false, false, false);
+      CreateManageFilamentFrame("Positioning Print Head", "Please wait.\n\nMoving the print head to the proper place.\n\nBe careful. The nozzle might be hot.", false, false, false, false, false, false);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
     {
       base.OnActivate(details);
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
       if (selectedPrinter == null)
+      {
         return;
-      if (this.CurrentDetails.current_spool == (FilamentSpool) null)
-        this.MainWindow.ResetToStartup();
-      int num = (int) selectedPrinter.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.CheckPrinterAndHeater), (object) selectedPrinter, "M117", "M114");
+      }
+
+      if (CurrentDetails.current_spool == (FilamentSpool) null)
+      {
+        MainWindow.ResetToStartup();
+      }
+
+      var num = (int) selectedPrinter.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(CheckPrinterAndHeater), (object) selectedPrinter, "M117", "M114");
     }
 
     private void CheckPrinterAndHeater(IAsyncCallResult ar)
     {
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
+      var asyncState = ar.AsyncState as PrinterObject;
       if (asyncState == null)
-        this.MainWindow.ResetToStartup();
+      {
+        MainWindow.ResetToStartup();
+      }
+
       if (ar.CallResult != CommandResult.Success)
       {
-        this.messagebox.AddMessageToQueue("There was a problem sending commands to the printer. Please try again.");
-        this.MainWindow.ResetToStartup();
+        messagebox.AddMessageToQueue("There was a problem sending commands to the printer. Please try again.");
+        MainWindow.ResetToStartup();
       }
       else if (!asyncState.Info.extruder.Z_Valid)
       {
-        this.messagebox.AddMessageToQueue("Sorry. The extruder can't move to a safe position for heating because the Z location has not be calibrated.", PopupMessageBox.MessageBoxButtons.OK);
-        this.MainWindow.ResetToStartup();
+        messagebox.AddMessageToQueue("Sorry. The extruder can't move to a safe position for heating because the Z location has not be calibrated.", PopupMessageBox.MessageBoxButtons.OK);
+        MainWindow.ResetToStartup();
       }
-      else if (this.CurrentDetails.current_spool.filament_location == FilamentSpool.Location.External)
+      else if (CurrentDetails.current_spool.filament_location == FilamentSpool.Location.External)
       {
-        FilamentConstants.ColorsEnum colors = (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), this.CurrentDetails.current_spool.filament_color_code);
-        this.MainWindow.TurnOnHeater(new M3D.Spooling.Client.AsyncCallback(this.RaiseExtruder), (object) asyncState, this.settingsManager.GetFilamentTemperature(this.CurrentDetails.current_spool.filament_type, colors), this.CurrentDetails.current_spool.filament_type);
+        var colors = (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), CurrentDetails.current_spool.filament_color_code);
+        MainWindow.TurnOnHeater(new M3D.Spooling.Client.AsyncCallback(RaiseExtruder), (object) asyncState, settingsManager.GetFilamentTemperature(CurrentDetails.current_spool.filament_type, colors), CurrentDetails.current_spool.filament_type);
       }
       else
-        this.MainWindow.TurnOffHeater(new M3D.Spooling.Client.AsyncCallback(this.RaiseExtruder), (object) asyncState);
+      {
+        MainWindow.TurnOffHeater(new M3D.Spooling.Client.AsyncCallback(RaiseExtruder), (object) asyncState);
+      }
     }
 
     private void RaiseExtruder(IAsyncCallResult ar)
     {
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
+      var asyncState = ar.AsyncState as PrinterObject;
       if (asyncState == null)
-        this.MainWindow.ResetToStartup();
+      {
+        MainWindow.ResetToStartup();
+      }
+
       if (ar.CallResult != CommandResult.Success)
       {
-        this.messagebox.AddMessageToQueue("There was a problem sending commands to the printer. Please try again.");
-        this.MainWindow.ResetToStartup();
+        messagebox.AddMessageToQueue("There was a problem sending commands to the printer. Please try again.");
+        MainWindow.ResetToStartup();
       }
       else if (!asyncState.Info.extruder.Z_Valid)
       {
-        this.messagebox.AddMessageToQueue("Sorry. The extruder can't move to a safe position for heating because the Z location has not be calibrated.", PopupMessageBox.MessageBoxButtons.OK);
-        this.MainWindow.ResetToStartup();
+        messagebox.AddMessageToQueue("Sorry. The extruder can't move to a safe position for heating because the Z location has not be calibrated.", PopupMessageBox.MessageBoxButtons.OK);
+        MainWindow.ResetToStartup();
       }
       else
       {
-        float fastestPossible = asyncState.MyPrinterProfile.SpeedLimitConstants.FastestPossible;
+        var fastestPossible = asyncState.MyPrinterProfile.SpeedLimitConstants.FastestPossible;
         PrinterSizeProfile printerSizeConstants = asyncState.MyPrinterProfile.PrinterSizeConstants;
-        int num1 = asyncState.Info.extruder.ishomed == Trilean.True ? 1 : 0;
-        float num2 = asyncState.Info.extruder.position.pos.z;
-        List<string> stringList = new List<string>();
+        var num1 = asyncState.Info.extruder.ishomed == Trilean.True ? 1 : 0;
+        var num2 = asyncState.Info.extruder.position.pos.z;
+        var stringList = new List<string>();
         if (num1 == 0)
         {
           if ((double) num2 > (double) printerSizeConstants.BoxTopLimitZ)
@@ -108,16 +122,16 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           stringList.Add("M114");
         }
         Manage3DInkMainWindow.PageID nextPage;
-        if (this.CurrentDetails.current_spool.filament_location == FilamentSpool.Location.Internal)
+        if (CurrentDetails.current_spool.filament_location == FilamentSpool.Location.Internal)
         {
-          float boxTopLimitZ = printerSizeConstants.BoxTopLimitZ;
+          var boxTopLimitZ = printerSizeConstants.BoxTopLimitZ;
           stringList.Add("G90");
           stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2} Z{3}", (object) printerSizeConstants.BackCornerPosition.x, (object) printerSizeConstants.BackCornerPosition.y, (object) fastestPossible, (object) boxTopLimitZ));
-          nextPage = this.CurrentDetails.mode != Manage3DInkMainWindow.Mode.RemoveFilament ? Manage3DInkMainWindow.PageID.Page14_InternalSpoolInstructions : Manage3DInkMainWindow.PageID.Page16_RemoveInternalSpoolInstructions;
+          nextPage = CurrentDetails.mode != Manage3DInkMainWindow.Mode.RemoveFilament ? Manage3DInkMainWindow.PageID.Page14_InternalSpoolInstructions : Manage3DInkMainWindow.PageID.Page16_RemoveInternalSpoolInstructions;
         }
         else
         {
-          float num3 = (double) num2 > 15.0 ? num2 : 15f;
+          var num3 = (double) num2 > 15.0 ? num2 : 15f;
           float x;
           float y;
           if (asyncState.IsPausedorPausing)
@@ -142,7 +156,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2} Z{3}", (object) x, (object) y, (object) fastestPossible, (object) num3));
           nextPage = Manage3DInkMainWindow.PageID.Page1_HeatingNozzle;
         }
-        int num4 = (int) asyncState.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(this.MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(asyncState, nextPage, this.CurrentDetails), stringList.ToArray());
+        var num4 = (int) asyncState.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(asyncState, nextPage, CurrentDetails), stringList.ToArray());
       }
     }
   }

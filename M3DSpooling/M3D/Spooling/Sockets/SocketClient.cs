@@ -23,13 +23,13 @@ namespace M3D.Spooling.Sockets
 
     public SocketClient()
     {
-      this.myListenerPort = -1;
-      this.DontTimeOut = false;
+      myListenerPort = -1;
+      DontTimeOut = false;
     }
 
     public int StartUp(int serverport)
     {
-      IPAddress ipAddress1 = (IPAddress) null;
+      var ipAddress1 = (IPAddress) null;
       try
       {
         IPAddress[] addressList = Dns.GetHostEntry("localhost").AddressList;
@@ -50,20 +50,23 @@ namespace M3D.Spooling.Sockets
         ipAddress1 = IPAddress.Parse("127.0.0.1");
       }
       if (ipAddress1 == null)
+      {
         return 0;
-      return this.StartUp(ipAddress1, serverport);
+      }
+
+      return StartUp(ipAddress1, serverport);
     }
 
     public int StartUp(IPAddress ipAddress, int serverport)
     {
-      this.remoteEP = new IPEndPoint(ipAddress, serverport);
-      if (this.StartSocketPeer(0) >= 0)
+      remoteEP = new IPEndPoint(ipAddress, serverport);
+      if (StartSocketPeer(0) >= 0)
       {
-        IPEndPoint localEndPoint = this.listener.LocalEndPoint as IPEndPoint;
+        var localEndPoint = listener.LocalEndPoint as IPEndPoint;
         if (localEndPoint != null)
         {
-          this.myListenerPort = localEndPoint.Port;
-          this.StartListening();
+          myListenerPort = localEndPoint.Port;
+          StartListening();
           return 1;
         }
       }
@@ -72,30 +75,36 @@ namespace M3D.Spooling.Sockets
 
     public string SendMessage(string message)
     {
-      return this.SendMessage(message, this.DontTimeOut ? 0 : 4000);
+      return SendMessage(message, DontTimeOut ? 0 : 4000);
     }
 
     public string SendMessage(string message, int timeout)
     {
-      string s = this.MyGuid.ToString() + "::" + this.myListenerPort.ToString() + "::" + message + "<EOF>";
-      string str = (string) null;
-      Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-      socket.SendTimeout = timeout;
-      socket.ReceiveTimeout = timeout;
+      var s = MyGuid.ToString() + "::" + myListenerPort.ToString() + "::" + message + "<EOF>";
+      var str = (string) null;
+      var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+      {
+        SendTimeout = timeout,
+        ReceiveTimeout = timeout
+      };
       byte[] numArray = new byte[1024];
       try
       {
-        socket.Connect((EndPoint) this.remoteEP);
+        socket.Connect((EndPoint)remoteEP);
         byte[] bytes = Encoding.UTF8.GetBytes(s);
         socket.Send(bytes);
         while (true)
         {
-          int count = socket.Receive(numArray);
+          var count = socket.Receive(numArray);
           str += Encoding.UTF8.GetString(numArray, 0, count);
           if (str.IndexOf("<EOF>") <= -1)
+          {
             Thread.Sleep(1);
+          }
           else
+          {
             break;
+          }
         }
         if (socket.Connected)
         {
@@ -131,9 +140,15 @@ namespace M3D.Spooling.Sockets
           ErrorLogger.LogException("Exception in SocketClient.SendMessage " + ex2.Message, ex2);
         }
         if (ex1 is ArgumentNullException)
+        {
           return "FAIL:ArgumentNullException : " + ex1.ToString();
+        }
+
         if (ex1 is SocketException)
+        {
           return "FAIL:SocketException : " + ex1.ToString();
+        }
+
         return "FAIL:Unexpected exception : " + ex1.ToString();
       }
       return str.Substring(0, str.IndexOf("<EOF>"));
@@ -143,19 +158,22 @@ namespace M3D.Spooling.Sockets
     {
       get
       {
-        return this.dontTimeOut.Value;
+        return dontTimeOut.Value;
       }
       set
       {
-        this.dontTimeOut.Value = value;
+        dontTimeOut.Value = value;
       }
     }
 
     public override void OnRawMessage(string message, Socket handler)
     {
-      if (this.OnReceivedRawMessage == null)
+      if (OnReceivedRawMessage == null)
+      {
         return;
-      this.OnReceivedRawMessage(message);
+      }
+
+      OnReceivedRawMessage(message);
     }
   }
 }

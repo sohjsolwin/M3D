@@ -13,14 +13,14 @@ namespace M3D.Spooling.Common
 
     public FilamentPreprocessorData()
     {
-      this.initialPrint = new InitialPrintPreProcessorData();
-      this.bonding = new BondingPreprocessorData();
+      initialPrint = new InitialPrintPreProcessorData();
+      bonding = new BondingPreprocessorData();
     }
 
     public FilamentPreprocessorData(FilamentPreprocessorData other)
     {
-      this.initialPrint = new InitialPrintPreProcessorData(other.initialPrint);
-      this.bonding = new BondingPreprocessorData(other.bonding);
+      initialPrint = new InitialPrintPreProcessorData(other.initialPrint);
+      bonding = new BondingPreprocessorData(other.bonding);
     }
   }
 }

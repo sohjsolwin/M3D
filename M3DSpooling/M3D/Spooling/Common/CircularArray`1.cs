@@ -18,64 +18,72 @@ namespace M3D.Spooling.Common
 
     public CircularArray(int capacity)
     {
-      this.buffer = new T[capacity];
-      this.front = 0;
-      this.count = 0;
+      buffer = new T[capacity];
+      front = 0;
+      count = 0;
     }
 
     public int Count
     {
       get
       {
-        lock (this.buffer)
-          return this.count;
+        lock (buffer)
+        {
+          return count;
+        }
       }
     }
 
     public void Enqueue(T item)
     {
-      lock (this.buffer)
+      lock (buffer)
       {
-        int index = (this.front + this.count) % this.buffer.Length;
-        ++this.count;
-        if (this.count >= this.buffer.Length)
+        var index = (front + count) % buffer.Length;
+        ++count;
+        if (count >= buffer.Length)
         {
-          this.front = (this.front + 1) % this.buffer.Length;
-          this.count = this.buffer.Length;
+          front = (front + 1) % buffer.Length;
+          count = buffer.Length;
         }
-        this.buffer[index] = item;
+        buffer[index] = item;
       }
     }
 
     public T Dequeue()
     {
-      lock (this.buffer)
+      lock (buffer)
       {
-        if (this.count == 0)
+        if (count == 0)
+        {
           throw new InvalidOperationException("empty CircularArray<T>");
-        T obj = this.buffer[this.front];
-        this.front = (this.front + 1) % this.buffer.Length;
-        --this.count;
+        }
+
+        T obj = buffer[front];
+        front = (front + 1) % buffer.Length;
+        --count;
         return obj;
       }
     }
 
     public T Peek()
     {
-      lock (this.buffer)
+      lock (buffer)
       {
-        if (this.count == 0)
+        if (count == 0)
+        {
           throw new InvalidOperationException("empty CircularArray<T>");
-        return this.buffer[this.front];
+        }
+
+        return buffer[front];
       }
     }
 
     public void Clear()
     {
-      lock (this.buffer)
+      lock (buffer)
       {
-        this.front = 0;
-        this.count = 0;
+        front = 0;
+        count = 0;
       }
     }
 
@@ -83,20 +91,26 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        lock (this.buffer)
+        lock (buffer)
         {
-          if (index < 0 || index >= this.buffer.Length)
+          if (index < 0 || index >= buffer.Length)
+          {
             throw new IndexOutOfRangeException();
-          return this.buffer[(this.front + index) % this.buffer.Length];
+          }
+
+          return buffer[(front + index) % buffer.Length];
         }
       }
       set
       {
-        lock (this.buffer)
+        lock (buffer)
         {
-          if (index < 0 || index >= this.buffer.Length)
+          if (index < 0 || index >= buffer.Length)
+          {
             throw new IndexOutOfRangeException();
-          this.buffer[(this.front + index) % this.buffer.Length] = value;
+          }
+
+          buffer[(front + index) % buffer.Length] = value;
         }
       }
     }
@@ -105,8 +119,10 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        lock (this.buffer)
-          return this.count == this.buffer.Length;
+        lock (buffer)
+        {
+          return count == buffer.Length;
+        }
       }
     }
 
@@ -114,23 +130,27 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        lock (this.buffer)
-          return this.count == 0;
+        lock (buffer)
+        {
+          return count == 0;
+        }
       }
     }
 
     public IEnumerator<T> GetEnumerator()
     {
-      if (this.Count != 0 && this.buffer.Length != 0)
+      if (Count != 0 && buffer.Length != 0)
       {
-        for (int i = 0; i < this.Count; ++i)
+        for (var i = 0; i < Count; ++i)
+        {
           yield return this[i];
+        }
       }
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator) this.GetEnumerator();
+      return (IEnumerator)GetEnumerator();
     }
   }
 }

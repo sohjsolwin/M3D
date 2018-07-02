@@ -29,19 +29,22 @@ namespace M3D.GUI.Controller
     {
       get
       {
-        if (this.n128FileHash.HasValue)
-          return this.n128FileHash.ToString();
+        if (n128FileHash.HasValue)
+        {
+          return n128FileHash.ToString();
+        }
+
         return "";
       }
       set
       {
         try
         {
-          this.n128FileHash = new BigInteger?(BigInteger.Parse(value.Trim(), NumberStyles.HexNumber));
+          n128FileHash = new BigInteger?(BigInteger.Parse(value.Trim(), NumberStyles.HexNumber));
         }
         catch
         {
-          this.n128FileHash = new BigInteger?();
+          n128FileHash = new BigInteger?();
         }
       }
     }
@@ -51,12 +54,14 @@ namespace M3D.GUI.Controller
     {
       get
       {
-        return this.Url.ToString();
+        return Url.ToString();
       }
       set
       {
-        if (!Uri.TryCreate(value, UriKind.Absolute, out this.Url) && this.Url.Scheme != Uri.UriSchemeHttps)
+        if (!Uri.TryCreate(value, UriKind.Absolute, out Url) && Url.Scheme != Uri.UriSchemeHttps)
+        {
           throw new ArgumentException("Url must be absolute and https");
+        }
       }
     }
 
@@ -65,11 +70,11 @@ namespace M3D.GUI.Controller
     {
       get
       {
-        return this.Version.ToString();
+        return Version.ToString();
       }
       set
       {
-        this.Version = new VersionNumber(value);
+        Version = new VersionNumber(value);
       }
     }
 

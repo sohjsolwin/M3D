@@ -18,19 +18,19 @@ namespace M3D.Spooling.FirstRunUpdates
     {
       try
       {
-        int uint32 = (int) BitConverter.ToUInt32(eeprom, (int) printerProfile.EEPROMConstants.GetEepromInfo("FirmwareVersion").EepromAddr);
-        int eepromAddr1 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationBLO").EepromAddr;
-        int eepromAddr2 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationBRO").EepromAddr;
-        int eepromAddr3 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationFLO").EepromAddr;
-        int eepromAddr4 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationFRO").EepromAddr;
-        int eepromAddr5 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationZO").EepromAddr;
-        float single1 = BitConverter.ToSingle(eeprom, eepromAddr1);
-        float single2 = BitConverter.ToSingle(eeprom, eepromAddr2);
-        float single3 = BitConverter.ToSingle(eeprom, eepromAddr3);
-        float single4 = BitConverter.ToSingle(eeprom, eepromAddr4);
-        float single5 = BitConverter.ToSingle(eeprom, eepromAddr5);
-        float num1 = 0.0f;
-        int num2 = 2015080402;
+        var uint32 = (int) BitConverter.ToUInt32(eeprom, (int) printerProfile.EEPROMConstants.GetEepromInfo("FirmwareVersion").EepromAddr);
+        var eepromAddr1 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationBLO").EepromAddr;
+        var eepromAddr2 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationBRO").EepromAddr;
+        var eepromAddr3 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationFLO").EepromAddr;
+        var eepromAddr4 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationFRO").EepromAddr;
+        var eepromAddr5 = (int) printerProfile.EEPROMConstants.GetEepromInfo("ZCalibrationZO").EepromAddr;
+        var single1 = BitConverter.ToSingle(eeprom, eepromAddr1);
+        var single2 = BitConverter.ToSingle(eeprom, eepromAddr2);
+        var single3 = BitConverter.ToSingle(eeprom, eepromAddr3);
+        var single4 = BitConverter.ToSingle(eeprom, eepromAddr4);
+        var single5 = BitConverter.ToSingle(eeprom, eepromAddr5);
+        var num1 = 0.0f;
+        var num2 = 2015080402;
         if ((uint) uint32 < (uint) num2)
         {
           if ((double) Math.Abs(single1) > 1.40129846432482E-45 || (double) Math.Abs(single2) > 1.40129846432482E-45 || ((double) Math.Abs(single3) > 1.40129846432482E-45 || (double) Math.Abs(single4) > 1.40129846432482E-45) || (double) Math.Abs(single5) > 1.40129846432482E-45)

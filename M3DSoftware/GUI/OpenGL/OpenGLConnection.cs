@@ -22,37 +22,37 @@ namespace M3D.GUI.OpenGL
 
     private void DetermineOpenGLRenderingMethod(DebugLogger debugLogger)
     {
-      string str1 = (string) null;
+      var str1 = (string) null;
       try
       {
-        int data1 = 0;
-        int data2 = 0;
         str1 = "DetermineOpenGLRenderingMethod::GL.GetInteger";
-        GL.GetInteger(GetPName.MajorVersion, out data1);
-        GL.GetInteger(GetPName.MinorVersion, out data2);
-        Version version = new Version(data1, data2);
+        GL.GetInteger(GetPName.MajorVersion, out var data1);
+        GL.GetInteger(GetPName.MinorVersion, out var data2);
+        var version = new Version(data1, data2);
         debugLogger.Add("DetermineOpenGLRenderingMethod()", "OpenGL vendor: " + GL.GetString(StringName.Vendor) + ".", DebugLogger.LogType.Primary);
         debugLogger.Add("DetermineOpenGLRenderingMethod()", "OpenGL renderer: " + GL.GetString(StringName.Renderer) + ".", DebugLogger.LogType.Primary);
         debugLogger.Add("DetermineOpenGLRenderingMethod()", "OpenGL version: " + version.ToString() + ".", DebugLogger.LogType.Primary);
         debugLogger.Add("DetermineOpenGLRenderingMethod()", "OpenGL Shading Language Version: " + GL.GetString(StringName.ShadingLanguageVersion) + ".", DebugLogger.LogType.Primary);
-        Dictionary<string, bool> dictionary = new Dictionary<string, bool>();
+        var dictionary = new Dictionary<string, bool>();
         if (version.Major >= 3)
         {
           str1 = "DetermineOpenGLRenderingMethod::version.Major >= 3";
-          int integer = GL.GetInteger(GetPName.NumExtensions);
-          for (int index = 0; index < integer; ++index)
+          var integer = GL.GetInteger(GetPName.NumExtensions);
+          for (var index = 0; index < integer; ++index)
           {
-            string key = GL.GetString(StringNameIndexed.Extensions, index);
+            var key = GL.GetString(StringNameIndexed.Extensions, index);
             dictionary.Add(key, true);
           }
         }
         else
         {
           str1 = "DetermineOpenGLRenderingMethod::else";
-          string str2 = GL.GetString(StringName.Extensions);
+          var str2 = GL.GetString(StringName.Extensions);
           char[] chArray = new char[1]{ ' ' };
-          foreach (string key in str2.Split(chArray))
+          foreach (var key in str2.Split(chArray))
+          {
             dictionary.Add(key, true);
+          }
         }
         if (version.Major >= 2)
         {
@@ -68,15 +68,15 @@ namespace M3D.GUI.OpenGL
       }
       catch (Exception ex)
       {
-        string extra_info = str1;
+        var extra_info = str1;
         ExceptionForm.ShowExceptionForm(ex, extra_info);
       }
     }
 
     public void OnLoad(GLControl glControl1, DebugLogger debugLogger)
     {
-      this._glControl1 = glControl1;
-      this.DetermineOpenGLRenderingMethod(debugLogger);
+      _glControl1 = glControl1;
+      DetermineOpenGLRenderingMethod(debugLogger);
       glControl1.Context.SwapInterval = 0;
       GraphicsContext.CurrentContext.SwapInterval = 0;
       debugLogger.Add("glControl1_Load()", "Frame buffer and textures created.", DebugLogger.LogType.Secondary);
@@ -110,7 +110,7 @@ namespace M3D.GUI.OpenGL
         GL.LoadIdentity();
         GL.Translate(0.0f, 0.0f, -500f);
         renderTask();
-        this.GLControl1.SwapBuffers();
+        GLControl1.SwapBuffers();
       }
       catch (Exception ex)
       {
@@ -122,7 +122,7 @@ namespace M3D.GUI.OpenGL
     {
       get
       {
-        return this._glControl1;
+        return _glControl1;
       }
     }
 

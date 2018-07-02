@@ -28,7 +28,7 @@ namespace M3D.Spooler
       this.handler = handler;
       this.printer = printer;
       this.previous_task = previous_task;
-      this.hadlockbeforecall = false;
+      hadlockbeforecall = false;
       attempts = 0;
     }
   }

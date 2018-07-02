@@ -36,14 +36,14 @@ namespace M3D.Graphics.Widgets2D
     public TextWidget(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.color = new Color4(0.0f, 0.0f, 0.0f, 1f);
-      this.off_x = 0;
-      this.off_y = 0;
-      this.text = "";
-      this.size = FontSize.Medium;
-      this.alignment = QFontAlignment.Centre;
-      this.vertical_alignment = TextVerticalAlignment.Middle;
-      this.IgnoreMouse = true;
+      color = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      off_x = 0;
+      off_y = 0;
+      text = "";
+      size = FontSize.Medium;
+      alignment = QFontAlignment.Centre;
+      vertical_alignment = TextVerticalAlignment.Middle;
+      IgnoreMouse = true;
     }
 
     public override ElementType GetElementType()
@@ -53,21 +53,24 @@ namespace M3D.Graphics.Widgets2D
 
     public override void OnRender(GUIHost host)
     {
-      host.SetCurFontSize(this.Size);
+      host.SetCurFontSize(Size);
       QFont currentFont = host.GetCurrentFont();
       if (currentFont != null)
       {
         currentFont.Options.LockToPixel = true;
-        float width = (float) this.Width;
-        float height = currentFont.Measure(this.text, width, this.alignment).Height;
-        float num1 = this.VAlignment != TextVerticalAlignment.Top ? (this.VAlignment != TextVerticalAlignment.Bottom ? (float) ((double) this.Height * 0.5 - (double) height * 0.5) + (float) this.Y_Abs : (float) this.Y_Abs + ((float) this.Height - height)) : (float) this.Y_Abs;
-        float num2 = this.alignment != QFontAlignment.Centre ? (float) this.X_Abs : (float) this.Width * 0.5f + (float) this.X_Abs;
-        Color4 color = this.Color;
-        if (!this.Enabled && this.FadeWhenDisabled)
+        var width = (float)Width;
+        var height = currentFont.Measure(text, width, alignment).Height;
+        var num1 = VAlignment != TextVerticalAlignment.Top ? (VAlignment != TextVerticalAlignment.Bottom ? (float) ((double)Height * 0.5 - (double) height * 0.5) + (float)Y_Abs : (float)Y_Abs + ((float)Height - height)) : (float)Y_Abs;
+        var num2 = alignment != QFontAlignment.Centre ? (float)X_Abs : (float)Width * 0.5f + (float)X_Abs;
+        Color4 color = Color;
+        if (!Enabled && FadeWhenDisabled)
+        {
           color.A = 0.5f;
+        }
+
         QFont.Begin();
-        currentFont.Options.Colour = this.Color;
-        currentFont.Print(this.text, width, this.alignment, new Vector2(num2 + (float) this.off_x, num1 + (float) this.off_y));
+        currentFont.Options.Colour = Color;
+        currentFont.Print(text, width, alignment, new Vector2(num2 + (float)off_x, num1 + (float)off_y));
         QFont.End();
       }
       base.OnRender(host);
@@ -78,11 +81,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.size;
+        return size;
       }
       set
       {
-        this.size = value;
+        size = value;
       }
     }
 
@@ -91,14 +94,18 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.text;
+        return text;
       }
       set
       {
         if (value.StartsWith("T_"))
-          this.text = Locale.GlobalLocale.T(value);
+        {
+          text = Locale.GlobalLocale.T(value);
+        }
         else
-          this.text = value.Replace("\\n", "\n");
+        {
+          text = value.Replace("\\n", "\n");
+        }
       }
     }
 
@@ -107,12 +114,12 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.hexColor;
+        return hexColor;
       }
       set
       {
-        this.hexColor = value;
-        this.Color = IElement.GenerateColorFromHtml(value);
+        hexColor = value;
+        Color = IElement.GenerateColorFromHtml(value);
       }
     }
 
@@ -121,11 +128,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.color;
+        return color;
       }
       set
       {
-        this.color = value;
+        color = value;
       }
     }
 
@@ -134,11 +141,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.alignment;
+        return alignment;
       }
       set
       {
-        this.alignment = value;
+        alignment = value;
       }
     }
 
@@ -147,11 +154,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.vertical_alignment;
+        return vertical_alignment;
       }
       set
       {
-        this.vertical_alignment = value;
+        vertical_alignment = value;
       }
     }
 
@@ -161,15 +168,21 @@ namespace M3D.Graphics.Widgets2D
       set
       {
         if (value == null)
-          this.Text = string.Empty;
+        {
+          Text = string.Empty;
+        }
         else if (value is string)
-          this.Text = (string) value;
+        {
+          Text = (string) value;
+        }
         else
-          this.Text = value.ToString();
+        {
+          Text = value.ToString();
+        }
       }
       get
       {
-        return (object) this.Text;
+        return (object)Text;
       }
     }
   }

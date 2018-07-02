@@ -17,10 +17,16 @@ namespace M3D.Spooling.Printer_Profiles
 
     public int GetBoundedTemp(int temp)
     {
-      if (temp < this.MinTemp)
-        return this.MinTemp;
-      if (temp > this.MaxTemp)
-        return this.MaxTemp;
+      if (temp < MinTemp)
+      {
+        return MinTemp;
+      }
+
+      if (temp > MaxTemp)
+      {
+        return MaxTemp;
+      }
+
       return temp;
     }
 
@@ -32,8 +38,8 @@ namespace M3D.Spooling.Printer_Profiles
 
     public TemperatureProfile(TemperatureProfile other)
     {
-      this.MinTemp = other.MinTemp;
-      this.MaxTemp = other.MaxTemp;
+      MinTemp = other.MinTemp;
+      MaxTemp = other.MaxTemp;
     }
 
     public TemperatureProfile()

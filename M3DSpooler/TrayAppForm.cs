@@ -21,43 +21,48 @@ namespace M3D.Spooler
     public TrayAppForm(SpoolerClientBuiltIn spooler_client)
       : base(spooler_client)
     {
-      this.trayMenu = new ContextMenu();
-      this.trayMenu.MenuItems.Add("Exit", new EventHandler(this.OnExit));
-      this.trayIcon = new NotifyIcon();
-      this.trayIcon.Text = "M3D Spooler";
-      this.trayIcon.Icon = new Icon(Resources.M3D, 40, 40);
-      this.trayIcon.ContextMenu = this.trayMenu;
-      this.trayIcon.Visible = true;
-      this.TopLevel = true;
-      this.trayIcon.Click += new EventHandler(this.notifyIcon1_Click);
+      trayMenu = new ContextMenu();
+      trayMenu.MenuItems.Add("Exit", new EventHandler(OnExit));
+      trayIcon = new NotifyIcon
+      {
+        Text = "M3D Spooler",
+        Icon = new Icon(Resources.M3D, 40, 40),
+        ContextMenu = trayMenu,
+        Visible = true
+      };
+      TopLevel = true;
+      trayIcon.Click += new EventHandler(notifyIcon1_Click);
     }
 
     protected override void OnLoad(EventArgs e)
     {
       if (TrayAppForm.start_invisible)
       {
-        this.Visible = false;
-        this.ShowInTaskbar = false;
+        Visible = false;
+        ShowInTaskbar = false;
       }
       base.OnLoad(e);
     }
 
     private void OnExit(object sender, EventArgs e)
     {
-      this.m_bShutdownByUser = true;
-      this.Close();
+      m_bShutdownByUser = true;
+      Close();
     }
 
     protected override void Dispose(bool bIsDisposing)
     {
       if (bIsDisposing)
-        this.trayIcon.Dispose();
+      {
+        trayIcon.Dispose();
+      }
+
       base.Dispose(bIsDisposing);
     }
 
     private void notifyIcon1_Click(object sender, EventArgs e)
     {
-      this.ShowSpooler();
+      ShowSpooler();
     }
   }
 }

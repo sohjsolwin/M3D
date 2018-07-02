@@ -15,18 +15,18 @@ namespace M3D.Spooling.Common
 
     public EmbeddedFirmwareSummary()
     {
-      this.FirmwareVersions = new List<FirmwareBoardVersionKVP>();
+      FirmwareVersions = new List<FirmwareBoardVersionKVP>();
     }
 
     public EmbeddedFirmwareSummary(string name)
       : this()
     {
-      this.Name = name;
+      Name = name;
     }
 
     public override string ToString()
     {
-      return "M3D " + this.Name;
+      return "M3D " + Name;
     }
   }
 }

@@ -39,21 +39,21 @@ namespace M3D.GUI.Controller
 
     public Updater(Form1 mainForm, PopupMessageBox Box, SpoolerConnection connection, SettingsManager settings)
     {
-      this.form = mainForm;
-      this.messagebox = Box;
-      this.spooler_connection = connection;
-      this.settingsManager = settings;
+      form = mainForm;
+      messagebox = Box;
+      spooler_connection = connection;
+      settingsManager = settings;
     }
 
     public Updater.UpdateSettings UpdaterMode
     {
       get
       {
-        return this.settingsManager.CurrentAppearanceSettings.UpdaterMode;
+        return settingsManager.CurrentAppearanceSettings.UpdaterMode;
       }
       set
       {
-        this.settingsManager.CurrentAppearanceSettings.UpdaterMode = value;
+        settingsManager.CurrentAppearanceSettings.UpdaterMode = value;
       }
     }
 
@@ -61,7 +61,7 @@ namespace M3D.GUI.Controller
     {
       get
       {
-        return this.internalState.Value;
+        return internalState.Value;
       }
     }
 
@@ -69,57 +69,76 @@ namespace M3D.GUI.Controller
     {
       get
       {
-        return this.internalState.Value == Updater.Status.Downloaded;
+        return internalState.Value == Updater.Status.Downloaded;
       }
     }
 
     public void CheckForUpdate(bool bCommandedByUser = false)
     {
-      lock (this.ThreadWatcherLock)
+      lock (ThreadWatcherLock)
       {
-        if (this.WorkerCheckForUpdateThread != null)
+        if (WorkerCheckForUpdateThread != null)
+        {
           return;
-        this.WorkerCheckForUpdateThread = new Thread((ThreadStart) (() => this.CheckForUpdate_Thread(bCommandedByUser)));
-        this.WorkerCheckForUpdateThread.IsBackground = true;
-        this.WorkerCheckForUpdateThread.Start();
+        }
+
+        WorkerCheckForUpdateThread = new Thread((ThreadStart)(() => CheckForUpdate_Thread(bCommandedByUser)))
+        {
+          IsBackground = true
+        };
+        WorkerCheckForUpdateThread.Start();
       }
     }
 
     public void DownloadUpdate(bool bCommandedByUser = false)
     {
-      lock (this.ThreadWatcherLock)
+      lock (ThreadWatcherLock)
       {
-        if (this.WorkerDownloaderThread != null)
+        if (WorkerDownloaderThread != null)
+        {
           return;
-        this.WorkerDownloaderThread = new Thread((ThreadStart) (() => this.DownloadUpdate_Thread(bCommandedByUser)));
-        this.WorkerDownloaderThread.IsBackground = true;
-        this.WorkerDownloaderThread.Start();
+        }
+
+        WorkerDownloaderThread = new Thread((ThreadStart)(() => DownloadUpdate_Thread(bCommandedByUser)))
+        {
+          IsBackground = true
+        };
+        WorkerDownloaderThread.Start();
       }
     }
 
     public void CancelDownloadUpdate()
     {
-      if (this.WorkerDownloaderThread != null)
+      if (WorkerDownloaderThread != null)
       {
         try
         {
-          lock (this.ThreadWatcherLock)
-            this.WorkerDownloaderThread.Abort();
-          this.WorkerDownloaderThread.Join();
-          this.WorkerCheckForUpdateThread = (Thread) null;
+          lock (ThreadWatcherLock)
+          {
+            WorkerDownloaderThread.Abort();
+          }
+
+          WorkerDownloaderThread.Join();
+          WorkerCheckForUpdateThread = (Thread) null;
         }
         catch (Exception ex)
         {
         }
       }
-      if (this.WorkerCheckForUpdateThread == null)
+      if (WorkerCheckForUpdateThread == null)
+      {
         return;
+      }
+
       try
       {
-        lock (this.ThreadWatcherLock)
-          this.WorkerCheckForUpdateThread.Abort();
-        this.WorkerCheckForUpdateThread.Join();
-        this.WorkerCheckForUpdateThread = (Thread) null;
+        lock (ThreadWatcherLock)
+        {
+          WorkerCheckForUpdateThread.Abort();
+        }
+
+        WorkerCheckForUpdateThread.Join();
+        WorkerCheckForUpdateThread = (Thread) null;
       }
       catch (Exception ex)
       {
@@ -130,32 +149,40 @@ namespace M3D.GUI.Controller
     {
       try
       {
-        this.m_oOnlineVersionInfo = this.FetchUpdateInfo();
+        m_oOnlineVersionInfo = FetchUpdateInfo();
         bool flag;
-        if (this.m_oOnlineVersionInfo != null)
+        if (m_oOnlineVersionInfo != null)
         {
-          if (this.m_oOnlineVersionInfo.Version > M3D.Spooling.Version.Client_Version)
+          if (m_oOnlineVersionInfo.Version > M3D.Spooling.Version.Client_Version)
           {
-            this.internalState.Value = Updater.Status.NewVersionAvailable;
-            flag = this.UpdaterMode != Updater.UpdateSettings.NoAction | bCommandedByUser;
+            internalState.Value = Updater.Status.NewVersionAvailable;
+            flag = UpdaterMode != Updater.UpdateSettings.NoAction | bCommandedByUser;
           }
           else
           {
             flag = false;
-            if (this.m_oOnlineVersionInfo != null)
-              this.internalState.Value = Updater.Status.UptoDate;
+            if (m_oOnlineVersionInfo != null)
+            {
+              internalState.Value = Updater.Status.UptoDate;
+            }
           }
         }
         else
         {
           if (bCommandedByUser)
-            this.messagebox.AddMessageToQueue("Failed to get information about update", PopupMessageBox.MessageBoxButtons.OK);
+          {
+            messagebox.AddMessageToQueue("Failed to get information about update", PopupMessageBox.MessageBoxButtons.OK);
+          }
+
           flag = false;
-          this.internalState.Value = Updater.Status.Unknown;
+          internalState.Value = Updater.Status.Unknown;
         }
         if (!flag)
+        {
           return;
-        this.DownloadUpdate(false);
+        }
+
+        DownloadUpdate(false);
       }
       catch (ThreadAbortException ex)
       {
@@ -163,120 +190,159 @@ namespace M3D.GUI.Controller
       }
       finally
       {
-        lock (this.ThreadWatcherLock)
-          this.WorkerCheckForUpdateThread = (Thread) null;
+        lock (ThreadWatcherLock)
+        {
+          WorkerCheckForUpdateThread = (Thread) null;
+        }
       }
     }
 
     private static bool bCheckFileAgainstHash(string sFileName, BigInteger? n128CheckValue)
     {
-      bool flag = false;
+      var flag = false;
       BigInteger? md5Hash = Updater.CalculateMD5Hash(sFileName);
       if (md5Hash.HasValue)
       {
         BigInteger? nullable1 = md5Hash;
         BigInteger? nullable2 = n128CheckValue;
         if ((nullable1.HasValue == nullable2.HasValue ? (nullable1.HasValue ? (nullable1.GetValueOrDefault() == nullable2.GetValueOrDefault() ? 1 : 0) : 1) : 0) != 0)
+        {
           flag = true;
+        }
       }
       return flag;
     }
 
     public void DownloadUpdate_Thread(bool bCommandedByUser)
     {
-      if (this.m_oOnlineVersionInfo == null)
+      if (m_oOnlineVersionInfo == null)
+      {
         return;
+      }
+
       try
       {
-        bool flag1 = false;
-        bool flag2 = false;
+        var flag1 = false;
+        var flag2 = false;
         if (System.IO.File.Exists(Paths.DownloadedExecutableFile))
         {
-          flag1 = Updater.bCheckFileAgainstHash(Paths.DownloadedExecutableFile, this.m_oOnlineVersionInfo.n128FileHash);
+          flag1 = Updater.bCheckFileAgainstHash(Paths.DownloadedExecutableFile, m_oOnlineVersionInfo.n128FileHash);
           if (flag1)
-            flag2 = true;
-          else
-            this.DeleteDownloadedFile();
-        }
-        if (!flag2)
-        {
-          this.internalState.Value = Updater.Status.Downloading;
-          if (this.DownloadFile(this.m_oOnlineVersionInfo.Address_Str, Paths.DownloadedExecutableFile))
-            flag1 = Updater.bCheckFileAgainstHash(Paths.DownloadedExecutableFile, this.m_oOnlineVersionInfo.n128FileHash);
-        }
-        if (flag1)
-        {
-          this.internalState.Value = Updater.Status.Downloaded;
-          if (bCommandedByUser)
           {
-            this.StartInstall();
+            flag2 = true;
           }
           else
           {
-            if (!this.allPrintersIdleCheck())
-              return;
-            if (this.UpdaterMode == Updater.UpdateSettings.DownloadInstall)
+            DeleteDownloadedFile();
+          }
+        }
+        if (!flag2)
+        {
+          internalState.Value = Updater.Status.Downloading;
+          if (DownloadFile(m_oOnlineVersionInfo.Address_Str, Paths.DownloadedExecutableFile))
+          {
+            flag1 = Updater.bCheckFileAgainstHash(Paths.DownloadedExecutableFile, m_oOnlineVersionInfo.n128FileHash);
+          }
+        }
+        if (flag1)
+        {
+          internalState.Value = Updater.Status.Downloaded;
+          if (bCommandedByUser)
+          {
+            StartInstall();
+          }
+          else
+          {
+            if (!allPrintersIdleCheck())
             {
-              this.StartInstall();
+              return;
+            }
+
+            if (UpdaterMode == Updater.UpdateSettings.DownloadInstall)
+            {
+              StartInstall();
             }
             else
             {
-              if (this.UpdaterMode != Updater.UpdateSettings.DownloadNotInstall)
+              if (UpdaterMode != Updater.UpdateSettings.DownloadNotInstall)
+              {
                 return;
-              this.AskToInstall();
+              }
+
+              AskToInstall();
             }
           }
         }
         else
         {
-          this.internalState.Value = Updater.Status.DownloadError;
+          internalState.Value = Updater.Status.DownloadError;
           if (!bCommandedByUser)
+          {
             return;
-          this.messagebox.AddMessageToQueue("Failed to download update", PopupMessageBox.MessageBoxButtons.OK);
+          }
+
+          messagebox.AddMessageToQueue("Failed to download update", PopupMessageBox.MessageBoxButtons.OK);
         }
       }
       catch (ThreadAbortException ex)
       {
-        if (Updater.Status.Downloading == this.internalState.Value)
-          this.internalState.Value = Updater.Status.DownloadError;
+        if (Updater.Status.Downloading == internalState.Value)
+        {
+          internalState.Value = Updater.Status.DownloadError;
+        }
+
         throw ex;
       }
       finally
       {
-        lock (this.ThreadWatcherLock)
-          this.WorkerDownloaderThread = (Thread) null;
+        lock (ThreadWatcherLock)
+        {
+          WorkerDownloaderThread = (Thread) null;
+        }
       }
     }
 
     public void AskToInstall()
     {
-      if (!this.isReadyToInstall)
+      if (!isReadyToInstall)
+      {
         return;
-      this.messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), Resources.updateInstallAskDialog, new PopupMessageBox.XMLButtonCallback(this.Callback), (object) null));
+      }
+
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), Resources.updateInstallAskDialog, new PopupMessageBox.XMLButtonCallback(Callback), (object) null));
     }
 
     private void Callback(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)
     {
       if (button.ID == 301)
       {
-        this.m_bRememberUserDecision = button.Checked;
+        m_bRememberUserDecision = button.Checked;
       }
       else
       {
         if (button.ID != 101 && button.ID != 102)
+        {
           return;
+        }
+
         parentFrame.CloseCurrent();
         if (button.ID == 101)
         {
-          if (this.m_bRememberUserDecision)
-            this.UpdaterMode = Updater.UpdateSettings.DownloadInstall;
-          this.StartInstall();
+          if (m_bRememberUserDecision)
+          {
+            UpdaterMode = Updater.UpdateSettings.DownloadInstall;
+          }
+
+          StartInstall();
         }
         else
         {
-          if (!this.m_bRememberUserDecision)
+          if (!m_bRememberUserDecision)
+          {
             return;
-          this.UpdaterMode = Updater.UpdateSettings.NoAction;
+          }
+
+          UpdaterMode = Updater.UpdateSettings.NoAction;
           parentFrame.AddMessageToQueue("You can check for future updates in the \"Settings\" menu under \"User Interface Options\".", "Software Update", PopupMessageBox.MessageBoxButtons.OK, (PopupMessageBox.OnUserSelectionDel) null);
         }
       }
@@ -284,17 +350,17 @@ namespace M3D.GUI.Controller
 
     public void ForceDownloadAndUpdate()
     {
-      switch (this.internalState.Value)
+      switch (internalState.Value)
       {
         case Updater.Status.Unknown:
-          this.CheckForUpdate(true);
+          CheckForUpdate(true);
           break;
         case Updater.Status.NewVersionAvailable:
         case Updater.Status.DownloadError:
-          this.DownloadUpdate(true);
+          DownloadUpdate(true);
           break;
         case Updater.Status.Downloaded:
-          this.StartInstall();
+          StartInstall();
           break;
       }
     }
@@ -303,16 +369,18 @@ namespace M3D.GUI.Controller
     {
       get
       {
-        lock (this.ThreadWatcherLock)
-          return this.WorkerCheckForUpdateThread != null || this.WorkerDownloaderThread != null;
+        lock (ThreadWatcherLock)
+        {
+          return WorkerCheckForUpdateThread != null || WorkerDownloaderThread != null;
+        }
       }
     }
 
     private void StartInstall()
     {
-      if (this.allPrintersIdleCheck())
+      if (allPrintersIdleCheck())
       {
-        Process process = new Process() { StartInfo = new ProcessStartInfo(Paths.DownloadedExecutableFile) };
+        var process = new Process() { StartInfo = new ProcessStartInfo(Paths.DownloadedExecutableFile) };
         bool flag;
         try
         {
@@ -323,27 +391,36 @@ namespace M3D.GUI.Controller
           flag = false;
         }
         if (flag)
-          this.form.Close();
+        {
+          form.Close();
+        }
         else
-          this.messagebox.AddMessageToQueue("Problem encountered while starting installer", PopupMessageBox.MessageBoxButtons.OK);
+        {
+          messagebox.AddMessageToQueue("Problem encountered while starting installer", PopupMessageBox.MessageBoxButtons.OK);
+        }
       }
       else
-        this.messagebox.AddMessageToQueue("Please allow all print jobs to complete and then try again.");
+      {
+        messagebox.AddMessageToQueue("Please allow all print jobs to complete and then try again.");
+      }
     }
 
     private bool allPrintersIdleCheck()
     {
-      bool flag = false;
-      List<PrinterInfo> printer_list = new List<PrinterInfo>();
-      this.spooler_connection.CopyPrinterList(ref printer_list);
-      for (int index = 0; index < printer_list.Count && !flag; ++index)
+      var flag = false;
+      var printer_list = new List<PrinterInfo>();
+      spooler_connection.CopyPrinterList(ref printer_list);
+      for (var index = 0; index < printer_list.Count && !flag; ++index)
+      {
         flag = printer_list[index].Status != PrinterStatus.Firmware_Idle || printer_list[index].current_job != null;
+      }
+
       return !flag;
     }
 
     private bool DownloadFile(string URL, string FilePath)
     {
-      WebClient webClient = new WebClient();
+      var webClient = new WebClient();
       try
       {
         webClient.DownloadFile(URL, FilePath);
@@ -351,7 +428,10 @@ namespace M3D.GUI.Controller
       catch (Exception ex)
       {
         if (ex is ThreadAbortException)
+        {
           throw ex;
+        }
+
         return false;
       }
       return true;
@@ -366,29 +446,35 @@ namespace M3D.GUI.Controller
       catch (Exception ex)
       {
         if (ex is ThreadAbortException)
+        {
           throw ex;
+        }
       }
     }
 
     private Package FetchUpdateInfo()
     {
-      Package package = (Package) null;
+      var package = (Package) null;
       try
       {
-        PackageManager packageManager = PackageManager.Load(Paths.DownloadedHashXML_URL);
+        var packageManager = PackageManager.Load(Paths.DownloadedHashXML_URL);
         if (packageManager != null)
         {
           Package.DistributionType thisDistro = Package.DistributionType.Windows;
-          IEnumerable<Package> source = (IEnumerable<Package>) packageManager.items.Where<Package>((Func<Package, bool>) (s => s.Distribution == thisDistro)).OrderBy<Package, VersionNumber>((Func<Package, VersionNumber>) (s => s.Version));
+          var source = (IEnumerable<Package>) packageManager.items.Where<Package>((Func<Package, bool>) (s => s.Distribution == thisDistro)).OrderBy<Package, VersionNumber>((Func<Package, VersionNumber>) (s => s.Version));
           if (source.Count<Package>() > 0)
+          {
             package = source.Last<Package>();
+          }
         }
       }
       catch (Exception ex)
       {
         package = (Package) null;
         if (ex is ThreadAbortException)
+        {
           throw ex;
+        }
       }
       return package;
     }
@@ -403,7 +489,10 @@ namespace M3D.GUI.Controller
       catch (Exception ex)
       {
         if (ex is ThreadAbortException)
+        {
           throw ex;
+        }
+
         return false;
       }
       return true;
@@ -411,15 +500,17 @@ namespace M3D.GUI.Controller
 
     private static BigInteger? CalculateMD5Hash(string fileName)
     {
-      BigInteger? nullable1 = new BigInteger?();
+      var nullable1 = new BigInteger?();
       BigInteger? nullable2;
       try
       {
-        byte[] numArray = (byte[]) null;
-        using (MD5 md5 = MD5.Create())
+        var numArray = (byte[]) null;
+        using (var md5 = MD5.Create())
         {
           using (FileStream fileStream = System.IO.File.OpenRead(fileName))
+          {
             numArray = md5.ComputeHash((Stream) fileStream);
+          }
         }
         Array.Reverse((Array) numArray);
         nullable2 = new BigInteger?(new BigInteger(numArray));
@@ -428,7 +519,9 @@ namespace M3D.GUI.Controller
       {
         nullable2 = new BigInteger?();
         if (ex is ThreadAbortException)
+        {
           throw ex;
+        }
       }
       return nullable2;
     }

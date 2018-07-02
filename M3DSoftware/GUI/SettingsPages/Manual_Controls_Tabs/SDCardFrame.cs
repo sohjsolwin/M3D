@@ -32,21 +32,21 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     public SDCardFrame(int ID, GUIHost host, PopupMessageBox messagebox, SpoolerConnection spooler_connection, SettingsManager settings)
       : base(ID)
     {
-      this.m_oMessagebox = messagebox;
-      this.m_oSpoolerConnection = spooler_connection;
-      this.m_oSettings = settings;
-      string manualcontrolsframeSdcard = Resources.manualcontrolsframe_sdcard;
-      this.Init(host, manualcontrolsframeSdcard, new ButtonCallback(this.MyButtonCallback));
-      this.m_oSDFilesListbox = (ListBoxWidget) this.FindChildElement(1100);
-      this.m_oAllowSavingtoSDOnlyCheckbox = (ButtonWidget) this.FindChildElement(1106);
-      this.CenterHorizontallyInParent = true;
-      this.RelativeY = 0.1f;
-      this.RelativeWidth = 0.95f;
-      this.RelativeHeight = 0.9f;
-      this.BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
-      this.SyncFromSettings();
-      this.Visible = false;
-      this.Enabled = false;
+      m_oMessagebox = messagebox;
+      m_oSpoolerConnection = spooler_connection;
+      m_oSettings = settings;
+      var manualcontrolsframeSdcard = Resources.manualcontrolsframe_sdcard;
+      Init(host, manualcontrolsframeSdcard, new ButtonCallback(MyButtonCallback));
+      m_oSDFilesListbox = (ListBoxWidget)FindChildElement(1100);
+      m_oAllowSavingtoSDOnlyCheckbox = (ButtonWidget)FindChildElement(1106);
+      CenterHorizontallyInParent = true;
+      RelativeY = 0.1f;
+      RelativeWidth = 0.95f;
+      RelativeHeight = 0.9f;
+      BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
+      SyncFromSettings();
+      Visible = false;
+      Enabled = false;
     }
 
     public override void SetVisible(bool bVisible)
@@ -54,95 +54,122 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
       base.SetVisible(bVisible);
       if (bVisible)
       {
-        PrinterObject selectedPrinter = this.m_oSpoolerConnection.SelectedPrinter;
+        PrinterObject selectedPrinter = m_oSpoolerConnection.SelectedPrinter;
         if (selectedPrinter != null && selectedPrinter.SDCardExtension.Available)
         {
-          this.DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null);
-          this.m_opLastPrinterSelected = selectedPrinter;
+          DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null);
+          m_opLastPrinterSelected = selectedPrinter;
         }
-        this.SyncFromSettings();
+        SyncFromSettings();
       }
       else
       {
-        if (this.m_oSettings == null)
+        if (m_oSettings == null)
+        {
           return;
-        this.m_oSettings.SaveSettings();
+        }
+
+        m_oSettings.SaveSettings();
       }
     }
 
     public override void OnUpdate()
     {
       base.OnUpdate();
-      this.VerifySelectedPrinter();
+      VerifySelectedPrinter();
     }
 
     public void MyButtonCallback(ButtonWidget button)
     {
-      PrinterObject selectedPrinter = this.m_oSpoolerConnection.SelectedPrinter;
+      PrinterObject selectedPrinter = m_oSpoolerConnection.SelectedPrinter;
       if (selectedPrinter == null || !selectedPrinter.isConnected())
+      {
         return;
+      }
+
       switch (button.ID)
       {
         case 1000:
-          int num = (int) selectedPrinter.SendEmergencyStop((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+          var num = (int) selectedPrinter.SendEmergencyStop((M3D.Spooling.Client.AsyncCallback) null, (object) null);
           break;
         case 1101:
-          this.DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null);
+          DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null);
           break;
         case 1102:
           if ((FilamentSpool) null == selectedPrinter.GetCurrentFilament())
           {
-            this.m_oMessagebox.AddMessageToQueue("Unable to start print because the printer doesn't have any filament.");
+            m_oMessagebox.AddMessageToQueue("Unable to start print because the printer doesn't have any filament.");
             break;
           }
-          string selectedFile1 = this.GetSelectedFile();
+          var selectedFile1 = GetSelectedFile();
           if (string.IsNullOrEmpty(selectedFile1))
+          {
             break;
-          this.DoPrinterOperation(SDCardFrame.Operation.Print, selectedPrinter, selectedFile1);
+          }
+
+          DoPrinterOperation(SDCardFrame.Operation.Print, selectedPrinter, selectedFile1);
           break;
         case 1103:
-          string selectedFile2 = this.GetSelectedFile();
+          var selectedFile2 = GetSelectedFile();
           if (string.IsNullOrEmpty(selectedFile2))
+          {
             break;
-          this.DoPrinterOperation(SDCardFrame.Operation.Delete, selectedPrinter, selectedFile2);
+          }
+
+          DoPrinterOperation(SDCardFrame.Operation.Delete, selectedPrinter, selectedFile2);
           break;
         case 1105:
-          this.SaveGCodeToSDCard();
+          SaveGCodeToSDCard();
           break;
         case 1106:
-          this.m_oSettings.CurrentAppearanceSettings.AllowSDOnlyPrinting = button.Checked;
+          m_oSettings.CurrentAppearanceSettings.AllowSDOnlyPrinting = button.Checked;
           break;
       }
     }
 
     private string GetSelectedFile()
     {
-      int selected = this.m_oSDFilesListbox.Selected;
+      var selected = m_oSDFilesListbox.Selected;
       if (selected >= 0)
-        return this.m_oSDFilesListbox.Items[selected].ToString();
+      {
+        return m_oSDFilesListbox.Items[selected].ToString();
+      }
+
       return (string) null;
     }
 
     private void VerifySelectedPrinter()
     {
-      PrinterObject selectedPrinter = this.m_oSpoolerConnection.SelectedPrinter;
-      if (selectedPrinter == null || this.m_opLastPrinterSelected == selectedPrinter)
+      PrinterObject selectedPrinter = m_oSpoolerConnection.SelectedPrinter;
+      if (selectedPrinter == null || m_opLastPrinterSelected == selectedPrinter)
+      {
         return;
-      this.m_opLastPrinterSelected = selectedPrinter;
+      }
+
+      m_opLastPrinterSelected = selectedPrinter;
       if (!selectedPrinter.SDCardExtension.Available)
+      {
         return;
-      this.DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null);
+      }
+
+      DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null);
     }
 
     private void SaveGCodeToSDCard()
     {
-      PrinterObject selectedPrinter1 = this.m_oSpoolerConnection.SelectedPrinter;
+      PrinterObject selectedPrinter1 = m_oSpoolerConnection.SelectedPrinter;
       if (selectedPrinter1 == null || !selectedPrinter1.isConnected())
+      {
         return;
-      string sourceFileName = OpenModelFileDialog.RunOpenModelDialog(OpenModelFileDialog.FileType.GCode);
+      }
+
+      var sourceFileName = OpenModelFileDialog.RunOpenModelDialog(OpenModelFileDialog.FileType.GCode);
       if (string.IsNullOrEmpty(sourceFileName))
+      {
         return;
-      string str = Path.Combine(Paths.PublicDataFolder, "Working", "m3doutput.gcode");
+      }
+
+      var str = Path.Combine(Paths.PublicDataFolder, "Working", "m3doutput.gcode");
       if (sourceFileName != str)
       {
         try
@@ -151,84 +178,103 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
         }
         catch (Exception ex)
         {
-          this.m_oMessagebox.AddMessageToQueue("Unable to send gcode file. " + ex.Message);
+          m_oMessagebox.AddMessageToQueue("Unable to send gcode file. " + ex.Message);
           return;
         }
       }
-      JobParams UserJob = new JobParams(str, "User Job", "", selectedPrinter1.GetCurrentFilament().filament_type, 0.0f, 0.0f);
+      var UserJob = new JobParams(str, "User Job", "", selectedPrinter1.GetCurrentFilament().filament_type, 0.0f, 0.0f);
       UserJob.options.autostart_ignorewarnings = true;
       UserJob.options.turn_on_fan_before_print = true;
       UserJob.preprocessor = selectedPrinter1.MyFilamentProfile.preprocessor;
       UserJob.filament_temperature = selectedPrinter1.MyFilamentProfile.Temperature;
       UserJob.jobMode = JobParams.Mode.SavingToSDCard;
-      PrinterObject selectedPrinter2 = this.m_oSpoolerConnection.SelectedPrinter;
+      PrinterObject selectedPrinter2 = m_oSpoolerConnection.SelectedPrinter;
       if (selectedPrinter2 == null || !selectedPrinter2.isConnected())
-        this.m_oMessagebox.AddMessageToQueue("Printer Disconnected", PopupMessageBox.MessageBoxButtons.OK);
+      {
+        m_oMessagebox.AddMessageToQueue("Printer Disconnected", PopupMessageBox.MessageBoxButtons.OK);
+      }
       else if (selectedPrinter2.PrinterState != PrinterObject.State.IsPrinting)
+      {
         selectedPrinter2.AutoLockAndPrint(UserJob);
+      }
       else
-        this.m_oMessagebox.AddMessageToQueue("Printer Busy", PopupMessageBox.MessageBoxButtons.OK);
+      {
+        m_oMessagebox.AddMessageToQueue("Printer Busy", PopupMessageBox.MessageBoxButtons.OK);
+      }
     }
 
     private void SyncFromSettings()
     {
-      if (this.m_oAllowSavingtoSDOnlyCheckbox == null)
+      if (m_oAllowSavingtoSDOnlyCheckbox == null)
+      {
         return;
-      this.m_oAllowSavingtoSDOnlyCheckbox.Checked = this.m_oSettings.CurrentAppearanceSettings.AllowSDOnlyPrinting;
+      }
+
+      m_oAllowSavingtoSDOnlyCheckbox.Checked = m_oSettings.CurrentAppearanceSettings.AllowSDOnlyPrinting;
     }
 
     private void DoPrinterOperation(SDCardFrame.Operation op, PrinterObject printer, string file)
     {
-      int num = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(this.DoOperationOnLock), (object) new SDCardFrame.OnLockOperationData(op, printer, file));
+      var num = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoOperationOnLock), (object) new SDCardFrame.OnLockOperationData(op, printer, file));
     }
 
     private void DoOperationOnLock(IAsyncCallResult ar)
     {
       if (ar.CallResult != CommandResult.Success && ar.CallResult != CommandResult.Success_LockAcquired)
+      {
         return;
-      SDCardFrame.OnLockOperationData asyncState = ar.AsyncState as SDCardFrame.OnLockOperationData;
+      }
+
+      var asyncState = ar.AsyncState as SDCardFrame.OnLockOperationData;
       PrinterObject printer = asyncState.printer;
-      PrinterObject selectedPrinter = this.m_oSpoolerConnection.SelectedPrinter;
+      PrinterObject selectedPrinter = m_oSpoolerConnection.SelectedPrinter;
       if (selectedPrinter != null && selectedPrinter == printer && selectedPrinter.SDCardExtension.Available)
       {
         switch (asyncState.op)
         {
           case SDCardFrame.Operation.Refresh:
-            int num1 = (int) selectedPrinter.SDCardExtension.RefreshSDCardList(new M3D.Spooling.Client.AsyncCallback(this.OnRefreshCallback), (object) selectedPrinter);
+            var num1 = (int) selectedPrinter.SDCardExtension.RefreshSDCardList(new M3D.Spooling.Client.AsyncCallback(OnRefreshCallback), (object) selectedPrinter);
             return;
           case SDCardFrame.Operation.Print:
-            string file1 = asyncState.file;
-            JobParams jobParams = new JobParams(file1, file1, "null", selectedPrinter.GetCurrentFilament().filament_type, 0.0f, 0.0f);
-            jobParams.jobMode = JobParams.Mode.FirmwarePrintingFromSDCard;
+            var file1 = asyncState.file;
+            var jobParams = new JobParams(file1, file1, "null", selectedPrinter.GetCurrentFilament().filament_type, 0.0f, 0.0f)
+            {
+              jobMode = JobParams.Mode.FirmwarePrintingFromSDCard
+            };
             jobParams.options.autostart_ignorewarnings = true;
             jobParams.options.dont_use_preprocessors = false;
-            FilamentProfile filamentProfile = FilamentProfile.CreateFilamentProfile(selectedPrinter.GetCurrentFilament(), selectedPrinter.MyPrinterProfile);
+            var filamentProfile = FilamentProfile.CreateFilamentProfile(selectedPrinter.GetCurrentFilament(), selectedPrinter.MyPrinterProfile);
             jobParams.preprocessor = filamentProfile.preprocessor;
             jobParams.filament_temperature = filamentProfile.Temperature;
-            int num2 = (int) selectedPrinter.PrintModel(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, jobParams);
+            var num2 = (int) selectedPrinter.PrintModel(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, jobParams);
             return;
           case SDCardFrame.Operation.Delete:
-            string file2 = asyncState.file;
-            int num3 = (int) selectedPrinter.SDCardExtension.DeleteFileFromSDCard(new M3D.Spooling.Client.AsyncCallback(this.DoOperationOnLock), (object) new SDCardFrame.OnLockOperationData(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null), file2);
+            var file2 = asyncState.file;
+            var num3 = (int) selectedPrinter.SDCardExtension.DeleteFileFromSDCard(new M3D.Spooling.Client.AsyncCallback(DoOperationOnLock), (object) new SDCardFrame.OnLockOperationData(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null), file2);
             return;
         }
       }
-      int num4 = (int) printer.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+      var num4 = (int) printer.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
     }
 
     private void OnRefreshCallback(IAsyncCallResult ar)
     {
       if (ar.CallResult != CommandResult.Success)
-        return;
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
-      PrinterObject selectedPrinter = this.m_oSpoolerConnection.SelectedPrinter;
-      if (selectedPrinter != null && selectedPrinter == asyncState && (selectedPrinter.SDCardExtension.Available && this.m_oSDFilesListbox != null))
       {
-        this.m_oSDFilesListbox.Items.Clear();
-        foreach (object sdCardFile in selectedPrinter.SDCardExtension.GetSDCardFileList())
-          this.m_oSDFilesListbox.Items.Add(sdCardFile);
+        return;
       }
-      int num = (int) asyncState.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+
+      var asyncState = ar.AsyncState as PrinterObject;
+      PrinterObject selectedPrinter = m_oSpoolerConnection.SelectedPrinter;
+      if (selectedPrinter != null && selectedPrinter == asyncState && (selectedPrinter.SDCardExtension.Available && m_oSDFilesListbox != null))
+      {
+        m_oSDFilesListbox.Items.Clear();
+        foreach (var sdCardFile in selectedPrinter.SDCardExtension.GetSDCardFileList())
+        {
+          m_oSDFilesListbox.Items.Add(sdCardFile);
+        }
+      }
+      var num = (int) asyncState.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
     }
 
     private enum AdvancedControlsID

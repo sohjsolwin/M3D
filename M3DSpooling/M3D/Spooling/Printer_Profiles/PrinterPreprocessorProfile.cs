@@ -15,7 +15,7 @@ namespace M3D.Spooling.Printer_Profiles
 
     public PrinterPreprocessorProfile(params IPreprocessor[] preprocessors)
     {
-      this.preprocessor_list = new List<IPreprocessor>((IEnumerable<IPreprocessor>) preprocessors);
+      preprocessor_list = new List<IPreprocessor>((IEnumerable<IPreprocessor>) preprocessors);
     }
   }
 }

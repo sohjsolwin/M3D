@@ -34,43 +34,53 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     public override void MyButtonCallback(ButtonWidget button)
     {
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
       if (selectedPrinter == null)
+      {
         return;
+      }
+
       selectedPrinter.MarkedAsBusy = true;
-      bool flag = false;
+      var flag = false;
       switch (button.ID)
       {
         case 9:
-          this.MainWindow.ResetToStartup();
+          MainWindow.ResetToStartup();
           break;
         case 11:
-          this.CurrentDetails.current_spool.filament_size = FilamentSpool.SizeEnum.Pro;
+          CurrentDetails.current_spool.filament_size = FilamentSpool.SizeEnum.Pro;
           flag = true;
           break;
         case 12:
-          this.CurrentDetails.current_spool.filament_size = FilamentSpool.SizeEnum.Micro;
+          CurrentDetails.current_spool.filament_size = FilamentSpool.SizeEnum.Micro;
           flag = true;
           break;
         default:
           throw new NotImplementedException();
       }
       if (!flag)
+      {
         return;
-      if (this.settingsManager.CurrentFilamentSettings.TrackFilament)
-        this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page19_FilamentIsNewSpoolPage, this.CurrentDetails);
+      }
+
+      if (settingsManager.CurrentFilamentSettings.TrackFilament)
+      {
+        MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page19_FilamentIsNewSpoolPage, CurrentDetails);
+      }
       else
-        this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page13_FilamentLocation, this.CurrentDetails);
+      {
+        MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page13_FilamentLocation, CurrentDetails);
+      }
     }
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("Size of Filament Spool Currently in use:", "", true, false, false, false, false, false);
-      Frame childElement = (Frame) this.FindChildElement(2);
+      CreateManageFilamentFrame("Size of Filament Spool Currently in use:", "", true, false, false, false, false, false);
+      var childElement = (Frame)FindChildElement(2);
       if (childElement != null)
       {
-        ButtonWidget buttonWidget1 = new ButtonWidget(11);
-        buttonWidget1.Init(this.Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        var buttonWidget1 = new ButtonWidget(11);
+        buttonWidget1.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget1.Size = FontSize.Medium;
         buttonWidget1.Text = "PRO SPOOL";
         buttonWidget1.SetGrowableWidth(4, 4, 32);
@@ -79,8 +89,8 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget1.SetPosition(60, -100);
         buttonWidget1.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
         childElement.AddChildElement((Element2D) buttonWidget1);
-        ButtonWidget buttonWidget2 = new ButtonWidget(12);
-        buttonWidget2.Init(this.Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        var buttonWidget2 = new ButtonWidget(12);
+        buttonWidget2.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget2.Size = FontSize.Medium;
         buttonWidget2.Text = "MICRO SPOOL";
         buttonWidget2.SetGrowableWidth(4, 4, 32);
@@ -90,7 +100,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget2.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
         childElement.AddChildElement((Element2D) buttonWidget2);
       }
-      this.PopulateStartupControlsList();
+      PopulateStartupControlsList();
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
@@ -98,44 +108,47 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       base.OnActivate(details);
       try
       {
-        if (this.MainWindow.GetSelectedPrinter() == null)
+        if (MainWindow.GetSelectedPrinter() == null)
+        {
           return;
-        this.OnUpdate();
-        this.DisableAllControls();
-        this.text_main.Visible = true;
-        this.pro_filament_button.Visible = true;
-        this.pro_filament_button.Enabled = true;
-        this.micro_filament_button.Visible = true;
-        this.micro_filament_button.Enabled = true;
-        this.cancel_button.Visible = true;
-        this.cancel_button.Enabled = true;
-        this.text_title.Text = "Currently inserting:\n\n" + FilamentProfile.GenerateSpoolName(this.CurrentDetails.current_spool, false);
-        this.text_main.Text = "Please select filament spool size for insertion:";
+        }
+
+        OnUpdate();
+        DisableAllControls();
+        text_main.Visible = true;
+        pro_filament_button.Visible = true;
+        pro_filament_button.Enabled = true;
+        micro_filament_button.Visible = true;
+        micro_filament_button.Enabled = true;
+        cancel_button.Visible = true;
+        cancel_button.Enabled = true;
+        text_title.Text = "Currently inserting:\n\n" + FilamentProfile.GenerateSpoolName(CurrentDetails.current_spool, false);
+        text_main.Text = "Please select filament spool size for insertion:";
       }
       catch (Exception ex)
       {
       }
-      this.OnUpdate();
+      OnUpdate();
     }
 
     private void PopulateStartupControlsList()
     {
-      this.pro_filament_button = (ButtonWidget) this.FindChildElement(11);
-      this.micro_filament_button = (ButtonWidget) this.FindChildElement(12);
-      this.cancel_button = (ButtonWidget) this.FindChildElement(9);
-      this.text_main = (TextWidget) this.FindChildElement(3);
-      this.text_title = (TextWidget) this.FindChildElement(1);
+      pro_filament_button = (ButtonWidget)FindChildElement(11);
+      micro_filament_button = (ButtonWidget)FindChildElement(12);
+      cancel_button = (ButtonWidget)FindChildElement(9);
+      text_main = (TextWidget)FindChildElement(3);
+      text_title = (TextWidget)FindChildElement(1);
     }
 
     public void DisableAllControls()
     {
-      this.text_main.Visible = false;
-      this.pro_filament_button.Visible = false;
-      this.pro_filament_button.Enabled = false;
-      this.micro_filament_button.Visible = false;
-      this.micro_filament_button.Enabled = false;
-      this.cancel_button.Visible = false;
-      this.cancel_button.Enabled = false;
+      text_main.Visible = false;
+      pro_filament_button.Visible = false;
+      pro_filament_button.Enabled = false;
+      micro_filament_button.Visible = false;
+      micro_filament_button.Enabled = false;
+      cancel_button.Visible = false;
+      cancel_button.Enabled = false;
     }
 
     public enum ControlIDs

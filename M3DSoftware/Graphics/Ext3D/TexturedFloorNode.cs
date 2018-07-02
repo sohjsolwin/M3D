@@ -29,11 +29,11 @@ namespace M3D.Graphics.Ext3D
 
     public void Create(M3D.Model.Utils.Vector3 pos, float xWidth, float yWidth, int opengl_texture_handle)
     {
-      float num1 = xWidth / 2f;
-      float num2 = yWidth / 2f;
-      M3D.Model.Utils.Vector3 vector3_1 = new M3D.Model.Utils.Vector3(pos.x + num1, pos.y + num2, pos.z);
-      M3D.Model.Utils.Vector3 vector3_2 = new M3D.Model.Utils.Vector3(pos.x - num1, pos.y - num2, pos.z);
-      this.Create(new List<VertexTNV>()
+      var num1 = xWidth / 2f;
+      var num2 = yWidth / 2f;
+      var vector3_1 = new M3D.Model.Utils.Vector3(pos.x + num1, pos.y + num2, pos.z);
+      var vector3_2 = new M3D.Model.Utils.Vector3(pos.x - num1, pos.y - num2, pos.z);
+      Create(new List<VertexTNV>()
       {
         new VertexTNV(new Vector2(0.0f, 0.0f), new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_2.y, vector3_1.z)),
         new VertexTNV(new Vector2(1f, 0.0f), new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_2.y, vector3_1.z)),

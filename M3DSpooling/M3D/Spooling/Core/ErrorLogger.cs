@@ -16,7 +16,10 @@ namespace M3D.Spooling.Core
     public static void LogException(string msg, Exception e)
     {
       if (ErrorLogger.OnLogException == null)
+      {
         return;
+      }
+
       ErrorLogger.OnLogException(msg, e);
     }
 
@@ -28,7 +31,10 @@ namespace M3D.Spooling.Core
     public static void LogErrorMsg(string msg, string title)
     {
       if (ErrorLogger.OnLogErrorMsg == null)
+      {
         return;
+      }
+
       ErrorLogger.OnLogErrorMsg(msg, title);
     }
 

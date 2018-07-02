@@ -16,43 +16,49 @@ namespace M3D.Spooling
 
     public void StartUp(IntPtr hWnd)
     {
-      this.implementation = (IStayAwakeAndShutdown) new WinStayAwakeAndShutdown(hWnd);
+      implementation = (IStayAwakeAndShutdown) new WinStayAwakeAndShutdown(hWnd);
     }
 
     public void Shutdown()
     {
-      this.implementation.Shutdown();
+      implementation.Shutdown();
     }
 
     public bool NeverSleep()
     {
-      if (this.stay_awake_set)
+      if (stay_awake_set)
+      {
         return true;
-      this.stay_awake_set = true;
-      return this.implementation.NeverSleep();
+      }
+
+      stay_awake_set = true;
+      return implementation.NeverSleep();
     }
 
     public void AllowSleep()
     {
-      if (!this.stay_awake_set)
+      if (!stay_awake_set)
+      {
         return;
-      this.implementation.AllowSleep();
-      this.stay_awake_set = false;
+      }
+
+      implementation.AllowSleep();
+      stay_awake_set = false;
     }
 
     public void CreateShutdownMessage(string msg)
     {
-      this.implementation.CreateShutdownMessage(msg);
+      implementation.CreateShutdownMessage(msg);
     }
 
     public void DestroyShutdownMessage()
     {
-      this.implementation.DestroyShutdownMessage();
+      implementation.DestroyShutdownMessage();
     }
 
     public bool InStayAwakeMode()
     {
-      return this.stay_awake_set;
+      return stay_awake_set;
     }
   }
 }

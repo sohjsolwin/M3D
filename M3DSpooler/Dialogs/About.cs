@@ -24,93 +24,101 @@ namespace M3D.Spooler.Dialogs
 
     public About(SpoolerInfo spoolerInfo)
     {
-      this.InitializeComponent();
+      InitializeComponent();
       if (spoolerInfo == null)
+      {
         return;
-      this.versionText.Text = "Spooler Version: " + spoolerInfo.Version.ToString();
+      }
+
+      versionText.Text = "Spooler Version: " + spoolerInfo.Version.ToString();
       foreach (EmbeddedFirmwareSummary supportPrinterProfile in spoolerInfo.SupportPrinterProfiles)
       {
         foreach (FirmwareBoardVersionKVP firmwareVersion in supportPrinterProfile.FirmwareVersions)
-          this.listBox1.Items.Add((object) string.Format("{0} - {1}", (object) supportPrinterProfile.ToString(), (object) firmwareVersion.ToString()));
+        {
+          listBox1.Items.Add((object) string.Format("{0} - {1}", (object) supportPrinterProfile.ToString(), (object) firmwareVersion.ToString()));
+        }
       }
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
-      this.Close();
+      Close();
     }
 
     protected override void Dispose(bool disposing)
     {
-      if (disposing && this.components != null)
-        this.components.Dispose();
+      if (disposing && components != null)
+      {
+        components.Dispose();
+      }
+
       base.Dispose(disposing);
     }
 
     private void InitializeComponent()
     {
-      ComponentResourceManager componentResourceManager = new ComponentResourceManager(typeof (About));
-      this.label1 = new Label();
-      this.label2 = new Label();
-      this.label3 = new Label();
-      this.listBox1 = new ListBox();
-      this.button1 = new Button();
-      this.versionText = new Label();
-      this.SuspendLayout();
-      this.label1.AutoSize = true;
-      this.label1.Font = new Font("Arial Narrow", 18f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
-      this.label1.Location = new Point(10, 9);
-      this.label1.Name = "label1";
-      this.label1.Size = new Size(203, 29);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "M3D 3D Print Spooler";
-      this.label2.AutoSize = true;
-      this.label2.Location = new Point(11, 58);
-      this.label2.Name = "label2";
-      this.label2.Size = new Size(271, 12);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Copyright © 2016 M3D LLC. All rights Reserved";
-      this.label3.AutoSize = true;
-      this.label3.Location = new Point(11, 91);
-      this.label3.Name = "label3";
-      this.label3.Size = new Size(195, 12);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "Supported Printers and Firmware:";
-      this.listBox1.FormattingEnabled = true;
-      this.listBox1.ItemHeight = 12;
-      this.listBox1.Location = new Point(12, 110);
-      this.listBox1.Name = "listBox1";
-      this.listBox1.Size = new Size(393, 76);
-      this.listBox1.TabIndex = 3;
-      this.button1.Location = new Point(12, 209);
-      this.button1.Name = "button1";
-      this.button1.Size = new Size(91, 23);
-      this.button1.TabIndex = 4;
-      this.button1.Text = "OK";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new EventHandler(this.button1_Click);
-      this.versionText.AutoSize = true;
-      this.versionText.Location = new Point(12, 40);
-      this.versionText.Name = "versionText";
-      this.versionText.Size = new Size(46, 12);
-      this.versionText.TabIndex = 5;
-      this.versionText.Text = "version";
-      this.AutoScaleDimensions = new SizeF(7f, 12f);
-      this.AutoScaleMode = AutoScaleMode.Font;
-      this.ClientSize = new Size(415, 244);
-      this.Controls.Add((Control) this.versionText);
-      this.Controls.Add((Control) this.button1);
-      this.Controls.Add((Control) this.listBox1);
-      this.Controls.Add((Control) this.label3);
-      this.Controls.Add((Control) this.label2);
-      this.Controls.Add((Control) this.label1);
-      this.Icon = (Icon) componentResourceManager.GetObject("$this.Icon");
-      this.MaximizeBox = false;
-      this.MinimizeBox = false;
-      this.Name = nameof (About);
-      this.Text = "About M3D Print Spooler";
-      this.ResumeLayout(false);
-      this.PerformLayout();
+      var componentResourceManager = new ComponentResourceManager(typeof (About));
+      label1 = new Label();
+      label2 = new Label();
+      label3 = new Label();
+      listBox1 = new ListBox();
+      button1 = new Button();
+      versionText = new Label();
+      SuspendLayout();
+      label1.AutoSize = true;
+      label1.Font = new Font("Arial Narrow", 18f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      label1.Location = new Point(10, 9);
+      label1.Name = "label1";
+      label1.Size = new Size(203, 29);
+      label1.TabIndex = 0;
+      label1.Text = "M3D 3D Print Spooler";
+      label2.AutoSize = true;
+      label2.Location = new Point(11, 58);
+      label2.Name = "label2";
+      label2.Size = new Size(271, 12);
+      label2.TabIndex = 1;
+      label2.Text = "Copyright © 2016 M3D LLC. All rights Reserved";
+      label3.AutoSize = true;
+      label3.Location = new Point(11, 91);
+      label3.Name = "label3";
+      label3.Size = new Size(195, 12);
+      label3.TabIndex = 2;
+      label3.Text = "Supported Printers and Firmware:";
+      listBox1.FormattingEnabled = true;
+      listBox1.ItemHeight = 12;
+      listBox1.Location = new Point(12, 110);
+      listBox1.Name = "listBox1";
+      listBox1.Size = new Size(393, 76);
+      listBox1.TabIndex = 3;
+      button1.Location = new Point(12, 209);
+      button1.Name = "button1";
+      button1.Size = new Size(91, 23);
+      button1.TabIndex = 4;
+      button1.Text = "OK";
+      button1.UseVisualStyleBackColor = true;
+      button1.Click += new EventHandler(button1_Click);
+      versionText.AutoSize = true;
+      versionText.Location = new Point(12, 40);
+      versionText.Name = "versionText";
+      versionText.Size = new Size(46, 12);
+      versionText.TabIndex = 5;
+      versionText.Text = "version";
+      AutoScaleDimensions = new SizeF(7f, 12f);
+      AutoScaleMode = AutoScaleMode.Font;
+      ClientSize = new Size(415, 244);
+      Controls.Add((Control)versionText);
+      Controls.Add((Control)button1);
+      Controls.Add((Control)listBox1);
+      Controls.Add((Control)label3);
+      Controls.Add((Control)label2);
+      Controls.Add((Control)label1);
+      Icon = (Icon) componentResourceManager.GetObject("$this.Icon");
+      MaximizeBox = false;
+      MinimizeBox = false;
+      Name = nameof (About);
+      Text = "About M3D Print Spooler";
+      ResumeLayout(false);
+      PerformLayout();
     }
   }
 }

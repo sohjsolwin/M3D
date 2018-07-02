@@ -20,9 +20,9 @@ namespace M3D.GUI.Forms.Splash
 
     public SplashForm()
     {
-      this.InitializeComponent();
-      this.CenterToScreen();
-      this.timer1.Start();
+      InitializeComponent();
+      CenterToScreen();
+      timer1.Start();
     }
 
     private void pictureBox1_Click(object sender, EventArgs e)
@@ -35,44 +35,56 @@ namespace M3D.GUI.Forms.Splash
 
     private void timer1_Tick(object sender, EventArgs e)
     {
-      this.Hide();
-      this.timer1.Stop();
-      this.timer1.Enabled = false;
+      Hide();
+      timer1.Stop();
+      timer1.Enabled = false;
     }
 
     protected override void Dispose(bool disposing)
     {
-      if (disposing && this.components != null)
-        this.components.Dispose();
+      if (disposing && components != null)
+      {
+        components.Dispose();
+      }
+
       base.Dispose(disposing);
     }
 
     private void InitializeComponent()
     {
-      this.components = (IContainer) new Container();
-      this.timer1 = new Timer(this.components);
-      this.SuspendLayout();
-      this.timer1.Interval = 2000;
-      this.timer1.Tick += new EventHandler(this.timer1_Tick);
-      this.AutoScaleDimensions = new SizeF(6f, 13f);
-      this.AutoScaleMode = AutoScaleMode.Font;
-      this.BackColor = Color.White;
-      this.BackgroundImageLayout = ImageLayout.Center;
+      components = (IContainer) new Container();
+      timer1 = new Timer(components);
+      SuspendLayout();
+      timer1.Interval = 2000;
+      timer1.Tick += new EventHandler(timer1_Tick);
+      AutoScaleDimensions = new SizeF(6f, 13f);
+      AutoScaleMode = AutoScaleMode.Font;
+      BackColor = Color.White;
+      BackgroundImageLayout = ImageLayout.Center;
       if (Program.isDEBUGBUILD || VersionNumber.Stage.DEBUG == M3D.Spooling.Version.Client_Version.stage)
-        this.BackgroundImage = (Image) Resources.splashscreen_debug;
+      {
+        BackgroundImage = (Image) Resources.splashscreen_debug;
+      }
       else if (VersionNumber.Stage.Alpha == M3D.Spooling.Version.Client_Version.stage)
-        this.BackgroundImage = (Image) Resources.splashscreenAlpha;
+      {
+        BackgroundImage = (Image) Resources.splashscreenAlpha;
+      }
       else if (VersionNumber.Stage.Beta == M3D.Spooling.Version.Client_Version.stage)
-        this.BackgroundImage = (Image) Resources.splashscreen_beta;
+      {
+        BackgroundImage = (Image) Resources.splashscreen_beta;
+      }
       else if (M3D.Spooling.Version.Client_Version.stage == VersionNumber.Stage.Release || VersionNumber.Stage.ReleaseCandidate == M3D.Spooling.Version.Client_Version.stage)
-        this.BackgroundImage = (Image) Resources.splashscreen_real;
-      this.ClientSize = new Size(500, 375);
-      this.ControlBox = false;
-      this.FormBorderStyle = FormBorderStyle.None;
-      this.Icon = Resources.Icon;
-      this.Name = nameof (SplashForm);
-      this.TransparencyKey = Color.White;
-      this.ResumeLayout(false);
+      {
+        BackgroundImage = (Image) Resources.splashscreen_real;
+      }
+
+      ClientSize = new Size(500, 375);
+      ControlBox = false;
+      FormBorderStyle = FormBorderStyle.None;
+      Icon = Resources.Icon;
+      Name = nameof (SplashForm);
+      TransparencyKey = Color.White;
+      ResumeLayout(false);
     }
   }
 }

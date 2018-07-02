@@ -13,8 +13,8 @@ namespace M3D.Spooling.Common
 
     public Range(Range other)
     {
-      this.min = other.min;
-      this.max = other.max;
+      min = other.min;
+      max = other.max;
     }
 
     public Range(float min, float max)
@@ -25,14 +25,14 @@ namespace M3D.Spooling.Common
 
     public bool Intercepts(out float p, float p1, float p2)
     {
-      if ((double) p2 < (double) this.min)
+      if ((double) p2 < (double)min)
       {
-        p = (double) p1 >= (double) p2 ? ((double) p1 >= (double) this.min ? this.min : p1) : p2;
+        p = (double) p1 >= (double) p2 ? ((double) p1 >= (double)min ? min : p1) : p2;
         return true;
       }
-      if ((double) p2 > (double) this.max)
+      if ((double) p2 > (double)max)
       {
-        p = (double) p1 <= (double) p2 ? ((double) p1 <= (double) this.max ? this.max : p1) : p2;
+        p = (double) p1 <= (double) p2 ? ((double) p1 <= (double)max ? max : p1) : p2;
         return true;
       }
       p = p2;

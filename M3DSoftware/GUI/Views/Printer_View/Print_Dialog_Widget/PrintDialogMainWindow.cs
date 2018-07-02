@@ -33,20 +33,20 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       this.host = host;
       this.spooler_connection = spooler_connection;
       this.slicer_connection = slicer_connection;
-      spooler_connection.OnSelectedPrinterChanged += new SpoolerConnection.SelectedPrinterChangedCallback(this.OnSelectedPrinterChanged);
-      this.SetSize(750, 500);
-      this.CenterHorizontallyInParent = true;
-      this.CenterVerticallyInParent = true;
-      this.frames.Add((IPrintDialogFrame) new PrintDialogFrame(1000, host, printerview, spooler_connection, message_box, modelloadingmanager, controller, this));
-      this.frames.Add((IPrintDialogFrame) new SlicingFrame(1001, host, printerview, message_box, controller, this));
-      this.frames.Add((IPrintDialogFrame) new PreparingToStartFrame(1002, host, printerview, message_box, recentPrints, this));
-      this.frames.Add((IPrintDialogFrame) new PreSlicingFrame(1003, host, this));
-      this.frames.Add((IPrintDialogFrame) new AdvancedPrintSettingsFrame(1004, host, message_box, controller, this));
-      this.frames.Add((IPrintDialogFrame) new PrintingToFileFrame(1005, host, message_box, this));
-      foreach (IPrintDialogFrame frame in this.frames)
+      spooler_connection.OnSelectedPrinterChanged += new SpoolerConnection.SelectedPrinterChangedCallback(OnSelectedPrinterChanged);
+      SetSize(750, 500);
+      CenterHorizontallyInParent = true;
+      CenterVerticallyInParent = true;
+      frames.Add((IPrintDialogFrame) new PrintDialogFrame(1000, host, printerview, spooler_connection, message_box, modelloadingmanager, controller, this));
+      frames.Add((IPrintDialogFrame) new SlicingFrame(1001, host, printerview, message_box, controller, this));
+      frames.Add((IPrintDialogFrame) new PreparingToStartFrame(1002, host, printerview, message_box, recentPrints, this));
+      frames.Add((IPrintDialogFrame) new PreSlicingFrame(1003, host, this));
+      frames.Add((IPrintDialogFrame) new AdvancedPrintSettingsFrame(1004, host, message_box, controller, this));
+      frames.Add((IPrintDialogFrame) new PrintingToFileFrame(1005, host, message_box, this));
+      foreach (IPrintDialogFrame frame in frames)
       {
         frame.Visible = false;
-        this.AddChildElement((Element2D) frame);
+        AddChildElement((Element2D) frame);
       }
     }
 
@@ -57,52 +57,55 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     public void Show(PrintDialogWidgetFrames frame, PrintJobDetails details)
     {
-      this.Visible = true;
-      this.Enabled = true;
-      this.SlicerConnection.SlicerSettings.ConfigureFromPrinterData((IPrinter) details.printer);
-      this.host.GlobalChildDialog += (Element2D) this;
-      this.ActivateFrame(frame, details);
+      Visible = true;
+      Enabled = true;
+      SlicerConnection.SlicerSettings.ConfigureFromPrinterData((IPrinter) details.printer);
+      host.GlobalChildDialog += (Element2D) this;
+      ActivateFrame(frame, details);
     }
 
     public void CloseWindow()
     {
-      if (this.current_frame != null)
+      if (current_frame != null)
       {
-        this.current_frame.Visible = false;
-        this.current_frame.OnDeactivate();
-        this.current_frame = (IPrintDialogFrame) null;
+        current_frame.Visible = false;
+        current_frame.OnDeactivate();
+        current_frame = (IPrintDialogFrame) null;
       }
-      this.Visible = false;
-      if (this.host == null)
+      Visible = false;
+      if (host == null)
+      {
         return;
-      this.host.GlobalChildDialog -= (Element2D) this;
+      }
+
+      host.GlobalChildDialog -= (Element2D) this;
     }
 
     public void ActivateFrame(PrintDialogWidgetFrames frame, PrintJobDetails details)
     {
-      if (this.current_frame != null)
+      if (current_frame != null)
       {
-        this.previous = (PrintDialogWidgetFrames) this.current_frame.ID;
-        this.current_frame.Visible = false;
-        this.current_frame.OnDeactivate();
-        this.current_frame = (IPrintDialogFrame) null;
+        previous = (PrintDialogWidgetFrames)current_frame.ID;
+        current_frame.Visible = false;
+        current_frame.OnDeactivate();
+        current_frame = (IPrintDialogFrame) null;
       }
-      this.current_frame = this.frames[(int) (frame - 1000)];
-      this.current_frame.Visible = true;
-      this.current_frame.OnActivate(details);
+      current_frame = frames[(int) (frame - 1000)];
+      current_frame.Visible = true;
+      current_frame.OnActivate(details);
     }
 
     public void ActivatePrevious(PrintJobDetails details)
     {
-      this.ActivateFrame(this.previous, details);
+      ActivateFrame(previous, details);
     }
 
     public PrinterObject GetSelectedPrinter()
     {
-      PrinterObject printerObject = this.spooler_connection.SelectedPrinter;
+      PrinterObject printerObject = spooler_connection.SelectedPrinter;
       if (printerObject == null || !printerObject.isConnected())
       {
-        this.CloseWindow();
+        CloseWindow();
         printerObject = (PrinterObject) null;
       }
       return printerObject;
@@ -110,16 +113,19 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     public void OnSelectedPrinterChanged(PrinterSerialNumber serial_number)
     {
-      if (!this.Visible)
+      if (!Visible)
+      {
         return;
-      this.CloseWindow();
+      }
+
+      CloseWindow();
     }
 
     public SmartSlicerSettingsBase SlicerSettings
     {
       get
       {
-        return this.slicer_connection.SlicerSettings;
+        return slicer_connection.SlicerSettings;
       }
     }
 
@@ -127,7 +133,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
     {
       get
       {
-        return this.slicer_connection;
+        return slicer_connection;
       }
     }
   }

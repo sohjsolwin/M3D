@@ -18,19 +18,21 @@ namespace M3D
 
     public string ExtensionOpenWith(string Extension)
     {
-      RegistryKey registryKey1 = (RegistryKey) null;
-      RegistryKey registryKey2 = (RegistryKey) null;
-      string str1 = (string) null;
+      var registryKey1 = (RegistryKey) null;
+      var registryKey2 = (RegistryKey) null;
+      var str1 = (string) null;
       try
       {
         registryKey1 = Registry.CurrentUser.OpenSubKey("Software\\Classes\\" + Extension);
-        object obj = registryKey1.GetValue("");
+        var obj = registryKey1.GetValue("");
         if (obj != null)
         {
-          string str2 = obj.ToString();
+          var str2 = obj.ToString();
           registryKey2 = Registry.CurrentUser.OpenSubKey("Software\\Classes\\" + str2);
           if (registryKey2 != null)
+          {
             str1 = registryKey2.OpenSubKey("Shell").OpenSubKey("open").OpenSubKey("command").GetValue("").ToString();
+          }
         }
       }
       catch (Exception ex)
@@ -46,10 +48,10 @@ namespace M3D
 
     public void Set3DFileAssociation(string Extension, string KeyName, string OpenWith, string FileDescription, string fileIcon)
     {
-      RegistryKey registryKey1 = (RegistryKey) null;
-      RegistryKey registryKey2 = (RegistryKey) null;
-      RegistryKey registryKey3 = (RegistryKey) null;
-      RegistryKey registryKey4 = (RegistryKey) null;
+      var registryKey1 = (RegistryKey) null;
+      var registryKey2 = (RegistryKey) null;
+      var registryKey3 = (RegistryKey) null;
+      var registryKey4 = (RegistryKey) null;
       bool flag;
       try
       {
@@ -78,20 +80,23 @@ namespace M3D
         registryKey4?.Close();
       }
       if (flag)
+      {
         return;
-      this.Delete3DFileAssociation(Extension, KeyName);
+      }
+
+      Delete3DFileAssociation(Extension, KeyName);
     }
 
     public void Delete3DFileAssociation(string Extension, string KeyName)
     {
-      this.Delete3DFileAssociation("Software\\Classes\\" + Extension);
-      this.Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell\\edit\\command");
-      this.Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell\\open\\command");
-      this.Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell\\edit");
-      this.Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell\\open");
-      this.Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell");
-      this.Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\DefaultIcon");
-      this.Delete3DFileAssociation("Software\\Classes\\" + KeyName);
+      Delete3DFileAssociation("Software\\Classes\\" + Extension);
+      Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell\\edit\\command");
+      Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell\\open\\command");
+      Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell\\edit");
+      Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell\\open");
+      Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\Shell");
+      Delete3DFileAssociation("Software\\Classes\\" + KeyName + "\\DefaultIcon");
+      Delete3DFileAssociation("Software\\Classes\\" + KeyName);
     }
 
     private void Delete3DFileAssociation(string subKey)

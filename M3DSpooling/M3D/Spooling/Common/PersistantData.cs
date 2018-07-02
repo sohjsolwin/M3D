@@ -33,26 +33,26 @@ namespace M3D.Spooling.Common
 
     public PersistantData()
     {
-      this.LastUpdate = DateTime.Now;
-      this.unsaved_print_time = 0.0f;
-      this.gantry_clips_removed = false;
-      this.bootloader_version = 0;
-      this.hours_used = 0.0f;
-      this.MyRestartAction = PersistantData.RestartAction.None;
-      this.SavedJobInformation = (PersistantJobData) null;
-      this.SavedData = new SerializableDictionary<string, string>();
+      LastUpdate = DateTime.Now;
+      unsaved_print_time = 0.0f;
+      gantry_clips_removed = false;
+      bootloader_version = 0;
+      hours_used = 0.0f;
+      MyRestartAction = PersistantData.RestartAction.None;
+      SavedJobInformation = (PersistantJobData) null;
+      SavedData = new SerializableDictionary<string, string>();
     }
 
     public PersistantData(PersistantData other)
     {
-      this.LastUpdate = other.LastUpdate;
-      this.unsaved_print_time = other.unsaved_print_time;
-      this.gantry_clips_removed = other.gantry_clips_removed;
-      this.bootloader_version = other.bootloader_version;
-      this.hours_used = other.hours_used;
-      this.MyRestartAction = other.MyRestartAction;
-      this.SavedData = new SerializableDictionary<string, string>((Dictionary<string, string>) other.SavedData);
-      this.SavedJobInformation = other.SavedJobInformation != null ? new PersistantJobData(other.SavedJobInformation) : (PersistantJobData) null;
+      LastUpdate = other.LastUpdate;
+      unsaved_print_time = other.unsaved_print_time;
+      gantry_clips_removed = other.gantry_clips_removed;
+      bootloader_version = other.bootloader_version;
+      hours_used = other.hours_used;
+      MyRestartAction = other.MyRestartAction;
+      SavedData = new SerializableDictionary<string, string>((Dictionary<string, string>) other.SavedData);
+      SavedJobInformation = other.SavedJobInformation != null ? new PersistantJobData(other.SavedJobInformation) : (PersistantJobData) null;
     }
 
     [XmlIgnore]
@@ -60,24 +60,24 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return (double) this.UnsavedPrintTime < 1.0;
+        return (double)UnsavedPrintTime < 1.0;
       }
     }
 
     internal PersistantData.RestartOptions PopRestartAction()
     {
       PersistantData.RestartOptions restartOptions;
-      if (this.LastUpdate - DateTime.Now > new TimeSpan(0, 3, 0))
+      if (LastUpdate - DateTime.Now > new TimeSpan(0, 3, 0))
       {
         restartOptions.RestartAction = PersistantData.RestartAction.None;
         restartOptions.RestartActionParam = 0;
       }
       else
       {
-        restartOptions.RestartAction = this.MyRestartAction;
-        restartOptions.RestartActionParam = this.RestartActionParam;
+        restartOptions.RestartAction = MyRestartAction;
+        restartOptions.RestartActionParam = RestartActionParam;
       }
-      this.MyRestartAction = PersistantData.RestartAction.None;
+      MyRestartAction = PersistantData.RestartAction.None;
       return restartOptions;
     }
 
@@ -86,11 +86,11 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.MyRestartAction.ToString();
+        return MyRestartAction.ToString();
       }
       set
       {
-        this.MyRestartAction = (PersistantData.RestartAction) Enum.Parse(typeof (PersistantData.RestartAction), value, false);
+        MyRestartAction = (PersistantData.RestartAction) Enum.Parse(typeof (PersistantData.RestartAction), value, false);
       }
     }
 
@@ -99,12 +99,12 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.unsaved_print_time;
+        return unsaved_print_time;
       }
       set
       {
-        this.unsaved_print_time = value;
-        this.LastUpdate = DateTime.Now;
+        unsaved_print_time = value;
+        LastUpdate = DateTime.Now;
       }
     }
 
@@ -113,12 +113,12 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return this.gantry_clips_removed;
+        return gantry_clips_removed;
       }
       set
       {
-        this.gantry_clips_removed = value;
-        this.LastUpdate = DateTime.Now;
+        gantry_clips_removed = value;
+        LastUpdate = DateTime.Now;
       }
     }
 
@@ -127,7 +127,10 @@ namespace M3D.Spooling.Common
       get
       {
         if (PersistantData.__class_serializer == null)
+        {
           PersistantData.__class_serializer = new XmlSerializer(typeof (PersistantData));
+        }
+
         return PersistantData.__class_serializer;
       }
     }

@@ -50,13 +50,16 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     public override void MyButtonCallback(ButtonWidget button)
     {
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
       if (selectedPrinter == null)
+      {
         return;
+      }
+
       FilamentSpool currentFilament = selectedPrinter.GetCurrentFilament();
       if (selectedPrinter.IsPausedorPausing && currentFilament != (FilamentSpool) null && currentFilament.filament_location == FilamentSpool.Location.Internal)
       {
-        this.messagebox.AddMessageToQueue("Sorry, but changes cannot be made to internal spools while paused.");
+        messagebox.AddMessageToQueue("Sorry, but changes cannot be made to internal spools while paused.");
       }
       else
       {
@@ -64,26 +67,32 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         switch (button.ID)
         {
           case 19:
-            if (this.current_spool == (FilamentSpool) null)
+            if (current_spool == (FilamentSpool) null)
             {
-              this.messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "Please insert filament"));
+              messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "Please insert filament"));
               break;
             }
-            if (this.settingsManager.CurrentAppearanceSettings.ShowAllWarnings)
-              this.messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "Warning. Changing these filament profiles can cause damage to your printer and are for advanced users only."));
-            this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page9_ChangeFilamentDetails, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.SetDetails, this.current_spool));
+            if (settingsManager.CurrentAppearanceSettings.ShowAllWarnings)
+            {
+              messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "Warning. Changing these filament profiles can cause damage to your printer and are for advanced users only."));
+            }
+
+            MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page9_ChangeFilamentDetails, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.SetDetails, current_spool));
             break;
           case 20:
-            this.MainWindow.LockPrinterAndGotoPage(selectedPrinter, Manage3DInkMainWindow.PageID.Page6_IsThereFilament, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.SetDetails));
+            MainWindow.LockPrinterAndGotoPage(selectedPrinter, Manage3DInkMainWindow.PageID.Page6_IsThereFilament, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.SetDetails));
             break;
           case 21:
-            this.MainWindow.LockPrinterAndGotoPage(selectedPrinter, Manage3DInkMainWindow.PageID.Page11_CheatCodePage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.AddFilament));
+            MainWindow.LockPrinterAndGotoPage(selectedPrinter, Manage3DInkMainWindow.PageID.Page11_CheatCodePage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.AddFilament));
             break;
           case 22:
             if (!(currentFilament != (FilamentSpool) null))
+            {
               break;
-            this.MainWindow.previous_spool = currentFilament;
-            this.MainWindow.LockPrinterAndGotoPage(selectedPrinter, Manage3DInkMainWindow.PageID.Page12_RaisingExtruder, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.RemoveFilament, this.MainWindow.previous_spool));
+            }
+
+            MainWindow.previous_spool = currentFilament;
+            MainWindow.LockPrinterAndGotoPage(selectedPrinter, Manage3DInkMainWindow.PageID.Page12_RaisingExtruder, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.RemoveFilament, MainWindow.previous_spool));
             break;
           default:
             throw new NotImplementedException();
@@ -93,92 +102,108 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("Filament Currently in use:", "", true, false, false, false, false, false);
-      Frame childElement = (Frame) this.FindChildElement(2);
+      CreateManageFilamentFrame("Filament Currently in use:", "", true, false, false, false, false, false);
+      var childElement = (Frame)FindChildElement(2);
       if (childElement != null)
       {
-        TextWidget textWidget1 = new TextWidget(11);
-        textWidget1.Color = new Color4(0.35f, 0.35f, 0.35f, 1f);
-        textWidget1.RelativeWidth = 0.45f;
-        textWidget1.RelativeHeight = 0.2f;
-        textWidget1.RelativeX = 0.0f;
-        textWidget1.RelativeY = 0.1f;
-        textWidget1.Alignment = QFontAlignment.Right;
-        textWidget1.VAlignment = TextVerticalAlignment.Middle;
-        textWidget1.Text = "Color:";
+        var textWidget1 = new TextWidget(11)
+        {
+          Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
+          RelativeWidth = 0.45f,
+          RelativeHeight = 0.2f,
+          RelativeX = 0.0f,
+          RelativeY = 0.1f,
+          Alignment = QFontAlignment.Right,
+          VAlignment = TextVerticalAlignment.Middle,
+          Text = "Color:"
+        };
         childElement.AddChildElement((Element2D) textWidget1);
-        TextWidget textWidget2 = new TextWidget(12);
-        textWidget2.Color = new Color4(0.35f, 0.35f, 0.35f, 1f);
-        textWidget2.RelativeWidth = 0.45f;
-        textWidget2.RelativeHeight = 0.2f;
-        textWidget2.RelativeX = 0.55f;
-        textWidget2.RelativeY = 0.1f;
-        textWidget2.Alignment = QFontAlignment.Left;
-        textWidget2.VAlignment = TextVerticalAlignment.Middle;
-        textWidget2.Text = "purple";
+        var textWidget2 = new TextWidget(12)
+        {
+          Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
+          RelativeWidth = 0.45f,
+          RelativeHeight = 0.2f,
+          RelativeX = 0.55f,
+          RelativeY = 0.1f,
+          Alignment = QFontAlignment.Left,
+          VAlignment = TextVerticalAlignment.Middle,
+          Text = "purple"
+        };
         childElement.AddChildElement((Element2D) textWidget2);
-        TextWidget textWidget3 = new TextWidget(13);
-        textWidget3.Color = new Color4(0.35f, 0.35f, 0.35f, 1f);
-        textWidget3.RelativeWidth = 0.45f;
-        textWidget3.RelativeHeight = 0.2f;
-        textWidget3.RelativeX = 0.0f;
-        textWidget3.RelativeY = 0.3f;
-        textWidget3.Alignment = QFontAlignment.Right;
-        textWidget3.VAlignment = TextVerticalAlignment.Middle;
-        textWidget3.Text = "Material:";
+        var textWidget3 = new TextWidget(13)
+        {
+          Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
+          RelativeWidth = 0.45f,
+          RelativeHeight = 0.2f,
+          RelativeX = 0.0f,
+          RelativeY = 0.3f,
+          Alignment = QFontAlignment.Right,
+          VAlignment = TextVerticalAlignment.Middle,
+          Text = "Material:"
+        };
         childElement.AddChildElement((Element2D) textWidget3);
-        TextWidget textWidget4 = new TextWidget(14);
-        textWidget4.Color = new Color4(0.35f, 0.35f, 0.35f, 1f);
-        textWidget4.RelativeWidth = 0.45f;
-        textWidget4.RelativeHeight = 0.2f;
-        textWidget4.RelativeX = 0.55f;
-        textWidget4.RelativeY = 0.3f;
-        textWidget4.Alignment = QFontAlignment.Left;
-        textWidget4.VAlignment = TextVerticalAlignment.Middle;
-        textWidget4.Text = "PLA";
+        var textWidget4 = new TextWidget(14)
+        {
+          Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
+          RelativeWidth = 0.45f,
+          RelativeHeight = 0.2f,
+          RelativeX = 0.55f,
+          RelativeY = 0.3f,
+          Alignment = QFontAlignment.Left,
+          VAlignment = TextVerticalAlignment.Middle,
+          Text = "PLA"
+        };
         childElement.AddChildElement((Element2D) textWidget4);
-        TextWidget textWidget5 = new TextWidget(15);
-        textWidget5.Color = new Color4(0.35f, 0.35f, 0.35f, 1f);
-        textWidget5.RelativeWidth = 0.45f;
-        textWidget5.RelativeHeight = 0.2f;
-        textWidget5.RelativeX = 0.0f;
-        textWidget5.RelativeY = 0.5f;
-        textWidget5.Alignment = QFontAlignment.Right;
-        textWidget5.VAlignment = TextVerticalAlignment.Middle;
-        textWidget5.Text = "Temperature:";
+        var textWidget5 = new TextWidget(15)
+        {
+          Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
+          RelativeWidth = 0.45f,
+          RelativeHeight = 0.2f,
+          RelativeX = 0.0f,
+          RelativeY = 0.5f,
+          Alignment = QFontAlignment.Right,
+          VAlignment = TextVerticalAlignment.Middle,
+          Text = "Temperature:"
+        };
         childElement.AddChildElement((Element2D) textWidget5);
-        TextWidget textWidget6 = new TextWidget(16);
-        textWidget6.Color = new Color4(0.35f, 0.35f, 0.35f, 1f);
-        textWidget6.RelativeWidth = 0.45f;
-        textWidget6.RelativeHeight = 0.2f;
-        textWidget6.RelativeX = 0.55f;
-        textWidget6.RelativeY = 0.5f;
-        textWidget6.Alignment = QFontAlignment.Left;
-        textWidget6.VAlignment = TextVerticalAlignment.Middle;
-        textWidget6.Text = "9001";
+        var textWidget6 = new TextWidget(16)
+        {
+          Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
+          RelativeWidth = 0.45f,
+          RelativeHeight = 0.2f,
+          RelativeX = 0.55f,
+          RelativeY = 0.5f,
+          Alignment = QFontAlignment.Left,
+          VAlignment = TextVerticalAlignment.Middle,
+          Text = "9001"
+        };
         childElement.AddChildElement((Element2D) textWidget6);
-        TextWidget textWidget7 = new TextWidget(17);
-        textWidget7.Color = new Color4(0.35f, 0.35f, 0.35f, 1f);
-        textWidget7.RelativeWidth = 0.45f;
-        textWidget7.RelativeHeight = 0.2f;
-        textWidget7.RelativeX = 0.0f;
-        textWidget7.RelativeY = 0.7f;
-        textWidget7.Alignment = QFontAlignment.Right;
-        textWidget7.VAlignment = TextVerticalAlignment.Middle;
-        textWidget7.Text = "3D Ink Used (mm):";
+        var textWidget7 = new TextWidget(17)
+        {
+          Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
+          RelativeWidth = 0.45f,
+          RelativeHeight = 0.2f,
+          RelativeX = 0.0f,
+          RelativeY = 0.7f,
+          Alignment = QFontAlignment.Right,
+          VAlignment = TextVerticalAlignment.Middle,
+          Text = "3D Ink Used (mm):"
+        };
         childElement.AddChildElement((Element2D) textWidget7);
-        TextWidget textWidget8 = new TextWidget(18);
-        textWidget8.Color = new Color4(0.35f, 0.35f, 0.35f, 1f);
-        textWidget8.RelativeWidth = 0.45f;
-        textWidget8.RelativeHeight = 0.2f;
-        textWidget8.RelativeX = 0.55f;
-        textWidget8.RelativeY = 0.7f;
-        textWidget8.Alignment = QFontAlignment.Left;
-        textWidget8.VAlignment = TextVerticalAlignment.Middle;
-        textWidget8.Text = "0";
+        var textWidget8 = new TextWidget(18)
+        {
+          Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
+          RelativeWidth = 0.45f,
+          RelativeHeight = 0.2f,
+          RelativeX = 0.55f,
+          RelativeY = 0.7f,
+          Alignment = QFontAlignment.Left,
+          VAlignment = TextVerticalAlignment.Middle,
+          Text = "0"
+        };
         childElement.AddChildElement((Element2D) textWidget8);
-        ButtonWidget buttonWidget1 = new ButtonWidget(19);
-        buttonWidget1.Init(this.Host, "guicontrols", 194f, 1f, 253f, 64f, 194f, 65f, 253f, 128f, 194f, 129f, 253f, 192f);
+        var buttonWidget1 = new ButtonWidget(19);
+        buttonWidget1.Init(Host, "guicontrols", 194f, 1f, 253f, 64f, 194f, 65f, 253f, 128f, 194f, 129f, 253f, 192f);
         buttonWidget1.Size = FontSize.Large;
         buttonWidget1.SetGrowableHeight(4, 4, 32);
         buttonWidget1.SetGrowableWidth(4, 4, 32);
@@ -186,8 +211,8 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget1.SetPosition(-60, 0);
         buttonWidget1.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
         childElement.AddChildElement((Element2D) buttonWidget1);
-        ButtonWidget buttonWidget2 = new ButtonWidget(20);
-        buttonWidget2.Init(this.Host, "guicontrols", 200f, 705f, 220f, 725f, 200f, 705f, 220f, 725f, 200f, 705f, 220f, 725f, 200f, 705f, 220f, 725f);
+        var buttonWidget2 = new ButtonWidget(20);
+        buttonWidget2.Init(Host, "guicontrols", 200f, 705f, 220f, 725f, 200f, 705f, 220f, 725f, 200f, 705f, 220f, 725f, 200f, 705f, 220f, 725f);
         buttonWidget2.Size = FontSize.Medium;
         buttonWidget2.Text = "CLICK HERE IF NOT CORRECT.";
         buttonWidget2.SetGrowableWidth(4, 4, 32);
@@ -199,8 +224,8 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget2.TextOverColor = new Color4(0.4392157f, 0.8392157f, 0.9372549f, 1f);
         buttonWidget2.TextDownColor = new Color4(0.2f, 0.6078432f, 0.7098039f, 1f);
         childElement.AddChildElement((Element2D) buttonWidget2);
-        ButtonWidget buttonWidget3 = new ButtonWidget(21);
-        buttonWidget3.Init(this.Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        var buttonWidget3 = new ButtonWidget(21);
+        buttonWidget3.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget3.Size = FontSize.Medium;
         buttonWidget3.Text = "INSERT FILAMENT";
         buttonWidget3.SetGrowableWidth(4, 4, 32);
@@ -209,9 +234,9 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget3.SetPosition(-270, -100);
         buttonWidget3.CenterHorizontallyInParent = true;
         buttonWidget3.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-        this.AddChildElement((Element2D) buttonWidget3);
-        ButtonWidget buttonWidget4 = new ButtonWidget(22);
-        buttonWidget4.Init(this.Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        AddChildElement((Element2D) buttonWidget3);
+        var buttonWidget4 = new ButtonWidget(22);
+        buttonWidget4.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget4.Size = FontSize.Medium;
         buttonWidget4.Text = "REMOVE FILAMENT";
         buttonWidget4.SetGrowableWidth(4, 4, 32);
@@ -220,60 +245,65 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget4.SetPosition(-270, -100);
         buttonWidget4.CenterHorizontallyInParent = true;
         buttonWidget4.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-        this.AddChildElement((Element2D) buttonWidget4);
-        SpriteAnimationWidget spriteAnimationWidget = new SpriteAnimationWidget(23);
-        spriteAnimationWidget.Init(this.Host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
+        AddChildElement((Element2D) buttonWidget4);
+        var spriteAnimationWidget = new SpriteAnimationWidget(23);
+        spriteAnimationWidget.Init(Host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
         spriteAnimationWidget.SetPosition(0, -100);
         spriteAnimationWidget.SetSize(96, 81);
         spriteAnimationWidget.CenterHorizontallyInParent = true;
-        this.AddChildElement((Element2D) spriteAnimationWidget);
+        AddChildElement((Element2D) spriteAnimationWidget);
       }
-      this.PopulateStartupControlsList();
+      PopulateStartupControlsList();
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
     {
       base.OnActivate(details);
-      this.OnUpdate();
+      OnUpdate();
     }
 
     public override void OnUpdate()
     {
-      if (this.Visible)
+      if (Visible)
       {
         try
         {
-          PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
-          this.DisableAllControls();
-          this.ShowCurrentDetails();
+          PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
+          DisableAllControls();
+          ShowCurrentDetails();
           if (selectedPrinter == null)
+          {
             return;
-          if (!this.IsPrinterInErrorState)
+          }
+
+          if (!IsPrinterInErrorState)
           {
             FilamentSpool currentFilament = selectedPrinter.GetCurrentFilament();
-            this.current_spool = !(currentFilament != (FilamentSpool) null) || currentFilament.filament_type == FilamentSpool.TypeEnum.NoFilament ? (FilamentSpool) null : new FilamentSpool(currentFilament);
+            current_spool = !(currentFilament != (FilamentSpool) null) || currentFilament.filament_type == FilamentSpool.TypeEnum.NoFilament ? (FilamentSpool) null : new FilamentSpool(currentFilament);
             if (!selectedPrinter.isBusy)
             {
-              if (this.current_spool == (FilamentSpool) null)
+              if (current_spool == (FilamentSpool) null)
               {
-                this.correct_button.Visible = true;
-                this.correct_button.Enabled = true;
-                this.add_button.Visible = true;
-                this.add_button.Enabled = true;
-                this.settings_button.Visible = true;
-                this.settings_button.Enabled = true;
+                correct_button.Visible = true;
+                correct_button.Enabled = true;
+                add_button.Visible = true;
+                add_button.Enabled = true;
+                settings_button.Visible = true;
+                settings_button.Enabled = true;
               }
               else
               {
-                this.correct_button.Visible = true;
-                this.remove_button.Enabled = true;
-                this.remove_button.Visible = true;
-                this.settings_button.Enabled = true;
-                this.settings_button.Visible = true;
+                correct_button.Visible = true;
+                remove_button.Enabled = true;
+                remove_button.Visible = true;
+                settings_button.Enabled = true;
+                settings_button.Visible = true;
               }
             }
             else
-              this.progress_busy.Visible = true;
+            {
+              progress_busy.Visible = true;
+            }
           }
         }
         catch (Exception ex)
@@ -285,129 +315,146 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     private void ShowCurrentDetails()
     {
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
-      if (this.ShowError(selectedPrinter))
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
+      if (ShowError(selectedPrinter))
+      {
         return;
+      }
+
       selectedPrinter.MarkedAsBusy = false;
       FilamentSpool filamentSpool = selectedPrinter.GetCurrentFilament();
       if (filamentSpool != (FilamentSpool) null)
+      {
         filamentSpool = new FilamentSpool(filamentSpool);
+      }
+
       if (filamentSpool == (FilamentSpool) null)
       {
-        this.text_title.Text = "3D Ink Currently in use:";
-        this.text_main.Text = selectedPrinter.isBusy || selectedPrinter.Info.Status == PrinterStatus.Connecting ? (selectedPrinter.Info.current_job == null ? "Unable to read information from the printer because it is working." : "Unable to read information from the printer because it is printing.") : "Looks like your printer doesn't have 3D Ink loaded.";
-        this.DisableAllControls();
-        this.text_main.Visible = true;
+        text_title.Text = "3D Ink Currently in use:";
+        text_main.Text = selectedPrinter.isBusy || selectedPrinter.Info.Status == PrinterStatus.Connecting ? (selectedPrinter.Info.current_job == null ? "Unable to read information from the printer because it is working." : "Unable to read information from the printer because it is printing.") : "Looks like your printer doesn't have 3D Ink loaded.";
+        DisableAllControls();
+        text_main.Visible = true;
       }
       else
-        this.ShowCurrentFilament(selectedPrinter, filamentSpool);
+      {
+        ShowCurrentFilament(selectedPrinter, filamentSpool);
+      }
     }
 
     private bool ShowError(PrinterObject printer)
     {
-      this.printerInErrorState = false;
+      printerInErrorState = false;
       if (printer == null || printer.PrinterState == PrinterObject.State.IsUpdatingFirmware || (printer.PrinterState == PrinterObject.State.IsCalibrating || printer.PrinterState == PrinterObject.State.IsNotHealthy))
       {
         if (printer == null)
         {
-          this.text_main.Text = "Sorry, but a printer has not been connected.";
-          this.text_title.Text = "3D Ink Currently in use:";
+          text_main.Text = "Sorry, but a printer has not been connected.";
+          text_title.Text = "3D Ink Currently in use:";
         }
         else if (printer.PrinterState == PrinterObject.State.IsCalibrating)
         {
-          this.text_main.Text = "Please wait while your printer calibrates.";
-          this.text_title.Text = "";
+          text_main.Text = "Please wait while your printer calibrates.";
+          text_title.Text = "";
         }
         else if (printer.PrinterState == PrinterObject.State.IsUpdatingFirmware)
         {
-          this.text_main.Text = "Please wait while your firmware is updating.";
-          this.text_title.Text = "";
+          text_main.Text = "Please wait while your firmware is updating.";
+          text_title.Text = "";
         }
         else if (printer.PrinterState == PrinterObject.State.IsNotHealthy)
         {
-          this.text_main.Text = "Your printer is having problems. You may have to disconnect.";
-          this.text_title.Text = "";
+          text_main.Text = "Your printer is having problems. You may have to disconnect.";
+          text_title.Text = "";
         }
         else
+        {
           printer.MarkedAsBusy = false;
-        this.DisableAllControls();
-        this.text_main.Visible = true;
-        this.printerInErrorState = true;
+        }
+
+        DisableAllControls();
+        text_main.Visible = true;
+        printerInErrorState = true;
       }
       else
-        this.printerInErrorState = false;
-      return this.printerInErrorState;
+      {
+        printerInErrorState = false;
+      }
+
+      return printerInErrorState;
     }
 
     private void ShowCurrentFilament(PrinterObject printer, FilamentSpool current_spool)
     {
-      this.text_title.Text = "3D Ink Currently in use:\n\n" + FilamentProfile.GenerateSpoolName(current_spool, true);
-      this.text_temperature_value.Text = current_spool.filament_temperature.ToString() + " Degrees C";
+      text_title.Text = "3D Ink Currently in use:\n\n" + FilamentProfile.GenerateSpoolName(current_spool, true);
+      text_temperature_value.Text = current_spool.filament_temperature.ToString() + " Degrees C";
       FilamentConstants.Branding brandingFrom = FilamentConstants.GetBrandingFrom(current_spool.filament_type, (FilamentConstants.ColorsEnum) current_spool.filament_color_code);
-      this.text_material_value.Text = brandingFrom == FilamentConstants.Branding.Other ? FilamentConstants.TypesToString(current_spool.filament_type) : FilamentConstants.TypesToString(current_spool.filament_type) + " " + FilamentConstants.BrandingToString(brandingFrom);
-      this.text_color_value.Text = FilamentConstants.ColorsToString((FilamentConstants.ColorsEnum) current_spool.filament_color_code);
-      this.text_main.Text = "";
-      this.text_3dInkAmount_value.Text = current_spool.estimated_filament_length_printed.ToString("0.00");
-      this.text_temperature_value.Visible = true;
-      this.text_material_value.Visible = true;
-      this.text_color_value.Visible = true;
-      this.text_temperature.Visible = true;
-      this.text_material.Visible = true;
-      this.text_color.Visible = true;
-      if (!this.settingsManager.CurrentFilamentSettings.TrackFilament)
+      text_material_value.Text = brandingFrom == FilamentConstants.Branding.Other ? FilamentConstants.TypesToString(current_spool.filament_type) : FilamentConstants.TypesToString(current_spool.filament_type) + " " + FilamentConstants.BrandingToString(brandingFrom);
+      text_color_value.Text = FilamentConstants.ColorsToString((FilamentConstants.ColorsEnum) current_spool.filament_color_code);
+      text_main.Text = "";
+      text_3dInkAmount_value.Text = current_spool.estimated_filament_length_printed.ToString("0.00");
+      text_temperature_value.Visible = true;
+      text_material_value.Visible = true;
+      text_color_value.Visible = true;
+      text_temperature.Visible = true;
+      text_material.Visible = true;
+      text_color.Visible = true;
+      if (!settingsManager.CurrentFilamentSettings.TrackFilament)
+      {
         return;
-      this.text_3dInkAmount_value.Visible = true;
-      this.text_3dInkAmount.Visible = true;
+      }
+
+      text_3dInkAmount_value.Visible = true;
+      text_3dInkAmount.Visible = true;
     }
 
     private void PopulateStartupControlsList()
     {
-      this.text_color_value = (TextWidget) this.FindChildElement(12);
-      this.text_material_value = (TextWidget) this.FindChildElement(14);
-      this.text_temperature_value = (TextWidget) this.FindChildElement(16);
-      this.text_color = (TextWidget) this.FindChildElement(11);
-      this.text_material = (TextWidget) this.FindChildElement(13);
-      this.text_temperature = (TextWidget) this.FindChildElement(15);
-      this.text_3dInkAmount_value = (TextWidget) this.FindChildElement(18);
-      this.text_3dInkAmount = (TextWidget) this.FindChildElement(17);
-      this.text_main = (TextWidget) this.FindChildElement(3);
-      this.text_title = (TextWidget) this.FindChildElement(1);
-      this.cancel_button = (ButtonWidget) this.FindChildElement(9);
-      this.progress_busy = (SpriteAnimationWidget) this.FindChildElement(23);
-      this.add_button = (ButtonWidget) this.FindChildElement(21);
-      this.remove_button = (ButtonWidget) this.FindChildElement(22);
-      this.correct_button = (ButtonWidget) this.FindChildElement(20);
-      this.settings_button = (ButtonWidget) this.FindChildElement(19);
+      text_color_value = (TextWidget)FindChildElement(12);
+      text_material_value = (TextWidget)FindChildElement(14);
+      text_temperature_value = (TextWidget)FindChildElement(16);
+      text_color = (TextWidget)FindChildElement(11);
+      text_material = (TextWidget)FindChildElement(13);
+      text_temperature = (TextWidget)FindChildElement(15);
+      text_3dInkAmount_value = (TextWidget)FindChildElement(18);
+      text_3dInkAmount = (TextWidget)FindChildElement(17);
+      text_main = (TextWidget)FindChildElement(3);
+      text_title = (TextWidget)FindChildElement(1);
+      cancel_button = (ButtonWidget)FindChildElement(9);
+      progress_busy = (SpriteAnimationWidget)FindChildElement(23);
+      add_button = (ButtonWidget)FindChildElement(21);
+      remove_button = (ButtonWidget)FindChildElement(22);
+      correct_button = (ButtonWidget)FindChildElement(20);
+      settings_button = (ButtonWidget)FindChildElement(19);
     }
 
     public void DisableAllControls()
     {
-      this.add_button.Visible = false;
-      this.add_button.Enabled = false;
-      this.remove_button.Enabled = false;
-      this.remove_button.Visible = false;
-      this.correct_button.Visible = false;
-      this.settings_button.Visible = false;
-      this.settings_button.Enabled = false;
-      this.progress_busy.Visible = false;
-      this.text_main.Visible = false;
-      this.text_temperature_value.Visible = false;
-      this.text_material_value.Visible = false;
-      this.text_color_value.Visible = false;
-      this.text_temperature.Visible = false;
-      this.text_material.Visible = false;
-      this.text_color.Visible = false;
-      this.text_3dInkAmount_value.Visible = false;
-      this.text_3dInkAmount.Visible = false;
-      this.cancel_button.Visible = false;
-      this.cancel_button.Enabled = false;
+      add_button.Visible = false;
+      add_button.Enabled = false;
+      remove_button.Enabled = false;
+      remove_button.Visible = false;
+      correct_button.Visible = false;
+      settings_button.Visible = false;
+      settings_button.Enabled = false;
+      progress_busy.Visible = false;
+      text_main.Visible = false;
+      text_temperature_value.Visible = false;
+      text_material_value.Visible = false;
+      text_color_value.Visible = false;
+      text_temperature.Visible = false;
+      text_material.Visible = false;
+      text_color.Visible = false;
+      text_3dInkAmount_value.Visible = false;
+      text_3dInkAmount.Visible = false;
+      cancel_button.Visible = false;
+      cancel_button.Enabled = false;
     }
 
     public bool IsPrinterInErrorState
     {
       get
       {
-        return this.printerInErrorState;
+        return printerInErrorState;
       }
     }
 

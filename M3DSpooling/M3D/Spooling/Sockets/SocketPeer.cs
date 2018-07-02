@@ -24,34 +24,39 @@ namespace M3D.Spooling.Sockets
 
     public SocketPeer()
     {
-      this.myguid = Guid.NewGuid();
-      this.thread_lock = new object();
-      this.blocking_socket = false;
+      myguid = Guid.NewGuid();
+      thread_lock = new object();
+      blocking_socket = false;
     }
 
     ~SocketPeer()
     {
-      this.Shutdown();
+      Shutdown();
     }
 
     public bool StartListening()
     {
-      this.SocketListenerThread = new Thread(new ThreadStart(this.SocketListeningLoop));
-      this.SocketListenerThread.Name = "Listener";
-      this.SocketListenerThread.Priority = ThreadPriority.Lowest;
-      this.SocketListenerThread.IsBackground = true;
-      this.SocketListenerThread.Start();
-      this.SocketListenerThread.IsBackground = true;
+      SocketListenerThread = new Thread(new ThreadStart(SocketListeningLoop))
+      {
+        Name = "Listener",
+        Priority = ThreadPriority.Lowest,
+        IsBackground = true
+      };
+      SocketListenerThread.Start();
+      SocketListenerThread.IsBackground = true;
       return true;
     }
 
     public virtual void Shutdown()
     {
-      if (this.SocketListenerThread == null)
+      if (SocketListenerThread == null)
+      {
         return;
-      Thread socketListenerThread = this.SocketListenerThread;
-      this.SocketListenerThread = (Thread) null;
-      this.CloseListener();
+      }
+
+      Thread socketListenerThread = SocketListenerThread;
+      SocketListenerThread = (Thread) null;
+      CloseListener();
       socketListenerThread.Abort();
     }
 
@@ -60,7 +65,10 @@ namespace M3D.Spooling.Sockets
       Socket listener = this.listener;
       this.listener = (Socket) null;
       if (listener == null)
+      {
         return;
+      }
+
       try
       {
         listener.Close();
@@ -77,8 +85,8 @@ namespace M3D.Spooling.Sockets
 
     public virtual int StartSocketPeer(int myListenerPort)
     {
-      int num = 0;
-      IPAddress address = (IPAddress) null;
+      var num = 0;
+      var address = (IPAddress) null;
       try
       {
         IPAddress[] addressList = Dns.GetHostEntry("localhost").AddressList;
@@ -99,22 +107,30 @@ namespace M3D.Spooling.Sockets
         address = IPAddress.Parse("127.0.0.1");
       }
       if (address == null)
+      {
         return -5;
-      this.localEndPoint = new IPEndPoint(address, myListenerPort);
-      this.listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-      this.listener.ReceiveTimeout = 2000;
-      this.listener.Blocking = this.blocking_socket;
+      }
+
+      localEndPoint = new IPEndPoint(address, myListenerPort);
+      listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+      {
+        ReceiveTimeout = 2000,
+        Blocking = blocking_socket
+      };
       try
       {
-        this.listener.Bind((EndPoint) this.localEndPoint);
-        this.listener.Listen(10);
+        listener.Bind((EndPoint)localEndPoint);
+        listener.Listen(10);
       }
       catch (SocketException ex)
       {
         if (ex.ErrorCode == 10048)
+        {
           ;
+        }
+
         num = -2;
-        this.listener = (Socket) null;
+        listener = (Socket) null;
       }
       catch (ObjectDisposedException ex)
       {
@@ -131,13 +147,15 @@ namespace M3D.Spooling.Sockets
     {
       try
       {
-        while (this.listener != null)
+        while (listener != null)
         {
           try
           {
-            Socket socket = this.listener.Accept();
+            Socket socket = listener.Accept();
             if (socket != null)
-              ThreadPool.QueueUserWorkItem(new WaitCallback(this.HandleIncomingConnection), (object) socket);
+            {
+              ThreadPool.QueueUserWorkItem(new WaitCallback(HandleIncomingConnection), (object) socket);
+            }
           }
           catch (SocketException ex)
           {
@@ -162,14 +180,14 @@ namespace M3D.Spooling.Sockets
       {
         ErrorLogger.LogException("Exception in SocketPeer.CoketListeningLoop 2 " + ex.Message, ex);
       }
-      this.CloseListener();
-      this.Shutdown();
+      CloseListener();
+      Shutdown();
     }
 
     public void HandleIncomingConnection(object client)
     {
-      Socket handler = (Socket) null;
-      string message = (string) null;
+      var handler = (Socket) null;
+      var message = (string) null;
       byte[] numArray = new byte[1024];
       try
       {
@@ -177,7 +195,7 @@ namespace M3D.Spooling.Sockets
         handler.ReceiveTimeout = 2000;
         while (true)
         {
-          int count = 0;
+          var count = 0;
           try
           {
             count = handler.Receive(numArray);
@@ -185,7 +203,9 @@ namespace M3D.Spooling.Sockets
           catch (SocketException ex)
           {
             if (ex.ErrorCode != 10035)
+            {
               throw ex;
+            }
           }
           catch (Exception ex)
           {
@@ -193,11 +213,15 @@ namespace M3D.Spooling.Sockets
           }
           message += Encoding.UTF8.GetString(numArray, 0, count);
           if (message.IndexOf("<EOF>") <= -1)
+          {
             Thread.Sleep(1);
+          }
           else
+          {
             break;
+          }
         }
-        this.OnRawMessage(message, handler);
+        OnRawMessage(message, handler);
       }
       catch (Exception ex)
       {
@@ -224,7 +248,7 @@ namespace M3D.Spooling.Sockets
     {
       get
       {
-        return this.myguid;
+        return myguid;
       }
     }
   }

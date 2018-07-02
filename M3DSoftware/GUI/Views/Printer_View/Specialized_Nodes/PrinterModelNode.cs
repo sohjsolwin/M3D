@@ -18,43 +18,49 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
 
     public PrinterModelNode(PrinterSizeProfile.CaseType casetype)
     {
-      this.Micro1Case = new Micro1CaseNode();
-      this.ProCase = new ProCaseNode();
-      this.Micro1Case.Visible = false;
-      this.ProCase.Visible = false;
-      this.AddChildElement((Element3D) this.Micro1Case);
-      this.AddChildElement((Element3D) this.ProCase);
-      this.SetCase(casetype);
+      Micro1Case = new Micro1CaseNode();
+      ProCase = new ProCaseNode();
+      Micro1Case.Visible = false;
+      ProCase.Visible = false;
+      AddChildElement((Element3D)Micro1Case);
+      AddChildElement((Element3D)ProCase);
+      SetCase(casetype);
     }
 
     public void SetCase(PrinterSizeProfile.CaseType casetype)
     {
-      if (this.current != null && casetype == this.current.CaseType)
+      if (current != null && casetype == current.CaseType)
+      {
         return;
-      if (this.current != null)
-        this.current.Visible = false;
+      }
+
+      if (current != null)
+      {
+        current.Visible = false;
+      }
+
       switch (casetype)
       {
         case PrinterSizeProfile.CaseType.Micro1Case:
-          this.current = (PrinterCaseNode) this.Micro1Case;
+          current = (PrinterCaseNode)Micro1Case;
           break;
         case PrinterSizeProfile.CaseType.ProCase:
-          this.current = (PrinterCaseNode) this.ProCase;
+          current = (PrinterCaseNode)ProCase;
           break;
       }
-      this.current.Visible = true;
+      current.Visible = true;
     }
 
     public override Color4 PrinterColor
     {
       get
       {
-        return this.current.PrinterColor;
+        return current.PrinterColor;
       }
       set
       {
-        this.Micro1Case.PrinterColor = value;
-        this.ProCase.PrinterColor = value;
+        Micro1Case.PrinterColor = value;
+        ProCase.PrinterColor = value;
       }
     }
 
@@ -62,7 +68,7 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     {
       get
       {
-        return this.current.ShellModel;
+        return current.ShellModel;
       }
     }
 
@@ -70,7 +76,7 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     {
       get
       {
-        return this.current.CaseType;
+        return current.CaseType;
       }
     }
 
@@ -78,7 +84,7 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     {
       get
       {
-        return this.current.ZOffset;
+        return current.ZOffset;
       }
     }
 
@@ -86,7 +92,7 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     {
       get
       {
-        return this.current.GUICaseSize;
+        return current.GUICaseSize;
       }
     }
   }

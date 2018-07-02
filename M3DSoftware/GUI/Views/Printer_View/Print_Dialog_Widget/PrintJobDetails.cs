@@ -30,22 +30,24 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     public PrintJobDetails()
     {
-      this.slicer_objects = new List<ModelTransform>();
-      this.objectDetailsList = new List<PrintDetails.ObjectDetails>();
+      slicer_objects = new List<ModelTransform>();
+      objectDetailsList = new List<PrintDetails.ObjectDetails>();
     }
 
     public void GenerateSlicerSettings(PrinterObject printer, PrinterView printerview)
     {
-      this.settings = new M3D.Slicer.General.PrintSettings();
-      this.settings.SetPrintDefaults();
+      settings = new M3D.Slicer.General.PrintSettings();
+      settings.SetPrintDefaults();
       if (printer != null)
       {
         FilamentSpool currentFilament = printer.GetCurrentFilament();
-        this.settings.filament_info = currentFilament;
+        settings.filament_info = currentFilament;
         if (currentFilament.filament_type == FilamentSpool.TypeEnum.HIPS)
-          this.settings.filament_info.filament_type = FilamentSpool.TypeEnum.ABS;
+        {
+          settings.filament_info.filament_type = FilamentSpool.TypeEnum.ABS;
+        }
       }
-      this.settings.transformation = printerview.GetObjectSlicerTransformation();
+      settings.transformation = printerview.GetObjectSlicerTransformation();
     }
   }
 }

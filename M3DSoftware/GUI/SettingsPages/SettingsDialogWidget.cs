@@ -36,39 +36,41 @@ namespace M3D.GUI.SettingsPages
     public SettingsDialogWidget(int ID, GUIHost host, SettingsManager main_controller, PopupMessageBox messagebox, SpoolerConnection spooler_connection, Updater softwareUpdater)
       : base(ID, (Element2D) null)
     {
-      this.settingsManager = main_controller;
+      settingsManager = main_controller;
       this.messagebox = messagebox;
-      this.Init(host, spooler_connection, softwareUpdater);
+      Init(host, spooler_connection, softwareUpdater);
     }
 
     private void Init(GUIHost host, SpoolerConnection spooler_connection, Updater softwareUpdater)
     {
       this.host = host;
-      this.Init(host, "guicontrols", 640f, 320f, 704f, 383f, 41, 8, 64, 37, 8, 64);
-      this.SetSize(792, 356);
-      TextWidget textWidget = new TextWidget(0);
+      Init(host, "guicontrols", 640f, 320f, 704f, 383f, 41, 8, 64, 37, 8, 64);
+      SetSize(792, 356);
+      var textWidget = new TextWidget(0);
       textWidget.SetPosition(50, 2);
       textWidget.SetSize(500, 35);
       textWidget.Text = "Settings";
       textWidget.Alignment = QFontAlignment.Left;
       textWidget.Size = FontSize.Large;
       textWidget.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      this.AddChildElement((Element2D) textWidget);
-      int yposition1 = 35;
+      AddChildElement((Element2D) textWidget);
+      var yposition1 = 35;
       Sprite.pixel_perfect = true;
-      this.CreateTabButton(2, "T_SettingsTab_UserInterfaceOptions", yposition1);
-      int yposition2 = yposition1 + 64;
-      this.CreateTabButton(5, "T_SettingsTab_Calibration", yposition2);
-      int yposition3 = yposition2 + 64;
-      this.CreateTabButton(3, "T_SettingsTab_ExpertControls", yposition3);
-      int yposition4 = yposition3 + 64;
-      this.CreateTabButton(4, "T_SettingsTab_FilamentOptions", yposition4);
-      int yposition5 = yposition4 + 64;
-      this.CreateTabButton(6, "  Pro/Micro+\n  Features", yposition5);
-      this.CreateTabButton(7, "T_SettingsTab_About", yposition5 + 64);
-      ButtonWidget buttonWidget = new ButtonWidget(8);
-      buttonWidget.X = -40;
-      buttonWidget.Y = 4;
+      CreateTabButton(2, "T_SettingsTab_UserInterfaceOptions", yposition1);
+      var yposition2 = yposition1 + 64;
+      CreateTabButton(5, "T_SettingsTab_Calibration", yposition2);
+      var yposition3 = yposition2 + 64;
+      CreateTabButton(3, "T_SettingsTab_ExpertControls", yposition3);
+      var yposition4 = yposition3 + 64;
+      CreateTabButton(4, "T_SettingsTab_FilamentOptions", yposition4);
+      var yposition5 = yposition4 + 64;
+      CreateTabButton(6, "  Pro/Micro+\n  Features", yposition5);
+      CreateTabButton(7, "T_SettingsTab_About", yposition5 + 64);
+      var buttonWidget = new ButtonWidget(8)
+      {
+        X = -40,
+        Y = 4
+      };
       buttonWidget.SetSize(32, 32);
       buttonWidget.Text = "";
       buttonWidget.TextColor = new Color4(0.5f, 0.5f, 0.5f, 1f);
@@ -77,28 +79,30 @@ namespace M3D.GUI.SettingsPages
       buttonWidget.Alignment = QFontAlignment.Left;
       buttonWidget.Init(host, "guicontrols", 704f, 320f, 735f, 351f, 736f, 320f, 767f, 351f, 704f, 352f, 735f, 383f);
       buttonWidget.DontMove = true;
-      buttonWidget.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.AddChildElement((Element2D) buttonWidget);
-      this.tab_frame = new Frame(9);
-      this.tab_frame.X = 191;
-      this.tab_frame.Y = 35;
-      this.AddChildElement((Element2D) this.tab_frame);
-      this.CreateAppearanceFrame(host, softwareUpdater, this.messagebox);
-      this.CreateManualControlsFrame(host, spooler_connection, this.settingsManager);
-      this.CreateFilamentProfilesFrame(host, spooler_connection);
-      this.CreateProFeaturesFrame(host, spooler_connection);
-      this.CreateCalibrationFrame(host, spooler_connection);
-      this.CreateAboutFrame(host);
-      this.about_frame.Visible = true;
-      this.about_frame.Enabled = true;
-      this.active_frame = (SettingsPage) this.about_frame;
+      buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
+      AddChildElement((Element2D) buttonWidget);
+      tab_frame = new Frame(9)
+      {
+        X = 191,
+        Y = 35
+      };
+      AddChildElement((Element2D)tab_frame);
+      CreateAppearanceFrame(host, softwareUpdater, messagebox);
+      CreateManualControlsFrame(host, spooler_connection, settingsManager);
+      CreateFilamentProfilesFrame(host, spooler_connection);
+      CreateProFeaturesFrame(host, spooler_connection);
+      CreateCalibrationFrame(host, spooler_connection);
+      CreateAboutFrame(host);
+      about_frame.Visible = true;
+      about_frame.Enabled = true;
+      active_frame = (SettingsPage)about_frame;
       Sprite.pixel_perfect = false;
-      this.Visible = false;
+      Visible = false;
     }
 
     private ButtonWidget CreateTabButton(int ID, string text, int yposition)
     {
-      ButtonWidget buttonWidget = new ButtonWidget(ID);
+      var buttonWidget = new ButtonWidget(ID);
       buttonWidget.SetPosition(0, yposition);
       buttonWidget.SetSize(181, 64);
       buttonWidget.Text = text;
@@ -106,20 +110,23 @@ namespace M3D.GUI.SettingsPages
       buttonWidget.TextDownColor = new Color4(1f, 1f, 1f, 1f);
       buttonWidget.TextOverColor = new Color4(0.161f, 0.79f, 0.95f, 1f);
       buttonWidget.Alignment = QFontAlignment.Left;
-      buttonWidget.Init(this.host, "guicontrols", 448f, 256f, 628f, 319f, 448f, 256f, 628f, 319f, 448f, 384f, 628f, 447f);
+      buttonWidget.Init(host, "guicontrols", 448f, 256f, 628f, 319f, 448f, 256f, 628f, 319f, 448f, 384f, 628f, 447f);
       buttonWidget.DontMove = true;
       buttonWidget.ClickType = ButtonType.Checkable;
       buttonWidget.GroupID = 18302;
       buttonWidget.Checked = false;
-      buttonWidget.SetCallback(new ButtonCallback(this.MyButtonCallback));
-      this.AddChildElement((Element2D) buttonWidget);
+      buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
+      AddChildElement((Element2D) buttonWidget);
       return buttonWidget;
     }
 
     public override void OnParentResize()
     {
-      if (this.tab_frame != null)
-        this.tab_frame.SetSize(this.Width - this.tab_frame.X - 10, this.Height - this.tab_frame.Y - 10);
+      if (tab_frame != null)
+      {
+        tab_frame.SetSize(Width - tab_frame.X - 10, Height - tab_frame.Y - 10);
+      }
+
       base.OnParentResize();
     }
 
@@ -130,38 +137,56 @@ namespace M3D.GUI.SettingsPages
 
     public void ActivateAdvancedView()
     {
-      this.ActivateAdvancedView(false);
+      ActivateAdvancedView(false);
     }
 
     public void ActivateAdvancedView(bool calibrate)
     {
       if (!calibrate)
+      {
         return;
-      ButtonWidget childElement = (ButtonWidget) this.FindChildElement(5);
+      }
+
+      var childElement = (ButtonWidget)FindChildElement(5);
       if (childElement != null)
+      {
         childElement.Checked = true;
-      if (this.active_frame == null)
+      }
+
+      if (active_frame == null)
+      {
         return;
-      this.active_frame.Enabled = true;
-      this.active_frame.Visible = true;
+      }
+
+      active_frame.Enabled = true;
+      active_frame.Visible = true;
     }
 
     public void ActivateFilamentView()
     {
-      ButtonWidget childElement = (ButtonWidget) this.FindChildElement(1);
+      var childElement = (ButtonWidget)FindChildElement(1);
       if (childElement != null)
+      {
         childElement.Checked = true;
-      if (this.active_frame == null)
+      }
+
+      if (active_frame == null)
+      {
         return;
-      this.active_frame.Enabled = true;
-      this.active_frame.Visible = true;
+      }
+
+      active_frame.Enabled = true;
+      active_frame.Visible = true;
     }
 
     public void ActivateChangeFilamentView()
     {
-      ButtonWidget childElement = (ButtonWidget) this.FindChildElement(1);
+      var childElement = (ButtonWidget)FindChildElement(1);
       if (childElement == null)
+      {
         return;
+      }
+
       childElement.Checked = true;
     }
 
@@ -170,107 +195,123 @@ namespace M3D.GUI.SettingsPages
       switch (button.ID)
       {
         case 2:
-          this.TurnOffActiveFrame();
-          this.active_frame = (SettingsPage) this.appearanceFrame;
+          TurnOffActiveFrame();
+          active_frame = (SettingsPage)appearanceFrame;
           break;
         case 3:
-          if (this.settingsManager.ShowAllWarnings)
-            this.messagebox.AddMessageToQueue(Locale.GlobalLocale.T("T_ManualControlsWarning"));
-          this.TurnOffActiveFrame();
-          this.active_frame = (SettingsPage) this.manualControlsFrame;
+          if (settingsManager.ShowAllWarnings)
+          {
+            messagebox.AddMessageToQueue(Locale.GlobalLocale.T("T_ManualControlsWarning"));
+          }
+
+          TurnOffActiveFrame();
+          active_frame = (SettingsPage)manualControlsFrame;
           break;
         case 4:
-          if (this.settingsManager.ShowAllWarnings)
-            this.messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, Locale.GlobalLocale.T("T_FilamentProfilesWarning")));
-          this.TurnOffActiveFrame();
-          this.active_frame = (SettingsPage) this.filamentprofiles_page;
+          if (settingsManager.ShowAllWarnings)
+          {
+            messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, Locale.GlobalLocale.T("T_FilamentProfilesWarning")));
+          }
+
+          TurnOffActiveFrame();
+          active_frame = (SettingsPage)filamentprofiles_page;
           break;
         case 5:
-          this.TurnOffActiveFrame();
-          this.active_frame = (SettingsPage) this.calibrationsettings_page;
+          TurnOffActiveFrame();
+          active_frame = (SettingsPage)calibrationsettings_page;
           break;
         case 6:
-          this.TurnOffActiveFrame();
-          this.active_frame = (SettingsPage) this.proFeaturePanelFrame;
+          TurnOffActiveFrame();
+          active_frame = (SettingsPage)proFeaturePanelFrame;
           break;
         case 7:
-          this.TurnOffActiveFrame();
-          this.active_frame = (SettingsPage) this.about_frame;
+          TurnOffActiveFrame();
+          active_frame = (SettingsPage)about_frame;
           break;
         case 8:
-          this.Close();
+          Close();
           break;
       }
-      if (this.active_frame == null)
+      if (active_frame == null)
+      {
         return;
-      this.active_frame.Enabled = true;
-      this.active_frame.Visible = true;
-      this.active_frame.Refresh();
-      this.active_frame.OnOpen();
+      }
+
+      active_frame.Enabled = true;
+      active_frame.Visible = true;
+      active_frame.Refresh();
+      active_frame.OnOpen();
     }
 
     private void CreateAppearanceFrame(GUIHost host, Updater softwareUpdater, PopupMessageBox messagebox)
     {
-      this.appearanceFrame = new AppearancePage(2, host, this.settingsManager, softwareUpdater, messagebox);
-      this.tab_frame.AddChildElement((Element2D) this.appearanceFrame);
-      this.appearanceFrame.Refresh();
+      appearanceFrame = new AppearancePage(2, host, settingsManager, softwareUpdater, messagebox);
+      tab_frame.AddChildElement((Element2D)appearanceFrame);
+      appearanceFrame.Refresh();
     }
 
     private void CreateManualControlsFrame(GUIHost host, SpoolerConnection spooler_connection, SettingsManager settingsManager)
     {
-      this.manualControlsFrame = new ManualControlsFrame(host, spooler_connection, this.messagebox, settingsManager);
-      this.tab_frame.AddChildElement((Element2D) this.manualControlsFrame);
-      this.manualControlsFrame.Refresh();
+      manualControlsFrame = new ManualControlsFrame(host, spooler_connection, messagebox, settingsManager);
+      tab_frame.AddChildElement((Element2D)manualControlsFrame);
+      manualControlsFrame.Refresh();
     }
 
     private void CreateFilamentProfilesFrame(GUIHost host, SpoolerConnection spooler_connection)
     {
-      this.filamentprofiles_page = new FilamentProfilePage(4, this.settingsManager, host, spooler_connection, this.messagebox);
-      this.tab_frame.AddChildElement((Element2D) this.filamentprofiles_page);
-      this.filamentprofiles_page.Refresh();
+      filamentprofiles_page = new FilamentProfilePage(4, settingsManager, host, spooler_connection, messagebox);
+      tab_frame.AddChildElement((Element2D)filamentprofiles_page);
+      filamentprofiles_page.Refresh();
     }
 
     private void CreateProFeaturesFrame(GUIHost host, SpoolerConnection spooler_connection)
     {
-      this.proFeaturePanelFrame = new FeaturePanel(6, host, spooler_connection);
-      this.tab_frame.AddChildElement((Element2D) this.proFeaturePanelFrame);
-      this.proFeaturePanelFrame.Refresh();
+      proFeaturePanelFrame = new FeaturePanel(6, host, spooler_connection);
+      tab_frame.AddChildElement((Element2D)proFeaturePanelFrame);
+      proFeaturePanelFrame.Refresh();
     }
 
     private void CreateCalibrationFrame(GUIHost host, SpoolerConnection spooler_connection)
     {
-      this.calibrationsettings_page = new CalibrationSettingsFrame(5, this.settingsManager, this.messagebox, spooler_connection);
-      this.calibrationsettings_page.X = 0;
-      this.calibrationsettings_page.Y = 0;
-      this.calibrationsettings_page.RelativeWidth = 1f;
-      this.calibrationsettings_page.RelativeHeight = 1f;
-      this.calibrationsettings_page.Visible = false;
-      this.calibrationsettings_page.Enabled = false;
-      this.calibrationsettings_page.Init(host);
-      this.tab_frame.AddChildElement((Element2D) this.calibrationsettings_page);
+      calibrationsettings_page = new CalibrationSettingsFrame(5, settingsManager, messagebox, spooler_connection)
+      {
+        X = 0,
+        Y = 0,
+        RelativeWidth = 1f,
+        RelativeHeight = 1f,
+        Visible = false,
+        Enabled = false
+      };
+      calibrationsettings_page.Init(host);
+      tab_frame.AddChildElement((Element2D)calibrationsettings_page);
     }
 
     private void CreateAboutFrame(GUIHost host)
     {
-      this.about_frame = new AboutPage(7);
-      this.about_frame.X = 0;
-      this.about_frame.Y = 0;
-      this.about_frame.RelativeWidth = 1f;
-      this.about_frame.RelativeHeight = 1f;
-      this.about_frame.Visible = false;
-      this.about_frame.Enabled = false;
-      this.about_frame.Init(host);
-      this.tab_frame.AddChildElement((Element2D) this.about_frame);
+      about_frame = new AboutPage(7)
+      {
+        X = 0,
+        Y = 0,
+        RelativeWidth = 1f,
+        RelativeHeight = 1f,
+        Visible = false,
+        Enabled = false
+      };
+      about_frame.Init(host);
+      tab_frame.AddChildElement((Element2D)about_frame);
     }
 
     private void TurnOffActiveFrame()
     {
-      if (this.active_frame == null)
+      if (active_frame == null)
+      {
         return;
-      this.active_frame.OnClose();
-      this.active_frame.Visible = false;
-      this.active_frame.Enabled = false;
-      this.active_frame = (SettingsPage) null;
+      }
+
+      active_frame.OnClose();
+      active_frame.Visible = false;
+      active_frame.Enabled = false;
+      active_frame = (SettingsPage) null;
     }
 
     public void UpdateSettings()
@@ -284,16 +325,22 @@ namespace M3D.GUI.SettingsPages
 
     public void SaveSettings()
     {
-      if (this.appearanceFrame != null)
-        this.appearanceFrame.SaveSettings();
-      if (this.settingsManager == null)
+      if (appearanceFrame != null)
+      {
+        appearanceFrame.SaveSettings();
+      }
+
+      if (settingsManager == null)
+      {
         return;
-      this.settingsManager.SaveSettings();
+      }
+
+      settingsManager.SaveSettings();
     }
 
     public override bool OnKeyboardEvent(KeyboardEvent keyboardevent)
     {
-      this.Close();
+      Close();
       return true;
     }
 
@@ -304,12 +351,18 @@ namespace M3D.GUI.SettingsPages
 
     public override void Close()
     {
-      this.Visible = false;
-      if (this.host.HasChildDialog)
-        this.host.GlobalChildDialog -= (Element2D) this;
-      if (this.active_frame != null)
-        this.active_frame.OnClose();
-      this.SaveSettings();
+      Visible = false;
+      if (host.HasChildDialog)
+      {
+        host.GlobalChildDialog -= (Element2D) this;
+      }
+
+      if (active_frame != null)
+      {
+        active_frame.OnClose();
+      }
+
+      SaveSettings();
     }
 
     private enum SettingsButtons

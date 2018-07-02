@@ -15,35 +15,43 @@ namespace M3D.Spooling.Printer_Profiles
 
     public PrinterProfileDictionary()
     {
-      this.m_profile_list = new List<InternalPrinterProfile>();
-      this.m_profile_list.Add((InternalPrinterProfile) new Micro1PrinterProfile());
-      this.m_profile_list.Add((InternalPrinterProfile) new ProPrinterProfile());
-      this.m_profile_list.Add((InternalPrinterProfile) new MicroPlusPrinterProfile());
+      m_profile_list = new List<InternalPrinterProfile>();
+      m_profile_list.Add((InternalPrinterProfile) new Micro1PrinterProfile());
+      m_profile_list.Add((InternalPrinterProfile) new ProPrinterProfile());
+      m_profile_list.Add((InternalPrinterProfile) new MicroPlusPrinterProfile());
     }
 
     public VID_PID[] GenerateVID_PID_List()
     {
-      VID_PID[] vidPidArray = new VID_PID[this.m_profile_list.Count];
-      for (int index = 0; index < vidPidArray.Length; ++index)
-        vidPidArray[index] = new VID_PID(this.m_profile_list[index].ProductConstants.VID, this.m_profile_list[index].ProductConstants.PID);
+      VID_PID[] vidPidArray = new VID_PID[m_profile_list.Count];
+      for (var index = 0; index < vidPidArray.Length; ++index)
+      {
+        vidPidArray[index] = new VID_PID(m_profile_list[index].ProductConstants.VID, m_profile_list[index].ProductConstants.PID);
+      }
+
       return vidPidArray;
     }
 
     public InternalPrinterProfile Get(VID_PID vid_pid)
     {
-      foreach (InternalPrinterProfile profile in this.m_profile_list)
+      foreach (InternalPrinterProfile profile in m_profile_list)
       {
         if ((int) profile.ProductConstants.VID == (int) vid_pid.VID && (int) profile.ProductConstants.PID == (int) vid_pid.PID)
+        {
           return profile;
+        }
       }
       return (InternalPrinterProfile) null;
     }
 
     public List<PrinterProfile> CreateProfileList()
     {
-      List<PrinterProfile> printerProfileList = new List<PrinterProfile>();
-      foreach (InternalPrinterProfile profile in this.m_profile_list)
+      var printerProfileList = new List<PrinterProfile>();
+      foreach (InternalPrinterProfile profile in m_profile_list)
+      {
         printerProfileList.Add(new PrinterProfile((PrinterProfile) profile));
+      }
+
       return printerProfileList;
     }
   }

@@ -22,8 +22,8 @@ namespace M3D.Spooling.Printer_Profiles
 
     public ProPrinterProfile()
     {
-      this.ProfileName = "Pro";
-      this.ProductConstants = new ProductProfile(41502U, 1155U, 98304U, (byte) 31, STMChipData.STM32F070CB, new Dictionary<char, FirmwareDetails>()
+      ProfileName = "Pro";
+      ProductConstants = new ProductProfile(41502U, 1155U, 98304U, (byte) 31, STMChipData.STM32F070CB, new Dictionary<char, FirmwareDetails>()
       {
         {
           'S',
@@ -34,21 +34,21 @@ namespace M3D.Spooling.Printer_Profiles
           new FirmwareDetails(2017121802U, 243077141U, "M3D.Spooling.Embedded_Firmware.m3dfirmware-encrypt00M24x.hex")
         }
       });
-      this.Scripts = (ScriptsProfile) new ProScriptsProfile();
-      this.PrinterSizeConstants = (PrinterSizeProfile) new ProPrinterSizeProfile();
-      this.PreprocessorConstants = new PrinterPreprocessorProfile(new IPreprocessor[4]
+      Scripts = (ScriptsProfile) new ProScriptsProfile();
+      PrinterSizeConstants = (PrinterSizeProfile) new ProPrinterSizeProfile();
+      PreprocessorConstants = new PrinterPreprocessorProfile(new IPreprocessor[4]
       {
         (IPreprocessor) new GCodeInitializationPreprocessor(),
         (IPreprocessor) new BondingPreprocessor(),
         (IPreprocessor) new BedCompensationPreprocessor(),
         (IPreprocessor) new BackLashPreprocessor()
       });
-      this.FirstRunConstants = new FirstRunProfile(new IFirstRunUpdater[0]);
-      this.SpeedLimitConstants = new SpeedLimitProfile(12000f, 120f, 3000f, 12000f, 120f, 3000f, 240f, 30f, 120f, 600f, 60f, 144f, 720f, 60f, 360f, 12000f, 2520f, 7200f);
-      this.TemperatureConstants = new TemperatureProfile(70, 295);
-      this.EEPROMConstants = (EEPROMProfile) new ProEEPROMConstants();
-      this.VirtualCodes = (VirtualCodeProfile) new ProVirtualCodes();
-      this.SupportedFeaturesConstants = new SupportedFeaturesProfile(new Dictionary<string, int>()
+      FirstRunConstants = new FirstRunProfile(new IFirstRunUpdater[0]);
+      SpeedLimitConstants = new SpeedLimitProfile(12000f, 120f, 3000f, 12000f, 120f, 3000f, 240f, 30f, 120f, 600f, 60f, 144f, 720f, 60f, 360f, 12000f, 2520f, 7200f);
+      TemperatureConstants = new TemperatureProfile(70, 295);
+      EEPROMConstants = (EEPROMProfile) new ProEEPROMConstants();
+      VirtualCodes = (VirtualCodeProfile) new ProVirtualCodes();
+      SupportedFeaturesConstants = new SupportedFeaturesProfile(new Dictionary<string, int>()
       {
         {
           "Single Point Bed Height Calibration",
@@ -75,12 +75,14 @@ namespace M3D.Spooling.Printer_Profiles
           5
         }
       });
-      this.AccessoriesConstants = new AccessoriesProfile(true, 50, 100, true, true, 400, 300, 3000, 320, 2500);
-      this.OptionsConstants = new SpoolerOptionsProfile();
-      this.OptionsConstants.CheckGantryClips = false;
-      this.OptionsConstants.VerifyGantryNonZeroValues = false;
-      this.OptionsConstants.HomeAndSetTempOnCalibration = true;
-      this.OptionsConstants.G92WorksOnAllAxes = true;
+      AccessoriesConstants = new AccessoriesProfile(true, 50, 100, true, true, 400, 300, 3000, 320, 2500);
+      OptionsConstants = new SpoolerOptionsProfile
+      {
+        CheckGantryClips = false,
+        VerifyGantryNonZeroValues = false,
+        HomeAndSetTempOnCalibration = true,
+        G92WorksOnAllAxes = true
+      };
     }
   }
 }

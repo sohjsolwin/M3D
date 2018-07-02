@@ -43,13 +43,16 @@ namespace M3D.Spooling.Core
 
     internal Dictionary<string, List<FirmwareBoardVersionKVP>> GetEmbeddedFirmwareList()
     {
-      Dictionary<string, List<FirmwareBoardVersionKVP>> dictionary = new Dictionary<string, List<FirmwareBoardVersionKVP>>();
-      foreach (VID_PID vidPid in this.profile_dictionary.GenerateVID_PID_List())
+      var dictionary = new Dictionary<string, List<FirmwareBoardVersionKVP>>();
+      foreach (VID_PID vidPid in profile_dictionary.GenerateVID_PID_List())
       {
-        InternalPrinterProfile internalPrinterProfile = this.profile_dictionary.Get(vidPid);
-        List<FirmwareBoardVersionKVP> firmwareBoardVersionKvpList = new List<FirmwareBoardVersionKVP>();
+        InternalPrinterProfile internalPrinterProfile = profile_dictionary.Get(vidPid);
+        var firmwareBoardVersionKvpList = new List<FirmwareBoardVersionKVP>();
         foreach (KeyValuePair<char, FirmwareDetails> firmware in internalPrinterProfile.ProductConstants.FirmwareList)
+        {
           firmwareBoardVersionKvpList.Add(new FirmwareBoardVersionKVP(firmware.Key, firmware.Value.firmware_version));
+        }
+
         dictionary.Add(internalPrinterProfile.ProfileName, firmwareBoardVersionKvpList);
       }
       return dictionary;
@@ -63,35 +66,40 @@ namespace M3D.Spooling.Core
 
     public SpoolerServer()
     {
-      this.shared_shutdown = new ThreadSafeVariable<bool>(false);
-      this.profile_dictionary = new PrinterProfileDictionary();
-      this.broadcastserver = (IBroadcastServer) null;
-      this.rpc_invoker = new RPCInvoker((object) this);
-      this.thread_sync = new object();
-      this.printer_handshake = new object();
-      this.logging_queue = new List<SpoolerMessage>();
-      this.network_logging_timer = new ThreadBasedTimer((IContainer) null, this.shared_shutdown);
-      this.network_logging_timer.Interval = 100;
-      this.network_logging_timer.Tick = new EventHandler(this.onLogger_Tick);
-      this.network_logging_timer.Start();
+      shared_shutdown = new ThreadSafeVariable<bool>(false);
+      profile_dictionary = new PrinterProfileDictionary();
+      broadcastserver = (IBroadcastServer) null;
+      rpc_invoker = new RPCInvoker((object) this);
+      thread_sync = new object();
+      printer_handshake = new object();
+      logging_queue = new List<SpoolerMessage>();
+      network_logging_timer = new ThreadBasedTimer((IContainer)null, shared_shutdown)
+      {
+        Interval = 100,
+        Tick = new EventHandler(onLogger_Tick)
+      };
+      network_logging_timer.Start();
     }
 
     ~SpoolerServer()
     {
-      this.shared_shutdown.Value = true;
+      shared_shutdown.Value = true;
     }
 
     public override void Shutdown()
     {
-      this.shared_shutdown.Value = true;
+      shared_shutdown.Value = true;
       base.Shutdown();
     }
 
     public bool ConnectToWindow(IntPtr hWnd)
     {
-      if (!this.StartListening())
+      if (!StartListening())
+      {
         return false;
-      this.StartConnectionManager();
+      }
+
+      StartConnectionManager();
       return true;
     }
 
@@ -102,9 +110,9 @@ namespace M3D.Spooling.Core
 
     private void appDataCleanUp()
     {
-      List<string> stringList = new List<string>();
-      Dictionary<string, List<string>> dictionary1 = new Dictionary<string, List<string>>();
-      Dictionary<string, DateTime> dictionary2 = new Dictionary<string, DateTime>();
+      var stringList = new List<string>();
+      var dictionary1 = new Dictionary<string, List<string>>();
+      var dictionary2 = new Dictionary<string, DateTime>();
       DateTime t2 = DateTime.Now.AddDays(-7.0);
       ulong num1 = 1000000000;
       try
@@ -129,20 +137,30 @@ namespace M3D.Spooling.Core
       {
       }
       if (stringList.Count == 0)
+      {
         return;
-      foreach (string path in stringList)
+      }
+
+      foreach (var path in stringList)
       {
         try
         {
           DateTime lastAccessTime = File.GetLastAccessTime(path);
-          string withoutExtension = Path.GetFileNameWithoutExtension(path);
+          var withoutExtension = Path.GetFileNameWithoutExtension(path);
           if (!dictionary1.ContainsKey(withoutExtension))
+          {
             dictionary1.Add(withoutExtension, new List<string>());
+          }
+
           dictionary1[withoutExtension].Add(path);
           if (!dictionary2.ContainsKey(withoutExtension))
+          {
             dictionary2.Add(withoutExtension, lastAccessTime);
+          }
           else if (DateTime.Compare(dictionary2[withoutExtension], lastAccessTime) < 0)
+          {
             dictionary2[withoutExtension] = lastAccessTime;
+          }
         }
         catch (Exception ex)
         {
@@ -150,19 +168,22 @@ namespace M3D.Spooling.Core
           ErrorLogger.LogErrorMsg(string.Format("SpoolServer.appdatacleanup path Clean up threw: {0}", (object) ex.Message));
         }
       }
-      List<KeyValuePair<string, DateTime>> keyValuePairList = new List<KeyValuePair<string, DateTime>>();
-      foreach (string key in dictionary2.Keys)
+      var keyValuePairList = new List<KeyValuePair<string, DateTime>>();
+      foreach (var key in dictionary2.Keys)
+      {
         keyValuePairList.Add(new KeyValuePair<string, DateTime>(key, dictionary2[key]));
+      }
+
       dictionary2.Clear();
-      keyValuePairList.Sort(new Comparison<KeyValuePair<string, DateTime>>(this.CompareDateTime));
-      for (int index = 0; index < keyValuePairList.Count; ++index)
+      keyValuePairList.Sort(new Comparison<KeyValuePair<string, DateTime>>(CompareDateTime));
+      for (var index = 0; index < keyValuePairList.Count; ++index)
       {
         KeyValuePair<string, DateTime> keyValuePair = keyValuePairList[index];
-        string key = keyValuePair.Key;
+        var key = keyValuePair.Key;
         keyValuePair = keyValuePairList[index];
         if (DateTime.Compare(keyValuePair.Value, t2) < 0)
         {
-          foreach (string path in dictionary1[key])
+          foreach (var path in dictionary1[key])
           {
             try
             {
@@ -185,15 +206,17 @@ namespace M3D.Spooling.Core
       ulong num2 = 0;
       foreach (KeyValuePair<string, DateTime> keyValuePair in keyValuePairList)
       {
-        string key = keyValuePair.Key;
+        var key = keyValuePair.Key;
         if (num2 < num1)
         {
-          foreach (string fileName in dictionary1[key])
+          foreach (var fileName in dictionary1[key])
+          {
             num2 += (ulong) new FileInfo(fileName).Length;
+          }
         }
         else
         {
-          foreach (string path in dictionary1[key])
+          foreach (var path in dictionary1[key])
           {
             try
             {
@@ -216,31 +239,36 @@ namespace M3D.Spooling.Core
       Directory.CreateDirectory(Paths.QueuePath);
       Directory.CreateDirectory(Paths.LogPath);
       Directory.CreateDirectory(Paths.SpoolerStorage);
-      this.appDataCleanUp();
+      appDataCleanUp();
     }
 
     public void SetBroadcastServer(IBroadcastServer brodcastserver)
     {
-      this.broadcastserver = brodcastserver;
+      broadcastserver = brodcastserver;
     }
 
     public void CloseConnections()
     {
-      this.DisconnectAll();
+      DisconnectAll();
     }
 
     public void DisconnectAll()
     {
-      foreach (KeyValuePair<string, PrinterConnection> printer in this.connectionManager.printers)
+      foreach (KeyValuePair<string, PrinterConnection> printer in connectionManager.printers)
+      {
         printer.Value.Shutdown();
+      }
     }
 
     public override int StartSocketPeer(int port)
     {
-      int num = base.StartSocketPeer(port);
+      var num = base.StartSocketPeer(port);
       if (num < 0)
+      {
         return num;
-      this.InitializeAppData();
+      }
+
+      InitializeAppData();
       return num;
     }
 
@@ -250,8 +278,10 @@ namespace M3D.Spooling.Core
 
     public override void OnClientRemoved(Guid guid)
     {
-      foreach (KeyValuePair<string, PrinterConnection> printer in this.connectionManager.printers)
+      foreach (KeyValuePair<string, PrinterConnection> printer in connectionManager.printers)
+      {
         printer.Value.OnClientRemoved(guid);
+      }
     }
 
     private void PrinterLoggerCallback(string message, string printer_serial)
@@ -261,25 +291,31 @@ namespace M3D.Spooling.Core
         message = "Detecting>" + message;
         printer_serial = "00-00-00-00-00-000-000";
       }
-      SpoolerMessage spoolerMessage = new SpoolerMessage(MessageType.LoggingMessage, new PrinterSerialNumber(printer_serial), Base64Convert.Base64Encode(message));
-      lock (this.logging_queue)
-        this.logging_queue.Add(spoolerMessage);
+      var spoolerMessage = new SpoolerMessage(MessageType.LoggingMessage, new PrinterSerialNumber(printer_serial), Base64Convert.Base64Encode(message));
+      lock (logging_queue)
+      {
+        logging_queue.Add(spoolerMessage);
+      }
     }
 
     private void onLogger_Tick(object sender, EventArgs e)
     {
       List<SpoolerMessage> spoolerMessageList;
-      lock (this.logging_queue)
+      lock (logging_queue)
       {
-        spoolerMessageList = new List<SpoolerMessage>((IEnumerable<SpoolerMessage>) this.logging_queue);
-        this.logging_queue.Clear();
+        spoolerMessageList = new List<SpoolerMessage>((IEnumerable<SpoolerMessage>)logging_queue);
+        logging_queue.Clear();
       }
       foreach (SpoolerMessage spoolerMessage in spoolerMessageList)
       {
-        if (this.broadcastserver != null)
-          this.broadcastserver.BroadcastMessage(spoolerMessage.Serialize());
+        if (broadcastserver != null)
+        {
+          broadcastserver.BroadcastMessage(spoolerMessage.Serialize());
+        }
         else
-          this.BroadcastMessage(spoolerMessage.Serialize());
+        {
+          BroadcastMessage(spoolerMessage.Serialize());
+        }
       }
     }
 
@@ -287,41 +323,47 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        return this.__onlog.Value;
+        return __onlog.Value;
       }
       set
       {
-        this.__onlog.Value = value;
+        __onlog.Value = value;
       }
     }
 
     private void StartConnectionManager()
     {
-      this.connectionManager = new PrinterConnectionManager(this.profile_dictionary.GenerateVID_PID_List());
-      this.connectionManager.PrinterConnectedEventHandler += new EventHandler<PrinterConnEventArgs>(this.OnPrinterConnected);
-      this.connectionManager.PrinterDisconnectedEventHandler += new EventHandler<PrinterConnEventArgs>(this.OnPrinterDisconnected);
-      this.connectionManager.LogEventHandler += new EventHandler<LogMessageEventArgs>(this.OnLogEventHandler);
-      this.connectionManager.Start(this.shared_shutdown);
+      connectionManager = new PrinterConnectionManager(profile_dictionary.GenerateVID_PID_List());
+      connectionManager.PrinterConnectedEventHandler += new EventHandler<PrinterConnEventArgs>(OnPrinterConnected);
+      connectionManager.PrinterDisconnectedEventHandler += new EventHandler<PrinterConnEventArgs>(OnPrinterDisconnected);
+      connectionManager.LogEventHandler += new EventHandler<LogMessageEventArgs>(OnLogEventHandler);
+      connectionManager.Start(shared_shutdown);
     }
 
     private void OnPrinterConnected(object sender, PrinterConnEventArgs e)
     {
       if (e.printer == null)
+      {
         return;
-      e.printer.SetPrinterProfile(this.profile_dictionary.Get(e.vid_pid));
-      this.ConnectToPrinter(e.printer);
+      }
+
+      e.printer.SetPrinterProfile(profile_dictionary.Get(e.vid_pid));
+      ConnectToPrinter(e.printer);
     }
 
     private void OnPrinterDisconnected(object sender, PrinterConnEventArgs e)
     {
       if (e.printer == null)
+      {
         return;
-      this.RemovePrinter(e.printer);
+      }
+
+      RemovePrinter(e.printer);
     }
 
     private void OnLogEventHandler(object sender, LogMessageEventArgs e)
     {
-      this.PrinterLoggerCallback(e.message, "Detecting");
+      PrinterLoggerCallback(e.message, "Detecting");
     }
 
     public void RemovePrinter(PrinterConnection connection)
@@ -332,24 +374,27 @@ namespace M3D.Spooling.Core
     public int ConnectToPrinter(PrinterConnection serial_connection)
     {
       if (string.IsNullOrEmpty(serial_connection.ComPort))
+      {
         return 0;
-      serial_connection.InternalLogger._onLog += new Logger.OnLogDel(this.PrinterLoggerCallback);
-      serial_connection.InitializeController(this.broadcastserver);
+      }
+
+      serial_connection.InternalLogger._onLog += new Logger.OnLogDel(PrinterLoggerCallback);
+      serial_connection.InitializeController(broadcastserver);
       serial_connection.StartSerialProcessing();
       return 1;
     }
 
     public string Serialize()
     {
-      string str1 = "";
-      if (this.connectionManager != null && this.connectionManager.printers != null)
+      var str1 = "";
+      if (connectionManager != null && connectionManager.printers != null)
       {
-        lock (this.connectionManager.printers)
+        lock (connectionManager.printers)
         {
-          foreach (KeyValuePair<string, PrinterConnection> printer in this.connectionManager.printers)
+          foreach (KeyValuePair<string, PrinterConnection> printer in connectionManager.printers)
           {
             PrinterConnection printerConnection = printer.Value;
-            string str2 = (string) null;
+            var str2 = (string) null;
             try
             {
               if (printerConnection.PrinterInfo.serial_number != PrinterSerialNumber.Undefined)
@@ -359,7 +404,9 @@ namespace M3D.Spooling.Core
                   if (printerConnection.PrinterInfo.Status != PrinterStatus.Connected)
                   {
                     if (printerConnection.PrinterInfo.Status != PrinterStatus.Error_PrinterNotAlive)
+                    {
                       str2 = printerConnection.Serialize();
+                    }
                   }
                 }
               }
@@ -369,7 +416,9 @@ namespace M3D.Spooling.Core
               str2 = (string) null;
             }
             if (!string.IsNullOrEmpty(str2))
+            {
               str1 += str2;
+            }
           }
         }
         str1 += string.Format("<DeviceInstallDetected count=\"{0}\" />", (object) WinUSBPrinterFinder.DeviceInstallDetected);
@@ -379,11 +428,13 @@ namespace M3D.Spooling.Core
 
     internal PrinterConnection GetPrinterConnection(PrinterSerialNumber serialnumber)
     {
-      foreach (KeyValuePair<string, PrinterConnection> printer in this.connectionManager.printers)
+      foreach (KeyValuePair<string, PrinterConnection> printer in connectionManager.printers)
       {
         PrinterConnection printerConnection = printer.Value;
         if (printerConnection.PrinterInfo.serial_number == serialnumber)
+        {
           return printerConnection;
+        }
       }
       return (PrinterConnection) null;
     }
@@ -391,13 +442,16 @@ namespace M3D.Spooling.Core
     private string LockVerifyResultToSpoolerMessage(CommandResult result, PrinterSerialNumber serialnumber, uint callID)
     {
       if (result == CommandResult.Success)
+      {
         return (string) null;
+      }
+
       return new SpoolerMessage(MessageType.LockResult, serialnumber, callID.ToString("D8") + result.ToString()).Serialize();
     }
 
     public string onClientMessage(string message)
     {
-      return this.onClientMessage(this.MyGuid, message);
+      return onClientMessage(MyGuid, message);
     }
 
     public override string onClientMessage(Guid guid, string message)
@@ -406,50 +460,63 @@ namespace M3D.Spooling.Core
       {
         if (message == "<CloseConnection/>")
         {
-          if (guid != this.MyGuid)
-            this.RemoveClient(guid);
+          if (guid != MyGuid)
+          {
+            RemoveClient(guid);
+          }
         }
         else if (message.StartsWith("<RPC"))
         {
-          RPCInvoker.RPC call = new RPCInvoker.RPC();
+          var call = new RPCInvoker.RPC();
           call.Deserialize(message);
-          string str = (string) null;
-          object obj = (object) null;
+          var str = (string) null;
+          var obj = (object) null;
           try
           {
             if (call.serialnumber == (PrinterSerialNumber) null)
             {
-              obj = this.rpc_invoker.CallMethod(call);
+              obj = rpc_invoker.CallMethod(call);
             }
             else
             {
-              PrinterConnection printerConnection = this.GetPrinterConnection(call.serialnumber);
+              PrinterConnection printerConnection = GetPrinterConnection(call.serialnumber);
               if (printerConnection != null)
               {
                 if (call.callID != 0U)
                 {
-                  if ((int) call.callID == (int) this.current_processing_id.Value)
+                  if ((int) call.callID == (int)current_processing_id.Value)
+                  {
                     return (string) null;
-                  this.current_processing_id.Value = call.callID;
+                  }
+
+                  current_processing_id.Value = call.callID;
                 }
                 CommandResult result;
                 if (call.name == "AcquireLock")
+                {
                   result = printerConnection.AcquireLock(guid);
+                }
                 else if (call.name == "ReleaseLock")
                 {
                   result = printerConnection.ReleaseLock(call.lockID);
                 }
                 else
                 {
-                  bool flag = true;
-                  if (this.LockExceptionList.Contains(call.name))
+                  var flag = true;
+                  if (LockExceptionList.Contains(call.name))
+                  {
                     flag = false;
+                  }
+
                   result = printerConnection.VerifyLock(call.lockID);
                   if (result == CommandResult.Failed_PrinterDoesNotHaveLock && call.name == "SendEmergencyStop" && printerConnection.IsWorking)
-                    printerConnection.SendInterrupted(this.LockVerifyResultToSpoolerMessage(CommandResult.CommandInterruptedByM0, call.serialnumber, 0U));
+                  {
+                    printerConnection.SendInterrupted(LockVerifyResultToSpoolerMessage(CommandResult.CommandInterruptedByM0, call.serialnumber, 0U));
+                  }
+
                   if (result == CommandResult.Success || !flag)
                   {
-                    obj = this.rpc_invoker.CallMethod((object) printerConnection, call);
+                    obj = rpc_invoker.CallMethod((object) printerConnection, call);
                     if (obj is CommandResult)
                     {
                       result = (CommandResult) obj;
@@ -458,11 +525,16 @@ namespace M3D.Spooling.Core
                   }
                 }
                 if (call.callID != 0U)
+                {
                   printerConnection.CurrentRPC_id.Value = call.callID;
-                str = this.LockVerifyResultToSpoolerMessage(result, call.serialnumber, call.callID);
+                }
+
+                str = LockVerifyResultToSpoolerMessage(result, call.serialnumber, call.callID);
               }
               else
+              {
                 str = new SpoolerMessage(MessageType.PrinterNotConnected, call.serialnumber, call.name).Serialize();
+              }
             }
           }
           catch (Exception ex)
@@ -470,11 +542,16 @@ namespace M3D.Spooling.Core
             str = new SpoolerMessage(MessageType.RPCError, ex.Message + "::" + call.name).Serialize();
           }
           if (str != null)
+          {
             return "<SocketBroadcast>" + str + "</SocketBroadcast>";
+          }
+
           if (obj != null)
           {
             if (obj is string)
+            {
               return (string) obj;
+            }
           }
         }
       }
@@ -489,62 +566,78 @@ namespace M3D.Spooling.Core
     public string InitialConnect(VersionNumber client_version)
     {
       if (client_version != M3D.Spooling.Version.Client_Version)
-        return "<SocketBroadcast>" + new SpoolerMessage(MessageType.IncompatibleSpooler, (string) null).Serialize() + "</SocketBroadcast>";
-      SpoolerInfo spoolerInfo = new SpoolerInfo();
-      spoolerInfo.Version = M3D.Spooling.Version.Client_Version;
-      foreach (KeyValuePair<string, List<FirmwareBoardVersionKVP>> embeddedFirmware in this.GetEmbeddedFirmwareList())
       {
-        EmbeddedFirmwareSummary embeddedFirmwareSummary = new EmbeddedFirmwareSummary(embeddedFirmware.Key);
+        return "<SocketBroadcast>" + new SpoolerMessage(MessageType.IncompatibleSpooler, (string) null).Serialize() + "</SocketBroadcast>";
+      }
+
+      var spoolerInfo = new SpoolerInfo
+      {
+        Version = M3D.Spooling.Version.Client_Version
+      };
+      foreach (KeyValuePair<string, List<FirmwareBoardVersionKVP>> embeddedFirmware in GetEmbeddedFirmwareList())
+      {
+        var embeddedFirmwareSummary = new EmbeddedFirmwareSummary(embeddedFirmware.Key);
         foreach (FirmwareBoardVersionKVP firmwareBoardVersionKvp in embeddedFirmware.Value)
+        {
           embeddedFirmwareSummary.FirmwareVersions.Add(firmwareBoardVersionKvp);
+        }
+
         spoolerInfo.SupportPrinterProfiles.Add(embeddedFirmwareSummary);
       }
-      spoolerInfo.PrinterProfileList = this.profile_dictionary.CreateProfileList();
-      return "<SocketBroadcast>" + spoolerInfo.Serialize() + this.Serialize() + "</SocketBroadcast>";
+      spoolerInfo.PrinterProfileList = profile_dictionary.CreateProfileList();
+      return "<SocketBroadcast>" + spoolerInfo.Serialize() + Serialize() + "</SocketBroadcast>";
     }
 
     public string UpdatePrinterList()
     {
-      return "<SocketBroadcast>" + this.Serialize() + "</SocketBroadcast>";
+      return "<SocketBroadcast>" + Serialize() + "</SocketBroadcast>";
     }
 
     public void ForceShutdownSpooler()
     {
       // ISSUE: reference to a compiler-generated field
-      if (this.OnReceivedSpoolerShutdownMessage == null)
+      if (OnReceivedSpoolerShutdownMessage == null)
+      {
         return;
+      }
       // ISSUE: reference to a compiler-generated field
-      this.OnReceivedSpoolerShutdownMessage((object) this, new EventArgs());
+      OnReceivedSpoolerShutdownMessage((object) this, new EventArgs());
     }
 
     public void HideSpooler()
     {
       // ISSUE: reference to a compiler-generated field
-      if (this.OnReceivedSpoolerHideMessage == null)
+      if (OnReceivedSpoolerHideMessage == null)
+      {
         return;
+      }
       // ISSUE: reference to a compiler-generated field
-      this.OnReceivedSpoolerHideMessage((object) this, new EventArgs());
+      OnReceivedSpoolerHideMessage((object) this, new EventArgs());
     }
 
     public void ShowSpooler()
     {
       // ISSUE: reference to a compiler-generated field
-      if (this.OnReceivedSpoolerShowMessage == null)
+      if (OnReceivedSpoolerShowMessage == null)
+      {
         return;
+      }
       // ISSUE: reference to a compiler-generated field
-      this.OnReceivedSpoolerShowMessage((object) this, new EventArgs());
+      OnReceivedSpoolerShowMessage((object) this, new EventArgs());
     }
 
     public int NumActiveAndQueuedJobs
     {
       get
       {
-        int num = 0;
-        foreach (KeyValuePair<string, PrinterConnection> printer in this.connectionManager.printers)
+        var num = 0;
+        foreach (KeyValuePair<string, PrinterConnection> printer in connectionManager.printers)
         {
           PrinterConnection printerConnection = printer.Value;
           if (printerConnection != null)
+          {
             num += printerConnection.GetJobsCount();
+          }
         }
         return num;
       }
@@ -554,12 +647,14 @@ namespace M3D.Spooling.Core
     {
       get
       {
-        bool flag = false;
-        foreach (KeyValuePair<string, PrinterConnection> printer in this.connectionManager.printers)
+        var flag = false;
+        foreach (KeyValuePair<string, PrinterConnection> printer in connectionManager.printers)
         {
           PrinterConnection printerConnection = printer.Value;
           if (printerConnection != null)
+          {
             flag |= printerConnection.IsWorking;
+          }
         }
         return flag;
       }

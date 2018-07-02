@@ -30,8 +30,11 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       get
       {
-        if (this.value.CompareTo(this.warning_range.min) >= 0)
-          return this.value.CompareTo(this.warning_range.max) > 0;
+        if (value.CompareTo(warning_range.min) >= 0)
+        {
+          return value.CompareTo(warning_range.max) > 0;
+        }
+
         return true;
       }
     }
@@ -40,19 +43,28 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       get
       {
-        if (this.value.CompareTo(this.error_range.min) >= 0)
-          return this.value.CompareTo(this.error_range.max) > 0;
+        if (value.CompareTo(error_range.min) >= 0)
+        {
+          return value.CompareTo(error_range.max) > 0;
+        }
+
         return true;
       }
     }
 
     public override string GetErrorMsg()
     {
-      if (this.HasError)
-        return "Required: " + (object) this.error_range.min + "-" + (object) this.error_range.max;
-      if (!this.HasWarning)
+      if (HasError)
+      {
+        return "Required: " + (object)error_range.min + "-" + (object)error_range.max;
+      }
+
+      if (!HasWarning)
+      {
         return "";
-      return "Suggested: " + (object) this.warning_range.min + "-" + (object) this.warning_range.max;
+      }
+
+      return "Suggested: " + (object)warning_range.min + "-" + (object)warning_range.max;
     }
   }
 }

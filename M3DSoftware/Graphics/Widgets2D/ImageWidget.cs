@@ -66,25 +66,25 @@ namespace M3D.Graphics.Widgets2D
     public ImageWidget(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.drawable_sprite = new Sprite();
-      this.state = State.Normal;
-      this.text_area_height = 20;
-      this.image_area_width = -1;
-      this.sand_boxing = false;
-      this.sandboxingratio = 1f;
-      this.Text = "";
-      this.sandboxcolor = new Color4(0.0f, 0.0f, 0.0f, 1f);
+      drawable_sprite = new Sprite();
+      state = State.Normal;
+      text_area_height = 20;
+      image_area_width = -1;
+      sand_boxing = false;
+      sandboxingratio = 1f;
+      Text = "";
+      sandboxcolor = new Color4(0.0f, 0.0f, 0.0f, 1f);
     }
 
     public void CopyImageData(ImageWidget source)
     {
-      this.text_area_height = source.text_area_height;
-      this.image_area_width = source.image_area_width;
-      this.sand_boxing = source.sand_boxing;
-      this.sandboxcolor = source.sandboxcolor;
-      this.sandboxingratio = source.sandboxingratio;
-      this.state = source.state;
-      this.drawable_sprite.CopyFrom(source.drawable_sprite);
+      text_area_height = source.text_area_height;
+      image_area_width = source.image_area_width;
+      sand_boxing = source.sand_boxing;
+      sandboxcolor = source.sandboxcolor;
+      sandboxingratio = source.sandboxingratio;
+      state = source.state;
+      drawable_sprite.CopyFrom(source.drawable_sprite);
     }
 
     public override ElementType GetElementType()
@@ -94,36 +94,36 @@ namespace M3D.Graphics.Widgets2D
 
     public void Init(GUIHost host, string texture, float u0, float v0, float u1, float v1)
     {
-      this.ImageSrc = texture;
-      this.drawable_sprite.Init(host, texture, u0, v0, u1, v1, u0, v0, u1, v1, u0, v0, u1, v1);
+      ImageSrc = texture;
+      drawable_sprite.Init(host, texture, u0, v0, u1, v1, u0, v0, u1, v1, u0, v0, u1, v1);
     }
 
     public void Init(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, float over_u0, float over_v0, float over_u1, float over_v1, float down_u0, float down_v0, float down_u1, float down_v1)
     {
-      this.ImageSrc = texture;
-      this.drawable_sprite.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1);
+      ImageSrc = texture;
+      drawable_sprite.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1);
     }
 
     public void Init(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, float over_u0, float over_v0, float over_u1, float over_v1, float down_u0, float down_v0, float down_u1, float down_v1, float disabled_u0, float disabled_v0, float disabled_u1, float disabled_v1)
     {
-      this.ImageSrc = texture;
-      this.drawable_sprite.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1, disabled_u0, disabled_v0, disabled_u1, disabled_v1);
+      ImageSrc = texture;
+      drawable_sprite.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1, disabled_u0, disabled_v0, disabled_u1, disabled_v1);
     }
 
     public bool Init(GUIHost host, string texture)
     {
-      this.ImageSrc = texture;
-      return this.drawable_sprite.Init(host, texture);
+      ImageSrc = texture;
+      return drawable_sprite.Init(host, texture);
     }
 
     public void SetGrowableWidth(int leftbordersize_pixels, int rightbordersize_pixels, int minimumwidth)
     {
-      this.drawable_sprite.SetGrowableWidth(leftbordersize_pixels, rightbordersize_pixels, minimumwidth);
+      drawable_sprite.SetGrowableWidth(leftbordersize_pixels, rightbordersize_pixels, minimumwidth);
     }
 
     public void SetGrowableHeight(int topbordersize_pixels, int bottombordersize_pixels, int minimumheight)
     {
-      this.drawable_sprite.SetGrowableHeight(topbordersize_pixels, bottombordersize_pixels, minimumheight);
+      drawable_sprite.SetGrowableHeight(topbordersize_pixels, bottombordersize_pixels, minimumheight);
     }
 
     public override void OnRender(GUIHost host)
@@ -132,53 +132,63 @@ namespace M3D.Graphics.Widgets2D
       int y;
       int Width;
       int Height;
-      if (this.VAlignment == TextVerticalAlignment.Top)
+      if (VAlignment == TextVerticalAlignment.Top)
       {
-        x = this.X_Abs + this.off_x;
-        y = this.Y_Abs + this.off_y + this.text_area_height;
+        x = X_Abs + off_x;
+        y = Y_Abs + off_y + text_area_height;
         Width = this.Width;
-        Height = this.Height - this.text_area_height;
+        Height = this.Height - text_area_height;
       }
-      else if (this.VAlignment == TextVerticalAlignment.Bottom)
+      else if (VAlignment == TextVerticalAlignment.Bottom)
       {
-        x = this.X_Abs + this.off_x;
-        y = this.Y_Abs + this.off_y;
+        x = X_Abs + off_x;
+        y = Y_Abs + off_y;
         Width = this.Width;
-        Height = this.Height - this.text_area_height;
+        Height = this.Height - text_area_height;
       }
       else
       {
-        x = this.X_Abs + this.off_x;
-        y = this.Y_Abs + this.off_y;
+        x = X_Abs + off_x;
+        y = Y_Abs + off_y;
         Width = this.Width;
         Height = this.Height;
       }
-      if (this.image_area_width > 0)
+      if (image_area_width > 0)
       {
-        int num = Width - this.image_area_width;
-        if (this.Alignment == QFontAlignment.Left)
+        var num = Width - image_area_width;
+        if (Alignment == QFontAlignment.Left)
+        {
           x += num;
-        else if (this.Alignment == QFontAlignment.Centre)
+        }
+        else if (Alignment == QFontAlignment.Centre)
+        {
           x += num / 2;
-        else if (this.Alignment == QFontAlignment.Justify)
-          this.off_x += this.image_area_width;
-        Width = this.image_area_width;
+        }
+        else if (Alignment == QFontAlignment.Justify)
+        {
+          off_x += image_area_width;
+        }
+
+        Width = image_area_width;
       }
-      if (this.sand_boxing)
+      if (sand_boxing)
       {
         Simple2DRenderer.Quad quad;
         quad.x0 = (float) x;
         quad.y0 = (float) y;
         quad.x1 = (float) (x + Width);
         quad.y1 = (float) (y + Height);
-        quad.color = this.sandboxcolor;
+        quad.color = sandboxcolor;
         host.GetSimpleRenderer().DrawQuad(quad);
       }
-      double sandboxingratio = (double) this.sandboxingratio;
-      State element_state = this.Enabled || this.state == State.Down ? this.state : State.Disabled;
-      if (this.Flashing && element_state != State.Highlighted && ImageWidget.FlashOn)
+      var sandboxingratio = (double) this.sandboxingratio;
+      State element_state = Enabled || state == State.Down ? state : State.Disabled;
+      if (Flashing && element_state != State.Highlighted && ImageWidget.FlashOn)
+      {
         element_state = State.Highlighted;
-      this.drawable_sprite.Render(host, element_state, x, y, Width, Height);
+      }
+
+      drawable_sprite.Render(host, element_state, x, y, Width, Height);
       base.OnRender(host);
     }
 
@@ -186,11 +196,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.sandboxcolor;
+        return sandboxcolor;
       }
       set
       {
-        this.sandboxcolor = value;
+        sandboxcolor = value;
       }
     }
 
@@ -199,11 +209,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.text_area_height;
+        return text_area_height;
       }
       set
       {
-        this.text_area_height = value;
+        text_area_height = value;
       }
     }
 
@@ -212,11 +222,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.image_area_width;
+        return image_area_width;
       }
       set
       {
-        this.image_area_width = value;
+        image_area_width = value;
       }
     }
 
@@ -224,11 +234,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.sand_boxing;
+        return sand_boxing;
       }
       set
       {
-        this.sand_boxing = value;
+        sand_boxing = value;
       }
     }
 
@@ -236,11 +246,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.sandboxingratio;
+        return sandboxingratio;
       }
       set
       {
-        this.sandboxingratio = value;
+        sandboxingratio = value;
       }
     }
 
@@ -249,47 +259,47 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.imageSrc = value;
+        imageSrc = value;
       }
       get
       {
-        return this.imageSrc;
+        return imageSrc;
       }
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
       base.InitChildren(parent, host, MyButtonCallback);
-      if ((double) this.u0 != 0.0 || (double) this.v0 != 0.0 || ((double) this.u1 != 0.0 || (double) this.v1 != 0.0))
+      if ((double)u0 != 0.0 || (double)v0 != 0.0 || ((double)u1 != 0.0 || (double)v1 != 0.0))
       {
-        this.Init(host, this.ImageSrc, this.u0, this.v0, this.u1, this.v1, this.over_u0, this.over_v0, this.over_u1, this.over_v1, this.down_u0, this.down_v0, this.down_u1, this.down_v1, this.disabled_u0, this.disabled_v0, this.disabled_u1, this.disabled_v1);
-        this.SetGrowableWidth(this.leftbordersize_pixels, this.rightbordersize_pixels, this.minimum_width_pixels);
-        this.SetGrowableHeight(this.topbordersize_pixels, this.bottombordersize_pixels, this.minimum_height_pixels);
+        Init(host, ImageSrc, u0, v0, u1, v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1, disabled_u0, disabled_v0, disabled_u1, disabled_v1);
+        SetGrowableWidth(leftbordersize_pixels, rightbordersize_pixels, minimum_width_pixels);
+        SetGrowableHeight(topbordersize_pixels, bottombordersize_pixels, minimum_height_pixels);
       }
       else
       {
         if (!parent.IsComboBoxElement() && !parent.IsListBoxElement())
         {
-          this.u0 = 896f;
-          this.v0 = 192f;
-          this.u1 = 959f;
-          this.v1 = (float) byte.MaxValue;
-          this.over_u0 = 896f;
-          this.over_v0 = 256f;
-          this.over_u1 = 959f;
-          this.over_v1 = 319f;
-          this.down_u0 = 896f;
-          this.down_v0 = 320f;
-          this.down_u1 = 959f;
-          this.down_v1 = 383f;
-          this.disabled_u0 = 960f;
-          this.disabled_v0 = 128f;
-          this.disabled_u1 = 1023f;
-          this.disabled_v1 = 191f;
-          this.Init(host, "guicontrols", this.u0, this.v0, this.u1, this.v1, this.over_u0, this.over_v0, this.over_u1, this.over_v1, this.down_u0, this.down_v0, this.down_u1, this.down_v1, this.disabled_u0, this.disabled_v0, this.disabled_u1, this.disabled_v1);
+          u0 = 896f;
+          v0 = 192f;
+          u1 = 959f;
+          v1 = (float) byte.MaxValue;
+          over_u0 = 896f;
+          over_v0 = 256f;
+          over_u1 = 959f;
+          over_v1 = 319f;
+          down_u0 = 896f;
+          down_v0 = 320f;
+          down_u1 = 959f;
+          down_v1 = 383f;
+          disabled_u0 = 960f;
+          disabled_v0 = 128f;
+          disabled_u1 = 1023f;
+          disabled_v1 = 191f;
+          Init(host, "guicontrols", u0, v0, u1, v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1, disabled_u0, disabled_v0, disabled_u1, disabled_v1);
         }
-        this.SetGrowableWidth(4, 4, 12);
-        this.SetGrowableHeight(4, 4, 12);
+        SetGrowableWidth(4, 4, 12);
+        SetGrowableHeight(4, 4, 12);
       }
     }
 
@@ -298,11 +308,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._u0;
+        return _u0;
       }
       set
       {
-        this._u0 = value;
+        _u0 = value;
       }
     }
 
@@ -311,11 +321,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._v0;
+        return _v0;
       }
       set
       {
-        this._v0 = value;
+        _v0 = value;
       }
     }
 
@@ -324,11 +334,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._u1;
+        return _u1;
       }
       set
       {
-        this._u1 = value;
+        _u1 = value;
       }
     }
 
@@ -337,11 +347,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._v1;
+        return _v1;
       }
       set
       {
-        this._v1 = value;
+        _v1 = value;
       }
     }
 
@@ -350,11 +360,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._over_u0;
+        return _over_u0;
       }
       set
       {
-        this._over_u0 = value;
+        _over_u0 = value;
       }
     }
 
@@ -363,11 +373,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._over_v0;
+        return _over_v0;
       }
       set
       {
-        this._over_v0 = value;
+        _over_v0 = value;
       }
     }
 
@@ -376,11 +386,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._over_u1;
+        return _over_u1;
       }
       set
       {
-        this._over_u1 = value;
+        _over_u1 = value;
       }
     }
 
@@ -389,11 +399,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._over_v1;
+        return _over_v1;
       }
       set
       {
-        this._over_v1 = value;
+        _over_v1 = value;
       }
     }
 
@@ -402,11 +412,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._down_u0;
+        return _down_u0;
       }
       set
       {
-        this._down_u0 = value;
+        _down_u0 = value;
       }
     }
 
@@ -415,11 +425,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._down_v0;
+        return _down_v0;
       }
       set
       {
-        this._down_v0 = value;
+        _down_v0 = value;
       }
     }
 
@@ -428,11 +438,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._down_u1;
+        return _down_u1;
       }
       set
       {
-        this._down_u1 = value;
+        _down_u1 = value;
       }
     }
 
@@ -441,11 +451,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._down_v1;
+        return _down_v1;
       }
       set
       {
-        this._down_v1 = value;
+        _down_v1 = value;
       }
     }
 
@@ -454,11 +464,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._disabled_u0;
+        return _disabled_u0;
       }
       set
       {
-        this._disabled_u0 = value;
+        _disabled_u0 = value;
       }
     }
 
@@ -467,11 +477,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._disabled_v0;
+        return _disabled_v0;
       }
       set
       {
-        this._disabled_v0 = value;
+        _disabled_v0 = value;
       }
     }
 
@@ -480,11 +490,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._disabled_u1;
+        return _disabled_u1;
       }
       set
       {
-        this._disabled_u1 = value;
+        _disabled_u1 = value;
       }
     }
 
@@ -493,11 +503,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._disabled_v1;
+        return _disabled_v1;
       }
       set
       {
-        this._disabled_v1 = value;
+        _disabled_v1 = value;
       }
     }
 
@@ -506,11 +516,11 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.drawable_sprite.Color = value;
+        drawable_sprite.Color = value;
       }
       get
       {
-        return this.drawable_sprite.Color;
+        return drawable_sprite.Color;
       }
     }
 
@@ -519,7 +529,7 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.drawable_sprite.DefaultColor = IElement.GenerateColorFromHtml(value);
+        drawable_sprite.DefaultColor = IElement.GenerateColorFromHtml(value);
       }
     }
 
@@ -528,11 +538,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.drawable_sprite.DefaultColor;
+        return drawable_sprite.DefaultColor;
       }
       set
       {
-        this.drawable_sprite.DefaultColor = value;
+        drawable_sprite.DefaultColor = value;
       }
     }
 
@@ -541,7 +551,7 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.drawable_sprite.DownColor = IElement.GenerateColorFromHtml(value);
+        drawable_sprite.DownColor = IElement.GenerateColorFromHtml(value);
       }
     }
 
@@ -550,11 +560,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.drawable_sprite.DownColor;
+        return drawable_sprite.DownColor;
       }
       set
       {
-        this.drawable_sprite.DownColor = value;
+        drawable_sprite.DownColor = value;
       }
     }
 
@@ -563,7 +573,7 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.drawable_sprite.OverColor = IElement.GenerateColorFromHtml(value);
+        drawable_sprite.OverColor = IElement.GenerateColorFromHtml(value);
       }
     }
 
@@ -572,11 +582,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.drawable_sprite.OverColor;
+        return drawable_sprite.OverColor;
       }
       set
       {
-        this.drawable_sprite.OverColor = value;
+        drawable_sprite.OverColor = value;
       }
     }
 
@@ -585,7 +595,7 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.drawable_sprite.DisabledColor = IElement.GenerateColorFromHtml(value);
+        drawable_sprite.DisabledColor = IElement.GenerateColorFromHtml(value);
       }
     }
 
@@ -594,11 +604,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.drawable_sprite.DisabledColor;
+        return drawable_sprite.DisabledColor;
       }
       set
       {
-        this.drawable_sprite.DisabledColor = value;
+        drawable_sprite.DisabledColor = value;
       }
     }
 
@@ -607,7 +617,10 @@ namespace M3D.Graphics.Widgets2D
       get
       {
         if (!ImageWidget.flash_timer.IsRunning || ImageWidget.flash_timer.ElapsedMilliseconds > 1000L)
+        {
           ImageWidget.flash_timer.Restart();
+        }
+
         return ImageWidget.flash_timer.ElapsedMilliseconds >= 500L;
       }
     }

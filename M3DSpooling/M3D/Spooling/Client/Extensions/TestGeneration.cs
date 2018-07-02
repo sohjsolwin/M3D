@@ -19,20 +19,20 @@ namespace M3D.Spooling.Client.Extensions
 
     public static List<string> FastRecenter(PrinterProfile profile)
     {
-      float x = profile.PrinterSizeConstants.printBedSize.x;
-      float y = profile.PrinterSizeConstants.printBedSize.y;
+      var x = profile.PrinterSizeConstants.printBedSize.x;
+      var y = profile.PrinterSizeConstants.printBedSize.y;
       return new List<string>() { "G91", PrinterCompatibleString.Format("G0 Y{0} F{1}", (object) y, (object) 3000f), PrinterCompatibleString.Format("G0 X{0} F{1}", (object) x, (object) 3000f), PrinterCompatibleString.Format("G0 Y-{0} X-{1}", (object) (float) ((double) y / 2.0), (object) (float) ((double) x / 2.0)) };
     }
 
     public static List<string> CreateXSpeedTest(PrinterProfile profile)
     {
-      float x = profile.PrinterSizeConstants.printBedSize.x;
+      var x = profile.PrinterSizeConstants.printBedSize.x;
       return new List<string>() { "G91", PrinterCompatibleString.Format("G0 X{0} F{1}", (object) x, (object) 3000f), PrinterCompatibleString.Format("G0 X-{0}", (object) x), PrinterCompatibleString.Format("G0 X{0}", (object) x), PrinterCompatibleString.Format("G0 X-{0}", (object) x), PrinterCompatibleString.Format("G0 X{0}", (object) x), PrinterCompatibleString.Format("G0 X-{0}", (object) x) };
     }
 
     public static List<string> CreateYSpeedTest(PrinterProfile profile)
     {
-      float y = profile.PrinterSizeConstants.printBedSize.y;
+      var y = profile.PrinterSizeConstants.printBedSize.y;
       return new List<string>() { "G91", PrinterCompatibleString.Format("G0 Y{0} F{1}", (object) y, (object) 3000f), PrinterCompatibleString.Format("G0 Y-{0}", (object) y), PrinterCompatibleString.Format("G0 Y{0}", (object) y), PrinterCompatibleString.Format("G0 Y-{0}", (object) y), PrinterCompatibleString.Format("G0 Y{0}", (object) y), PrinterCompatibleString.Format("G0 Y-{0}", (object) y) };
     }
 
@@ -58,15 +58,15 @@ namespace M3D.Spooling.Client.Extensions
 
     private static List<string> CreateSkipTestInternal(float max, int stride, char param)
     {
-      List<string> stringList = new List<string>();
-      int num1 = (int) ((double) max / (double) Math.Abs(stride));
-      int num2 = stride < 0 ? 1 : -1;
+      var stringList = new List<string>();
+      var num1 = (int) ((double) max / (double) Math.Abs(stride));
+      var num2 = stride < 0 ? 1 : -1;
       stringList.Add("G91");
-      for (int index1 = 0; index1 < 1; ++index1)
+      for (var index1 = 0; index1 < 1; ++index1)
       {
         stringList.Add("G4 S1");
         stringList.Add(PrinterCompatibleString.Format("G0 {0}{1} F{2}", (object) param, (object) (float) ((double) max * (double) num2), (object) 3000f));
-        for (int index2 = 0; index2 < num1; ++index2)
+        for (var index2 = 0; index2 < num1; ++index2)
         {
           stringList.Add("G4 S1");
           stringList.Add(PrinterCompatibleString.Format("G0 {0}{1}", (object) param, (object) stride));

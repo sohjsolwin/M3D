@@ -23,21 +23,27 @@ namespace M3D.Spooling.ConnectionManager
     public override bool Equals(object obj)
     {
       if (obj == null)
+      {
         return false;
-      VID_PID other = obj as VID_PID;
+      }
+
+      var other = obj as VID_PID;
       if (other == null)
+      {
         return false;
-      return this.Equals(other);
+      }
+
+      return Equals(other);
     }
 
     public override int GetHashCode()
     {
-      return this.GetHashCode(this);
+      return GetHashCode(this);
     }
 
     public bool Equals(VID_PID other)
     {
-      return this.Equals(this, other);
+      return Equals(this, other);
     }
 
     public int GetHashCode(VID_PID vidpidpair)
@@ -48,13 +54,16 @@ namespace M3D.Spooling.ConnectionManager
     public bool Equals(VID_PID vidpidpair1, VID_PID vidpidpair2)
     {
       if ((int) vidpidpair1.PID == (int) vidpidpair2.PID)
+      {
         return (int) vidpidpair1.VID == (int) vidpidpair2.VID;
+      }
+
       return false;
     }
 
     public override string ToString()
     {
-      return string.Format("{0}-{1}", (object) this.VID, (object) this.PID);
+      return string.Format("{0}-{1}", (object)VID, (object)PID);
     }
   }
 }

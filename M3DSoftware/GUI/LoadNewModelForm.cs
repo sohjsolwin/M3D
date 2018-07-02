@@ -21,76 +21,79 @@ namespace M3D.GUI
 
     public LoadNewModelForm()
     {
-      this.InitializeComponent();
+      InitializeComponent();
     }
 
     private void buttonYes_Click(object sender, EventArgs e)
     {
-      this.DialogResult = DialogResult.Yes;
+      DialogResult = DialogResult.Yes;
     }
 
     private void buttonNo_Click(object sender, EventArgs e)
     {
-      this.DialogResult = DialogResult.No;
+      DialogResult = DialogResult.No;
     }
 
     protected override void Dispose(bool disposing)
     {
-      if (disposing && this.components != null)
-        this.components.Dispose();
+      if (disposing && components != null)
+      {
+        components.Dispose();
+      }
+
       base.Dispose(disposing);
     }
 
     private void InitializeComponent()
     {
-      this.checkBoxShowAgain = new CheckBox();
-      this.buttonNo = new Button();
-      this.buttonYes = new Button();
-      this.label1 = new Label();
-      this.SuspendLayout();
-      this.checkBoxShowAgain.AutoSize = true;
-      this.checkBoxShowAgain.Location = new Point(152, 217);
-      this.checkBoxShowAgain.Name = "checkBoxShowAgain";
-      this.checkBoxShowAgain.Size = new Size(215, 16);
-      this.checkBoxShowAgain.TabIndex = 8;
-      this.checkBoxShowAgain.Text = "Do not show this message again.";
-      this.checkBoxShowAgain.UseVisualStyleBackColor = true;
-      this.buttonNo.Font = new Font("Microsoft Sans Serif", 12f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
-      this.buttonNo.Location = new Point(281, 71);
-      this.buttonNo.Name = "buttonNo";
-      this.buttonNo.Size = new Size(148, 54);
-      this.buttonNo.TabIndex = 7;
-      this.buttonNo.Text = "No";
-      this.buttonNo.UseVisualStyleBackColor = true;
-      this.buttonNo.Click += new EventHandler(this.buttonNo_Click);
-      this.buttonYes.Font = new Font("Microsoft Sans Serif", 12f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
-      this.buttonYes.ForeColor = Color.Green;
-      this.buttonYes.Location = new Point(90, 71);
-      this.buttonYes.Name = "buttonYes";
-      this.buttonYes.Size = new Size(148, 54);
-      this.buttonYes.TabIndex = 6;
-      this.buttonYes.Text = "Yes";
-      this.buttonYes.UseVisualStyleBackColor = true;
-      this.buttonYes.Click += new EventHandler(this.buttonYes_Click);
-      this.label1.Font = new Font("Microsoft Sans Serif", 11.25f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
-      this.label1.Location = new Point(12, 14);
-      this.label1.Name = "label1";
-      this.label1.Size = new Size(499, 45);
-      this.label1.TabIndex = 5;
-      this.label1.Text = "Would you like to replace the already loaded model\r\nwith the new model?";
-      this.label1.TextAlign = ContentAlignment.MiddleCenter;
-      this.AutoScaleDimensions = new SizeF(7f, 12f);
-      this.AutoScaleMode = AutoScaleMode.Font;
-      this.AutoSize = true;
-      this.ClientSize = new Size(533, 148);
-      this.Controls.Add((Control) this.checkBoxShowAgain);
-      this.Controls.Add((Control) this.buttonNo);
-      this.Controls.Add((Control) this.buttonYes);
-      this.Controls.Add((Control) this.label1);
-      this.Name = nameof (LoadNewModelForm);
-      this.Text = "Load New Model";
-      this.ResumeLayout(false);
-      this.PerformLayout();
+      checkBoxShowAgain = new CheckBox();
+      buttonNo = new Button();
+      buttonYes = new Button();
+      label1 = new Label();
+      SuspendLayout();
+      checkBoxShowAgain.AutoSize = true;
+      checkBoxShowAgain.Location = new Point(152, 217);
+      checkBoxShowAgain.Name = "checkBoxShowAgain";
+      checkBoxShowAgain.Size = new Size(215, 16);
+      checkBoxShowAgain.TabIndex = 8;
+      checkBoxShowAgain.Text = "Do not show this message again.";
+      checkBoxShowAgain.UseVisualStyleBackColor = true;
+      buttonNo.Font = new Font("Microsoft Sans Serif", 12f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      buttonNo.Location = new Point(281, 71);
+      buttonNo.Name = "buttonNo";
+      buttonNo.Size = new Size(148, 54);
+      buttonNo.TabIndex = 7;
+      buttonNo.Text = "No";
+      buttonNo.UseVisualStyleBackColor = true;
+      buttonNo.Click += new EventHandler(buttonNo_Click);
+      buttonYes.Font = new Font("Microsoft Sans Serif", 12f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      buttonYes.ForeColor = Color.Green;
+      buttonYes.Location = new Point(90, 71);
+      buttonYes.Name = "buttonYes";
+      buttonYes.Size = new Size(148, 54);
+      buttonYes.TabIndex = 6;
+      buttonYes.Text = "Yes";
+      buttonYes.UseVisualStyleBackColor = true;
+      buttonYes.Click += new EventHandler(buttonYes_Click);
+      label1.Font = new Font("Microsoft Sans Serif", 11.25f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      label1.Location = new Point(12, 14);
+      label1.Name = "label1";
+      label1.Size = new Size(499, 45);
+      label1.TabIndex = 5;
+      label1.Text = "Would you like to replace the already loaded model\r\nwith the new model?";
+      label1.TextAlign = ContentAlignment.MiddleCenter;
+      AutoScaleDimensions = new SizeF(7f, 12f);
+      AutoScaleMode = AutoScaleMode.Font;
+      AutoSize = true;
+      ClientSize = new Size(533, 148);
+      Controls.Add((Control)checkBoxShowAgain);
+      Controls.Add((Control)buttonNo);
+      Controls.Add((Control)buttonYes);
+      Controls.Add((Control)label1);
+      Name = nameof (LoadNewModelForm);
+      Text = "Load New Model";
+      ResumeLayout(false);
+      PerformLayout();
     }
   }
 }

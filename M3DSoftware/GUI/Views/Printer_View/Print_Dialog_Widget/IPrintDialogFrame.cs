@@ -28,7 +28,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
     {
       get
       {
-        return this.printDialogWindow;
+        return printDialogWindow;
       }
     }
 
@@ -36,7 +36,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
     {
       get
       {
-        return this.printDialogWindow.SlicerSettings;
+        return printDialogWindow.SlicerSettings;
       }
     }
 
@@ -44,7 +44,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
     {
       get
       {
-        return this.printDialogWindow.SlicerConnection;
+        return printDialogWindow.SlicerConnection;
       }
     }
 
@@ -52,7 +52,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
     {
       get
       {
-        return this.printDialogWindow.GetSelectedPrinter();
+        return printDialogWindow.GetSelectedPrinter();
       }
     }
   }

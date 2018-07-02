@@ -10,8 +10,8 @@ namespace M3D.Spooling.Common
   {
     public FirmwareBoardVersionKVP(char boardID, uint firmwareVersion)
     {
-      this.BoardID = boardID;
-      this.FirmwareVersion = firmwareVersion;
+      BoardID = boardID;
+      FirmwareVersion = firmwareVersion;
     }
 
     public char BoardID { get; set; }
@@ -20,8 +20,8 @@ namespace M3D.Spooling.Common
 
     public override string ToString()
     {
-      string str = this.FirmwareVersion.ToString();
-      return this.BoardID.ToString() + " - Firmware Version: " + str.Substring(0, 4) + "-" + str.Substring(4, 2) + "-" + str.Substring(6, 2) + "-" + str.Substring(8, 2);
+      var str = FirmwareVersion.ToString();
+      return BoardID.ToString() + " - Firmware Version: " + str.Substring(0, 4) + "-" + str.Substring(4, 2) + "-" + str.Substring(6, 2) + "-" + str.Substring(8, 2);
     }
   }
 }

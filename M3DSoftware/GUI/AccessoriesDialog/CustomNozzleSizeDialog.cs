@@ -24,26 +24,29 @@ namespace M3D.GUI.AccessoriesDialog
 
     private CustomNozzleSizeDialog(GUIHost guiHost, PopupMessageBox messagebox, EventHandler<CustomNozzleSizeDialog.CustomNozzleSizeResult> OnDialogClose, int iMinNozzleSize, int iMaxNozzleSize, PrinterObject printer)
     {
-      string nozzleSizeDialog = Resources.customNozzleSizeDialog;
-      this.Init(guiHost, nozzleSizeDialog, new ButtonCallback(this.ButtonCallback));
-      this.SetSize(540, (int) byte.MaxValue);
-      this.CenterHorizontallyInParent = true;
-      this.CenterVerticallyInParent = true;
-      this.m_OnDialogClose = OnDialogClose;
-      this.m_oMessagebox = messagebox;
-      this.m_iMinNozzleSize = iMinNozzleSize;
-      this.m_iMaxNozzleSize = iMaxNozzleSize;
-      this.m_oPrinter = printer;
-      EditBoxWidget childElement = (EditBoxWidget) this.childFrame.FindChildElement(100);
+      var nozzleSizeDialog = Resources.customNozzleSizeDialog;
+      Init(guiHost, nozzleSizeDialog, new ButtonCallback(ButtonCallback));
+      SetSize(540, (int) byte.MaxValue);
+      CenterHorizontallyInParent = true;
+      CenterVerticallyInParent = true;
+      m_OnDialogClose = OnDialogClose;
+      m_oMessagebox = messagebox;
+      m_iMinNozzleSize = iMinNozzleSize;
+      m_iMaxNozzleSize = iMaxNozzleSize;
+      m_oPrinter = printer;
+      var childElement = (EditBoxWidget)childFrame.FindChildElement(100);
       if (childElement == null)
+      {
         return;
-      float num = (float) this.m_oPrinter.Info.extruder.iNozzleSizeMicrons / 1000f;
+      }
+
+      var num = (float)m_oPrinter.Info.extruder.iNozzleSizeMicrons / 1000f;
       childElement.Text = num.ToString();
     }
 
     public static void Show(GUIHost guiHost, PopupMessageBox messagebox, EventHandler<CustomNozzleSizeDialog.CustomNozzleSizeResult> OnDialogClose, int iMinNozzleSize, int iMaxNozzleSize, PrinterObject printer)
     {
-      CustomNozzleSizeDialog nozzleSizeDialog = new CustomNozzleSizeDialog(guiHost, messagebox, OnDialogClose, iMinNozzleSize, iMaxNozzleSize, printer);
+      var nozzleSizeDialog = new CustomNozzleSizeDialog(guiHost, messagebox, OnDialogClose, iMinNozzleSize, iMaxNozzleSize, printer);
       guiHost.GlobalChildDialog += (Element2D) nozzleSizeDialog;
     }
 
@@ -51,44 +54,55 @@ namespace M3D.GUI.AccessoriesDialog
     {
       if (button.ID == 101)
       {
-        EditBoxWidget childElement = (EditBoxWidget) this.childFrame.FindChildElement(100);
+        var childElement = (EditBoxWidget)childFrame.FindChildElement(100);
         if (childElement == null)
         {
-          this.m_oMessagebox.AddMessageToQueue("There was an error setting the nozzle size. Please try again.");
+          m_oMessagebox.AddMessageToQueue("There was an error setting the nozzle size. Please try again.");
         }
         else
         {
-          float result;
-          if (float.TryParse(childElement.Text, out result))
+          if (float.TryParse(childElement.Text, out var result))
           {
-            int iNozzleSizeMicrons = (int) ((double) result * 1000.0);
-            if (iNozzleSizeMicrons < this.m_iMinNozzleSize || iNozzleSizeMicrons > this.m_iMaxNozzleSize)
-              this.m_oMessagebox.AddMessageToQueue(string.Format("Sorry, but the nozzle size must be between {0} and {1} mm.", (object) (float) ((double) this.m_iMinNozzleSize / 1000.0), (object) (float) ((double) this.m_iMaxNozzleSize / 1000.0)));
+            var iNozzleSizeMicrons = (int)((double)result * 1000.0);
+            if (iNozzleSizeMicrons < m_iMinNozzleSize || iNozzleSizeMicrons > m_iMaxNozzleSize)
+            {
+              m_oMessagebox.AddMessageToQueue(string.Format("Sorry, but the nozzle size must be between {0} and {1} mm.", (object)(float)((double)m_iMinNozzleSize / 1000.0), (object)(float)((double)m_iMaxNozzleSize / 1000.0)));
+            }
             else
-              this.Close(iNozzleSizeMicrons, false);
+            {
+              Close(iNozzleSizeMicrons, false);
+            }
           }
           else
-            this.m_oMessagebox.AddMessageToQueue("Sorry, but the nozzle size is not a number.");
+          {
+            m_oMessagebox.AddMessageToQueue("Sorry, but the nozzle size is not a number.");
+          }
         }
       }
       else
       {
         if (button.ID != 102)
+        {
           return;
-        this.Close();
+        }
+
+        Close();
       }
     }
 
     private void Close(int iNozzleSizeMicrons, bool bCanceled)
     {
-      if (this.m_OnDialogClose != null)
-        this.m_OnDialogClose((object) this, new CustomNozzleSizeDialog.CustomNozzleSizeResult(iNozzleSizeMicrons, bCanceled, this.m_oPrinter));
-      this.Host.GlobalChildDialog -= (Element2D) this;
+      if (m_OnDialogClose != null)
+      {
+        m_OnDialogClose((object) this, new CustomNozzleSizeDialog.CustomNozzleSizeResult(iNozzleSizeMicrons, bCanceled, m_oPrinter));
+      }
+
+      Host.GlobalChildDialog -= (Element2D) this;
     }
 
     public override void Close()
     {
-      this.Close(0, true);
+      Close(0, true);
     }
 
     public class CustomNozzleSizeResult
@@ -97,7 +111,7 @@ namespace M3D.GUI.AccessoriesDialog
       {
         this.bCanceled = bCanceled;
         this.iCustomNozzleSizeMicrons = iCustomNozzleSizeMicrons;
-        this.Printer = printer;
+        Printer = printer;
       }
 
       public bool bCanceled { get; private set; }

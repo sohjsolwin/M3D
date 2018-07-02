@@ -28,7 +28,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       : base(ID, host, mainWindow)
     {
       this.messagebox = messagebox;
-      this.m_osIdleStopwatchTimer = new Stopwatch();
+      m_osIdleStopwatchTimer = new Stopwatch();
     }
 
     public override void MyButtonCallback(ButtonWidget button)
@@ -37,13 +37,16 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("Please wait. The printer is busy perfoming the requested actions.", "", false, false, false, false, false, false);
-      this.WaitingText = (TextWidget) this.FindChildElement(1);
-      Frame childElement = (Frame) this.FindChildElement(2);
+      CreateManageFilamentFrame("Please wait. The printer is busy perfoming the requested actions.", "", false, false, false, false, false, false);
+      WaitingText = (TextWidget)FindChildElement(1);
+      var childElement = (Frame)FindChildElement(2);
       if (childElement == null)
+      {
         return;
-      SpriteAnimationWidget spriteAnimationWidget = new SpriteAnimationWidget(11);
-      spriteAnimationWidget.Init(this.Host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
+      }
+
+      var spriteAnimationWidget = new SpriteAnimationWidget(11);
+      spriteAnimationWidget.Init(Host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
       spriteAnimationWidget.SetSize(128, 108);
       spriteAnimationWidget.CenterVerticallyInParent = true;
       spriteAnimationWidget.CenterHorizontallyInParent = true;
@@ -53,54 +56,60 @@ namespace M3D.GUI.ManageFilament.Child_Frames
     public override void OnActivate(Mangage3DInkStageDetails details)
     {
       base.OnActivate(details);
-      this.WaitingText.Text = FilamentWaitingPage.CurrentWaitingText;
-      this.m_osIdleStopwatchTimer.Stop();
-      this.finishedWaiting = false;
+      WaitingText.Text = FilamentWaitingPage.CurrentWaitingText;
+      m_osIdleStopwatchTimer.Stop();
+      finishedWaiting = false;
     }
 
     public override void OnUpdate()
     {
-      if (this.Visible)
+      if (Visible)
       {
-        PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+        PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
         if (selectedPrinter == null)
         {
-          this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page0_StartupPage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.None));
+          MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page0_StartupPage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.None));
           return;
         }
-        if ((selectedPrinter.Info.Status == PrinterStatus.Firmware_Ready || selectedPrinter.Info.Status == PrinterStatus.Firmware_Idle || selectedPrinter.Info.Status == PrinterStatus.Firmware_PrintingPaused) && !selectedPrinter.WaitingForCommandToComplete && ((this.CurrentDetails.waitCondition != null ? (this.CurrentDetails.waitCondition() ? 1 : 0) : 1) != 0 && !this.finishedWaiting))
+        if ((selectedPrinter.Info.Status == PrinterStatus.Firmware_Ready || selectedPrinter.Info.Status == PrinterStatus.Firmware_Idle || selectedPrinter.Info.Status == PrinterStatus.Firmware_PrintingPaused) && !selectedPrinter.WaitingForCommandToComplete && ((CurrentDetails.waitCondition != null ? (CurrentDetails.waitCondition() ? 1 : 0) : 1) != 0 && !finishedWaiting))
         {
-          if (this.CurrentDetails.pageAfterWait == Manage3DInkMainWindow.PageID.Page0_StartupPage)
+          if (CurrentDetails.pageAfterWait == Manage3DInkMainWindow.PageID.Page0_StartupPage)
           {
             if (selectedPrinter.LockStatus == PrinterLockStatus.Unlocked)
             {
-              this.finishedWaiting = true;
-              int num = (int) selectedPrinter.AcquireLock(new AsyncCallback(this.DoStartUpSequenceCallsAfterLock), (object) selectedPrinter);
+              finishedWaiting = true;
+              var num = (int) selectedPrinter.AcquireLock(new AsyncCallback(DoStartUpSequenceCallsAfterLock), (object) selectedPrinter);
             }
             else if (selectedPrinter.LockStatus == PrinterLockStatus.WeOwnLocked)
             {
-              this.finishedWaiting = true;
-              this.DoStartUpSequence(selectedPrinter);
+              finishedWaiting = true;
+              DoStartUpSequence(selectedPrinter);
             }
             else
-              this.MainWindow.ActivateFrame(this.CurrentDetails.pageAfterWait, this.CurrentDetails);
+            {
+              MainWindow.ActivateFrame(CurrentDetails.pageAfterWait, CurrentDetails);
+            }
           }
           else
           {
-            this.finishedWaiting = true;
-            this.MainWindow.ActivateFrame(this.CurrentDetails.pageAfterWait, this.CurrentDetails);
+            finishedWaiting = true;
+            MainWindow.ActivateFrame(CurrentDetails.pageAfterWait, CurrentDetails);
           }
         }
-        else if (!selectedPrinter.WaitingForCommandToComplete && this.CurrentDetails.waitCondition == null)
-          this.MainWindow.ActivateFrame(this.CurrentDetails.pageAfterWait, this.CurrentDetails);
+        else if (!selectedPrinter.WaitingForCommandToComplete && CurrentDetails.waitCondition == null)
+        {
+          MainWindow.ActivateFrame(CurrentDetails.pageAfterWait, CurrentDetails);
+        }
         else if (selectedPrinter.Info.Status == PrinterStatus.Firmware_Idle)
         {
-          if (!this.m_osIdleStopwatchTimer.IsRunning)
-            this.m_osIdleStopwatchTimer.Restart();
-          else if (this.m_osIdleStopwatchTimer.ElapsedMilliseconds > 3000L)
+          if (!m_osIdleStopwatchTimer.IsRunning)
           {
-            int num = (int) selectedPrinter.BreakLock((AsyncCallback) null, (object) null);
-            this.finishedWaiting = true;
+            m_osIdleStopwatchTimer.Restart();
+          }
+          else if (m_osIdleStopwatchTimer.ElapsedMilliseconds > 3000L)
+          {
+            var num = (int) selectedPrinter.BreakLock((AsyncCallback) null, (object) null);
+            finishedWaiting = true;
           }
         }
       }
@@ -110,30 +119,36 @@ namespace M3D.GUI.ManageFilament.Child_Frames
     private void DoStartUpSequence(PrinterObject printer)
     {
       if (printer == null)
+      {
         return;
-      int num = (int) printer.SendManualGCode(new AsyncCallback(this.OnStartUpSuccess), (object) printer, "M117", "M114", "M576", "M104 S0");
+      }
+
+      var num = (int) printer.SendManualGCode(new AsyncCallback(OnStartUpSuccess), (object) printer, "M117", "M114", "M576", "M104 S0");
     }
 
     private void DoStartUpSequenceCallsAfterLock(IAsyncCallResult ar)
     {
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
+      var asyncState = ar.AsyncState as PrinterObject;
       switch (ar.CallResult)
       {
         case CommandResult.Success_LockAcquired:
-          this.DoStartUpSequence(asyncState);
+          DoStartUpSequence(asyncState);
           break;
         default:
-          this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page0_StartupPage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.None));
+          MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page0_StartupPage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.None));
           break;
       }
     }
 
     private void OnStartUpSuccess(IAsyncCallResult ar)
     {
-      PrinterObject asyncState = ar.AsyncState as PrinterObject;
+      var asyncState = ar.AsyncState as PrinterObject;
       if (asyncState.LockStatus != PrinterLockStatus.WeOwnLocked)
+      {
         return;
-      int num = (int) asyncState.ReleaseLock(new AsyncCallback(this.MainWindow.AfterRelease), (object) asyncState);
+      }
+
+      var num = (int) asyncState.ReleaseLock(new AsyncCallback(MainWindow.AfterRelease), (object) asyncState);
     }
 
     public enum ControlIDs

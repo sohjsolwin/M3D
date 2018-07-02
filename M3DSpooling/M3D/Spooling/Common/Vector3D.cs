@@ -26,9 +26,9 @@ namespace M3D.Spooling.Common
 
     public Vector3D(Vector3D other)
     {
-      this.x = other.x;
-      this.y = other.y;
-      this.z = other.z;
+      x = other.x;
+      y = other.y;
+      z = other.z;
     }
   }
 }

@@ -119,192 +119,262 @@ namespace M3D.Graphics.Widgets2D
     public Element2D(int ID, Element2D parent)
       : base(ID, (IElement) parent)
     {
-      this.ChildList = new Element2DList(this);
-      this.CenterHorizontallyInParent = false;
-      this.CenterVerticallyInParent = false;
+      ChildList = new Element2DList(this);
+      CenterHorizontallyInParent = false;
+      CenterVerticallyInParent = false;
       this.parent = parent;
-      this._bActive = false;
-      this.wraponnegativeX = true;
-      this.wraponnegativeY = true;
-      this.location.x = 0;
-      this.location.y = 0;
-      this.size.width = 0;
-      this.size.height = 0;
-      this.__MinWidth = 0;
-      this.__MinHeight = 0;
-      this.__MaxWidth = 0;
-      this.__MaxHeight = 0;
-      this.auto_center_x_offset = 0;
-      this.auto_center_y_offset = 0;
-      this.IgnoreMouse = false;
-      this.hasfocus = false;
-      this.relativeposition = false;
-      this.dropdownelement = (Element2D) null;
+      _bActive = false;
+      wraponnegativeX = true;
+      wraponnegativeY = true;
+      location.x = 0;
+      location.y = 0;
+      size.width = 0;
+      size.height = 0;
+      __MinWidth = 0;
+      __MinHeight = 0;
+      __MaxWidth = 0;
+      __MaxHeight = 0;
+      auto_center_x_offset = 0;
+      auto_center_y_offset = 0;
+      IgnoreMouse = false;
+      hasfocus = false;
+      relativeposition = false;
+      dropdownelement = (Element2D) null;
     }
 
     public virtual void OnControlMsg(Element2D the_control, ControlMsg msg, float xparam, float yparam)
     {
-      if (this.OnControlMsgCallback != null)
+      if (OnControlMsgCallback != null)
       {
-        this.OnControlMsgCallback(the_control, msg, xparam, yparam);
+        OnControlMsgCallback(the_control, msg, xparam, yparam);
       }
       else
       {
-        if (this.parent == null)
+        if (parent == null)
+        {
           return;
-        this.parent.OnControlMsg(the_control, msg, xparam, yparam);
+        }
+
+        parent.OnControlMsg(the_control, msg, xparam, yparam);
       }
     }
 
     public void TurnOffGroup(int group, Element2D except)
     {
       if (group == -1)
+      {
         return;
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      }
+
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         if (child.GroupID == group && child != except)
+        {
           child.SetOff();
+        }
       }
     }
 
     public void DisableGroup(int groupID)
     {
-      if (this.GroupID == groupID)
-        this.Enabled = false;
+      if (GroupID == groupID)
+      {
+        Enabled = false;
+      }
+
       if (groupID == -1)
+      {
         return;
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      }
+
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      {
         child.DisableGroup(groupID);
+      }
     }
 
     public void EnableGroup(int groupID)
     {
-      if (this.GroupID == groupID)
-        this.Enabled = true;
+      if (GroupID == groupID)
+      {
+        Enabled = true;
+      }
+
       if (groupID == -1)
+      {
         return;
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      }
+
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      {
         child.EnableGroup(groupID);
+      }
     }
 
     public override void Refresh()
     {
-      this.OnParentResize();
+      OnParentResize();
     }
 
     public virtual void RemoveAllChildElements()
     {
-      this.ChildList.Clear();
+      ChildList.Clear();
     }
 
     public virtual void RemoveChildElementAt(int index)
     {
-      this.ChildList.RemoveAt(index);
+      ChildList.RemoveAt(index);
     }
 
     public bool IsComboBoxElement()
     {
-      if (this.GetElementType() == ElementType.ComboBoxWidget)
+      if (GetElementType() == ElementType.ComboBoxWidget)
+      {
         return true;
-      for (Element2D parent = this.Parent; parent != null; parent = parent.Parent)
+      }
+
+      for (Element2D parent = Parent; parent != null; parent = parent.Parent)
       {
         if (parent.GetElementType() == ElementType.ComboBoxWidget)
+        {
           return true;
+        }
       }
       return false;
     }
 
     public bool IsListBoxElement()
     {
-      if (this.GetElementType() == ElementType.ListBoxWidget)
+      if (GetElementType() == ElementType.ListBoxWidget)
+      {
         return true;
-      for (Element2D parent = this.Parent; parent != null; parent = parent.Parent)
+      }
+
+      for (Element2D parent = Parent; parent != null; parent = parent.Parent)
       {
         if (parent.GetElementType() == ElementType.ListBoxWidget)
+        {
           return true;
+        }
       }
       return false;
     }
 
     public Frame FindParentFrame()
     {
-      if (this.IsScrollFrame())
+      if (IsScrollFrame())
+      {
         return (Frame) this;
-      if (this.Parent != null)
-        return this.Parent.FindParentFrame();
+      }
+
+      if (Parent != null)
+      {
+        return Parent.FindParentFrame();
+      }
+
       return (Frame) null;
     }
 
     public ComboBoxWidget GetComboBoxElement()
     {
-      if (this.GetElementType() == ElementType.ComboBoxWidget)
+      if (GetElementType() == ElementType.ComboBoxWidget)
+      {
         return (ComboBoxWidget) this;
-      for (Element2D parent = this.Parent; parent != null; parent = parent.Parent)
+      }
+
+      for (Element2D parent = Parent; parent != null; parent = parent.Parent)
       {
         if (parent.GetElementType() == ElementType.ComboBoxWidget)
+        {
           return (ComboBoxWidget) parent;
+        }
       }
       return (ComboBoxWidget) null;
     }
 
     public ListBoxWidget GetListBoxElement()
     {
-      if (this.GetElementType() == ElementType.ListBoxWidget)
+      if (GetElementType() == ElementType.ListBoxWidget)
+      {
         return (ListBoxWidget) this;
-      for (Element2D parent = this.Parent; parent != null; parent = parent.Parent)
+      }
+
+      for (Element2D parent = Parent; parent != null; parent = parent.Parent)
       {
         if (parent.GetElementType() == ElementType.ListBoxWidget)
+        {
           return (ListBoxWidget) parent;
+        }
       }
       return (ListBoxWidget) null;
     }
 
     public bool IsScrollFrame()
     {
-      if (this.GetElementType() == ElementType.ScrollFrame)
+      if (GetElementType() == ElementType.ScrollFrame)
+      {
         return true;
-      for (Element2D parent = this.Parent; parent != null; parent = parent.Parent)
+      }
+
+      for (Element2D parent = Parent; parent != null; parent = parent.Parent)
       {
         if (parent.GetElementType() == ElementType.ScrollFrame)
+        {
           return true;
+        }
       }
       return false;
     }
 
     public Frame GetScrollFrame()
     {
-      if (this.GetElementType() == ElementType.ScrollFrame)
+      if (GetElementType() == ElementType.ScrollFrame)
+      {
         return (Frame) this;
-      for (Element2D parent = this.Parent; parent != null; parent = parent.Parent)
+      }
+
+      for (Element2D parent = Parent; parent != null; parent = parent.Parent)
       {
         if (parent.GetElementType() == ElementType.ScrollFrame)
+        {
           return (Frame) parent;
+        }
       }
       return (Frame) null;
     }
 
     public Element2D FindChildElement(int ID)
     {
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         if (child.ID == ID)
+        {
           return child;
+        }
+
         Element2D childElement = child.FindChildElement(ID);
         if (childElement != null)
+        {
           return childElement;
+        }
       }
       return (Element2D) null;
     }
 
     public Element2D FindChildElement(string tag)
     {
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         if (child.tag == tag)
+        {
           return child;
+        }
+
         Element2D childElement = child.FindChildElement(tag);
         if (childElement != null)
+        {
           return childElement;
+        }
       }
       return (Element2D) null;
     }
@@ -320,78 +390,107 @@ namespace M3D.Graphics.Widgets2D
 
     public virtual void Clear()
     {
-      this.RemoveAllChildElements();
+      RemoveAllChildElements();
     }
 
     private int CalculateXFromRelative()
     {
-      int num = (int) ((double) this.Parent.Width * (double) this.relative_x) + this.relative_x_adj;
+      var num = (int) ((double)Parent.Width * (double)relative_x) + relative_x_adj;
       if (num < 0)
+      {
         num = 0;
+      }
+
       return num;
     }
 
     private int CalculateYFromRelative()
     {
-      int num = (int) ((double) this.Parent.Height * (double) this.relative_y) + this.relative_y_adj;
+      var num = (int) ((double)Parent.Height * (double)relative_y) + relative_y_adj;
       if (num < 0)
+      {
         num = 0;
+      }
+
       return num;
     }
 
     private int CalculateWidthFromRelative()
     {
-      return (int) ((double) this.Parent.Width * (double) this.relative_width) + this.relative_width_adj;
+      return (int) ((double)Parent.Width * (double)relative_width) + relative_width_adj;
     }
 
     private int CalculateHeightFromRelative()
     {
-      return (int) ((double) this.Parent.Height * (double) this.relative_height) + this.relative_height_adj;
+      return (int) ((double)Parent.Height * (double)relative_height) + relative_height_adj;
     }
 
     public virtual void OnParentResize()
     {
-      if (this.Parent == null)
+      if (Parent == null)
+      {
         return;
-      if ((double) this.relative_width > 0.0 || (double) this.relative_height > 0.0)
-      {
-        int width = this.Width;
-        int height = this.Height;
-        if ((double) this.relative_width > 0.0)
-          width = this.CalculateWidthFromRelative();
-        if ((double) this.relative_height > 0.0)
-          height = this.CalculateHeightFromRelative();
-        this.SetSize(width, height);
       }
-      int x = this.X;
-      int y = this.Y;
-      if (this.CenterHorizontallyInParent || this.CenterVerticallyInParent)
+
+      if ((double)relative_width > 0.0 || (double)relative_height > 0.0)
       {
-        if (this.CenterHorizontallyInParent)
+        var width = Width;
+        var height = Height;
+        if ((double)relative_width > 0.0)
         {
-          x = (this.Parent.Width - this.Width - this.auto_center_x_offset) / 2 + this.auto_center_x_offset;
+          width = CalculateWidthFromRelative();
+        }
+
+        if ((double)relative_height > 0.0)
+        {
+          height = CalculateHeightFromRelative();
+        }
+
+        SetSize(width, height);
+      }
+      var x = X;
+      var y = Y;
+      if (CenterHorizontallyInParent || CenterVerticallyInParent)
+      {
+        if (CenterHorizontallyInParent)
+        {
+          x = (Parent.Width - Width - auto_center_x_offset) / 2 + auto_center_x_offset;
           if (x < 0)
+          {
             x = 0;
+          }
         }
-        if (this.CenterVerticallyInParent)
+        if (CenterVerticallyInParent)
         {
-          y = (this.Parent.Height - this.Height - this.auto_center_y_offset) / 2 + this.auto_center_y_offset;
+          y = (Parent.Height - Height - auto_center_y_offset) / 2 + auto_center_y_offset;
           if (y < 0)
+          {
             y = 0;
+          }
         }
       }
-      if (this.UseRelativePositions)
+      if (UseRelativePositions)
       {
-        if ((double) this.relative_y > 0.0)
-          y = this.CalculateYFromRelative();
-        if ((double) this.relative_x > 0.0)
-          x = this.CalculateXFromRelative();
+        if ((double)relative_y > 0.0)
+        {
+          y = CalculateYFromRelative();
+        }
+
+        if ((double)relative_x > 0.0)
+        {
+          x = CalculateXFromRelative();
+        }
       }
-      this.SetPosition(x, y);
-      if (this.DoOnParentResize != null)
-        this.DoOnParentResize();
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      SetPosition(x, y);
+      if (DoOnParentResize != null)
+      {
+        DoOnParentResize();
+      }
+
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      {
         child.OnParentResize();
+      }
     }
 
     public virtual void OnFocusChanged()
@@ -400,108 +499,139 @@ namespace M3D.Graphics.Widgets2D
 
     public virtual bool OnKeyboardEvent(KeyboardEvent keyboardevent)
     {
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         if (child.OnKeyboardEvent(keyboardevent))
+        {
           return true;
+        }
       }
       return false;
     }
 
     public virtual void OnMouseLeave()
     {
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      {
         child.OnMouseLeave();
+      }
     }
 
     public virtual bool OnMouseCommand(MouseEvent mouseevent)
     {
-      if (this.dropdownelement != null)
-        return this.dropdownelement.OnMouseCommand(mouseevent);
+      if (dropdownelement != null)
+      {
+        return dropdownelement.OnMouseCommand(mouseevent);
+      }
+
       return false;
     }
 
     public virtual void OnMouseMove(int x, int y)
     {
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         if (child.Enabled || IElement.HasEnabledOnlyItem && child.HasChildren)
+        {
           child.OnMouseMove(x, y);
+        }
       }
     }
 
     public bool Overlaps(Element2D other)
     {
-      return this.Overlaps(other, 0, 0);
+      return Overlaps(other, 0, 0);
     }
 
     public bool Overlaps(Element2D other, int x_off, int y_off)
     {
-      return this.X_Abs + this.Width + x_off >= other.X_Abs && this.X_Abs + x_off <= other.X_Abs + other.Width && (this.Y_Abs + this.Height + y_off >= other.Y_Abs && this.Y_Abs + y_off <= other.Y_Abs + other.Height);
+      return X_Abs + Width + x_off >= other.X_Abs && X_Abs + x_off <= other.X_Abs + other.Width && (Y_Abs + Height + y_off >= other.Y_Abs && Y_Abs + y_off <= other.Y_Abs + other.Height);
     }
 
     public virtual bool ContainsPoint(int x, int y)
     {
-      return x >= this.absolutelocation.x && y >= this.absolutelocation.y && (x <= this.absolutelocation.x + this.size.width && y <= this.absolutelocation.y + this.size.height);
+      return x >= absolutelocation.x && y >= absolutelocation.y && (x <= absolutelocation.x + size.width && y <= absolutelocation.y + size.height);
     }
 
     public virtual Element2D GetSelfOrDependantAtPoint(int x, int y)
     {
-      if (this.ContainsPoint(x, y) && this.Visible && (this.Enabled || this.ChildList.Count > 0))
+      if (ContainsPoint(x, y) && Visible && (Enabled || ChildList.Count > 0))
       {
-        foreach (Element2D element2D in (IEnumerable<Element2D>) this.ChildList.Reverse())
+        foreach (Element2D element2D in (IEnumerable<Element2D>)ChildList.Reverse())
         {
           Element2D dependantAtPoint = element2D.GetSelfOrDependantAtPoint(x, y);
           if (dependantAtPoint != null && dependantAtPoint.Enabled && !dependantAtPoint.IgnoreMouse)
+          {
             return dependantAtPoint;
+          }
         }
-        if (this.GetElementType() != ElementType.Frame)
+        if (GetElementType() != ElementType.Frame)
+        {
           return this;
+        }
       }
       return (Element2D) null;
     }
 
     public void GetNextTabIndexElement(ref List<Element2D> tabIndexElements)
     {
-      if (!this.Visible || !this.Enabled)
+      if (!Visible || !Enabled)
+      {
         return;
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      }
+
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         if (child.Visible && child.Enabled)
+        {
           child.GetNextTabIndexElement(ref tabIndexElements);
+        }
       }
-      if (this.GetElementType() == ElementType.Frame || this.GetElementType() == ElementType.ScrollFrame || this.tabIndex <= -1)
+      if (GetElementType() == ElementType.Frame || GetElementType() == ElementType.ScrollFrame || tabIndex <= -1)
+      {
         return;
+      }
+
       tabIndexElements.Add(this);
     }
 
     public virtual void OnParentMove()
     {
-      this.SetPosition(this.X, this.Y);
-      if (this.DoOnParentMove == null)
+      SetPosition(X, Y);
+      if (DoOnParentMove == null)
+      {
         return;
-      this.DoOnParentMove();
+      }
+
+      DoOnParentMove();
     }
 
     public virtual void OnRender(GUIHost host)
     {
-      this.OnRender();
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      OnRender();
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
-        if (child.Visible && this.dropdownelement != child && (!child.HasFocus || !child.FocusedAlwaysOnTop))
+        if (child.Visible && dropdownelement != child && (!child.HasFocus || !child.FocusedAlwaysOnTop))
+        {
           child.OnRender(host);
+        }
       }
-      if (this.dropdownelement == null)
+      if (dropdownelement == null)
+      {
         return;
-      this.dropdownelement.OnRender(host);
+      }
+
+      dropdownelement.OnRender(host);
     }
 
     public override void OnUpdate()
     {
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         if ((child.Visible || child.bUpdateWhenNotVisible) && (child.Enabled || IElement.HasEnabledOnlyItem && child.HasChildren))
+        {
           child.OnUpdate();
+        }
       }
       base.OnUpdate();
     }
@@ -509,67 +639,89 @@ namespace M3D.Graphics.Widgets2D
     public void AddFirstChild(Element2D child)
     {
       child.SetParent(this);
-      this.ChildList.Insert(0, child);
+      ChildList.Insert(0, child);
     }
 
     public virtual void AddChildElement(Element2D child)
     {
-      this.ChildList.Add(child);
+      ChildList.Add(child);
     }
 
     public virtual void RemoveChildElement(Element2D child)
     {
-      this.ChildList.Remove(child);
+      ChildList.Remove(child);
     }
 
     public virtual void SetPosition(int x, int y)
     {
-      this.absolutelocation.x = this.location.x = x;
-      this.absolutelocation.y = this.location.y = y;
-      if (this.Parent != null)
+      absolutelocation.x = location.x = x;
+      absolutelocation.y = location.y = y;
+      if (Parent != null)
       {
-        if (this.location.x < 0 && this.WrapOnNegativeX)
-          this.absolutelocation.x = this.Parent.Width + x;
-        if (this.location.y < 0 && this.WrapOnNegativeY)
-          this.absolutelocation.y = this.Parent.Height + y;
-        this.absolutelocation.x += this.Parent.X_Abs;
-        this.absolutelocation.y += this.Parent.Y_Abs;
+        if (location.x < 0 && WrapOnNegativeX)
+        {
+          absolutelocation.x = Parent.Width + x;
+        }
+
+        if (location.y < 0 && WrapOnNegativeY)
+        {
+          absolutelocation.y = Parent.Height + y;
+        }
+
+        absolutelocation.x += Parent.X_Abs;
+        absolutelocation.y += Parent.Y_Abs;
       }
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      {
         child.OnParentMove();
+      }
     }
 
     public void SetPositionRelative(float x, float y)
     {
-      this.RelativeX = x;
-      this.RelativeY = y;
+      RelativeX = x;
+      RelativeY = y;
     }
 
     public virtual void SetSize(int width, int height)
     {
-      if (this.MinWidth > 0 && width < this.MinWidth)
-        width = this.MinWidth;
-      if (this.MaxWidth > 0 && width > this.MaxWidth)
-        width = this.MaxWidth;
-      if (this.MinHeight > 0 && height < this.MinHeight)
-        height = this.MinHeight;
-      if (this.MaxHeight > 0 && height > this.MaxHeight)
-        height = this.MaxHeight;
-      this.size.width = width;
-      this.size.height = height;
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      if (MinWidth > 0 && width < MinWidth)
+      {
+        width = MinWidth;
+      }
+
+      if (MaxWidth > 0 && width > MaxWidth)
+      {
+        width = MaxWidth;
+      }
+
+      if (MinHeight > 0 && height < MinHeight)
+      {
+        height = MinHeight;
+      }
+
+      if (MaxHeight > 0 && height > MaxHeight)
+      {
+        height = MaxHeight;
+      }
+
+      size.width = width;
+      size.height = height;
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      {
         child.OnParentResize();
+      }
     }
 
     public void SetSizeRelative(float width, float height)
     {
-      this.RelativeWidth = width;
-      this.RelativeHeight = height;
+      RelativeWidth = width;
+      RelativeHeight = height;
     }
 
     public virtual void SetActive(bool bActive)
     {
-      this._bActive = bActive;
+      _bActive = bActive;
     }
 
     public void SetAsFocused(GUIHost host)
@@ -579,33 +731,51 @@ namespace M3D.Graphics.Widgets2D
 
     public virtual void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
-      this.SetParent(parent);
-      if (this.HasFocus)
-        this.SetAsFocused(host);
-      foreach (Element2D child in (IEnumerable<Element2D>) this.ChildList)
+      SetParent(parent);
+      if (HasFocus)
+      {
+        SetAsFocused(host);
+      }
+
+      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
       {
         child.SetParent(this);
         child.InitChildren(this, host, MyButtonCallback);
       }
-      this.Refresh();
+      Refresh();
     }
 
     public void SetParent(Element2D parent)
     {
       this.parent = parent;
-      this.IParent = (IElement) parent;
-      this.SetBaseParent((IElement) parent);
+      IParent = (IElement) parent;
+      SetBaseParent((IElement) parent);
       if (parent == null)
+      {
         return;
-      if ((double) this.relative_x > 0.0)
-        this.RelativeX = this.RelativeX;
-      if ((double) this.relative_y > 0.0)
-        this.RelativeY = this.RelativeY;
-      if ((double) this.relative_width > 0.0)
-        this.RelativeWidth = this.RelativeWidth;
-      if ((double) this.relative_height <= 0.0)
+      }
+
+      if ((double)relative_x > 0.0)
+      {
+        RelativeX = RelativeX;
+      }
+
+      if ((double)relative_y > 0.0)
+      {
+        RelativeY = RelativeY;
+      }
+
+      if ((double)relative_width > 0.0)
+      {
+        RelativeWidth = RelativeWidth;
+      }
+
+      if ((double)relative_height <= 0.0)
+      {
         return;
-      this.RelativeHeight = this.RelativeHeight;
+      }
+
+      RelativeHeight = RelativeHeight;
     }
 
     [XmlIgnore]
@@ -613,7 +783,7 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.absolutelocation.x;
+        return absolutelocation.x;
       }
     }
 
@@ -622,7 +792,7 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.absolutelocation.y;
+        return absolutelocation.y;
       }
     }
 
@@ -631,11 +801,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.location.x;
+        return location.x;
       }
       set
       {
-        this.SetPosition(value, this.location.y);
+        SetPosition(value, location.y);
       }
     }
 
@@ -644,11 +814,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.location.y;
+        return location.y;
       }
       set
       {
-        this.SetPosition(this.location.x, value);
+        SetPosition(location.x, value);
       }
     }
 
@@ -657,11 +827,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.size.width;
+        return size.width;
       }
       set
       {
-        this.SetSize(value, this.size.height);
+        SetSize(value, size.height);
       }
     }
 
@@ -670,11 +840,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.size.height;
+        return size.height;
       }
       set
       {
-        this.SetSize(this.size.width, value);
+        SetSize(size.width, value);
       }
     }
 
@@ -683,11 +853,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this._bActive;
+        return _bActive;
       }
       set
       {
-        this.SetActive(value);
+        SetActive(value);
       }
     }
 
@@ -696,11 +866,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.parent;
+        return parent;
       }
       set
       {
-        this.SetParent(value);
+        SetParent(value);
       }
     }
 
@@ -709,19 +879,19 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.relativeposition;
+        return relativeposition;
       }
       set
       {
-        this.relativeposition = value;
+        relativeposition = value;
       }
     }
 
     public void ForceAbsolute()
     {
-      this.relative_width = -1f;
-      this.relative_height = -1f;
-      this.relativeposition = false;
+      relative_width = -1f;
+      relative_height = -1f;
+      relativeposition = false;
     }
 
     [XmlAttribute("relative-x")]
@@ -729,15 +899,18 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.relative_x;
+        return relative_x;
       }
       set
       {
-        this.UseRelativePositions = true;
-        this.relative_x = value;
-        if (this.Parent == null)
+        UseRelativePositions = true;
+        relative_x = value;
+        if (Parent == null)
+        {
           return;
-        this.X = this.CalculateXFromRelative();
+        }
+
+        X = CalculateXFromRelative();
       }
     }
 
@@ -746,15 +919,18 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.relative_y;
+        return relative_y;
       }
       set
       {
-        this.UseRelativePositions = true;
-        this.relative_y = value;
-        if (this.Parent == null)
+        UseRelativePositions = true;
+        relative_y = value;
+        if (Parent == null)
+        {
           return;
-        this.Y = this.CalculateYFromRelative();
+        }
+
+        Y = CalculateYFromRelative();
       }
     }
 
@@ -763,14 +939,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.relative_x_adj;
+        return relative_x_adj;
       }
       set
       {
-        this.relative_x_adj = value;
-        if (!this.UseRelativePositions || this.Parent == null)
+        relative_x_adj = value;
+        if (!UseRelativePositions || Parent == null)
+        {
           return;
-        this.X = this.CalculateXFromRelative();
+        }
+
+        X = CalculateXFromRelative();
       }
     }
 
@@ -779,14 +958,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.relative_y_adj;
+        return relative_y_adj;
       }
       set
       {
-        this.relative_y_adj = value;
-        if (!this.UseRelativePositions || this.Parent == null)
+        relative_y_adj = value;
+        if (!UseRelativePositions || Parent == null)
+        {
           return;
-        this.Y = this.CalculateYFromRelative();
+        }
+
+        Y = CalculateYFromRelative();
       }
     }
 
@@ -795,11 +977,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.auto_center_x_offset;
+        return auto_center_x_offset;
       }
       set
       {
-        this.auto_center_x_offset = value;
+        auto_center_x_offset = value;
       }
     }
 
@@ -808,11 +990,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.auto_center_y_offset;
+        return auto_center_y_offset;
       }
       set
       {
-        this.auto_center_y_offset = value;
+        auto_center_y_offset = value;
       }
     }
 
@@ -821,14 +1003,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.relative_width;
+        return relative_width;
       }
       set
       {
-        this.relative_width = value;
-        if (this.Parent == null || (double) this.relative_width == -1.0)
+        relative_width = value;
+        if (Parent == null || (double)relative_width == -1.0)
+        {
           return;
-        this.Width = this.CalculateWidthFromRelative();
+        }
+
+        Width = CalculateWidthFromRelative();
       }
     }
 
@@ -837,14 +1022,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.relative_height;
+        return relative_height;
       }
       set
       {
-        this.relative_height = value;
-        if (this.Parent == null || (double) this.relative_height == -1.0)
+        relative_height = value;
+        if (Parent == null || (double)relative_height == -1.0)
+        {
           return;
-        this.Height = this.CalculateHeightFromRelative();
+        }
+
+        Height = CalculateHeightFromRelative();
       }
     }
 
@@ -853,14 +1041,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.relative_width_adj;
+        return relative_width_adj;
       }
       set
       {
-        this.relative_width_adj = value;
-        if (this.Parent == null || (double) this.relative_width == -1.0)
+        relative_width_adj = value;
+        if (Parent == null || (double)relative_width == -1.0)
+        {
           return;
-        this.Width = this.CalculateWidthFromRelative();
+        }
+
+        Width = CalculateWidthFromRelative();
       }
     }
 
@@ -869,14 +1060,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.relative_height_adj;
+        return relative_height_adj;
       }
       set
       {
-        this.relative_height_adj = value;
-        if (this.Parent == null || (double) this.relative_height == -1.0)
+        relative_height_adj = value;
+        if (Parent == null || (double)relative_height == -1.0)
+        {
           return;
-        this.Height = this.CalculateHeightFromRelative();
+        }
+
+        Height = CalculateHeightFromRelative();
       }
     }
 
@@ -885,12 +1079,12 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.hasfocus;
+        return hasfocus;
       }
       set
       {
-        this.hasfocus = value;
-        this.OnFocusChanged();
+        hasfocus = value;
+        OnFocusChanged();
       }
     }
 
@@ -899,11 +1093,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.data;
+        return data;
       }
       set
       {
-        this.data = value;
+        data = value;
       }
     }
 
@@ -912,14 +1106,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.__MinWidth;
+        return __MinWidth;
       }
       set
       {
-        this.__MinWidth = value;
-        if (this.__MinWidth <= 0 || this.Width >= this.__MinWidth)
+        __MinWidth = value;
+        if (__MinWidth <= 0 || Width >= __MinWidth)
+        {
           return;
-        this.SetSize(this.__MinWidth, this.Height);
+        }
+
+        SetSize(__MinWidth, Height);
       }
     }
 
@@ -928,14 +1125,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.__MinHeight;
+        return __MinHeight;
       }
       set
       {
-        this.__MinHeight = value;
-        if (this.__MinHeight <= 0 || this.Height >= this.__MinHeight)
+        __MinHeight = value;
+        if (__MinHeight <= 0 || Height >= __MinHeight)
+        {
           return;
-        this.SetSize(this.Width, this.__MinHeight);
+        }
+
+        SetSize(Width, __MinHeight);
       }
     }
 
@@ -944,14 +1144,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.__MaxWidth;
+        return __MaxWidth;
       }
       set
       {
-        this.__MaxWidth = value;
-        if (this.__MaxWidth <= 0 || this.Width <= this.__MaxWidth)
+        __MaxWidth = value;
+        if (__MaxWidth <= 0 || Width <= __MaxWidth)
+        {
           return;
-        this.SetSize(this.__MaxWidth, this.Height);
+        }
+
+        SetSize(__MaxWidth, Height);
       }
     }
 
@@ -960,14 +1163,17 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.__MaxHeight;
+        return __MaxHeight;
       }
       set
       {
-        this.__MaxHeight = value;
-        if (this.__MaxHeight <= 0 || this.Height <= this.__MaxHeight)
+        __MaxHeight = value;
+        if (__MaxHeight <= 0 || Height <= __MaxHeight)
+        {
           return;
-        this.SetSize(this.Width, this.__MaxHeight);
+        }
+
+        SetSize(Width, __MaxHeight);
       }
     }
 
@@ -976,11 +1182,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.wraponnegativeX;
+        return wraponnegativeX;
       }
       set
       {
-        this.wraponnegativeX = value;
+        wraponnegativeX = value;
       }
     }
 
@@ -989,11 +1195,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.wraponnegativeY;
+        return wraponnegativeY;
       }
       set
       {
-        this.wraponnegativeY = value;
+        wraponnegativeY = value;
       }
     }
 
@@ -1002,8 +1208,8 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.wraponnegativeY = value;
-        this.wraponnegativeX = value;
+        wraponnegativeY = value;
+        wraponnegativeX = value;
       }
     }
 
@@ -1012,11 +1218,11 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.ignoremouse = value;
+        ignoremouse = value;
       }
       get
       {
-        return this.ignoremouse;
+        return ignoremouse;
       }
     }
 
@@ -1025,7 +1231,7 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.ChildList.Count > 0;
+        return ChildList.Count > 0;
       }
     }
 
@@ -1034,11 +1240,11 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.dropdownelement = value;
+        dropdownelement = value;
       }
       get
       {
-        return this.dropdownelement;
+        return dropdownelement;
       }
     }
 

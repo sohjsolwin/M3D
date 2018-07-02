@@ -27,7 +27,7 @@ namespace M3D.GUI.ManageFilament
     {
       this.mode = mode;
       this.current_spool = current_spool;
-      this.pageAfterWait = Manage3DInkMainWindow.PageID.Page0_StartupPage;
+      pageAfterWait = Manage3DInkMainWindow.PageID.Page0_StartupPage;
     }
 
     public Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode mode, Manage3DInkMainWindow.PageID pageAfterWait)

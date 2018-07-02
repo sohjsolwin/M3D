@@ -26,18 +26,21 @@ namespace M3D.Graphics.Ext3D
     {
       this.transformNode = transformNode;
       this.modelNode = modelNode;
-      this.data.name = "model";
-      this.data.ID = 0U;
+      data.name = "model";
+      data.ID = 0U;
     }
 
     public void CalculateExtents()
     {
-      if (this.modelNode == null)
+      if (modelNode == null)
+      {
         return;
-      this.modelSize = this.modelNode.CalculateMinMax(this.transformNode.GetTransformationMatrix());
-      this.OriginalModelSize = this.modelNode.CalculateMinMax();
-      this.size = Math.Max(this.modelSize.Ext.x, this.modelSize.Ext.y);
-      this.size = Math.Max(this.modelSize.Ext.z, this.size);
+      }
+
+      modelSize = modelNode.CalculateMinMax(transformNode.GetTransformationMatrix());
+      OriginalModelSize = modelNode.CalculateMinMax();
+      size = Math.Max(modelSize.Ext.x, modelSize.Ext.y);
+      size = Math.Max(modelSize.Ext.z, size);
     }
 
     public ModelSize OriginalModelSize { get; private set; }
@@ -49,7 +52,7 @@ namespace M3D.Graphics.Ext3D
 
       public override string ToString()
       {
-        return this.name;
+        return name;
       }
     }
   }

@@ -35,184 +35,189 @@ namespace M3D.Spooler
 
     public BacklashSettingsDialog(float initial_x, float initial_y, float initial_speed, float default_speed, float max_speed)
     {
-      this.InitializeComponent();
-      this.DEFAULT_SPEED = default_speed;
-      this.MAX_SPEED = max_speed;
-      this.textBoxXBacklash.Text = initial_x.ToString();
-      this.textBoxYBacklash.Text = initial_y.ToString();
-      this.textBoxBacklashSpeed.Text = initial_speed.ToString();
+      InitializeComponent();
+      DEFAULT_SPEED = default_speed;
+      MAX_SPEED = max_speed;
+      textBoxXBacklash.Text = initial_x.ToString();
+      textBoxYBacklash.Text = initial_y.ToString();
+      textBoxBacklashSpeed.Text = initial_speed.ToString();
     }
 
     private void buttonOK_Click(object sender, EventArgs e)
     {
-      if (!float.TryParse(this.textBoxXBacklash.Text, out this.X_BACKLASH))
+      if (!float.TryParse(textBoxXBacklash.Text, out X_BACKLASH))
       {
-        int num1 = (int) MessageBox.Show("Sorry, but the X backlash is not a number. Please try again.");
+        var num1 = (int) MessageBox.Show("Sorry, but the X backlash is not a number. Please try again.");
       }
-      else if ((double) this.X_BACKLASH < 0.0)
+      else if ((double)X_BACKLASH < 0.0)
       {
-        int num2 = (int) MessageBox.Show("The X backlash must be a positive number. Please try again.");
+        var num2 = (int) MessageBox.Show("The X backlash must be a positive number. Please try again.");
       }
-      else if (!float.TryParse(this.textBoxYBacklash.Text, out this.Y_BACKLASH))
+      else if (!float.TryParse(textBoxYBacklash.Text, out Y_BACKLASH))
       {
-        int num3 = (int) MessageBox.Show("Sorry, but the Y backlash is not a number. Please try again.");
+        var num3 = (int) MessageBox.Show("Sorry, but the Y backlash is not a number. Please try again.");
       }
-      else if ((double) this.Y_BACKLASH < 0.0)
+      else if ((double)Y_BACKLASH < 0.0)
       {
-        int num4 = (int) MessageBox.Show("The Y backlash must be a positive number. Please try again.");
+        var num4 = (int) MessageBox.Show("The Y backlash must be a positive number. Please try again.");
       }
-      else if (!float.TryParse(this.textBoxBacklashSpeed.Text, out this.BACKLASH_SPEED))
+      else if (!float.TryParse(textBoxBacklashSpeed.Text, out BACKLASH_SPEED))
       {
-        int num5 = (int) MessageBox.Show("Sorry, but the backlash speed is not a number. Please try again.");
+        var num5 = (int) MessageBox.Show("Sorry, but the backlash speed is not a number. Please try again.");
       }
       else
       {
-        if ((double) this.BACKLASH_SPEED > (double) this.MAX_SPEED)
+        if ((double)BACKLASH_SPEED > (double)MAX_SPEED)
         {
           if (MessageBox.Show("The backlash speed has been set to a value faster than the max speed for this printer and may not be reached. Do you want to continue?", "M3D Spooler", MessageBoxButtons.YesNo) == DialogResult.No)
+          {
             return;
+          }
         }
-        else if ((double) this.BACKLASH_SPEED < 100.0)
+        else if ((double)BACKLASH_SPEED < 100.0)
         {
-          int num6 = (int) MessageBox.Show("The backlash speed must be a greater than 100. Please try again.");
+          var num6 = (int) MessageBox.Show("The backlash speed must be a greater than 100. Please try again.");
           return;
         }
-        this.ok = true;
-        this.Close();
+        ok = true;
+        Close();
       }
     }
 
     private void buttonCancel_Click(object sender, EventArgs e)
     {
-      this.ok = false;
-      this.Close();
+      ok = false;
+      Close();
     }
 
     private void defaultSpeedbutton_Click(object sender, EventArgs e)
     {
-      this.textBoxBacklashSpeed.Text = this.DEFAULT_SPEED.ToString();
+      textBoxBacklashSpeed.Text = DEFAULT_SPEED.ToString();
     }
 
     private void MaxSpeedbutton_Click(object sender, EventArgs e)
     {
-      this.textBoxBacklashSpeed.Text = this.MAX_SPEED.ToString();
+      textBoxBacklashSpeed.Text = MAX_SPEED.ToString();
     }
 
     protected override void Dispose(bool disposing)
     {
-      if (disposing && this.components != null)
-        this.components.Dispose();
+      if (disposing && components != null)
+      {
+        components.Dispose();
+      }
+
       base.Dispose(disposing);
     }
 
     private void InitializeComponent()
     {
-      ComponentResourceManager componentResourceManager = new ComponentResourceManager(typeof (BacklashSettingsDialog));
-      this.buttonCancel = new Button();
-      this.buttonOK = new Button();
-      this.label2 = new Label();
-      this.textBoxYBacklash = new TextBox();
-      this.label1 = new Label();
-      this.textBoxXBacklash = new TextBox();
-      this.groupBox1 = new GroupBox();
-      this.defaultSpeedbutton = new Button();
-      this.label4 = new Label();
-      this.textBoxBacklashSpeed = new TextBox();
-      this.label3 = new Label();
-      this.MaxSpeedbutton = new Button();
-      this.groupBox1.SuspendLayout();
-      this.SuspendLayout();
-      this.buttonCancel.Location = new Point(209, 212);
-      this.buttonCancel.Name = "buttonCancel";
-      this.buttonCancel.Size = new Size(121, 28);
-      this.buttonCancel.TabIndex = 11;
-      this.buttonCancel.Text = "Cancel";
-      this.buttonCancel.UseVisualStyleBackColor = true;
-      this.buttonCancel.Click += new EventHandler(this.buttonCancel_Click);
-      this.buttonOK.Location = new Point(67, 212);
-      this.buttonOK.Name = "buttonOK";
-      this.buttonOK.Size = new Size(121, 28);
-      this.buttonOK.TabIndex = 10;
-      this.buttonOK.Text = "OK";
-      this.buttonOK.UseVisualStyleBackColor = true;
-      this.buttonOK.Click += new EventHandler(this.buttonOK_Click);
-      this.label2.AutoSize = true;
-      this.label2.Location = new Point(17, 64);
-      this.label2.Name = "label2";
-      this.label2.Size = new Size(83, 12);
-      this.label2.TabIndex = 9;
-      this.label2.Text = "Y_BACKLASH";
-      this.textBoxYBacklash.Location = new Point(132, 61);
-      this.textBoxYBacklash.Name = "textBoxYBacklash";
-      this.textBoxYBacklash.Size = new Size(230, 21);
-      this.textBoxYBacklash.TabIndex = 8;
-      this.label1.AutoSize = true;
-      this.label1.Location = new Point(17, 30);
-      this.label1.Name = "label1";
-      this.label1.Size = new Size(83, 12);
-      this.label1.TabIndex = 7;
-      this.label1.Text = "X_BACKLASH";
-      this.textBoxXBacklash.Location = new Point(132, 27);
-      this.textBoxXBacklash.Name = "textBoxXBacklash";
-      this.textBoxXBacklash.Size = new Size(230, 21);
-      this.textBoxXBacklash.TabIndex = 6;
-      this.groupBox1.Controls.Add((Control) this.MaxSpeedbutton);
-      this.groupBox1.Controls.Add((Control) this.defaultSpeedbutton);
-      this.groupBox1.Controls.Add((Control) this.label4);
-      this.groupBox1.Controls.Add((Control) this.textBoxBacklashSpeed);
-      this.groupBox1.Controls.Add((Control) this.label3);
-      this.groupBox1.Controls.Add((Control) this.textBoxXBacklash);
-      this.groupBox1.Controls.Add((Control) this.label1);
-      this.groupBox1.Controls.Add((Control) this.textBoxYBacklash);
-      this.groupBox1.Controls.Add((Control) this.label2);
-      this.groupBox1.Location = new Point(14, 11);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new Size(368, 190);
-      this.groupBox1.TabIndex = 12;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Printer Backlash Settings";
-      this.defaultSpeedbutton.Location = new Point(211, 91);
-      this.defaultSpeedbutton.Name = "defaultSpeedbutton";
-      this.defaultSpeedbutton.Size = new Size(73, 28);
-      this.defaultSpeedbutton.TabIndex = 13;
-      this.defaultSpeedbutton.Text = "Default";
-      this.defaultSpeedbutton.UseVisualStyleBackColor = true;
-      this.defaultSpeedbutton.Click += new EventHandler(this.defaultSpeedbutton_Click);
-      this.label4.Location = new Point(18, 132);
-      this.label4.Name = "label4";
-      this.label4.Size = new Size(344, 46);
-      this.label4.TabIndex = 13;
-      this.label4.Text = "Note: Backlash speeds are not guaranteed and are further limitted by the hardware and settings built into the firmware.";
-      this.textBoxBacklashSpeed.Location = new Point(131, 94);
-      this.textBoxBacklashSpeed.Name = "textBoxBacklashSpeed";
-      this.textBoxBacklashSpeed.Size = new Size(74, 21);
-      this.textBoxBacklashSpeed.TabIndex = 10;
-      this.label3.AutoSize = true;
-      this.label3.Location = new Point(16, 97);
-      this.label3.Name = "label3";
-      this.label3.Size = new Size(97, 12);
-      this.label3.TabIndex = 11;
-      this.label3.Text = "Backlash Speed";
-      this.MaxSpeedbutton.Location = new Point(289, 91);
-      this.MaxSpeedbutton.Name = "MaxSpeedbutton";
-      this.MaxSpeedbutton.Size = new Size(73, 28);
-      this.MaxSpeedbutton.TabIndex = 14;
-      this.MaxSpeedbutton.Text = "Max";
-      this.MaxSpeedbutton.UseVisualStyleBackColor = true;
-      this.MaxSpeedbutton.Click += new EventHandler(this.MaxSpeedbutton_Click);
-      this.AutoScaleDimensions = new SizeF(7f, 12f);
-      this.AutoScaleMode = AutoScaleMode.Font;
-      this.ClientSize = new Size(394, 246);
-      this.ControlBox = false;
-      this.Controls.Add((Control) this.groupBox1);
-      this.Controls.Add((Control) this.buttonCancel);
-      this.Controls.Add((Control) this.buttonOK);
-      this.Icon = (Icon) componentResourceManager.GetObject("$this.Icon");
-      this.Name = "BacklashSettings";
-      this.Text = "Preprocessor Settings";
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
-      this.ResumeLayout(false);
+      var componentResourceManager = new ComponentResourceManager(typeof (BacklashSettingsDialog));
+      buttonCancel = new Button();
+      buttonOK = new Button();
+      label2 = new Label();
+      textBoxYBacklash = new TextBox();
+      label1 = new Label();
+      textBoxXBacklash = new TextBox();
+      groupBox1 = new GroupBox();
+      defaultSpeedbutton = new Button();
+      label4 = new Label();
+      textBoxBacklashSpeed = new TextBox();
+      label3 = new Label();
+      MaxSpeedbutton = new Button();
+      groupBox1.SuspendLayout();
+      SuspendLayout();
+      buttonCancel.Location = new Point(209, 212);
+      buttonCancel.Name = "buttonCancel";
+      buttonCancel.Size = new Size(121, 28);
+      buttonCancel.TabIndex = 11;
+      buttonCancel.Text = "Cancel";
+      buttonCancel.UseVisualStyleBackColor = true;
+      buttonCancel.Click += new EventHandler(buttonCancel_Click);
+      buttonOK.Location = new Point(67, 212);
+      buttonOK.Name = "buttonOK";
+      buttonOK.Size = new Size(121, 28);
+      buttonOK.TabIndex = 10;
+      buttonOK.Text = "OK";
+      buttonOK.UseVisualStyleBackColor = true;
+      buttonOK.Click += new EventHandler(buttonOK_Click);
+      label2.AutoSize = true;
+      label2.Location = new Point(17, 64);
+      label2.Name = "label2";
+      label2.Size = new Size(83, 12);
+      label2.TabIndex = 9;
+      label2.Text = "Y_BACKLASH";
+      textBoxYBacklash.Location = new Point(132, 61);
+      textBoxYBacklash.Name = "textBoxYBacklash";
+      textBoxYBacklash.Size = new Size(230, 21);
+      textBoxYBacklash.TabIndex = 8;
+      label1.AutoSize = true;
+      label1.Location = new Point(17, 30);
+      label1.Name = "label1";
+      label1.Size = new Size(83, 12);
+      label1.TabIndex = 7;
+      label1.Text = "X_BACKLASH";
+      textBoxXBacklash.Location = new Point(132, 27);
+      textBoxXBacklash.Name = "textBoxXBacklash";
+      textBoxXBacklash.Size = new Size(230, 21);
+      textBoxXBacklash.TabIndex = 6;
+      groupBox1.Controls.Add((Control)MaxSpeedbutton);
+      groupBox1.Controls.Add((Control)defaultSpeedbutton);
+      groupBox1.Controls.Add((Control)label4);
+      groupBox1.Controls.Add((Control)textBoxBacklashSpeed);
+      groupBox1.Controls.Add((Control)label3);
+      groupBox1.Controls.Add((Control)textBoxXBacklash);
+      groupBox1.Controls.Add((Control)label1);
+      groupBox1.Controls.Add((Control)textBoxYBacklash);
+      groupBox1.Controls.Add((Control)label2);
+      groupBox1.Location = new Point(14, 11);
+      groupBox1.Name = "groupBox1";
+      groupBox1.Size = new Size(368, 190);
+      groupBox1.TabIndex = 12;
+      groupBox1.TabStop = false;
+      groupBox1.Text = "Printer Backlash Settings";
+      defaultSpeedbutton.Location = new Point(211, 91);
+      defaultSpeedbutton.Name = "defaultSpeedbutton";
+      defaultSpeedbutton.Size = new Size(73, 28);
+      defaultSpeedbutton.TabIndex = 13;
+      defaultSpeedbutton.Text = "Default";
+      defaultSpeedbutton.UseVisualStyleBackColor = true;
+      defaultSpeedbutton.Click += new EventHandler(defaultSpeedbutton_Click);
+      label4.Location = new Point(18, 132);
+      label4.Name = "label4";
+      label4.Size = new Size(344, 46);
+      label4.TabIndex = 13;
+      label4.Text = "Note: Backlash speeds are not guaranteed and are further limitted by the hardware and settings built into the firmware.";
+      textBoxBacklashSpeed.Location = new Point(131, 94);
+      textBoxBacklashSpeed.Name = "textBoxBacklashSpeed";
+      textBoxBacklashSpeed.Size = new Size(74, 21);
+      textBoxBacklashSpeed.TabIndex = 10;
+      label3.AutoSize = true;
+      label3.Location = new Point(16, 97);
+      label3.Name = "label3";
+      label3.Size = new Size(97, 12);
+      label3.TabIndex = 11;
+      label3.Text = "Backlash Speed";
+      MaxSpeedbutton.Location = new Point(289, 91);
+      MaxSpeedbutton.Name = "MaxSpeedbutton";
+      MaxSpeedbutton.Size = new Size(73, 28);
+      MaxSpeedbutton.TabIndex = 14;
+      MaxSpeedbutton.Text = "Max";
+      MaxSpeedbutton.UseVisualStyleBackColor = true;
+      MaxSpeedbutton.Click += new EventHandler(MaxSpeedbutton_Click);
+      AutoScaleDimensions = new SizeF(7f, 12f);
+      AutoScaleMode = AutoScaleMode.Font;
+      ClientSize = new Size(394, 246);
+      ControlBox = false;
+      Controls.Add((Control)groupBox1);
+      Controls.Add((Control)buttonCancel);
+      Controls.Add((Control)buttonOK);
+      Icon = (Icon) componentResourceManager.GetObject("$this.Icon");
+      Name = "BacklashSettings";
+      Text = "Preprocessor Settings";
+      groupBox1.ResumeLayout(false);
+      groupBox1.PerformLayout();
+      ResumeLayout(false);
     }
   }
 }

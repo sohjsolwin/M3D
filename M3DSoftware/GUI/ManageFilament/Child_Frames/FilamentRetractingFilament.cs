@@ -25,44 +25,50 @@ namespace M3D.GUI.ManageFilament.Child_Frames
     public override void MyButtonCallback(ButtonWidget button)
     {
       if (button.ID != 9)
+      {
         return;
-      this.MainWindow.ResetToStartup();
+      }
+
+      MainWindow.ResetToStartup();
     }
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("Retracting Current 3D Ink", "We're retracting your current 3D Ink.\n\nPull on the 3D Ink until it's released.", true, false, true, false, false, false);
-      this.progressBar = (ProgressBarWidget) this.FindChildElement(4);
+      CreateManageFilamentFrame("Retracting Current 3D Ink", "We're retracting your current 3D Ink.\n\nPull on the 3D Ink until it's released.", true, false, true, false, false, false);
+      progressBar = (ProgressBarWidget)FindChildElement(4);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
     {
       base.OnActivate(details);
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
       if (selectedPrinter == null)
+      {
         return;
-      int num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(this.DoNextRetractionStep), (object) new FilamentRetractingFilament.RetractionProcessData(this.progressBar, selectedPrinter, 0), "G90", "G92");
+      }
+
+      var num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(DoNextRetractionStep), (object) new FilamentRetractingFilament.RetractionProcessData(progressBar, selectedPrinter, 0), "G90", "G92");
     }
 
     private void DoNextRetractionStep(IAsyncCallResult ar)
     {
       if (ar.CallResult != CommandResult.Success)
       {
-        this.MainWindow.ResetToStartup();
+        MainWindow.ResetToStartup();
       }
       else
       {
-        FilamentRetractingFilament.RetractionProcessData asyncState = ar.AsyncState as FilamentRetractingFilament.RetractionProcessData;
-        float num1 = (float) asyncState.amount_retracted / 80f;
+        var asyncState = ar.AsyncState as FilamentRetractingFilament.RetractionProcessData;
+        var num1 = (float) asyncState.amount_retracted / 80f;
         asyncState.progressBar.PercentComplete = num1;
         if ((double) asyncState.amount_retracted == 80.0)
         {
-          this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page3_HasRetractedFilament, this.CurrentDetails);
+          MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page3_HasRetractedFilament, CurrentDetails);
         }
         else
         {
           asyncState.amount_retracted += 10;
-          int num2 = (int) asyncState.printer.SendManualGCode(new AsyncCallback(this.DoNextRetractionStep), (object) asyncState, PrinterCompatibleString.Format("G0 F450 E-{0}", (object) asyncState.amount_retracted));
+          var num2 = (int) asyncState.printer.SendManualGCode(new AsyncCallback(DoNextRetractionStep), (object) asyncState, PrinterCompatibleString.Format("G0 F450 E-{0}", (object) asyncState.amount_retracted));
         }
       }
     }

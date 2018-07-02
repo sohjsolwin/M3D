@@ -25,7 +25,7 @@ namespace M3D.Spooler.Forms
 
     public AdvancedStatistics()
     {
-      this.InitializeComponent();
+      InitializeComponent();
     }
 
     public void ClearList()
@@ -38,22 +38,28 @@ namespace M3D.Spooler.Forms
       {
         if (!(connectedPrinter.serial_number == PrinterSerialNumber.Undefined) && connectedPrinter != null)
         {
-          ListViewItem listViewItem = this.FindItem(this.listViewPrinterInfo, connectedPrinter.serial_number.ToString());
+          ListViewItem listViewItem = FindItem(listViewPrinterInfo, connectedPrinter.serial_number.ToString());
           if (listViewItem == null)
           {
-            listViewItem = this.listViewPrinterInfo.Items.Add(connectedPrinter.serial_number.ToString());
+            listViewItem = listViewPrinterInfo.Items.Add(connectedPrinter.serial_number.ToString());
             listViewItem.SubItems.Add("?");
             listViewItem.SubItems.Add("?");
             listViewItem.SubItems.Add("?");
             listViewItem.SubItems.Add("?");
             listViewItem.SubItems.Add("?");
           }
-          string str1 = connectedPrinter.Status.ToString();
+          var str1 = connectedPrinter.Status.ToString();
           if (listViewItem.SubItems[1].Text != str1)
+          {
             listViewItem.SubItems[1].Text = str1;
-          string str2 = (double) connectedPrinter.extruder.Temperature != -1.0 ? ((double) connectedPrinter.extruder.Temperature >= 1.0 ? connectedPrinter.extruder.Temperature.ToString() : "OFF") : "ON";
+          }
+
+          var str2 = (double) connectedPrinter.extruder.Temperature != -1.0 ? ((double) connectedPrinter.extruder.Temperature >= 1.0 ? connectedPrinter.extruder.Temperature.ToString() : "OFF") : "ON";
           if (str2 != listViewItem.SubItems[2].Text)
+          {
             listViewItem.SubItems[2].Text = str2;
+          }
+
           if (connectedPrinter.statistics.isMetering)
           {
             listViewItem.SubItems[3].Text = connectedPrinter.statistics.AvgCMDsBeforeRS.ToString();
@@ -72,71 +78,76 @@ namespace M3D.Spooler.Forms
 
     private ListViewItem FindItem(ListView view, string text)
     {
-      for (int index = 0; index < view.Items.Count; ++index)
+      for (var index = 0; index < view.Items.Count; ++index)
       {
         if (view.Items[index].Text == text)
+        {
           return view.Items[index];
+        }
       }
       return (ListViewItem) null;
     }
 
     protected override void Dispose(bool disposing)
     {
-      if (disposing && this.components != null)
-        this.components.Dispose();
+      if (disposing && components != null)
+      {
+        components.Dispose();
+      }
+
       base.Dispose(disposing);
     }
 
     private void InitializeComponent()
     {
-      this.listViewPrinterInfo = new ListView();
-      this.columnHeader0 = new ColumnHeader();
-      this.columnHeader1 = new ColumnHeader();
-      this.columnHeader2 = new ColumnHeader();
-      this.columnHeader3 = new ColumnHeader();
-      this.columnHeader4 = new ColumnHeader();
-      this.columnHeader5 = new ColumnHeader();
-      this.SuspendLayout();
-      this.listViewPrinterInfo.Activation = ItemActivation.OneClick;
-      this.listViewPrinterInfo.Columns.AddRange(new ColumnHeader[6]
+      listViewPrinterInfo = new ListView();
+      columnHeader0 = new ColumnHeader();
+      columnHeader1 = new ColumnHeader();
+      columnHeader2 = new ColumnHeader();
+      columnHeader3 = new ColumnHeader();
+      columnHeader4 = new ColumnHeader();
+      columnHeader5 = new ColumnHeader();
+      SuspendLayout();
+      listViewPrinterInfo.Activation = ItemActivation.OneClick;
+      listViewPrinterInfo.Columns.AddRange(new ColumnHeader[6]
       {
-        this.columnHeader0,
-        this.columnHeader1,
-        this.columnHeader2,
-        this.columnHeader3,
-        this.columnHeader4,
-        this.columnHeader5
+        columnHeader0,
+        columnHeader1,
+        columnHeader2,
+        columnHeader3,
+        columnHeader4,
+        columnHeader5
       });
-      this.listViewPrinterInfo.FullRowSelect = true;
-      this.listViewPrinterInfo.HideSelection = false;
-      this.listViewPrinterInfo.LabelWrap = false;
-      this.listViewPrinterInfo.Location = new Point(12, 14);
-      this.listViewPrinterInfo.MultiSelect = false;
-      this.listViewPrinterInfo.Name = "listViewPrinterInfo";
-      this.listViewPrinterInfo.Size = new Size(855, 120);
-      this.listViewPrinterInfo.TabIndex = 50;
-      this.listViewPrinterInfo.UseCompatibleStateImageBehavior = false;
-      this.listViewPrinterInfo.View = View.Details;
-      this.columnHeader0.Text = "Serial Number";
-      this.columnHeader0.Width = 140;
-      this.columnHeader1.Text = "Status";
-      this.columnHeader1.Width = 151;
-      this.columnHeader2.Text = "Temp. (C)";
-      this.columnHeader2.Width = 82;
-      this.columnHeader3.Text = "Avg Cmds Before RS";
-      this.columnHeader3.Width = 145;
-      this.columnHeader4.Text = "Avg RS Delay";
-      this.columnHeader4.Width = 100;
-      this.columnHeader5.Text = "RS Delay SDeviation";
-      this.columnHeader5.Width = 140;
-      this.AutoScaleDimensions = new SizeF(7f, 12f);
-      this.AutoScaleMode = AutoScaleMode.Font;
-      this.ClientSize = new Size(879, 146);
-      this.ControlBox = false;
-      this.Controls.Add((Control) this.listViewPrinterInfo);
-      this.Name = nameof (AdvancedStatistics);
-      this.Text = nameof (AdvancedStatistics);
-      this.ResumeLayout(false);
+      listViewPrinterInfo.FullRowSelect = true;
+      listViewPrinterInfo.HideSelection = false;
+      listViewPrinterInfo.LabelWrap = false;
+      listViewPrinterInfo.Location = new Point(12, 14);
+      listViewPrinterInfo.MultiSelect = false;
+      listViewPrinterInfo.Name = "listViewPrinterInfo";
+      listViewPrinterInfo.Size = new Size(855, 120);
+      listViewPrinterInfo.TabIndex = 50;
+      listViewPrinterInfo.UseCompatibleStateImageBehavior = false;
+      listViewPrinterInfo.View = View.Details;
+      columnHeader0.Text = "Serial Number";
+      columnHeader0.Width = 140;
+      columnHeader1.Text = "Status";
+      columnHeader1.Width = 151;
+      columnHeader2.Text = "Temp. (C)";
+      columnHeader2.Width = 82;
+      columnHeader3.Text = "Avg Cmds Before RS";
+      columnHeader3.Width = 145;
+      columnHeader4.Text = "Avg RS Delay";
+      columnHeader4.Width = 100;
+      columnHeader5.Text = "RS Delay SDeviation";
+      columnHeader5.Width = 140;
+      AutoScaleDimensions = new SizeF(7f, 12f);
+      AutoScaleMode = AutoScaleMode.Font;
+      ClientSize = new Size(879, 146);
+      ControlBox = false;
+      Controls.Add((Control)listViewPrinterInfo);
+      Name = nameof (AdvancedStatistics);
+      Text = nameof (AdvancedStatistics);
+      ResumeLayout(false);
     }
   }
 }

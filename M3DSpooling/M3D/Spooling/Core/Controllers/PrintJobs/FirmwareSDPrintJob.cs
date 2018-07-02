@@ -27,71 +27,77 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     public FirmwareSDPrintJob(JobParams jobParams, string user, InternalPrinterProfile printerProfile)
       : base(jobParams, user, printerProfile)
     {
-      this.m_oswRefreshTimer = new Stopwatch();
-      this.PreviewImageFileName = jobParams.preview_image_file_name;
+      m_oswRefreshTimer = new Stopwatch();
+      PreviewImageFileName = jobParams.preview_image_file_name;
     }
 
     public override JobCreateResult Create(PrinterInfo printerInfo)
     {
       try
       {
-        this.m_sGCodeFileOnSDCard = this.Details.jobParams.gcodefile;
+        m_sGCodeFileOnSDCard = Details.jobParams.gcodefile;
       }
       catch (Exception ex)
       {
         return new JobCreateResult((AbstractJob) this, ProcessReturn.FAILURE, (List<MessageType>) null);
       }
-      FilamentSpool.TypeEnum filamentTypeFromName = FirmwareSDPrintJob.GetFilamentTypeFromName(this.Details.jobParams.gcodefile);
+      FilamentSpool.TypeEnum filamentTypeFromName = FirmwareSDPrintJob.GetFilamentTypeFromName(Details.jobParams.gcodefile);
       switch (filamentTypeFromName)
       {
         case FilamentSpool.TypeEnum.NoFilament:
         case FilamentSpool.TypeEnum.OtherOrUnknown:
           return new JobCreateResult((AbstractJob) this, ProcessReturn.SUCCESS, (List<MessageType>) null);
         default:
-          if (FilamentProfile.CreateFilamentProfile(printerInfo.filament_info, (PrinterProfile) this.MyPrinterProfile).Type != filamentTypeFromName)
+          if (FilamentProfile.CreateFilamentProfile(printerInfo.filament_info, (PrinterProfile)MyPrinterProfile).Type != filamentTypeFromName)
+          {
             return new JobCreateResult((AbstractJob) null, ProcessReturn.FAILURE_FILAMENT_MISMATCH, (List<MessageType>) null);
+          }
+
           goto case FilamentSpool.TypeEnum.NoFilament;
       }
     }
 
     public override void Update(PrinterInfo printerInfo)
     {
-      if (this.m_lSDFileSize > 0L || this.JobBeginTimer.ElapsedMilliseconds > 5000L && printerInfo.IsIdle)
-        this.m_bDone.Value = !printerInfo.accessories.SDCardStatus.IsPrintingFromSD;
-      this.m_lSDFilePos = printerInfo.accessories.SDCardStatus.SDFilePosition;
-      this.m_lSDFileSize = printerInfo.accessories.SDCardStatus.SDFileLength;
+      if (m_lSDFileSize > 0L || JobBeginTimer.ElapsedMilliseconds > 5000L && printerInfo.IsIdle)
+      {
+        m_bDone.Value = !printerInfo.accessories.SDCardStatus.IsPrintingFromSD;
+      }
+
+      m_lSDFilePos = printerInfo.accessories.SDCardStatus.SDFilePosition;
+      m_lSDFileSize = printerInfo.accessories.SDCardStatus.SDFileLength;
     }
 
     public override bool Start(out List<string> start_gcode)
     {
       start_gcode = new List<string>()
       {
-        string.Format("M32 {0}", (object) this.m_sGCodeFileOnSDCard)
+        string.Format("M32 {0}", (object) m_sGCodeFileOnSDCard)
       };
-      this.ConnectToRunningSDPrint();
+      ConnectToRunningSDPrint();
       return true;
     }
 
     public void ConnectToRunningSDPrint()
     {
-      this.m_oswRefreshTimer.Start();
-      this.JobBeginTimer.Stop();
-      this.JobBeginTimer.Reset();
-      this.Status = JobStatus.Printing;
-      this.m_lSDFilePos = 0L;
-      this.m_lSDFileSize = 0L;
+      m_oswRefreshTimer.Start();
+      JobBeginTimer.Stop();
+      JobBeginTimer.Reset();
+      Status = JobStatus.Printing;
+      m_lSDFilePos = 0L;
+      m_lSDFileSize = 0L;
     }
 
     public override bool Pause(out List<string> pause_gcode, FilamentSpool spool)
     {
-      this.Status = JobStatus.Paused;
+      Status = JobStatus.Paused;
       pause_gcode = new List<string>() { "M25" };
       return true;
     }
 
     public override JobController.Result Resume(out List<string> resume_gcode, FilamentSpool spool)
     {
-      this.Status = JobStatus.Printing;
+      Status = JobStatus.Printing;
       resume_gcode = new List<string>() { "M24" };
       return JobController.Result.Success;
     }
@@ -102,10 +108,13 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public override GCode GetNextCommand()
     {
-      this.OnGetNextCommand();
-      if (this.Status == JobStatus.Paused || this.m_oswRefreshTimer.ElapsedMilliseconds <= 1000L)
+      OnGetNextCommand();
+      if (Status == JobStatus.Paused || m_oswRefreshTimer.ElapsedMilliseconds <= 1000L)
+      {
         return (GCode) null;
-      this.m_oswRefreshTimer.Restart();
+      }
+
+      m_oswRefreshTimer.Restart();
       return FirmwareSDPrintJob.M27;
     }
 
@@ -121,7 +130,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return this.m_bDone.Value;
+        return m_bDone.Value;
       }
     }
 
@@ -137,9 +146,12 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        if (this.m_lSDFileSize <= 0L)
+        if (m_lSDFileSize <= 0L)
+        {
           return 0.0f;
-        return (float) this.m_lSDFilePos / (float) this.m_lSDFileSize;
+        }
+
+        return (float)m_lSDFilePos / (float)m_lSDFileSize;
       }
     }
 
@@ -161,10 +173,12 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public static FilamentSpool.TypeEnum GetFilamentTypeFromName(string gcodefile)
     {
-      string extension = Path.GetExtension(gcodefile);
-      FilamentSpool.TypeEnum result;
-      if (!string.IsNullOrEmpty(extension) && 3 < extension.Length && Enum.TryParse<FilamentSpool.TypeEnum>(extension.Substring(1), true, out result))
+      var extension = Path.GetExtension(gcodefile);
+      if (!string.IsNullOrEmpty(extension) && 3 < extension.Length && Enum.TryParse<FilamentSpool.TypeEnum>(extension.Substring(1), true, out FilamentSpool.TypeEnum result))
+      {
         return result;
+      }
+
       return FilamentSpool.TypeEnum.NoFilament;
     }
   }

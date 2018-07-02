@@ -30,64 +30,88 @@ namespace M3D.GUI.ManageFilament.Child_Frames
     public override void MyButtonCallback(ButtonWidget button)
     {
       if (button.ID != 9)
+      {
         return;
-      this.MainWindow.ResetToStartup();
+      }
+
+      MainWindow.ResetToStartup();
     }
 
     public override void Init()
     {
-      this.CreateManageFilamentFrame("Warming up", "Please wait while the nozzle is heated.\nBe careful. The nozzle may be very hot.", true, false, true, false, false, false);
-      this.progressBar = (ProgressBarWidget) this.FindChildElement(4);
+      CreateManageFilamentFrame("Warming up", "Please wait while the nozzle is heated.\nBe careful. The nozzle may be very hot.", true, false, true, false, false, false);
+      progressBar = (ProgressBarWidget)FindChildElement(4);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
     {
       base.OnActivate(details);
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
       if (selectedPrinter == null)
+      {
         return;
-      if (this.CurrentDetails.current_spool == (FilamentSpool) null)
-        this.MainWindow.ResetToStartup();
+      }
+
+      if (CurrentDetails.current_spool == (FilamentSpool) null)
+      {
+        MainWindow.ResetToStartup();
+      }
       else if (!selectedPrinter.Info.extruder.Z_Valid)
       {
-        this.messagebox.AddMessageToQueue("Sorry. The extruder can't move to a safe position for heating because the Z location has not be calibrated.", PopupMessageBox.MessageBoxButtons.OK);
-        this.MainWindow.ResetToStartup();
+        messagebox.AddMessageToQueue("Sorry. The extruder can't move to a safe position for heating because the Z location has not be calibrated.", PopupMessageBox.MessageBoxButtons.OK);
+        MainWindow.ResetToStartup();
       }
       else
       {
-        FilamentConstants.ColorsEnum colors = (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), this.CurrentDetails.current_spool.filament_color_code);
-        this.MainWindow.TurnOnHeater(new M3D.Spooling.Client.AsyncCallback(this.MainWindow.HeaterStartedSuccess), (object) selectedPrinter, this.settingsManager.GetFilamentTemperature(this.CurrentDetails.current_spool.filament_type, colors), this.CurrentDetails.current_spool.filament_type);
+        var colors = (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), CurrentDetails.current_spool.filament_color_code);
+        MainWindow.TurnOnHeater(new M3D.Spooling.Client.AsyncCallback(MainWindow.HeaterStartedSuccess), (object) selectedPrinter, settingsManager.GetFilamentTemperature(CurrentDetails.current_spool.filament_type, colors), CurrentDetails.current_spool.filament_type);
       }
     }
 
     public override void OnUpdate()
     {
-      if (!this.Visible)
+      if (!Visible)
+      {
         return;
+      }
+
       base.OnUpdate();
-      PrinterObject selectedPrinter = this.MainWindow.GetSelectedPrinter();
+      PrinterObject selectedPrinter = MainWindow.GetSelectedPrinter();
       if (selectedPrinter == null)
+      {
         return;
-      int targetTemperature = this.MainWindow.TargetTemperature;
+      }
+
+      var targetTemperature = MainWindow.TargetTemperature;
       if ((double) selectedPrinter.Info.extruder.Temperature < 50.0)
       {
-        this.progressBar.PercentComplete = 0.0f;
+        progressBar.PercentComplete = 0.0f;
       }
       else
       {
-        if (this.progressBar != null)
+        if (progressBar != null)
         {
-          double num = (double) selectedPrinter.Info.extruder.Temperature / (double) targetTemperature;
+          var num = (double) selectedPrinter.Info.extruder.Temperature / (double) targetTemperature;
           if (num > 1.0)
+          {
             num = 1.0;
-          this.progressBar.PercentComplete = (float) (Math.Exp((num * 100.0 + 23.1809997558594) / 24.2569999694824) / 166.0);
+          }
+
+          progressBar.PercentComplete = (float) (Math.Exp((num * 100.0 + 23.1809997558594) / 24.2569999694824) / 166.0);
         }
         if ((double) selectedPrinter.Info.extruder.Temperature <= (double) (targetTemperature - 10) || (double) selectedPrinter.Info.extruder.Temperature >= (double) (targetTemperature + 10) || selectedPrinter.WaitingForCommandToComplete || selectedPrinter.Info.Status != PrinterStatus.Firmware_Idle && selectedPrinter.Info.Status != PrinterStatus.Firmware_PrintingPaused)
+        {
           return;
-        if (this.CurrentDetails.mode == Manage3DInkMainWindow.Mode.RemoveFilament)
-          this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page10_PrimingNozzle, this.CurrentDetails);
+        }
+
+        if (CurrentDetails.mode == Manage3DInkMainWindow.Mode.RemoveFilament)
+        {
+          MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page10_PrimingNozzle, CurrentDetails);
+        }
         else
-          this.MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page4_InsertNewFilament, this.CurrentDetails);
+        {
+          MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page4_InsertNewFilament, CurrentDetails);
+        }
       }
     }
   }

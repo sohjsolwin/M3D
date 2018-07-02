@@ -19,32 +19,41 @@ namespace M3D.Spooling.Common
 
     public SupportedFeatures(SupportedFeatures other)
     {
-      this.FeaturesBitField = other.FeaturesBitField;
-      this.UsesSupportedFeatures = other.UsesSupportedFeatures;
+      FeaturesBitField = other.FeaturesBitField;
+      UsesSupportedFeatures = other.UsesSupportedFeatures;
     }
 
     public SupportedFeatures.Status GetStatus(string key, SupportedFeaturesProfile profileConstants)
     {
-      int featureSlot = profileConstants.GetFeatureSlot(key);
+      var featureSlot = profileConstants.GetFeatureSlot(key);
       if (featureSlot >= 0)
-        return this.GetStatus(featureSlot);
+      {
+        return GetStatus(featureSlot);
+      }
+
       return SupportedFeatures.Status.Unavailable;
     }
 
     public bool Available(string key, SupportedFeaturesProfile profileConstants)
     {
-      int featureSlot = profileConstants.GetFeatureSlot(key);
+      var featureSlot = profileConstants.GetFeatureSlot(key);
       if (featureSlot >= 0)
-        return (uint) this.GetStatus(featureSlot) > 0U;
+      {
+        return (uint)GetStatus(featureSlot) > 0U;
+      }
+
       return false;
     }
 
     public SupportedFeatures.Status GetStatus(int feature_slot)
     {
       if (feature_slot < 0)
+      {
         return SupportedFeatures.Status.Unavailable;
-      ushort num = (ushort) (feature_slot * 2);
-      return (SupportedFeatures.Status) ((this.FeaturesBitField & 3U << (int) num) >> (int) num);
+      }
+
+      var num = (ushort) (feature_slot * 2);
+      return (SupportedFeatures.Status) ((FeaturesBitField & 3U << (int) num) >> (int) num);
     }
 
     public enum Status

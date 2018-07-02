@@ -15,12 +15,12 @@ namespace M3D.Spooling.Common
 
     public HeatedBed()
     {
-      this.BedTemperature = 0.0f;
+      BedTemperature = 0.0f;
     }
 
     public HeatedBed(HeatedBed other)
     {
-      this.BedTemperature = other.BedTemperature;
+      BedTemperature = other.BedTemperature;
     }
   }
 }

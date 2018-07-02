@@ -19,7 +19,7 @@ namespace M3D.Slicer.General
     {
       this.WorkingFolder = WorkingFolder;
       this.ExeResourceFolder = ExeResourceFolder;
-      this.SlicerSettingStack = new SmartSlicerSettingsStack(toCloneFrom);
+      SlicerSettingStack = new SmartSlicerSettingsStack(toCloneFrom);
     }
 
     public abstract string SlicerPath { get; }
@@ -28,7 +28,7 @@ namespace M3D.Slicer.General
     {
       get
       {
-        return Path.Combine(this.ExeResourceFolder, this.SlicerPath);
+        return Path.Combine(ExeResourceFolder, SlicerPath);
       }
     }
 
@@ -40,7 +40,7 @@ namespace M3D.Slicer.General
     {
       get
       {
-        return this.SlicerSettingStack.SlicerSettings;
+        return SlicerSettingStack.SlicerSettings;
       }
     }
 
@@ -56,17 +56,21 @@ namespace M3D.Slicer.General
 
     public void SendMessageToQueue(string msg)
     {
-      lock (this.threadsync)
-        this.slicer_msg.Enqueue(msg);
+      lock (threadsync)
+      {
+        slicer_msg.Enqueue(msg);
+      }
     }
 
     public string GetMessageFromQueue()
     {
-      string str = (string) null;
-      lock (this.threadsync)
+      var str = (string) null;
+      lock (threadsync)
       {
-        if (this.slicer_msg.Count > 0)
-          str = this.slicer_msg.Dequeue();
+        if (slicer_msg.Count > 0)
+        {
+          str = slicer_msg.Dequeue();
+        }
       }
       return str;
     }

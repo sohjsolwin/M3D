@@ -25,77 +25,95 @@ namespace M3D.GUI.Views.Printer_View.History
 
     public void Clear()
     {
-      lock (this.threadSync)
+      lock (threadSync)
       {
-        this.undo_history.Clear();
-        this.redo_history.Clear();
+        undo_history.Clear();
+        redo_history.Clear();
       }
     }
 
     public void PushAddModelFile(uint objectID, string filename, string zipfilename, TransformationNode.Transform transform)
     {
-      lock (this.threadSync)
+      lock (threadSync)
       {
-        if (!this._recordHistory)
+        if (!_recordHistory)
+        {
           return;
-        this.PushToHistory((HistoryNode) new AddModelFileHistoryNode(objectID, filename, zipfilename, transform));
+        }
+
+        PushToHistory((HistoryNode) new AddModelFileHistoryNode(objectID, filename, zipfilename, transform));
       }
     }
 
     public void PushRemoveModelFile(uint objectID, string filename, string zipfilename, TransformationNode.Transform transform)
     {
-      lock (this.threadSync)
+      lock (threadSync)
       {
-        if (!this._recordHistory)
+        if (!_recordHistory)
+        {
           return;
-        this.PushToHistory((HistoryNode) new RemoveModelFileHistoryNode(objectID, filename, zipfilename, transform));
+        }
+
+        PushToHistory((HistoryNode) new RemoveModelFileHistoryNode(objectID, filename, zipfilename, transform));
       }
     }
 
     public void PushSelectObject(uint objectID, uint previousObject)
     {
-      lock (this.threadSync)
+      lock (threadSync)
       {
-        if (!this._recordHistory)
+        if (!_recordHistory)
+        {
           return;
-        this.PushToHistory((HistoryNode) new SelectObjectHistoryNode(objectID, previousObject));
+        }
+
+        PushToHistory((HistoryNode) new SelectObjectHistoryNode(objectID, previousObject));
       }
     }
 
     public void PushTransformObject(uint objectID, TransformationNode.Transform previousTransform, TransformationNode.Transform newTransform)
     {
       if (previousTransform.Equals(ref newTransform))
-        return;
-      lock (this.threadSync)
       {
-        if (!this._recordHistory)
+        return;
+      }
+
+      lock (threadSync)
+      {
+        if (!_recordHistory)
+        {
           return;
-        this.PushToHistory((HistoryNode) new TransformObjectHistoryNode(objectID, previousTransform, newTransform));
+        }
+
+        PushToHistory((HistoryNode) new TransformObjectHistoryNode(objectID, previousTransform, newTransform));
       }
     }
 
     private void PushToHistory(HistoryNode item)
     {
-      this.undo_history.Push(item);
-      this.redo_history.Clear();
+      undo_history.Push(item);
+      redo_history.Clear();
     }
 
     public bool Undo()
     {
-      return this.UndoRedoHelper(this.undo_history, PrinterViewHistory.Action.Undo);
+      return UndoRedoHelper(undo_history, PrinterViewHistory.Action.Undo);
     }
 
     public bool Redo()
     {
-      return this.UndoRedoHelper(this.redo_history, PrinterViewHistory.Action.Redo);
+      return UndoRedoHelper(redo_history, PrinterViewHistory.Action.Redo);
     }
 
     public bool CanUndo
     {
       get
       {
-        if (this.undo_history.Count > 0)
-          return !this.printerView.ModelLoadingInterface.LoadingNewModel;
+        if (undo_history.Count > 0)
+        {
+          return !printerView.ModelLoadingInterface.LoadingNewModel;
+        }
+
         return false;
       }
     }
@@ -104,8 +122,11 @@ namespace M3D.GUI.Views.Printer_View.History
     {
       get
       {
-        if (this.redo_history.Count > 0)
-          return !this.printerView.ModelLoadingInterface.LoadingNewModel;
+        if (redo_history.Count > 0)
+        {
+          return !printerView.ModelLoadingInterface.LoadingNewModel;
+        }
+
         return false;
       }
     }
@@ -114,37 +135,44 @@ namespace M3D.GUI.Views.Printer_View.History
     {
       get
       {
-        lock (this.threadSync)
-          return this._recordHistory;
+        lock (threadSync)
+        {
+          return _recordHistory;
+        }
       }
       set
       {
-        lock (this.threadSync)
-          this._recordHistory = value;
+        lock (threadSync)
+        {
+          _recordHistory = value;
+        }
       }
     }
 
     private bool UndoRedoHelper(Stack<HistoryNode> history, PrinterViewHistory.Action action)
     {
-      lock (this.threadSync)
+      lock (threadSync)
       {
         if (history.Count == 0)
+        {
           return false;
-        bool recordHistory = this._recordHistory;
-        this._recordHistory = false;
+        }
+
+        var recordHistory = _recordHistory;
+        _recordHistory = false;
         HistoryNode historyNode = history.Pop();
         switch (action)
         {
           case PrinterViewHistory.Action.Undo:
-            historyNode.Undo(this.printerView);
-            this.redo_history.Push(historyNode);
+            historyNode.Undo(printerView);
+            redo_history.Push(historyNode);
             break;
           case PrinterViewHistory.Action.Redo:
-            historyNode.Redo(this.printerView);
-            this.undo_history.Push(historyNode);
+            historyNode.Redo(printerView);
+            undo_history.Push(historyNode);
             break;
         }
-        this._recordHistory = recordHistory;
+        _recordHistory = recordHistory;
         return true;
       }
     }

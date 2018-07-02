@@ -23,7 +23,7 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     {
       get
       {
-        return this.position;
+        return position;
       }
     }
 
@@ -31,7 +31,7 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     {
       get
       {
-        return this.direction;
+        return direction;
       }
     }
   }

@@ -22,18 +22,20 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public AbstractJob(JobParams jobParams, string user, InternalPrinterProfile printerProfile)
     {
-      this.MyPrinterProfile = printerProfile;
-      this.Status = JobStatus.Queued;
-      this.PreviewImageFileName = "null";
-      this.jobDetails = new JobDetails();
-      this.Details.jobParams = jobParams;
-      this.Details.bounds = new BoundingBox(float.MaxValue, float.MaxValue, float.MaxValue, float.MinValue, float.MinValue, float.MinValue);
-      this.Details.ideal_temperature = 0;
-      this.User = user;
-      this.job_begin_timer = new Stopwatch();
-      this.InitialSpoolUsed = new FilamentSpool();
-      this.InitialSpoolUsed.filament_temperature = jobParams.filament_temperature;
-      this.InitialSpoolUsed.filament_type = jobParams.filament_type;
+      MyPrinterProfile = printerProfile;
+      Status = JobStatus.Queued;
+      PreviewImageFileName = "null";
+      jobDetails = new JobDetails();
+      Details.jobParams = jobParams;
+      Details.bounds = new BoundingBox(float.MaxValue, float.MaxValue, float.MaxValue, float.MinValue, float.MinValue, float.MinValue);
+      Details.ideal_temperature = 0;
+      User = user;
+      job_begin_timer = new Stopwatch();
+      InitialSpoolUsed = new FilamentSpool
+      {
+        filament_temperature = jobParams.filament_temperature,
+        filament_type = jobParams.filament_type
+      };
     }
 
     public abstract JobCreateResult Create(PrinterInfo printerInfo);
@@ -64,14 +66,14 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public JobInfo GetInfo()
     {
-      return new JobInfo(this.Details.jobParams.jobname, this.User, this.Status, this.PreviewImageFileName, this.PercentComplete, this.TimeRemaining, this.Details.jobParams);
+      return new JobInfo(Details.jobParams.jobname, User, Status, PreviewImageFileName, PercentComplete, TimeRemaining, Details.jobParams);
     }
 
     public string JobName
     {
       get
       {
-        return this.Details.jobParams.jobname;
+        return Details.jobParams.jobname;
       }
     }
 
@@ -83,11 +85,11 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return this.status.Value;
+        return status.Value;
       }
       protected set
       {
-        this.status.Value = value;
+        status.Value = value;
       }
     }
 
@@ -95,7 +97,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return this.jobDetails;
+        return jobDetails;
       }
     }
 
@@ -103,8 +105,11 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        if (!this.Aborted)
-          return this.Done;
+        if (!Aborted)
+        {
+          return Done;
+        }
+
         return true;
       }
     }
@@ -113,7 +118,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return this.Details.jobParams.estimatedTime;
+        return Details.jobParams.estimatedTime;
       }
     }
 
@@ -121,7 +126,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return this.Details.jobParams.options.autostart_ignorewarnings;
+        return Details.jobParams.options.autostart_ignorewarnings;
       }
     }
 
@@ -129,13 +134,18 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        float num = (float) ((double) this.JobBeginTimer.ElapsedMilliseconds / 1000.0 / 60.0);
+        var num = (float) ((double)JobBeginTimer.ElapsedMilliseconds / 1000.0 / 60.0);
         if ((double) num > 5.0)
         {
-          if ((double) this.Details.jobParams.estimatedTime > 0.0)
-            return this.Details.jobParams.estimatedTime - this.Details.jobParams.estimatedTime * this.PercentComplete;
-          if ((double) this.PercentComplete > 0.0)
-            return (float) TimeSpan.FromMinutes((double) num / (double) this.PercentComplete - (double) num).TotalSeconds;
+          if ((double)Details.jobParams.estimatedTime > 0.0)
+          {
+            return Details.jobParams.estimatedTime - Details.jobParams.estimatedTime * PercentComplete;
+          }
+
+          if ((double)PercentComplete > 0.0)
+          {
+            return (float) TimeSpan.FromMinutes((double) num / (double)PercentComplete - (double) num).TotalSeconds;
+          }
         }
         return 0.0f;
       }
@@ -145,7 +155,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        return this.JobBeginTimer.Elapsed.TotalMinutes;
+        return JobBeginTimer.Elapsed.TotalMinutes;
       }
     }
 
@@ -153,16 +163,19 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     protected void OnGetNextCommand()
     {
-      if (this.JobBeginTimer.IsRunning)
+      if (JobBeginTimer.IsRunning)
+      {
         return;
-      this.JobBeginTimer.Start();
+      }
+
+      JobBeginTimer.Start();
     }
 
     protected Stopwatch JobBeginTimer
     {
       get
       {
-        return this.job_begin_timer;
+        return job_begin_timer;
       }
     }
 

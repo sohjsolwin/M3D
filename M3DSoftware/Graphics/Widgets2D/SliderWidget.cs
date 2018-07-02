@@ -38,25 +38,25 @@ namespace M3D.Graphics.Widgets2D
     public SliderWidget(int ID, Element2D parent)
       : base(ID, parent)
     {
-      this.m_trackSubControl = new ImageWidget(0, (Element2D) this);
-      this.m_buttonSubControl = new ButtonWidget(0, (Element2D) this);
-      this.m_pushButtonPlus = new ButtonWidget(1, (Element2D) this);
-      this.m_pushButtonMinus = new ButtonWidget(2, (Element2D) this);
-      this.m_buttonSubControl.DontMove = true;
-      this.m_pushButtonPlus.DontMove = true;
-      this.m_pushButtonMinus.DontMove = true;
-      this.m_trackSubControl.IgnoreMouse = true;
-      this.ChildList = this.ChildList + (Element2D) this.m_trackSubControl;
-      this.ChildList = this.ChildList + (Element2D) this.m_buttonSubControl;
-      this.ChildList = this.ChildList + (Element2D) this.m_pushButtonPlus;
-      this.ChildList = this.ChildList + (Element2D) this.m_pushButtonMinus;
-      this.m_track_size = 0.0f;
-      this.m_track_position = 0.0f;
-      this.m_button_size = 0.0f;
-      this.m_button_size_percent = 0.0f;
-      this.m_range_start = 0.0f;
-      this.m_range = 1f;
-      this.m_button_range = 0.0f;
+      m_trackSubControl = new ImageWidget(0, (Element2D) this);
+      m_buttonSubControl = new ButtonWidget(0, (Element2D) this);
+      m_pushButtonPlus = new ButtonWidget(1, (Element2D) this);
+      m_pushButtonMinus = new ButtonWidget(2, (Element2D) this);
+      m_buttonSubControl.DontMove = true;
+      m_pushButtonPlus.DontMove = true;
+      m_pushButtonMinus.DontMove = true;
+      m_trackSubControl.IgnoreMouse = true;
+      ChildList = ChildList + (Element2D)m_trackSubControl;
+      ChildList = ChildList + (Element2D)m_buttonSubControl;
+      ChildList = ChildList + (Element2D)m_pushButtonPlus;
+      ChildList = ChildList + (Element2D)m_pushButtonMinus;
+      m_track_size = 0.0f;
+      m_track_position = 0.0f;
+      m_button_size = 0.0f;
+      m_button_size_percent = 0.0f;
+      m_range_start = 0.0f;
+      m_range = 1f;
+      m_button_range = 0.0f;
     }
 
     public override ElementType GetElementType()
@@ -67,7 +67,7 @@ namespace M3D.Graphics.Widgets2D
     public override void SetSize(int width, int height)
     {
       base.SetSize(width, height);
-      this.OnSetTrackSize((float) width, (float) height);
+      OnSetTrackSize((float) width, (float) height);
     }
 
     public override void SetPosition(int x, int y)
@@ -78,10 +78,10 @@ namespace M3D.Graphics.Widgets2D
     public override void SetEnabled(bool bEnabled)
     {
       base.SetEnabled(bEnabled);
-      this.m_buttonSubControl.Enabled = bEnabled;
-      this.m_pushButtonPlus.Enabled = bEnabled;
-      this.m_pushButtonMinus.Enabled = bEnabled;
-      this.m_buttonSubControl.Visible = bEnabled;
+      m_buttonSubControl.Enabled = bEnabled;
+      m_pushButtonPlus.Enabled = bEnabled;
+      m_pushButtonMinus.Enabled = bEnabled;
+      m_buttonSubControl.Visible = bEnabled;
     }
 
     public override void OnControlMsg(Element2D the_control, ControlMsg msg, float xparam, float yparam)
@@ -89,124 +89,157 @@ namespace M3D.Graphics.Widgets2D
       if (msg == ControlMsg.MSG_HIT)
       {
         if (the_control.ID == 2)
-          this.SetTrackPosition(this.m_track_position - this.m_pushbuttonstep);
+        {
+          SetTrackPosition(m_track_position - m_pushbuttonstep);
+        }
         else if (the_control.ID == 1)
-          this.SetTrackPosition(this.m_track_position + this.m_pushbuttonstep);
+        {
+          SetTrackPosition(m_track_position + m_pushbuttonstep);
+        }
       }
       if (the_control.GetElementType() == ElementType.ButtonWidget && msg == ControlMsg.MSG_MOVE && the_control.ID == 0)
       {
-        float fPosition = xparam / yparam * this.m_range + this.m_range_start;
-        if (this.rounding_place >= 0)
-          fPosition = (float) Math.Round((double) fPosition, this.rounding_place, MidpointRounding.AwayFromZero);
-        this.SetTrackPosition(fPosition);
+        var fPosition = xparam / yparam * m_range + m_range_start;
+        if (rounding_place >= 0)
+        {
+          fPosition = (float) Math.Round((double) fPosition, rounding_place, MidpointRounding.AwayFromZero);
+        }
+
+        SetTrackPosition(fPosition);
       }
       if (the_control != null)
+      {
         return;
-      this.SetTrackPosition(xparam / yparam * this.m_range + this.m_range_start);
+      }
+
+      SetTrackPosition(xparam / yparam * m_range + m_range_start);
     }
 
     public void InitPlus(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, float over_u0, float over_v0, float over_u1, float over_v1, float down_u0, float down_v0, float down_u1, float down_v1)
     {
-      this.m_pushButtonPlus.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1);
+      m_pushButtonPlus.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1);
     }
 
     public void InitMinus(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, float over_u0, float over_v0, float over_u1, float over_v1, float down_u0, float down_v0, float down_u1, float down_v1)
     {
-      this.m_pushButtonMinus.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1);
+      m_pushButtonMinus.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1);
     }
 
     public virtual void InitButton(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, float over_u0, float over_v0, float over_u1, float over_v1, float down_u0, float down_v0, float down_u1, float down_v1, int topborder, int bottomborder, int minsize)
     {
-      this.m_buttonSubControl.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1);
+      m_buttonSubControl.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1);
     }
 
     public void InitTrack(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, int growableborder, int min, bool isvertical)
     {
-      this.InitTrack(host, texture, normal_u0, normal_v0, normal_u1, normal_v1);
+      InitTrack(host, texture, normal_u0, normal_v0, normal_u1, normal_v1);
       if (isvertical)
-        this.m_trackSubControl.SetGrowableHeight(growableborder, growableborder, min);
+      {
+        m_trackSubControl.SetGrowableHeight(growableborder, growableborder, min);
+      }
       else
-        this.m_trackSubControl.SetGrowableWidth(growableborder, growableborder, min);
+      {
+        m_trackSubControl.SetGrowableWidth(growableborder, growableborder, min);
+      }
     }
 
     public void InitTrack(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1)
     {
-      this.m_trackSubControl.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, normal_u0, normal_v0, normal_u1, normal_v1, normal_u0, normal_v0, normal_u1, normal_v1);
+      m_trackSubControl.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1, normal_u0, normal_v0, normal_u1, normal_v1, normal_u0, normal_v0, normal_u1, normal_v1);
     }
 
     public void SetButtonSize(float size)
     {
-      this.m_button_size = size;
-      this.m_button_size_percent = -1f;
+      m_button_size = size;
+      m_button_size_percent = -1f;
     }
 
     public void SetButtonSizeByPercent(float size)
     {
-      this.m_button_size_percent = size;
-      this.m_button_size = -1f;
+      m_button_size_percent = size;
+      m_button_size = -1f;
     }
 
     public void SetRange(float start, float end)
     {
-      this.SetRange(start, end, start);
+      SetRange(start, end, start);
     }
 
     public void SetRange(float start, float end, float position)
     {
-      if ((double) this.m_range_start == (double) start && (double) this.m_range == (double) end - (double) start)
+      if ((double)m_range_start == (double) start && (double)m_range == (double) end - (double) start)
+      {
         return;
-      this.m_range_start = start;
-      this.m_range = end - start;
-      this.SetTrackPosition(position);
-      if ((double) this.m_pushbuttonstep != 0.0)
+      }
+
+      m_range_start = start;
+      m_range = end - start;
+      SetTrackPosition(position);
+      if ((double)m_pushbuttonstep != 0.0)
+      {
         return;
-      this.m_pushbuttonstep = this.m_range * 0.1f;
+      }
+
+      m_pushbuttonstep = m_range * 0.1f;
     }
 
     public void MoveSlider(float fAmount)
     {
-      this.m_track_position += fAmount;
-      if ((double) this.m_track_position < (double) this.m_range_start)
-        this.m_track_position = this.m_range_start;
-      else if ((double) this.m_track_position > (double) this.m_range_start + (double) this.m_range)
-        this.m_track_position = this.m_range_start + this.m_range;
-      this.Refresh();
-      base.OnControlMsg((Element2D) this, ControlMsg.SCROLL_MOVE, this.m_track_position, 0.0f);
+      m_track_position += fAmount;
+      if ((double)m_track_position < (double)m_range_start)
+      {
+        m_track_position = m_range_start;
+      }
+      else if ((double)m_track_position > (double)m_range_start + (double)m_range)
+      {
+        m_track_position = m_range_start + m_range;
+      }
+
+      Refresh();
+      base.OnControlMsg((Element2D) this, ControlMsg.SCROLL_MOVE, m_track_position, 0.0f);
     }
 
     public void SetTrackPosition(float fPosition)
     {
-      this.SetTrackPositionNoCallBack(fPosition);
-      base.OnControlMsg((Element2D) this, ControlMsg.SCROLL_MOVE, this.m_track_position, 0.0f);
+      SetTrackPositionNoCallBack(fPosition);
+      base.OnControlMsg((Element2D) this, ControlMsg.SCROLL_MOVE, m_track_position, 0.0f);
     }
 
     public void SetTrackPositionNoCallBack(float fPosition)
     {
-      this.m_track_position = fPosition;
-      if ((double) this.m_track_position < (double) this.m_range_start)
-        this.m_track_position = this.m_range_start;
-      else if ((double) this.m_track_position > (double) this.m_range_start + (double) this.m_range)
-        this.m_track_position = this.m_range_start + this.m_range;
-      this.Refresh();
+      m_track_position = fPosition;
+      if ((double)m_track_position < (double)m_range_start)
+      {
+        m_track_position = m_range_start;
+      }
+      else if ((double)m_track_position > (double)m_range_start + (double)m_range)
+      {
+        m_track_position = m_range_start + m_range;
+      }
+
+      Refresh();
     }
 
     public void SetTrackPositionToEnd()
     {
-      this.SetTrackPosition(this.m_range_start + this.m_range);
+      SetTrackPosition(m_range_start + m_range);
     }
 
     public int RoundingPlace
     {
       get
       {
-        return this.rounding_place;
+        return rounding_place;
       }
       set
       {
-        this.rounding_place = value;
-        if (this.rounding_place < 0)
+        rounding_place = value;
+        if (rounding_place < 0)
+        {
           return;
-        this.m_track_position = (float) Math.Round((double) this.m_track_position, this.rounding_place, MidpointRounding.AwayFromZero);
+        }
+
+        m_track_position = (float) Math.Round((double)m_track_position, rounding_place, MidpointRounding.AwayFromZero);
       }
     }
 
@@ -214,11 +247,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.m_track_position;
+        return m_track_position;
       }
       set
       {
-        this.SetTrackPosition(value);
+        SetTrackPosition(value);
       }
     }
 
@@ -226,11 +259,11 @@ namespace M3D.Graphics.Widgets2D
     {
       set
       {
-        this.m_pushbuttonstep = value;
+        m_pushbuttonstep = value;
       }
       get
       {
-        return this.m_pushbuttonstep;
+        return m_pushbuttonstep;
       }
     }
 
@@ -238,11 +271,11 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return this.m_bShowPushButtons;
+        return m_bShowPushButtons;
       }
       set
       {
-        this.m_bShowPushButtons = value;
+        m_bShowPushButtons = value;
       }
     }
 
@@ -252,19 +285,19 @@ namespace M3D.Graphics.Widgets2D
 
     protected void CopySliderProperties(SliderWidget other)
     {
-      this.m_trackSubControl.CopyImageData(other.m_trackSubControl);
-      this.m_buttonSubControl.CopyImageData((ImageWidget) other.m_buttonSubControl);
-      this.m_pushButtonPlus.CopyImageData((ImageWidget) other.m_pushButtonPlus);
-      this.m_pushButtonMinus.CopyImageData((ImageWidget) other.m_pushButtonMinus);
-      this.m_track_size = other.m_track_size;
-      this.m_track_position = other.m_track_position;
-      this.m_button_size = other.m_button_size;
-      this.m_button_size_percent = other.m_button_size_percent;
-      this.m_range_start = other.m_range_start;
-      this.m_range = other.m_range;
-      this.m_button_range = other.m_button_range;
-      this.m_bShowPushButtons = other.m_bShowPushButtons;
-      this.m_pushbuttonstep = other.m_pushbuttonstep;
+      m_trackSubControl.CopyImageData(other.m_trackSubControl);
+      m_buttonSubControl.CopyImageData((ImageWidget) other.m_buttonSubControl);
+      m_pushButtonPlus.CopyImageData((ImageWidget) other.m_pushButtonPlus);
+      m_pushButtonMinus.CopyImageData((ImageWidget) other.m_pushButtonMinus);
+      m_track_size = other.m_track_size;
+      m_track_position = other.m_track_position;
+      m_button_size = other.m_button_size;
+      m_button_size_percent = other.m_button_size_percent;
+      m_range_start = other.m_range_start;
+      m_range = other.m_range;
+      m_button_range = other.m_button_range;
+      m_bShowPushButtons = other.m_bShowPushButtons;
+      m_pushbuttonstep = other.m_pushbuttonstep;
     }
   }
 }

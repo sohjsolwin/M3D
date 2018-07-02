@@ -27,24 +27,24 @@ namespace M3D.Spooling.Common
 
     public Extruder(Extruder rhs)
     {
-      this.ishomed = rhs.ishomed;
-      this.inRelativeMode = rhs.inRelativeMode;
-      this.position = rhs.position;
-      this.Z_Valid = rhs.Z_Valid;
-      this.Temperature = rhs.Temperature;
-      this.iNozzleSizeMicrons = rhs.iNozzleSizeMicrons;
-      this.Fan = rhs.Fan;
+      ishomed = rhs.ishomed;
+      inRelativeMode = rhs.inRelativeMode;
+      position = rhs.position;
+      Z_Valid = rhs.Z_Valid;
+      Temperature = rhs.Temperature;
+      iNozzleSizeMicrons = rhs.iNozzleSizeMicrons;
+      Fan = rhs.Fan;
     }
 
     public Extruder()
     {
-      this.ishomed = Trilean.Unknown;
-      this.inRelativeMode = Trilean.Unknown;
-      this.position = new Vector3DE(0.0f, 0.0f, 0.0f, 0.0f);
-      this.Z_Valid = true;
-      this.Temperature = -273f;
-      this.Fan = (byte) 0;
-      this.iNozzleSizeMicrons = 0;
+      ishomed = Trilean.Unknown;
+      inRelativeMode = Trilean.Unknown;
+      position = new Vector3DE(0.0f, 0.0f, 0.0f, 0.0f);
+      Z_Valid = true;
+      Temperature = -273f;
+      Fan = (byte) 0;
+      iNozzleSizeMicrons = 0;
     }
   }
 }
