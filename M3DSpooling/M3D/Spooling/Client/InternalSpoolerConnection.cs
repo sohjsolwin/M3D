@@ -35,7 +35,7 @@ namespace M3D.Spooling.Client
     public InternalSpoolerConnection()
     {
       spooler_server = new SpoolerServer();
-      spooler_server.SetBroadcastServer((IBroadcastServer) this);
+      spooler_server.SetBroadcastServer(this);
     }
 
     public bool ConnectToWindow(IntPtr hwnd)

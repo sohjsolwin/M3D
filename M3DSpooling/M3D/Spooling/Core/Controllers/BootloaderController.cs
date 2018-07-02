@@ -36,7 +36,7 @@ namespace M3D.Spooling.Core.Controllers
       {
         if (bootloader_version < 6 || bootloader_version > 8)
         {
-          throw new Exception(string.Format("Unsupported Bootloader Interface - {0}", (object) bootloader_version));
+          throw new Exception(string.Format("Unsupported Bootloader Interface - {0}", bootloader_version));
         }
 
         mInterfaceVersion = BootloaderController.BootloaderInterfaceVersion.V2;
@@ -147,7 +147,7 @@ namespace M3D.Spooling.Core.Controllers
           for (var index = 0; index < getbytes; ++index)
           {
             byte[] numArray2 = m_oBootloaderConnection.ReadBytes(1);
-            if (index != 0 || numArray2[0] != (byte) 13)
+            if (index != 0 || numArray2[0] != 13)
             {
               inArray[index] = numArray2[0];
             }
@@ -156,7 +156,7 @@ namespace M3D.Spooling.Core.Controllers
               --index;
             }
           }
-          if (m_oBootloaderConnection.ReadBytes(1)[0] != (byte) 13)
+          if (m_oBootloaderConnection.ReadBytes(1)[0] != 13)
           {
             return "FAIL";
           }
@@ -294,11 +294,11 @@ namespace M3D.Spooling.Core.Controllers
 
     private void SetBootloader(char bootloaderID)
     {
-      m_oBootloaderConnection.SPout((byte) 84);
+      m_oBootloaderConnection.SPout(84);
       m_oBootloaderConnection.SPout((byte) bootloaderID);
-      if (m_oBootloaderConnection.ReadBytes(1)[0] != (byte) 13)
+      if (m_oBootloaderConnection.ReadBytes(1)[0] != 13)
       {
-        throw new Exception(string.Format("Unable to switch to bootloader {0}", (object) bootloaderID));
+        throw new Exception(string.Format("Unable to switch to bootloader {0}", bootloaderID));
       }
     }
 
@@ -412,7 +412,7 @@ namespace M3D.Spooling.Core.Controllers
             stopwatch.Start();
             flag = BootloaderUpdateFirmware(firmwareDetails);
             stopwatch.Stop();
-            WriteLog("<< time: " + (object) stopwatch.Elapsed, Logger.TextType.Write);
+            WriteLog("<< time: " + stopwatch.Elapsed, Logger.TextType.Write);
           }
           catch (Exception ex)
           {
@@ -469,7 +469,7 @@ namespace M3D.Spooling.Core.Controllers
           }
           catch (Exception ex)
           {
-            WriteLog(string.Format("Error updating firmware:{0}", (object) ex.Message), Logger.TextType.Error);
+            WriteLog(string.Format("Error updating firmware:{0}", ex.Message), Logger.TextType.Error);
             Status = PrinterStatus.Bootloader_FirmwareUpdateFailed;
             flag = true;
           }
@@ -481,7 +481,7 @@ namespace M3D.Spooling.Core.Controllers
     private byte[] GetFirmwareBytesFromStream(Stream input, uint maxFirmwareSize)
     {
       byte[] numArray1 = new byte[(int) maxFirmwareSize];
-      for (var index = 0; (long) index < (long) maxFirmwareSize; ++index)
+      for (var index = 0; index < maxFirmwareSize; ++index)
       {
         numArray1[index] = byte.MaxValue;
       }
@@ -490,7 +490,7 @@ namespace M3D.Spooling.Core.Controllers
       var index1 = 0;
       while (num >= 0)
       {
-        numArray1[index1] = (byte) ((int) byte.MaxValue & num);
+        numArray1[index1] = (byte)(byte.MaxValue & num);
         num = input.ReadByte();
         ++index1;
       }
@@ -521,10 +521,10 @@ namespace M3D.Spooling.Core.Controllers
           throw new Exception("Unsupported Bootloader Interface");
         }
 
-        m_oBootloaderConnection.SPout((byte) 75);
-        m_oBootloaderConnection.SPout((byte) 65);
+        m_oBootloaderConnection.SPout(75);
+        m_oBootloaderConnection.SPout(65);
         byte[] numArray = m_oBootloaderConnection.ReadBytes(3);
-        var str = string.Format("{0}{1}{2}", (object) (char) numArray[0], (object) (char) numArray[1], (object) (char) numArray[2]);
+        var str = string.Format("{0}{1}{2}", (char)numArray[0], (char)numArray[1], (char)numArray[2]);
         if (str == "ok\r")
         {
           return;
@@ -535,7 +535,7 @@ namespace M3D.Spooling.Core.Controllers
           throw new Exception("Firmware failed redundancy check.");
         }
 
-        throw new Exception(string.Format("'K' gave an unexpected result - {0}", (object) str));
+        throw new Exception(string.Format("'K' gave an unexpected result - {0}", str));
       }
     }
 
@@ -553,7 +553,7 @@ namespace M3D.Spooling.Core.Controllers
       var eepromMapping = new EEPROMMapping(m_oBootloaderConnection.ReadAllReadableEEPROM(), MyPrinterProfile.EEPROMConstants);
       var uint32 = (int) eepromMapping.GetUInt32("FirmwareVersion");
       byte[] bytes = new byte[4];
-      if (eepromMapping.GetUInt16("SavedZState") != (ushort) 0)
+      if (eepromMapping.GetUInt16("SavedZState") != 0)
       {
         return;
       }
@@ -617,26 +617,26 @@ namespace M3D.Spooling.Core.Controllers
     private bool QuitSecondaryBootloader()
     {
       m_oBootloaderConnection.FlushIncomingBytes();
-      m_oBootloaderConnection.SPout((byte) 81);
+      m_oBootloaderConnection.SPout(81);
       byte[] numArray1 = m_oBootloaderConnection.ReadBytes(1);
-      if (numArray1[0] == (byte) 13)
+      if (numArray1[0] == 13)
       {
         return true;
       }
 
       byte[] numArray2 = m_oBootloaderConnection.ReadBytes(2);
-      var str = string.Format("{0}{1}", (object) (char) numArray1[0], (object) (char) numArray2[1]);
+      var str = string.Format("{0}{1}", (char)numArray1[0], (char)numArray2[1]);
       if (str == "no\r")
       {
         return false;
       }
 
-      throw new Exception(string.Format("'Q' gave an unexpected result - {0}", (object) str));
+      throw new Exception(string.Format("'Q' gave an unexpected result - {0}", str));
     }
 
     private void SwitchBootloaderToApplication(bool bIsOnMBoard)
     {
-      m_oBootloaderConnection.SPout((byte) 81);
+      m_oBootloaderConnection.SPout(81);
       if (mInterfaceVersion == BootloaderController.BootloaderInterfaceVersion.V1)
       {
         return;
@@ -650,19 +650,19 @@ namespace M3D.Spooling.Core.Controllers
       try
       {
         byte[] numArray1 = m_oBootloaderConnection.ReadBytes(1);
-        if (numArray1[0] == (byte) 13)
+        if (numArray1[0] == 13)
         {
           return;
         }
 
         byte[] numArray2 = m_oBootloaderConnection.ReadBytes(2);
-        var str = string.Format("{0}{1}", (object) (char) numArray1[0], (object) (char) numArray2[1]);
+        var str = string.Format("{0}{1}", (char)numArray1[0], (char)numArray2[1]);
         if (str == "no\r")
         {
           throw new Exception("CRC Failure");
         }
 
-        throw new Exception(string.Format("'Q' gave an unexpected result - {0}", (object) str));
+        throw new Exception(string.Format("'Q' gave an unexpected result - {0}", str));
       }
       catch (IOException ex)
       {
@@ -701,12 +701,12 @@ namespace M3D.Spooling.Core.Controllers
         m_oBootloaderConnection.WriteToEEPROM(GetEEPROMDataLocation("FANTYPE"), eepromMapping1.AlignedByteToBytaArray((ushort) fanType));
       }
 
-      if ((int) alignedByte2 != fanConstant.Offset)
+      if (alignedByte2 != fanConstant.Offset)
       {
         m_oBootloaderConnection.WriteToEEPROM(GetEEPROMDataLocation("FANOFFSET"), eepromMapping1.AlignedByteToBytaArray((ushort) fanConstant.Offset));
       }
 
-      if ((double) num1 != (double) fanConstant.Scale)
+      if (num1 != (double)fanConstant.Scale)
       {
         m_oBootloaderConnection.WriteToEEPROM(GetEEPROMDataLocation("FANSCALE"), BitConverter.GetBytes(fanConstant.Scale));
       }
@@ -716,7 +716,7 @@ namespace M3D.Spooling.Core.Controllers
       var alignedByte4 = eepromMapping1.GetAlignedByte("FANOFFSET");
       var num3 = eepromMapping1.GetFloat("FANSCALE");
       var num4 = (int) (byte) fanType;
-      if (alignedByte3 == num4 && (int) alignedByte4 == fanConstant.Offset && (double) num3 == (double) fanConstant.Scale)
+      if (alignedByte3 == num4 && alignedByte4 == fanConstant.Offset && num3 == (double)fanConstant.Scale)
       {
         WriteLog(">> ok", Logger.TextType.Read);
       }
@@ -729,14 +729,14 @@ namespace M3D.Spooling.Core.Controllers
     public override void SetExtruderCurrent(ushort current)
     {
       var eepromMapping1 = new EEPROMMapping(m_oBootloaderConnection.ReadAllReadableEEPROM(), MyPrinterProfile.EEPROMConstants);
-      if ((int) eepromMapping1.GetUInt16("ExtruderCurrent") == (int) current)
+      if (eepromMapping1.GetUInt16("ExtruderCurrent") == current)
       {
         return;
       }
 
       m_oBootloaderConnection.WriteToEEPROM(GetEEPROMDataLocation("ExtruderCurrent"), BitConverter.GetBytes(current));
       var eepromMapping2 = new EEPROMMapping(m_oBootloaderConnection.ReadAllReadableEEPROM(), MyPrinterProfile.EEPROMConstants);
-      if ((int) eepromMapping1.GetUInt16("ExtruderCurrent") == (int) current)
+      if (eepromMapping1.GetUInt16("ExtruderCurrent") == current)
       {
         WriteLog(">> ok", Logger.TextType.Read);
       }

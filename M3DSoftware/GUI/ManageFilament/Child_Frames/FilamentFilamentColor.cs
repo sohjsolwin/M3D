@@ -87,14 +87,14 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         VAlignment = TextVerticalAlignment.Top,
         Text = "What Color is your filament?"
       };
-      childElement.AddChildElement((Element2D) textWidget);
+      childElement.AddChildElement(textWidget);
       color_combobox = new ComboBoxWidget(12);
       color_combobox.Init(Host);
       color_combobox.Select = 0;
       color_combobox.SetPosition(30, 60);
       color_combobox.SetSize(336, 32);
       color_combobox.CenterHorizontallyInParent = true;
-      childElement.AddChildElement((Element2D)color_combobox);
+      childElement.AddChildElement(color_combobox);
       color_combobox.ListBox.Items = settingsManager.FilamentDictionary.GenerateColors(FilamentSpool.TypeEnum.NoFilament).Cast<object>().ToList<object>();
       color_combobox.ListBox.Items.Sort();
       color_combobox.Select = 0;
@@ -109,9 +109,9 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       {
         foreach (M3D.Spooling.Common.Filament userFilament in CurrentDetails.user_filaments)
         {
-          if (!color_combobox.ListBox.Items.Contains((object) userFilament.ColorStr))
+          if (!color_combobox.ListBox.Items.Contains(userFilament.ColorStr))
           {
-            color_combobox.ListBox.Items.Add((object) userFilament.ColorStr);
+            color_combobox.ListBox.Items.Add(userFilament.ColorStr);
           }
         }
       }

@@ -22,12 +22,12 @@ namespace M3D.Graphics.Ext3D
     protected OpenGLRendererObject texturedGeometry;
 
     public CustomShape()
-      : this(0, (Element3D) null)
+      : this(0, null)
     {
     }
 
     public CustomShape(int ID)
-      : this(ID, (Element3D) null)
+      : this(ID, null)
     {
     }
 
@@ -97,37 +97,37 @@ namespace M3D.Graphics.Ext3D
       min = new Vector3(vertex_list[0].Position.X, vertex_list[0].Position.Y, vertex_list[0].Position.Z);
       foreach (VertexTNV vertex in vertex_list)
       {
-        if ((double) vertex.Position.X < (double)min.x)
+        if (vertex.Position.X < (double)min.X)
         {
-          min.x = vertex.Position.X;
+          min.X = vertex.Position.X;
         }
 
-        if ((double) vertex.Position.Y < (double)min.y)
+        if (vertex.Position.Y < (double)min.Y)
         {
-          min.y = vertex.Position.Y;
+          min.Y = vertex.Position.Y;
         }
 
-        if ((double) vertex.Position.Z < (double)min.z)
+        if (vertex.Position.Z < (double)min.Z)
         {
-          min.z = vertex.Position.Z;
+          min.Z = vertex.Position.Z;
         }
 
-        if ((double) vertex.Position.X > (double)max.x)
+        if (vertex.Position.X > (double)max.X)
         {
-          max.x = vertex.Position.X;
+          max.X = vertex.Position.X;
         }
 
-        if ((double) vertex.Position.Y > (double)max.y)
+        if (vertex.Position.Y > (double)max.Y)
         {
-          max.y = vertex.Position.Y;
+          max.Y = vertex.Position.Y;
         }
 
-        if ((double) vertex.Position.Z > (double)max.z)
+        if (vertex.Position.Z > (double)max.Z)
         {
-          max.z = vertex.Position.Z;
+          max.Z = vertex.Position.Z;
         }
       }
-      ext = new Vector3(max.x - min.x, max.y - min.y, max.z - min.z);
+      ext = new Vector3(max.X - min.X, max.Y - min.Y, max.Z - min.Z);
       texturedGeometry = new OpenGLRendererObject(new GraphicsModelData(vertex_list), true);
       texture_handle = opengl_texture_handle;
     }

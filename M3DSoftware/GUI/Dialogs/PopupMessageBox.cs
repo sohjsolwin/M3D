@@ -41,7 +41,7 @@ namespace M3D.GUI.Dialogs
     {
       if (!AllowMessages)
       {
-        return (PopupMessageBox.MessageData) null;
+        return null;
       }
 
       try
@@ -59,12 +59,12 @@ namespace M3D.GUI.Dialogs
       catch (Exception ex)
       {
       }
-      return (PopupMessageBox.MessageData) null;
+      return null;
     }
 
     public void AddMessageToQueue(string message, string button1_text, string button2_text, PopupMessageBox.OnUserSelectionDel callback)
     {
-      AddMessageToQueue(message, button1_text, button2_text, (string) null, callback, (object) null);
+      AddMessageToQueue(message, button1_text, button2_text, null, callback, null);
     }
 
     public void AddMessageToQueue(string message, string button1_text, string button2_text, string button3_text, PopupMessageBox.OnUserSelectionDel callback, object data)
@@ -81,7 +81,7 @@ namespace M3D.GUI.Dialogs
     {
       lock (threadsync_standardmsgs)
       {
-        standard_queue.Enqueue((PopupMessageBox.MessageData) message_data);
+        standard_queue.Enqueue(message_data);
       }
     }
 
@@ -92,7 +92,7 @@ namespace M3D.GUI.Dialogs
 
     public void AddMessageToQueue(string message, PopupMessageBox.MessageBoxButtons buttons)
     {
-      AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, message), buttons, (PopupMessageBox.OnUserSelectionDel) null);
+      AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, message), buttons, null);
     }
 
     public void AddMessageToQueue(string message, PopupMessageBox.MessageBoxButtons buttons, PopupMessageBox.OnUserSelectionDel callback)
@@ -107,24 +107,24 @@ namespace M3D.GUI.Dialogs
 
     public void AddMessageToQueue(SpoolerMessage message)
     {
-      AddMessageToQueue(message, PopupMessageBox.MessageBoxButtons.DEFAULT, (PopupMessageBox.OnUserSelectionDel) null);
+      AddMessageToQueue(message, PopupMessageBox.MessageBoxButtons.DEFAULT, null);
     }
 
     public void AddMessageToQueue(SpoolerMessage message, PopupMessageBox.MessageBoxButtons buttons)
     {
-      AddMessageToQueue(message, buttons, (PopupMessageBox.OnUserSelectionDel) null);
+      AddMessageToQueue(message, buttons, null);
     }
 
     public void AddMessageToQueue(SpoolerMessage message, PopupMessageBox.MessageBoxButtons buttons, PopupMessageBox.OnUserSelectionDel callback)
     {
-      AddMessageToQueue(message, buttons, callback, (object) null);
+      AddMessageToQueue(message, buttons, callback, null);
     }
 
     public void AddMessageToQueue(string message, string title, PopupMessageBox.MessageBoxButtons buttons, PopupMessageBox.OnUserSelectionDel callback)
     {
       lock (threadsync_standardmsgs)
       {
-        standard_queue.Enqueue((PopupMessageBox.MessageData) new PopupMessageBox.MessageDataStandard(new SpoolerMessage(MessageType.UserDefined, message), title, buttons, callback, (object) null));
+        standard_queue.Enqueue(new PopupMessageBox.MessageDataStandard(new SpoolerMessage(MessageType.UserDefined, message), title, buttons, callback, (object)null));
       }
     }
 
@@ -132,7 +132,7 @@ namespace M3D.GUI.Dialogs
     {
       lock (threadsync_standardmsgs)
       {
-        standard_queue.Enqueue((PopupMessageBox.MessageData) new PopupMessageBox.MessageDataStandard(message, buttons, callback, data));
+        standard_queue.Enqueue(new PopupMessageBox.MessageDataStandard(message, buttons, callback, data));
       }
     }
 
@@ -140,7 +140,7 @@ namespace M3D.GUI.Dialogs
     {
       lock (threadsync_standardmsgs)
       {
-        standard_queue.Enqueue((PopupMessageBox.MessageData) xmlMessageData);
+        standard_queue.Enqueue(xmlMessageData);
       }
     }
 
@@ -164,9 +164,9 @@ namespace M3D.GUI.Dialogs
         RelativeHeight = 1f,
         AutoCenterYOffset = 50
       };
-      AddChildElement((Element2D)child_frame);
+      AddChildElement(child_frame);
       Visible = false;
-      host.AddProcess((IProcess) this);
+      host.AddProcess(this);
     }
 
     public void CheckCriticalMessages()
@@ -199,10 +199,7 @@ namespace M3D.GUI.Dialogs
         XMLMessageCallback = messageDataXml.buttonCallback;
         XMLOnUpdateCallback = messageDataXml.onUpdateCallback;
         SetMessageXML(messageDataXml.message, messageDataXml.xmlsource);
-        if (messageDataXml.onShowCallback != null)
-        {
-          messageDataXml.onShowCallback(this, child_frame, host, messageDataXml.data);
-        }
+        messageDataXml.onShowCallback?.Invoke(this, child_frame, host, messageDataXml.data);
 
         hasmessage = true;
         Visible = true;
@@ -253,7 +250,7 @@ namespace M3D.GUI.Dialogs
         return;
       }
 
-      child_frame.DoOnUpdate = (ElementStandardDelegate) null;
+      child_frame.DoOnUpdate = null;
     }
 
     public override void OnRender(GUIHost host)
@@ -268,7 +265,7 @@ namespace M3D.GUI.Dialogs
       child_frame.Init(host, message_box_xml, new ButtonCallback(XMLFormButtonCallback));
       child_frame.DoOnUpdate = XMLOnUpdateCallback;
       child_frame.Refresh();
-      host.SetFocus((Element2D)child_frame);
+      host.SetFocus(child_frame);
       Sprite.pixel_perfect = false;
     }
 
@@ -421,7 +418,7 @@ namespace M3D.GUI.Dialogs
           childElement2.Enabled = true;
         }
       }
-      host.SetFocus((Element2D) childElement2);
+      host.SetFocus(childElement2);
       childElement1.Text = MessageText;
     }
 
@@ -472,7 +469,7 @@ namespace M3D.GUI.Dialogs
         hasmessage = false;
         if (host.HasChildDialog)
         {
-          host.GlobalChildDialog -= (Element2D) this;
+          host.GlobalChildDialog -= (this);
         }
 
         base.SetVisible(bVisible);
@@ -484,7 +481,7 @@ namespace M3D.GUI.Dialogs
           return;
         }
 
-        host.GlobalChildDialog += (Element2D) this;
+        host.GlobalChildDialog += (this);
         base.SetVisible(bVisible);
       }
     }
@@ -550,7 +547,7 @@ namespace M3D.GUI.Dialogs
       public object data;
 
       public MessageDataStandard(SpoolerMessage message, PopupMessageBox.MessageBoxButtons buttons)
-        : this(message, "Printer Message", buttons, (PopupMessageBox.OnUserSelectionDel) null, (object) null)
+        : this(message, "Printer Message", buttons, null, null)
       {
       }
 
@@ -566,9 +563,9 @@ namespace M3D.GUI.Dialogs
         OnSelection = OnSelectionCallback;
         this.data = data;
         this.title = title;
-        custom_button1_text = (string) null;
-        custom_button2_text = (string) null;
-        custom_button3_text = (string) null;
+        custom_button1_text = null;
+        custom_button2_text = null;
+        custom_button3_text = null;
       }
 
       public override PopupMessageBox.MessageBoxType GetMessageType()
@@ -587,7 +584,7 @@ namespace M3D.GUI.Dialogs
       public PopupMessageBox.XMLOnShow onShowCallback;
 
       public MessageDataXML(string xmlsource, PopupMessageBox.XMLButtonCallback buttonCallback, ElementStandardDelegate onUpdateCallback, PopupMessageBox.XMLOnShow onShowCallback)
-        : this(xmlsource, buttonCallback, onUpdateCallback, onShowCallback, (object) null)
+        : this(xmlsource, buttonCallback, onUpdateCallback, onShowCallback, null)
       {
       }
 
@@ -597,12 +594,12 @@ namespace M3D.GUI.Dialogs
       }
 
       public MessageDataXML(SpoolerMessage message, string xmlsource, PopupMessageBox.XMLButtonCallback buttonCallback, object data)
-        : this(message, xmlsource, buttonCallback, data, (ElementStandardDelegate) null, (PopupMessageBox.XMLOnShow) null)
+        : this(message, xmlsource, buttonCallback, data, null, null)
       {
       }
 
       public MessageDataXML(SpoolerMessage message, string xmlsource, PopupMessageBox.XMLButtonCallback buttonCallback, object data, ElementStandardDelegate onUpdateCallback)
-        : this(message, xmlsource, buttonCallback, data, onUpdateCallback, (PopupMessageBox.XMLOnShow) null)
+        : this(message, xmlsource, buttonCallback, data, onUpdateCallback, null)
       {
       }
 

@@ -26,7 +26,7 @@ namespace M3D.Spooling.Printer_Profiles
     {
       foreach (EepromAddressInfo address1 in addressList)
       {
-        if ((int) address1.EepromAddr == address)
+        if (address1.EepromAddr == address)
         {
           return address1;
         }
@@ -36,7 +36,7 @@ namespace M3D.Spooling.Printer_Profiles
         Debugger.Break();
       }
 
-      return (EepromAddressInfo) null;
+      return null;
     }
 
     public EepromAddressInfo GetEepromInfo(string name)
@@ -48,7 +48,7 @@ namespace M3D.Spooling.Printer_Profiles
           return address;
         }
       }
-      return (EepromAddressInfo) null;
+      return null;
     }
 
     public SortedList<int, EepromAddressInfo> GetAllData()
@@ -56,7 +56,7 @@ namespace M3D.Spooling.Printer_Profiles
       var sortedList = new SortedList<int, EepromAddressInfo>();
       foreach (EepromAddressInfo address in addressList)
       {
-        sortedList.Add((int) address.EepromAddr, address);
+        sortedList.Add(address.EepromAddr, address);
       }
 
       return sortedList;

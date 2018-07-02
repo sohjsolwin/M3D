@@ -44,23 +44,23 @@ namespace M3D.Spooling.Preprocessors
           flag1 = true;
           flag2 = true;
         }
-        else if (nextLine.hasZ & flag3 && !flag1)
+        else if (nextLine.HasZ & flag3 && !flag1)
         {
-          output_writer.Write(new GCode(";LAYER:" + (object) num1++));
+          output_writer.Write(new GCode(";LAYER:" + num1++));
           flag2 = true;
         }
-        else if (nextLine.hasG)
+        else if (nextLine.HasG)
         {
-          if (nextLine.G == (ushort) 90)
+          if (nextLine.G == 90)
           {
             flag3 = true;
           }
-          else if (nextLine.G == (ushort) 91)
+          else if (nextLine.G == 91)
           {
             flag3 = false;
           }
         }
-        if (!(nextLine.orig.ToLower() == "t0") && nextLine.orig.ToLower().IndexOf(" t0 ") <= -1 && (!nextLine.hasM || nextLine.M != (ushort) 104 && nextLine.M != (ushort) 109) && (!useFanPreprocessor || !nextLine.hasM || nextLine.M != (ushort) 106 && nextLine.M != (ushort) 107))
+        if (!(nextLine.orig.ToLower() == "t0") && nextLine.orig.ToLower().IndexOf(" t0 ") <= -1 && (!nextLine.hasM || nextLine.M != 104 && nextLine.M != 109) && (!useFanPreprocessor || !nextLine.hasM || nextLine.M != 106 && nextLine.M != 107))
         {
           var flag6 = false;
           if (nextLine.orig.StartsWith(";LAYER:"))
@@ -78,9 +78,9 @@ namespace M3D.Spooling.Preprocessors
                 output_writer.Write(new GCode("M109 S" + layerTemperature.ToString()));
                 output_writer.Write(new GCode("G90"));
                 BoundingBox bounds = printerProfile.PrinterSizeConstants.WarningRegion.bounds_list[0];
-                output_writer.Write(new GCode(PrinterCompatibleString.Format("G0 X{0} Y{1} Z0.5 F3600", (object) (float) ((double) bounds.max.x - 1.0), (object) (float) (((double) bounds.min.y + (double) bounds.max.y) / 2.0 + 10.0))));
+                output_writer.Write(new GCode(PrinterCompatibleString.Format("G0 X{0} Y{1} Z0.5 F3600", (float)((double)bounds.max.x - 1.0), (float)(((double)bounds.min.y + (double)bounds.max.y) / 2.0 + 10.0))));
                 output_writer.Write(new GCode("G91                  ;Go relative"));
-                output_writer.Write(new GCode(PrinterCompatibleString.Format("G0 E{0} F{1}          ;prime the nozzle", (object) initial_print_settings.PrimeAmount, (object) 72f)));
+                output_writer.Write(new GCode(PrinterCompatibleString.Format("G0 E{0} F{1}          ;prime the nozzle", initial_print_settings.PrimeAmount, 72f)));
                 output_writer.Write(new GCode("G4 S0"));
                 output_writer.Write(new GCode("G92 E0               ;reset E"));
                 output_writer.Write(new GCode("G90                  ;Go absolute"));
@@ -153,7 +153,7 @@ label_22:
       }
 
       output_writer.Write(new GCode("G90"));
-      output_writer.Write(new GCode(PrinterCompatibleString.Format("G0 Z5 F{0}", (object) (float) ((double) printerProfile.SpeedLimitConstants.DEFAULT_FEEDRATE_Z * 60.0))));
+      output_writer.Write(new GCode(PrinterCompatibleString.Format("G0 Z5 F{0}", (object) (float)(printerProfile.SpeedLimitConstants.DEFAULT_FEEDRATE_Z * 60.0))));
       if (0 < num)
       {
         output_writer.Write(new GCode("M18"));
@@ -234,12 +234,12 @@ label_22:
       if (retract)
       {
         var primeAmount = (float) initialPrint.PrimeAmount;
-        var num1 = (float) Math.Round(0.25 * (double) primeAmount);
+        var num1 = (float) Math.Round(0.25 * primeAmount);
         var num2 = primeAmount - num1;
         var num3 = 1800f;
-        stringList.Add(PrinterCompatibleString.Format("G0 X5 Y5 E{1} F{0}", (object) num3, (object) (float) -(double) num1));
+        stringList.Add(PrinterCompatibleString.Format("G0 X5 Y5 E{1} F{0}", num3, (float)-(double)num1));
         var num4 = 360f;
-        stringList.Add(PrinterCompatibleString.Format("G0 E{1} F{0}", (object) num4, (object) (float) -(double) num2));
+        stringList.Add(PrinterCompatibleString.Format("G0 E{1} F{0}", num4, (float)-(double)num2));
       }
       stringList.Add("M104 S0");
       if (printerProfile.AccessoriesConstants.HeatedBedConstants.HasBuiltinHeatedBed && jobdetails.jobParams.options.use_heated_bed)
@@ -247,17 +247,17 @@ label_22:
         stringList.Add("M140 S0");
       }
 
-      if ((double) jobdetails.bounds.max.z > (double) printerSizeConstants.BoxTopLimitZ)
+      if (jobdetails.bounds.max.z > (double)printerSizeConstants.BoxTopLimitZ)
       {
         BoundingBox bounds = printerSizeConstants.WarningRegion.bounds_list[printerSizeConstants.WarningRegion.bounds_list.Count - 1];
-        if ((double) jobdetails.bounds.max.z + 1.0 < (double) bounds.max.z)
+        if (jobdetails.bounds.max.z + 1.0 < bounds.max.z)
         {
           var num = 90f;
           stringList.Add(PrinterCompatibleString.Format("G0 Z1 F{0}", (object) num));
         }
         var num1 = 1800f;
         stringList.Add("G90");
-        stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2}", (object) printerSizeConstants.BackCornerPositionBoxTop.x, (object) printerSizeConstants.BackCornerPositionBoxTop.y, (object) num1));
+        stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2}", printerSizeConstants.BackCornerPositionBoxTop.x, printerSizeConstants.BackCornerPositionBoxTop.y, num1));
       }
       else
       {
@@ -265,7 +265,7 @@ label_22:
         stringList.Add(PrinterCompatibleString.Format("G0 Z3 F{0}", (object) num1));
         stringList.Add("G90");
         var num2 = 1800f;
-        stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2}", (object) printerSizeConstants.BackCornerPosition.x, (object) printerSizeConstants.BackCornerPosition.y, (object) num2));
+        stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2}", printerSizeConstants.BackCornerPosition.x, printerSizeConstants.BackCornerPosition.y, num2));
       }
       stringList.Add("M18");
       return stringList;

@@ -9,12 +9,12 @@ namespace M3D.Graphics.Frames_and_Layouts
     private int scrollframe_height = -1;
 
     public ScrollFrame()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public ScrollFrame(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 

@@ -20,13 +20,13 @@ namespace M3D.Graphics.Widgets2D
     private GUIHost host;
 
     public ComboBoxWidget()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
       dropdown_height = 96;
     }
 
     public ComboBoxWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
       dropdown_height = 96;
     }
@@ -45,9 +45,9 @@ namespace M3D.Graphics.Widgets2D
       editboxwidget.Enabled = true;
       editboxwidget.Text = "";
       ShowDropDown = false;
-      ChildList = ChildList + (Element2D)listboxwidget;
-      ChildList = ChildList + (Element2D)buttonwidget;
-      ChildList = ChildList + (Element2D)editboxwidget;
+      ChildList = ChildList + listboxwidget;
+      ChildList = ChildList + buttonwidget;
+      ChildList = ChildList + editboxwidget;
     }
 
     public override bool HasFocus
@@ -64,7 +64,7 @@ namespace M3D.Graphics.Widgets2D
           return;
         }
 
-        host.SetFocus((Element2D) this);
+        host.SetFocus(this);
       }
     }
 
@@ -107,7 +107,7 @@ namespace M3D.Graphics.Widgets2D
           return ListBox.Items[ListBox.Selected].ToString();
         }
 
-        return (string) null;
+        return null;
       }
     }
 
@@ -137,9 +137,9 @@ namespace M3D.Graphics.Widgets2D
       Init(host);
       lock (ChildList)
       {
-        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+        foreach (Element2D child in ChildList)
         {
-          child.InitChildren((Element2D) this, host, MyButtonCallback);
+          child.InitChildren(this, host, MyButtonCallback);
         }
       }
     }
@@ -250,7 +250,7 @@ namespace M3D.Graphics.Widgets2D
       {
         if (Select < 0)
         {
-          return (object) "";
+          return "";
         }
 
         return listboxwidget.Items[Select];
@@ -354,7 +354,7 @@ namespace M3D.Graphics.Widgets2D
         if (value)
         {
           Height += dropdown_height;
-          host.SetFocus((Element2D) this);
+          host.SetFocus(this);
         }
         else
         {
@@ -370,11 +370,11 @@ namespace M3D.Graphics.Widgets2D
 
         if (value)
         {
-          Parent.DropdownElement = (Element2D)listboxwidget;
+          Parent.DropdownElement = listboxwidget;
         }
         else
         {
-          Parent.DropdownElement = (Element2D) null;
+          Parent.DropdownElement = null;
         }
       }
     }
@@ -429,14 +429,14 @@ namespace M3D.Graphics.Widgets2D
       {
         itemsEnumString = value;
         var type = Type.GetType(itemsEnumString);
-        if (!(type != (Type) null) || !type.IsEnum)
+        if (!(type != null) || !type.IsEnum)
         {
           return;
         }
 
         foreach (var name in Enum.GetNames(type))
         {
-          listboxwidget.Items.Add((object) name.Replace("__", " "));
+          listboxwidget.Items.Add(name.Replace("__", " "));
         }
 
         itemsEnum = type;

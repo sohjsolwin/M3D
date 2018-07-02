@@ -20,7 +20,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     }
 
     public GridLayout(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -47,7 +47,7 @@ namespace M3D.Graphics.Frames_and_Layouts
         return element_list[index];
       }
 
-      return (Element2D) null;
+      return null;
     }
 
     public override void Clear()
@@ -204,7 +204,7 @@ namespace M3D.Graphics.Frames_and_Layouts
           return 1;
         }
 
-        return (int) Math.Ceiling((double)element_list.Count / (double)ElementsPerPage);
+        return (int) Math.Ceiling(element_list.Count / (double)ElementsPerPage);
       }
     }
 

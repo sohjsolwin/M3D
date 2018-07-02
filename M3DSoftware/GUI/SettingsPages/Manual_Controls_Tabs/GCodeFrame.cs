@@ -48,7 +48,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     {
       base.OnUpdate();
       PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
-      if (selectedPrinter != null && selectedPrinter.isConnected() && last_selected_printer != selectedPrinter)
+      if (selectedPrinter != null && selectedPrinter.IsConnected() && last_selected_printer != selectedPrinter)
       {
         updatingfromprinter = true;
         if (logwaits_checkbox != null)
@@ -63,7 +63,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
 
         updatingfromprinter = false;
       }
-      if (selectedPrinter == null || !selectedPrinter.isConnected() || show_full_log)
+      if (selectedPrinter == null || !selectedPrinter.IsConnected() || show_full_log)
       {
         if (spooler_connection.LogUpdated || last_selected_printer != null || log_changed)
         {
@@ -74,7 +74,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
             childElement.Items.Clear();
             foreach (var str in log)
             {
-              childElement.Items.Add((object) str);
+              childElement.Items.Add(str);
             }
 
             childElement.Refresh();
@@ -91,7 +91,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
           childElement.Items.Clear();
           foreach (var str in log)
           {
-            childElement.Items.Add((object) str);
+            childElement.Items.Add(str);
           }
 
           childElement.Refresh();
@@ -105,7 +105,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     public void gCodesFrameButtonCallback(ButtonWidget button)
     {
       PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
-      if ((selectedPrinter == null || !selectedPrinter.isConnected()) && button.ID != 1033)
+      if ((selectedPrinter == null || !selectedPrinter.IsConnected()) && button.ID != 1033)
       {
         return;
       }
@@ -113,7 +113,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
       switch (button.ID)
       {
         case 1000:
-          selectedPrinter.SendCommandAutoLockRelease(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, "M0");
+          selectedPrinter.SendCommandAutoLockRelease(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, "M0");
           break;
         case 1032:
           var childElement = (EditBoxWidget)FindChildElement(1030);
@@ -177,18 +177,18 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     private void OnPressSendManualGCode(EditBoxWidget manual_g)
     {
       PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
-      if (selectedPrinter == null || !selectedPrinter.isConnected() || manual_g.Text == "")
+      if (selectedPrinter == null || !selectedPrinter.IsConnected() || manual_g.Text == "")
       {
         return;
       }
 
-      selectedPrinter.SendCommandAutoLockRelease(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, manual_g.Text);
+      selectedPrinter.SendCommandAutoLockRelease(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, manual_g.Text);
     }
 
     private void PrintGCodeFromFile()
     {
       PrinterObject selectedPrinter1 = spooler_connection.SelectedPrinter;
-      if (selectedPrinter1 == null || !selectedPrinter1.isConnected())
+      if (selectedPrinter1 == null || !selectedPrinter1.IsConnected())
       {
         return;
       }
@@ -218,7 +218,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
       UserJob.preprocessor = selectedPrinter1.MyFilamentProfile.preprocessor;
       UserJob.filament_temperature = selectedPrinter1.MyFilamentProfile.Temperature;
       PrinterObject selectedPrinter2 = spooler_connection.SelectedPrinter;
-      if (selectedPrinter2 == null || !selectedPrinter2.isConnected())
+      if (selectedPrinter2 == null || !selectedPrinter2.IsConnected())
       {
         messagebox.AddMessageToQueue("Printer Disconnected", PopupMessageBox.MessageBoxButtons.OK);
       }

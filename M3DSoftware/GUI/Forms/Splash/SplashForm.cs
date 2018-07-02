@@ -46,7 +46,7 @@ namespace M3D.GUI.Forms.Splash
 
     private void InitializeComponent()
     {
-      components = (IContainer) new Container();
+      components = new Container();
       timer1 = new Timer(components);
       SuspendLayout();
       timer1.Interval = 2000;
@@ -55,21 +55,21 @@ namespace M3D.GUI.Forms.Splash
       AutoScaleMode = AutoScaleMode.Font;
       BackColor = Color.White;
       BackgroundImageLayout = ImageLayout.Center;
-      if (Program.isDEBUGBUILD || VersionNumber.Stage.DEBUG == M3D.Spooling.Version.Client_Version.stage)
+      if (Program.IsDEBUGBUILD || VersionNumber.Stage.DEBUG == M3D.Spooling.Version.Client_Version.stage)
       {
-        BackgroundImage = (Image) Resources.splashscreen_debug;
+        BackgroundImage = Resources.splashscreen_debug;
       }
       else if (VersionNumber.Stage.Alpha == M3D.Spooling.Version.Client_Version.stage)
       {
-        BackgroundImage = (Image) Resources.splashscreenAlpha;
+        BackgroundImage = Resources.splashscreenAlpha;
       }
       else if (VersionNumber.Stage.Beta == M3D.Spooling.Version.Client_Version.stage)
       {
-        BackgroundImage = (Image) Resources.splashscreen_beta;
+        BackgroundImage = Resources.splashscreen_beta;
       }
       else if (M3D.Spooling.Version.Client_Version.stage == VersionNumber.Stage.Release || VersionNumber.Stage.ReleaseCandidate == M3D.Spooling.Version.Client_Version.stage)
       {
-        BackgroundImage = (Image) Resources.splashscreen_real;
+        BackgroundImage = Resources.splashscreen_real;
       }
 
       ClientSize = new Size(500, 375);

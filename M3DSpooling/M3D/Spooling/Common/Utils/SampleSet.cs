@@ -59,7 +59,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (float)m_sum / (float)Count;
+        return (float)m_sum / Count;
       }
     }
 
@@ -67,7 +67,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (float) (m_sumSqrd - m_sum * m_sum / (double)Count) / (float) (Count - 1);
+        return (float) (m_sumSqrd - m_sum * m_sum / Count) / (Count - 1);
       }
     }
 
@@ -75,7 +75,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (float) Math.Sqrt((double)SampleVariance);
+        return (float) Math.Sqrt(SampleVariance);
       }
     }
   }

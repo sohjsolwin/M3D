@@ -49,7 +49,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         return;
       }
 
-      var num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(DoNextExtrusionStep), (object) new FilamentInsertNewFilament.ExtrusionProcessData(progressBar, selectedPrinter, 0), "G90", "G92");
+      var num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(DoNextExtrusionStep), new FilamentInsertNewFilament.ExtrusionProcessData(progressBar, selectedPrinter, 0), "G90", "G92");
     }
 
     private void DoNextExtrusionStep(IAsyncCallResult ar)
@@ -61,16 +61,16 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       else
       {
         var asyncState = ar.AsyncState as FilamentInsertNewFilament.ExtrusionProcessData;
-        var num1 = (float) asyncState.amount_extruded / 80f;
+        var num1 = asyncState.amount_extruded / 80f;
         asyncState.progressBar.PercentComplete = num1;
-        if ((double) asyncState.amount_extruded == 80.0)
+        if (asyncState.amount_extruded == 80.0)
         {
           MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page5_HasFilamentExited, CurrentDetails);
         }
         else
         {
           asyncState.amount_extruded += 10;
-          var num2 = (int) asyncState.printer.SendManualGCode(new AsyncCallback(DoNextExtrusionStep), (object) asyncState, PrinterCompatibleString.Format("G0 F450 E{0}", (object) asyncState.amount_extruded));
+          var num2 = (int) asyncState.printer.SendManualGCode(new AsyncCallback(DoNextExtrusionStep), asyncState, PrinterCompatibleString.Format("G0 F450 E{0}", (object) asyncState.amount_extruded));
         }
       }
     }

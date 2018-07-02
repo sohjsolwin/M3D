@@ -44,7 +44,7 @@ namespace M3D.Graphics
       }
 
       font_mapping = new Dictionary<FontSize, FontInfo>();
-      m_ofntCurFont = (QFont) null;
+      m_ofntCurFont = null;
       m_fDefaultFontSize = default_size;
       m_oframeRootElement = new Frame(0);
       m_oframeRootControlElement = new Frame(0);
@@ -65,9 +65,9 @@ namespace M3D.Graphics
       m_oframeRootControlElement.RelativeWidth = 1f;
       m_oframeRootControlElement.RelativeHeight = 1f;
       m_oframeRootControlElement.IgnoreMouse = true;
-      m_oframeRootMasterElement.AddChildElement((Element2D)m_oframeRootElement);
-      m_oframeRootMasterElement.AddChildElement((Element2D)m_odialogRootElement);
-      m_oframeRootMasterElement.AddChildElement((Element2D)m_oframeRootControlElement);
+      m_oframeRootMasterElement.AddChildElement(m_oframeRootElement);
+      m_oframeRootMasterElement.AddChildElement(m_odialogRootElement);
+      m_oframeRootMasterElement.AddChildElement(m_oframeRootControlElement);
       m_renderer = new Simple2DRenderer(glControl.Width, glControl.Height);
       m_renderer.SetLineWidth(2f);
       m_renderer.SetTexturePath(Path.Combine(Path.Combine(PublicDataFolder, "Data"), "GUIImages"));
@@ -147,7 +147,7 @@ namespace M3D.Graphics
         }
         else
         {
-          m_ocbComboboxSelected = (ComboBoxWidget) null;
+          m_ocbComboboxSelected = null;
         }
       }
       else if (keyboardevent.Type == KeyboardEventType.CommandKey && ((CommandKeyEvent) keyboardevent).Key == KeyboardCommandKey.Escape)
@@ -350,7 +350,7 @@ namespace M3D.Graphics
     {
       get
       {
-        return (Element2D)m_oframeRootElement;
+        return m_oframeRootElement;
       }
     }
 
@@ -386,7 +386,7 @@ namespace M3D.Graphics
       if (m_oeSelectedElement != null && m_oeSelectedElement != m_oeMouseOverElement)
       {
         flag = m_oeSelectedElement.OnMouseCommand(mouseevent);
-        m_oeSelectedElement = (Element2D) null;
+        m_oeSelectedElement = null;
       }
       Element2D mouseOverElement = m_oeMouseOverElement;
       if (mouseOverElement != null)
@@ -409,7 +409,7 @@ namespace M3D.Graphics
             else if (m_ocbComboboxSelected != null)
             {
               m_ocbComboboxSelected.ShowDropDown = false;
-              m_ocbComboboxSelected = (ComboBoxWidget) null;
+              m_ocbComboboxSelected = null;
             }
             if (m_oeFocusElement != null && m_oeFocusElement != mouseOverElement && m_oeFocusElement != m_ocbComboboxSelected)
             {
@@ -498,7 +498,7 @@ namespace M3D.Graphics
       m_olocaleCurrent = new_locale;
       foreach (KeyValuePair<FontSize, FontInfo> keyValuePair in font_mapping)
       {
-        keyValuePair.Value.font = (QFont) null;
+        keyValuePair.Value.font = null;
       }
 
       foreach (KeyValuePair<FontSize, FontInfo> keyValuePair in font_mapping)
@@ -571,7 +571,7 @@ namespace M3D.Graphics
     {
       foreach (KeyValuePair<FontSize, FontInfo> keyValuePair in font_mapping)
       {
-        if ((double) keyValuePair.Value.realsize == (double) ptsize && keyValuePair.Value.font != null)
+        if (keyValuePair.Value.realsize == (double)ptsize && keyValuePair.Value.font != null)
         {
           return keyValuePair.Key;
         }

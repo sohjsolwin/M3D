@@ -60,7 +60,7 @@ namespace M3D.Spooling.Common
     public Calibration()
     {
       Calibration_Valid = true;
-      G32_VERSION = (int) byte.MaxValue;
+      G32_VERSION = byte.MaxValue;
       CORNER_HEIGHT_BACK_RIGHT = 0.0f;
       CORNER_HEIGHT_BACK_LEFT = 0.0f;
       CORNER_HEIGHT_FRONT_LEFT = 0.0f;

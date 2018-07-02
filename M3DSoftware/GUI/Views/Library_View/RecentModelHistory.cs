@@ -35,7 +35,7 @@ namespace M3D.GUI.Views.Library_View
     {
       if (m_thedatabaseRecent.Count < 1)
       {
-        return (QueryResults<RecentModelHistory.RecentRecord>) null;
+        return null;
       }
 
       var queryResults = new QueryResults<RecentModelHistory.RecentRecord>();
@@ -59,7 +59,7 @@ namespace M3D.GUI.Views.Library_View
           return new RecentModelHistory.RecentRecord(m_thedatabaseRecent[index]);
         }
       }
-      return (RecentModelHistory.RecentRecord) null;
+      return null;
     }
 
     public bool AddModelToRecent(string fileName, string icon)
@@ -128,7 +128,7 @@ namespace M3D.GUI.Views.Library_View
       {
         using (var streamReader = new StreamReader(Paths.RecentDBPath))
         {
-          using (var xmlReader = XmlReader.Create((TextReader) streamReader))
+          using (var xmlReader = XmlReader.Create(streamReader))
           {
             m_thedatabaseRecent = (List<RecentModelHistory.RecentRecord>) new XmlSerializer(typeof (List<RecentModelHistory.RecentRecord>), new XmlRootAttribute("Recent")).Deserialize(xmlReader);
           }
@@ -151,7 +151,7 @@ namespace M3D.GUI.Views.Library_View
         StreamWriter streamWriter2 = streamWriter1;
         List<RecentModelHistory.RecentRecord> thedatabaseRecent = m_thedatabaseRecent;
         XmlSerializerNamespaces namespaces = serializerNamespaces;
-        xmlSerializer.Serialize((TextWriter) streamWriter2, (object) thedatabaseRecent, namespaces);
+        xmlSerializer.Serialize(streamWriter2, thedatabaseRecent, namespaces);
         streamWriter1.Close();
       }
       catch (Exception ex)
@@ -190,7 +190,7 @@ namespace M3D.GUI.Views.Library_View
       }
 
       public RecentRecord(RecentModelHistory.RecentRecord other)
-        : base((LibraryRecord) other)
+        : base(other)
       {
         cachefilename = other.cachefilename;
         _3dmodelfilename = other._3dmodelfilename;

@@ -35,7 +35,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
             settingsManager.DisassociateFilamentFromPrinter(selectedPrinter.Info.serial_number);
             settingsManager.SaveSettings();
           }
-          var none = (int) selectedPrinter.SetFilamentToNone(new AsyncCallback(MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(selectedPrinter, Manage3DInkMainWindow.PageID.Page8_WaitingPage, CurrentDetails));
+          var none = (int) selectedPrinter.SetFilamentToNone(new AsyncCallback(MainWindow.GotoPageAfterOperation), new Manage3DInkMainWindow.PageAfterLockDetails(selectedPrinter, Manage3DInkMainWindow.PageID.Page8_WaitingPage, CurrentDetails));
           break;
         case 6:
           MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page2_RetractingFilament, CurrentDetails);

@@ -52,9 +52,9 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       var num2 = num1 / 60;
       var num3 = num2 / 60;
       var num4 = num2 - num3 * 60;
-      CurrentJobDetails.Estimated_Print_Time = (float) num1;
+      CurrentJobDetails.Estimated_Print_Time = num1;
       estimated_time.Text = num3.ToString() + " hours, " + num4.ToString() + " minutes";
-      estimated_filament.Text = ((float) (int)CurrentJobDetails.Estimated_Filament * 0.0393701f).ToString() + " inches";
+      estimated_filament.Text = ((int)CurrentJobDetails.Estimated_Filament * 0.0393701f).ToString() + " inches";
       countdown_timer.Restart();
     }
 
@@ -64,8 +64,8 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     public void Init(GUIHost host)
     {
-      var borderedImageFrame = new BorderedImageFrame(ID, (Element2D) null);
-      AddChildElement((Element2D) borderedImageFrame);
+      var borderedImageFrame = new BorderedImageFrame(ID, null);
+      AddChildElement(borderedImageFrame);
       SetSize(480, 340);
       borderedImageFrame.Init(host, "guicontrols", 640f, 256f, 703f, 319f, 8, 8, 64, 8, 8, 64);
       borderedImageFrame.SetSize(480, 340);
@@ -77,28 +77,28 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         Alignment = QFontAlignment.Centre,
         VAlignment = TextVerticalAlignment.Middle,
         Text = "T_PrintDialog_PrintWillBeginShortly",
-        Color = new Color4((byte)100, (byte)100, (byte)100, byte.MaxValue)
+        Color = new Color4(100, 100, 100, byte.MaxValue)
       };
       textWidget.SetPosition(0, 10);
       textWidget.SetSize(480, 80);
       textWidget.CenterHorizontallyInParent = true;
-      borderedImageFrame.AddChildElement((Element2D) textWidget);
+      borderedImageFrame.AddChildElement(textWidget);
       autostart_text = new TextWidget(0)
       {
         Size = FontSize.Medium,
         Alignment = QFontAlignment.Centre,
         VAlignment = TextVerticalAlignment.Middle,
         Text = "T_PrintDialog_AutoStartingIn",
-        Color = new Color4((byte)100, (byte)100, (byte)100, byte.MaxValue)
+        Color = new Color4(100, 100, 100, byte.MaxValue)
       };
       autostart_text.SetPosition(87, 193);
       autostart_text.SetSize(140, 30);
-      borderedImageFrame.AddChildElement((Element2D)autostart_text);
+      borderedImageFrame.AddChildElement(autostart_text);
       timer_progress = new SpriteAnimationWidget(1);
       timer_progress.Init(host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
       timer_progress.SetSize(128, 108);
       timer_progress.SetPosition(238, 150);
-      borderedImageFrame.AddChildElement((Element2D)timer_progress);
+      borderedImageFrame.AddChildElement(timer_progress);
       timer_text = new TextWidget(0)
       {
         Size = FontSize.VeryLarge,
@@ -108,10 +108,10 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       };
       timer_text.SetSize(128, 108);
       timer_text.SetPosition(238, 150);
-      timer_text.Color = new Color4((byte) 100, (byte) 100, (byte) 100, byte.MaxValue);
-      borderedImageFrame.AddChildElement((Element2D)timer_text);
+      timer_text.Color = new Color4(100, 100, 100, byte.MaxValue);
+      borderedImageFrame.AddChildElement(timer_text);
       continue_button = new ButtonWidget(1);
-      continue_button.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      continue_button.Init(host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       continue_button.Size = FontSize.Medium;
       continue_button.Text = "T_PrintDialog_StartNow";
       continue_button.SetGrowableWidth(4, 4, 32);
@@ -119,9 +119,9 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       continue_button.SetSize(100, 32);
       continue_button.SetPosition(100, -46);
       continue_button.SetCallback(new ButtonCallback(MyButtonCallback));
-      borderedImageFrame.AddChildElement((Element2D)continue_button);
+      borderedImageFrame.AddChildElement(continue_button);
       cancel_button = new ButtonWidget(0);
-      cancel_button.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      cancel_button.Init(host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       cancel_button.Size = FontSize.Medium;
       cancel_button.Text = "T_Cancel";
       cancel_button.SetGrowableWidth(4, 4, 32);
@@ -130,7 +130,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       cancel_button.SetPosition(-204, -46);
       cancel_button.CenterHorizontallyInParent = false;
       cancel_button.SetCallback(new ButtonCallback(MyButtonCallback));
-      borderedImageFrame.AddChildElement((Element2D)cancel_button);
+      borderedImageFrame.AddChildElement(cancel_button);
       estimated_time_label = new TextWidget(0)
       {
         Text = "T_PrintDialog_EstimatedTime",
@@ -167,10 +167,10 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       estimated_filament.SetPosition(220, 122);
       estimated_filament.SetSize(275, 24);
       estimated_filament.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
-      borderedImageFrame.AddChildElement((Element2D)estimated_time_label);
-      borderedImageFrame.AddChildElement((Element2D)estimated_time);
-      borderedImageFrame.AddChildElement((Element2D)estimated_filament_label);
-      borderedImageFrame.AddChildElement((Element2D)estimated_filament);
+      borderedImageFrame.AddChildElement(estimated_time_label);
+      borderedImageFrame.AddChildElement(estimated_time);
+      borderedImageFrame.AddChildElement(estimated_filament_label);
+      borderedImageFrame.AddChildElement(estimated_filament);
     }
 
     public void MyButtonCallback(ButtonWidget button)
@@ -184,7 +184,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
             break;
           }
 
-          var num = (int)CurrentJobDetails.printer.SendManualGCode(new AsyncCallback(ReleasePrinterAfterCommand), (object)CurrentJobDetails.printer, "M106 S0");
+          var num = (int)CurrentJobDetails.printer.SendManualGCode(new AsyncCallback(ReleasePrinterAfterCommand), CurrentJobDetails.printer, "M106 S0");
           break;
         case 1:
           CloseAndStart();
@@ -200,7 +200,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         return;
       }
 
-      var num = (int) asyncState.ReleaseLock((AsyncCallback) null, (object) null);
+      var num = (int) asyncState.ReleaseLock(null, null);
     }
 
     private void CloseAndStart()
@@ -223,7 +223,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         return;
       }
 
-      var num = (int) asyncState.ReleaseLock(new AsyncCallback(FailedReleaseCallback), (object) asyncState);
+      var num = (int) asyncState.ReleaseLock(new AsyncCallback(FailedReleaseCallback), asyncState);
     }
 
     public override void OnUpdate()

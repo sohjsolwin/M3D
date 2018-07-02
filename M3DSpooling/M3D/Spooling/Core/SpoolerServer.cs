@@ -62,12 +62,12 @@ namespace M3D.Spooling.Core
     {
       shared_shutdown = new ThreadSafeVariable<bool>(false);
       profile_dictionary = new PrinterProfileDictionary();
-      broadcastserver = (IBroadcastServer) null;
-      rpc_invoker = new RPCInvoker((object) this);
+      broadcastserver = null;
+      rpc_invoker = new RPCInvoker(this);
       thread_sync = new object();
       printer_handshake = new object();
       logging_queue = new List<SpoolerMessage>();
-      network_logging_timer = new ThreadBasedTimer((IContainer)null, shared_shutdown)
+      network_logging_timer = new ThreadBasedTimer(null, shared_shutdown)
       {
         Interval = 100,
         Tick = new EventHandler(onLogger_Tick)
@@ -111,21 +111,21 @@ namespace M3D.Spooling.Core
       ulong num1 = 1000000000;
       try
       {
-        stringList.AddRange((IEnumerable<string>) Directory.GetFiles(Paths.SpoolerFolder));
+        stringList.AddRange(Directory.GetFiles(Paths.SpoolerFolder));
       }
       catch (Exception ex)
       {
       }
       try
       {
-        stringList.AddRange((IEnumerable<string>) Directory.GetFiles(Paths.QueuePath));
+        stringList.AddRange(Directory.GetFiles(Paths.QueuePath));
       }
       catch (Exception ex)
       {
       }
       try
       {
-        stringList.AddRange((IEnumerable<string>) Directory.GetFiles(Paths.LogPath));
+        stringList.AddRange(Directory.GetFiles(Paths.LogPath));
       }
       catch (Exception ex)
       {
@@ -158,8 +158,8 @@ namespace M3D.Spooling.Core
         }
         catch (Exception ex)
         {
-          ErrorLogger.LogException(string.Format("Exception in SpoolerServer.appdatacleanup: {0}", (object) ex.Message), ex);
-          ErrorLogger.LogErrorMsg(string.Format("SpoolServer.appdatacleanup path Clean up threw: {0}", (object) ex.Message));
+          ErrorLogger.LogException(string.Format("Exception in SpoolerServer.appdatacleanup: {0}", ex.Message), ex);
+          ErrorLogger.LogErrorMsg(string.Format("SpoolServer.appdatacleanup path Clean up threw: {0}", ex.Message));
         }
       }
       var keyValuePairList = new List<KeyValuePair<string, DateTime>>();
@@ -189,7 +189,7 @@ namespace M3D.Spooling.Core
             catch (Exception ex)
             {
               ErrorLogger.LogException("Exception in SpoolerServer.appdatacleanup 1" + ex.Message, ex);
-              ErrorLogger.LogErrorMsg(string.Format("SpoolServer.appdatacleanup path Clean up threw:{0}", (object) ex.Message));
+              ErrorLogger.LogErrorMsg(string.Format("SpoolServer.appdatacleanup path Clean up threw:{0}", ex.Message));
             }
           }
           dictionary1.Remove(key);
@@ -219,7 +219,7 @@ namespace M3D.Spooling.Core
             catch (Exception ex)
             {
               ErrorLogger.LogException("Exception in SpoolerServer.appdatacleanup 2" + ex.Message, ex);
-              ErrorLogger.LogErrorMsg(string.Format("SpoolServer.appdatacleanup path Clean up threw:{0}", (object) ex.Message));
+              ErrorLogger.LogErrorMsg(string.Format("SpoolServer.appdatacleanup path Clean up threw:{0}", ex.Message));
             }
           }
         }
@@ -266,7 +266,7 @@ namespace M3D.Spooling.Core
       return num;
     }
 
-    public override void onNewClientConnection(Guid guid)
+    public override void OnNewClientConnection(Guid guid)
     {
     }
 
@@ -297,7 +297,7 @@ namespace M3D.Spooling.Core
       List<SpoolerMessage> spoolerMessageList;
       lock (logging_queue)
       {
-        spoolerMessageList = new List<SpoolerMessage>((IEnumerable<SpoolerMessage>)logging_queue);
+        spoolerMessageList = new List<SpoolerMessage>(logging_queue);
         logging_queue.Clear();
       }
       foreach (SpoolerMessage spoolerMessage in spoolerMessageList)
@@ -407,7 +407,7 @@ namespace M3D.Spooling.Core
             }
             catch (InvalidOperationException ex)
             {
-              str2 = (string) null;
+              str2 = null;
             }
             if (!string.IsNullOrEmpty(str2))
             {
@@ -415,7 +415,7 @@ namespace M3D.Spooling.Core
             }
           }
         }
-        str1 += string.Format("<DeviceInstallDetected count=\"{0}\" />", (object) WinUSBPrinterFinder.DeviceInstallDetected);
+        str1 += string.Format("<DeviceInstallDetected count=\"{0}\" />", WinUSBPrinterFinder.DeviceInstallDetected);
       }
       return "<SPOOLER__ALL/>" + str1;
     }
@@ -430,14 +430,14 @@ namespace M3D.Spooling.Core
           return printerConnection;
         }
       }
-      return (PrinterConnection) null;
+      return null;
     }
 
     private string LockVerifyResultToSpoolerMessage(CommandResult result, PrinterSerialNumber serialnumber, uint callID)
     {
       if (result == CommandResult.Success)
       {
-        return (string) null;
+        return null;
       }
 
       return new SpoolerMessage(MessageType.LockResult, serialnumber, callID.ToString("D8") + result.ToString()).Serialize();
@@ -445,10 +445,10 @@ namespace M3D.Spooling.Core
 
     public string onClientMessage(string message)
     {
-      return onClientMessage(MyGuid, message);
+      return OnClientMessage(MyGuid, message);
     }
 
-    public override string onClientMessage(Guid guid, string message)
+    public override string OnClientMessage(Guid guid, string message)
     {
       try
       {
@@ -467,7 +467,7 @@ namespace M3D.Spooling.Core
           var obj = (object) null;
           try
           {
-            if (call.serialnumber == (PrinterSerialNumber) null)
+            if (call.serialnumber == null)
             {
               obj = rpc_invoker.CallMethod(call);
             }
@@ -480,7 +480,7 @@ namespace M3D.Spooling.Core
                 {
                   if ((int) call.callID == (int)current_processing_id.Value)
                   {
-                    return (string) null;
+                    return null;
                   }
 
                   current_processing_id.Value = call.callID;
@@ -510,11 +510,11 @@ namespace M3D.Spooling.Core
 
                   if (result == CommandResult.Success || !flag)
                   {
-                    obj = rpc_invoker.CallMethod((object) printerConnection, call);
+                    obj = rpc_invoker.CallMethod(printerConnection, call);
                     if (obj is CommandResult)
                     {
                       result = (CommandResult) obj;
-                      obj = (object) null;
+                      obj = null;
                     }
                   }
                 }
@@ -554,14 +554,14 @@ namespace M3D.Spooling.Core
         ErrorLogger.LogException("Exception in SpoolerServer.OnClientMessage " + ex.Message, ex);
         return "FAIL";
       }
-      return (string) null;
+      return null;
     }
 
     public string InitialConnect(VersionNumber client_version)
     {
       if (client_version != M3D.Spooling.Version.Client_Version)
       {
-        return "<SocketBroadcast>" + new SpoolerMessage(MessageType.IncompatibleSpooler, (string) null).Serialize() + "</SocketBroadcast>";
+        return "<SocketBroadcast>" + new SpoolerMessage(MessageType.IncompatibleSpooler, null).Serialize() + "</SocketBroadcast>";
       }
 
       var spoolerInfo = new SpoolerInfo
@@ -595,7 +595,7 @@ namespace M3D.Spooling.Core
         return;
       }
       // ISSUE: reference to a compiler-generated field
-      OnReceivedSpoolerShutdownMessage((object) this, new EventArgs());
+      OnReceivedSpoolerShutdownMessage(this, new EventArgs());
     }
 
     public void HideSpooler()
@@ -606,7 +606,7 @@ namespace M3D.Spooling.Core
         return;
       }
       // ISSUE: reference to a compiler-generated field
-      OnReceivedSpoolerHideMessage((object) this, new EventArgs());
+      OnReceivedSpoolerHideMessage(this, new EventArgs());
     }
 
     public void ShowSpooler()
@@ -617,7 +617,7 @@ namespace M3D.Spooling.Core
         return;
       }
       // ISSUE: reference to a compiler-generated field
-      OnReceivedSpoolerShowMessage((object) this, new EventArgs());
+      OnReceivedSpoolerShowMessage(this, new EventArgs());
     }
 
     public int NumActiveAndQueuedJobs

@@ -37,12 +37,12 @@ namespace M3D.Graphics.Widgets2D
     private ListBoxWidget.OnChangeCallback onchangecallback;
 
     public ListBoxWidget()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public ListBoxWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
       Size = FontSize.Medium;
     }
@@ -76,9 +76,9 @@ namespace M3D.Graphics.Widgets2D
       color = new Color4(0.15f, 0.15f, 0.15f, 1f);
       color_selected = new Color4(0.7f, 0.7f, 1f, 1f);
       color_highlighted = new Color4(1f, 1f, 0.5f, 1f);
-      ChildList = ChildList + (Element2D)image_widget;
-      ChildList = ChildList + (Element2D)scrollbar;
-      onchangecallback = (ListBoxWidget.OnChangeCallback) null;
+      ChildList = ChildList + image_widget;
+      ChildList = ChildList + scrollbar;
+      onchangecallback = null;
     }
 
     public override ElementType GetElementType()
@@ -140,7 +140,7 @@ namespace M3D.Graphics.Widgets2D
       Refresh();
       Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
       tabIndex = 1;
-      ImageHasFocusColor = new Color4((byte) 100, (byte) 230, byte.MaxValue, byte.MaxValue);
+      ImageHasFocusColor = new Color4(100, 230, byte.MaxValue, byte.MaxValue);
     }
 
     public override void SetVisible(bool bVisible)
@@ -185,8 +185,8 @@ namespace M3D.Graphics.Widgets2D
           Simple2DRenderer.Quad quad1;
           quad1.x0 = x;
           quad1.y0 = y;
-          quad1.x1 = x + (float)text_region_width;
-          quad1.y1 = y + (float)rowheight * 0.75f;
+          quad1.x1 = x + text_region_width;
+          quad1.y1 = y + rowheight * 0.75f;
           quad1.color = color_highlighted;
           Simple2DRenderer.Quad quad2 = quad1;
           simpleRenderer.DrawQuad(quad2);
@@ -199,16 +199,16 @@ namespace M3D.Graphics.Widgets2D
           Simple2DRenderer.Quad quad1;
           quad1.x0 = x;
           quad1.y0 = y;
-          quad1.x1 = x + (float)text_region_width;
-          quad1.y1 = y + (float)rowheight * 0.75f;
+          quad1.x1 = x + text_region_width;
+          quad1.y1 = y + rowheight * 0.75f;
           quad1.color = color_selected;
           Simple2DRenderer.Quad quad2 = quad1;
           simpleRenderer.DrawQuad(quad2);
           QFont.Begin();
         }
         currentFont.Options.Colour = Color;
-        currentFont.Print(Items[startRow].ToString(), (float)text_region_width, new Vector2(x, y));
-        y += (float)rowheight;
+        currentFont.Print(Items[startRow].ToString(), text_region_width, new Vector2(x, y));
+        y += rowheight;
         ++num;
       }
       QFont.End();
@@ -254,10 +254,7 @@ namespace M3D.Graphics.Widgets2D
           if (num3 >= 0)
           {
             Selected = num3;
-            if (onchangecallback != null)
-            {
-              onchangecallback(this);
-            }
+            onchangecallback?.Invoke(this);
           }
         }
       }
@@ -313,9 +310,9 @@ namespace M3D.Graphics.Widgets2D
       Init(host);
       lock (ChildList)
       {
-        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+        foreach (Element2D child in ChildList)
         {
-          child.InitChildren((Element2D) this, host, MyButtonCallback);
+          child.InitChildren(this, host, MyButtonCallback);
         }
       }
     }
@@ -338,7 +335,7 @@ namespace M3D.Graphics.Widgets2D
       var flag = false;
       text_region_height = Height - (topbordersize_pixels + bottombordersize_pixels);
       text_region_width = Width - (leftbordersize_pixels + rightbordersize_pixels);
-      max_rows_on_screen = rowheight > 0 ? (int) Math.Ceiling((double)text_region_height / (double)rowheight) : 0;
+      max_rows_on_screen = rowheight > 0 ? (int) Math.Ceiling(text_region_height / (double)rowheight) : 0;
       item_count = Items.Count;
       if (ShowScrollbar != ListBoxWidget.ScrollBarState.Off && (max_rows_on_screen < item_count || ShowScrollbar == ListBoxWidget.ScrollBarState.On))
       {
@@ -350,13 +347,13 @@ namespace M3D.Graphics.Widgets2D
         if (item_count > max_rows_on_screen)
         {
           scrollbar.Enabled = true;
-          scrollbar.SetRange(0.0f, (float) (item_count - max_rows_on_screen), (float)Selected);
+          scrollbar.SetRange(0.0f, item_count - max_rows_on_screen, Selected);
           scrollbar.PushButtonStep = 1f;
         }
         else
         {
           scrollbar.Enabled = true;
-          scrollbar.SetRange(0.0f, 0.0f, (float)Selected);
+          scrollbar.SetRange(0.0f, 0.0f, Selected);
         }
         scrollbar.Visible = true;
         flag = true;
@@ -374,7 +371,7 @@ namespace M3D.Graphics.Widgets2D
 
     public void SetTrackPositionToEnd()
     {
-      max_rows_on_screen = (int) Math.Ceiling((double)text_region_height / (double)rowheight);
+      max_rows_on_screen = (int) Math.Ceiling(text_region_height / (double)rowheight);
       if (max_rows_on_screen < item_count)
       {
         scrollbar.SetTrackPositionToEnd();
@@ -408,7 +405,7 @@ namespace M3D.Graphics.Widgets2D
       set
       {
         selected = value;
-        base.OnControlMsg((Element2D) this, ControlMsg.SELECTCHANGED, (float)selected, (float)selected);
+        base.OnControlMsg(this, ControlMsg.SELECTCHANGED, selected, selected);
       }
     }
 

@@ -64,13 +64,13 @@ namespace M3D.Graphics.Ext3D.ModelRendering
       {
         Vector3 normal = vertex.Faces[index].Normal;
         var num2 = Math.Abs(faceNormal.Dot(normal) / (faceNormal.Length() * normal.Length()));
-        if ((double) num2 >= 0.698131680488586)
+        if (num2 >= 0.698131680488586)
         {
           vector3 += normal * num2;
           ++num1;
         }
       }
-      return (vector3 * (1f / (float) num1)).Normalize();
+      return (vector3 * (1f / num1)).Normalize();
     }
   }
 }

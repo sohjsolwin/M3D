@@ -77,7 +77,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           settingsManager.AssociateFilamentToPrinter(selectedPrinter.Info.serial_number, CurrentDetails.current_spool);
           settingsManager.SaveSettings();
         }
-        var num = (int) selectedPrinter.SetFilamentInfo(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, CurrentDetails.current_spool);
+        var num = (int) selectedPrinter.SetFilamentInfo(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, CurrentDetails.current_spool);
       }
       else
       {
@@ -93,7 +93,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       if (childElement != null)
       {
         var buttonWidget1 = new ButtonWidget(11);
-        buttonWidget1.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        buttonWidget1.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget1.Size = FontSize.Medium;
         buttonWidget1.Text = "INSERT FILAMENT (INTERNAL)";
         buttonWidget1.SetGrowableWidth(4, 4, 32);
@@ -101,9 +101,9 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget1.SetSize(192, 60);
         buttonWidget1.SetPosition(60, -100);
         buttonWidget1.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-        childElement.AddChildElement((Element2D) buttonWidget1);
+        childElement.AddChildElement(buttonWidget1);
         var buttonWidget2 = new ButtonWidget(12);
-        buttonWidget2.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        buttonWidget2.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget2.Size = FontSize.Medium;
         buttonWidget2.Text = "INSERT FILAMENT (EXTERNAL)";
         buttonWidget2.SetGrowableWidth(4, 4, 32);
@@ -111,7 +111,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget2.SetSize(192, 60);
         buttonWidget2.SetPosition(-252, -100);
         buttonWidget2.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-        childElement.AddChildElement((Element2D) buttonWidget2);
+        childElement.AddChildElement(buttonWidget2);
       }
       PopulateStartupControlsList();
     }

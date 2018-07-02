@@ -44,7 +44,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       spriteAnimationWidget.SetSize(128, 108);
       spriteAnimationWidget.CenterVerticallyInParent = true;
       spriteAnimationWidget.CenterHorizontallyInParent = true;
-      childElement.AddChildElement((Element2D) spriteAnimationWidget);
+      childElement.AddChildElement(spriteAnimationWidget);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
@@ -72,7 +72,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
             if (selectedPrinter.LockStatus == PrinterLockStatus.Unlocked)
             {
               finishedWaiting = true;
-              var num = (int) selectedPrinter.AcquireLock(new AsyncCallback(DoStartUpSequenceCallsAfterLock), (object) selectedPrinter);
+              var num = (int) selectedPrinter.AcquireLock(new AsyncCallback(DoStartUpSequenceCallsAfterLock), selectedPrinter);
             }
             else if (selectedPrinter.LockStatus == PrinterLockStatus.WeOwnLocked)
             {
@@ -102,7 +102,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           }
           else if (m_osIdleStopwatchTimer.ElapsedMilliseconds > 3000L)
           {
-            var num = (int) selectedPrinter.BreakLock((AsyncCallback) null, (object) null);
+            var num = (int) selectedPrinter.BreakLock(null, null);
             finishedWaiting = true;
           }
         }
@@ -117,7 +117,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         return;
       }
 
-      var num = (int) printer.SendManualGCode(new AsyncCallback(OnStartUpSuccess), (object) printer, "M117", "M114", "M576", "M104 S0");
+      var num = (int) printer.SendManualGCode(new AsyncCallback(OnStartUpSuccess), printer, "M117", "M114", "M576", "M104 S0");
     }
 
     private void DoStartUpSequenceCallsAfterLock(IAsyncCallResult ar)
@@ -142,7 +142,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         return;
       }
 
-      var num = (int) asyncState.ReleaseLock(new AsyncCallback(MainWindow.AfterRelease), (object) asyncState);
+      var num = (int) asyncState.ReleaseLock(new AsyncCallback(MainWindow.AfterRelease), asyncState);
     }
 
     public enum ControlIDs

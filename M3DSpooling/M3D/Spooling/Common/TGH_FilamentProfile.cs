@@ -7,7 +7,7 @@ namespace M3D.Spooling.Common
     public TGH_FilamentProfile(FilamentSpool spool, PrinterProfile printer_profile)
       : base(spool)
     {
-      preprocessor.initialPrint.StartingFanValue = (int) byte.MaxValue;
+      preprocessor.initialPrint.StartingFanValue = byte.MaxValue;
       preprocessor.initialPrint.StartingTempStabilizationDelay = 15;
       preprocessor.initialPrint.StartingTemp = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature - 5);
       preprocessor.bonding.FirstLayerTemp = preprocessor.initialPrint.StartingTemp;

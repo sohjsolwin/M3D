@@ -21,15 +21,15 @@ namespace M3D.Graphics.Frames_and_Layouts
     }
 
     public Frame(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
     public Frame(int ID, Element2D parent)
       : base(ID, parent)
     {
-      bordercolor = new Color4((byte) 0, (byte) 0, (byte) 0, (byte) 0);
-      bgcolor = new Color4((byte) 0, (byte) 0, (byte) 0, (byte) 0);
+      bordercolor = new Color4(0, 0, 0, 0);
+      bgcolor = new Color4(0, 0, 0, 0);
       Clipping = false;
     }
 
@@ -59,9 +59,9 @@ namespace M3D.Graphics.Frames_and_Layouts
       {
         Simple2DRenderer.Quad quad;
         quad.x0 = 0.0f;
-        quad.x1 = (float) simpleRenderer.WindowWidth;
+        quad.x1 = simpleRenderer.WindowWidth;
         quad.y0 = 0.0f;
-        quad.y1 = (float) simpleRenderer.WindowHeight;
+        quad.y1 = simpleRenderer.WindowHeight;
         quad.color = new Color4(0.0f, 0.0f, 0.0f, 0.5f);
         simpleRenderer.DrawQuad(quad);
       }
@@ -76,25 +76,25 @@ namespace M3D.Graphics.Frames_and_Layouts
       }
 
       Simple2DRenderer.Quad quad1;
-      quad1.x0 = (float)X_Abs;
-      quad1.y0 = (float)Y_Abs;
-      quad1.x1 = (float) (X_Abs + Width);
-      quad1.y1 = (float) (Y_Abs + Height);
+      quad1.x0 = X_Abs;
+      quad1.y0 = Y_Abs;
+      quad1.x1 = X_Abs + Width;
+      quad1.y1 = Y_Abs + Height;
       quad1.color = bgcolor;
-      if ((double)bordercolor.A > 0.0)
+      if (bordercolor.A > 0.0)
       {
-        quad1.x0 = (float) (X_Abs + 1);
-        quad1.y0 = (float) (Y_Abs + 1);
-        quad1.x1 = (float) (X_Abs + Width - 1);
-        quad1.y1 = (float) (Y_Abs + Height - 1);
+        quad1.x0 = X_Abs + 1;
+        quad1.y0 = Y_Abs + 1;
+        quad1.x1 = X_Abs + Width - 1;
+        quad1.y1 = Y_Abs + Height - 1;
         quad1.color = bgcolor;
       }
-      if ((double)bgcolor.A > 0.0)
+      if (bgcolor.A > 0.0)
       {
         quad1.color = bgcolor;
         simpleRenderer.DrawQuad(quad1);
       }
-      if ((double)bordercolor.A > 0.0)
+      if (bordercolor.A > 0.0)
       {
         quad1.color = bordercolor;
         simpleRenderer.DrawQuadLine(quad1);

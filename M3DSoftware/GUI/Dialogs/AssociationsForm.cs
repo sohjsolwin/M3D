@@ -24,7 +24,7 @@ namespace M3D.GUI.Dialogs
       this.IconPath = IconPath;
       messagebox.AllowMessages = true;
       var associationsDialog = Resources.fileAssociationsDialog;
-      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), associationsDialog, new PopupMessageBox.XMLButtonCallback(XMLButtonCallback), (object) null));
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), associationsDialog, new PopupMessageBox.XMLButtonCallback(XMLButtonCallback), null));
     }
 
     private void XMLButtonCallback(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)

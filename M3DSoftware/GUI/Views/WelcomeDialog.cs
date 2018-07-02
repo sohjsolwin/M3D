@@ -15,7 +15,7 @@ namespace M3D.GUI.Views
     private ButtonWidget continue_button;
 
     public WelcomeDialog(int ID, PopupMessageBox messagebox)
-      : base(ID, (Element2D) null)
+      : base(ID, null)
     {
       this.messagebox = messagebox;
     }
@@ -38,12 +38,12 @@ namespace M3D.GUI.Views
       {
         CenterHorizontallyInParent = true,
         CenterVerticallyInParent = true,
-        BGColor = new Color4((byte)246, (byte)246, (byte)246, byte.MaxValue),
-        BorderColor = new Color4((byte)220, (byte)220, (byte)220, byte.MaxValue),
+        BGColor = new Color4(246, 246, 246, byte.MaxValue),
+        BorderColor = new Color4(220, 220, 220, byte.MaxValue),
         RelativeWidth = 0.95f,
         RelativeHeight = 0.8f
       };
-      AddChildElement((Element2D) frame);
+      AddChildElement(frame);
       var textWidget1 = new TextWidget(0)
       {
         Size = FontSize.VeryLarge,
@@ -56,8 +56,8 @@ namespace M3D.GUI.Views
       textWidget1.Alignment = QFontAlignment.Centre;
       textWidget1.VAlignment = TextVerticalAlignment.Top;
       textWidget1.Text = "Thank you for choosing M3D.";
-      textWidget1.Color = new Color4(byte.MaxValue, (byte) 147, (byte) 0, byte.MaxValue);
-      frame.AddChildElement((Element2D) textWidget1);
+      textWidget1.Color = new Color4(byte.MaxValue, 147, 0, byte.MaxValue);
+      frame.AddChildElement(textWidget1);
       var textWidget2 = new TextWidget(0)
       {
         Size = FontSize.Medium,
@@ -70,8 +70,8 @@ namespace M3D.GUI.Views
       textWidget2.Alignment = QFontAlignment.Centre;
       textWidget2.VAlignment = TextVerticalAlignment.Top;
       textWidget2.Text = "Here are some features new to this release.";
-      textWidget2.Color = new Color4((byte) 100, (byte) 100, (byte) 100, byte.MaxValue);
-      frame.AddChildElement((Element2D) textWidget2);
+      textWidget2.Color = new Color4(100, 100, 100, byte.MaxValue);
+      frame.AddChildElement(textWidget2);
       var listBoxWidget = new ListBoxWidget(0);
       listBoxWidget.Init(host, "guicontrols", 944f, 96f, 960f, 144f, 944f, 96f, 960f, 144f, 4, 4, 16, 4, 4, 48, 24, 24);
       listBoxWidget.ScrollBar.InitTrack(host, "guicontrols", 809f, 80f, 831f, 87f, 2, 8);
@@ -84,18 +84,18 @@ namespace M3D.GUI.Views
       listBoxWidget.Y = 110;
       listBoxWidget.CenterHorizontallyInParent = true;
       listBoxWidget.SetSize(650, 190);
-      listBoxWidget.Items.Add((object) ("Release " + Version.VersionTextNoDate));
-      listBoxWidget.Items.Add((object) "- Performance improvements for untethered printing (Micro+, Pro)");
-      listBoxWidget.Items.Add((object) "- Power outage recovery (Micro+, Pro)");
-      listBoxWidget.Items.Add((object) "- Improved \"on the fly\" backlash processing (Micro+, Pro)");
-      listBoxWidget.Items.Add((object) "- New \"Accessories\" menu helps automate print settings (Pro)");
-      listBoxWidget.Items.Add((object) "- Improved \"cat screen\" for quicker calibration adjustments (all models)");
-      listBoxWidget.Items.Add((object) "- Remedied false alarms for \"Error 1006\" heater panics (Pro)");
-      listBoxWidget.Items.Add((object) "- Numerous additional user interface and printer behavior improvements");
-      listBoxWidget.Items.Add((object) "  (all models)");
-      listBoxWidget.Items.Add((object) "- For full release notes, please see website");
+      listBoxWidget.Items.Add("Release " + Version.VersionTextNoDate);
+      listBoxWidget.Items.Add("- Performance improvements for untethered printing (Micro+, Pro)");
+      listBoxWidget.Items.Add("- Power outage recovery (Micro+, Pro)");
+      listBoxWidget.Items.Add("- Improved \"on the fly\" backlash processing (Micro+, Pro)");
+      listBoxWidget.Items.Add("- New \"Accessories\" menu helps automate print settings (Pro)");
+      listBoxWidget.Items.Add("- Improved \"cat screen\" for quicker calibration adjustments (all models)");
+      listBoxWidget.Items.Add("- Remedied false alarms for \"Error 1006\" heater panics (Pro)");
+      listBoxWidget.Items.Add("- Numerous additional user interface and printer behavior improvements");
+      listBoxWidget.Items.Add("  (all models)");
+      listBoxWidget.Items.Add("- For full release notes, please see website");
       listBoxWidget.NoSelect = true;
-      frame.AddChildElement((Element2D) listBoxWidget);
+      frame.AddChildElement(listBoxWidget);
       var imageWidget = new ImageWidget(0);
       imageWidget.Init(host, "guicontrols", 0.0f, 737f, 128f, 767f, 0.0f, 737f, 128f, 767f, 0.0f, 737f, 128f, 767f);
       imageWidget.Width = 129;
@@ -103,9 +103,9 @@ namespace M3D.GUI.Views
       imageWidget.Y = -40;
       imageWidget.CenterHorizontallyInParent = true;
       imageWidget.SandBoxing = false;
-      frame.AddChildElement((Element2D) imageWidget);
+      frame.AddChildElement(imageWidget);
       continue_button = new ButtonWidget(0);
-      continue_button.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      continue_button.Init(host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       continue_button.Size = FontSize.Medium;
       continue_button.Text = "Continue";
       continue_button.SetGrowableWidth(4, 4, 32);
@@ -114,7 +114,7 @@ namespace M3D.GUI.Views
       continue_button.SetPosition(-150, -40);
       continue_button.SetCallback(new ButtonCallback(MyButtonCallback));
       continue_button.CenterHorizontallyInParent = true;
-      AddChildElement((Element2D)continue_button);
+      AddChildElement(continue_button);
       frame.SetSize(frame.Width, frame.Height);
       frame.SetSize(660, 360);
       SetSize(750, 450);
@@ -129,7 +129,7 @@ namespace M3D.GUI.Views
       }
 
       Visible = false;
-      m_host.GlobalChildDialog -= (Element2D) this;
+      m_host.GlobalChildDialog -= (this);
       messagebox.AllowMessages = true;
     }
 

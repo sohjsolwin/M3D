@@ -34,7 +34,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     }
 
     public BorderedImageFrame(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -52,14 +52,14 @@ namespace M3D.Graphics.Frames_and_Layouts
       imageWidget.Init(host, texture, normal_u0, normal_v0, normal_u1, normal_v1);
       imageWidget.SetGrowableWidth(leftbordersize_pixels, rightbordersize_pixels, minimumwidth);
       imageWidget.SetGrowableHeight(topbordersize_pixels, bottombordersize_pixels, minimumheight);
-      AddFirstChild((Element2D) imageWidget);
+      AddFirstChild(imageWidget);
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
       Parent = parent;
       base.InitChildren(parent, host, MyButtonCallback);
-      if ((double)u0 == 0.0 && (double)v0 == 0.0 && ((double)u1 == 0.0 && (double)v1 == 0.0))
+      if (u0 == 0.0 && v0 == 0.0 && (u1 == 0.0 && v1 == 0.0))
       {
         texture = "guicontrols";
         u0 = 640f;

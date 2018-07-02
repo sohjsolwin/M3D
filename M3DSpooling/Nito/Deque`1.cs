@@ -100,7 +100,7 @@ namespace Nito
 
     bool ICollection<T>.Contains(T item)
     {
-      return this.Contains<T>(item, (IEqualityComparer<T>) null);
+      return this.Contains<T>(item, null);
     }
 
     void ICollection<T>.CopyTo(T[] array, int arrayIndex)
@@ -141,7 +141,7 @@ namespace Nito
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator)GetEnumerator();
+      return GetEnumerator();
     }
 
     private bool ObjectIsT(object item)
@@ -233,7 +233,7 @@ namespace Nito
     {
       get
       {
-        return (object) this[index];
+        return this[index];
       }
       set
       {
@@ -258,11 +258,11 @@ namespace Nito
       {
         try
         {
-          array.SetValue((object) this[index1], index + index1);
+          array.SetValue(this[index1], index + index1);
         }
         catch (InvalidCastException ex)
         {
-          throw new ArgumentException("Destination array is of incorrect type.", (Exception) ex);
+          throw new ArgumentException("Destination array is of incorrect type.", ex);
         }
       }
     }
@@ -279,7 +279,7 @@ namespace Nito
     {
       get
       {
-        return (object) this;
+        return this;
       }
     }
 
@@ -287,7 +287,7 @@ namespace Nito
     {
       if (index < 0 || index > sourceLength)
       {
-        throw new ArgumentOutOfRangeException(nameof (index), "Invalid new index " + (object) index + " for source length " + (object) sourceLength);
+        throw new ArgumentOutOfRangeException(nameof (index), "Invalid new index " + index + " for source length " + sourceLength);
       }
     }
 
@@ -295,7 +295,7 @@ namespace Nito
     {
       if (index < 0 || index >= sourceLength)
       {
-        throw new ArgumentOutOfRangeException(nameof (index), "Invalid existing index " + (object) index + " for source length " + (object) sourceLength);
+        throw new ArgumentOutOfRangeException(nameof (index), "Invalid existing index " + index + " for source length " + sourceLength);
       }
     }
 
@@ -303,17 +303,17 @@ namespace Nito
     {
       if (offset < 0)
       {
-        throw new ArgumentOutOfRangeException(nameof (offset), "Invalid offset " + (object) offset);
+        throw new ArgumentOutOfRangeException(nameof (offset), "Invalid offset " + offset);
       }
 
       if (count < 0)
       {
-        throw new ArgumentOutOfRangeException(nameof (count), "Invalid count " + (object) count);
+        throw new ArgumentOutOfRangeException(nameof (count), "Invalid count " + count);
       }
 
       if (sourceLength - offset < count)
       {
-        throw new ArgumentException("Invalid offset (" + (object) offset + ") or count + (" + (object) count + ") for source length " + (object) sourceLength);
+        throw new ArgumentException("Invalid offset (" + offset + ") or count + (" + count + ") for source length " + sourceLength);
       }
     }
 
@@ -368,12 +368,12 @@ namespace Nito
         if (IsSplit)
         {
           var num = Capacity - offset;
-          Array.Copy((Array)buffer, offset, (Array) objArray, 0, num);
-          Array.Copy((Array)buffer, 0, (Array) objArray, num, Count - num);
+          Array.Copy(buffer, offset, objArray, 0, num);
+          Array.Copy(buffer, 0, objArray, num, Count - num);
         }
         else
         {
-          Array.Copy((Array)buffer, offset, (Array) objArray, 0, Count);
+          Array.Copy(buffer, offset, objArray, 0, Count);
         }
 
         buffer = objArray;
@@ -411,7 +411,7 @@ namespace Nito
       }
       else
       {
-        DoInsertRange(index, (IEnumerable<T>) new T[1]
+        DoInsertRange(index, new T[1]
         {
           item
         }, 1);

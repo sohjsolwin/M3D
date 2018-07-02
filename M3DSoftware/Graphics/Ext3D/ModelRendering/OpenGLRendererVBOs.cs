@@ -58,12 +58,12 @@ namespace M3D.Graphics.Ext3D.ModelRendering
             case ErrorCode.OutOfMemory:
               throw new OutOfMemoryException("Out of GPU memory");
             default:
-              throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), (object) error));
+              throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), error));
           }
         case ErrorCode.OutOfMemory:
           throw new OutOfMemoryException("Out of GPU memory");
         default:
-          throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), (object) GL.GetError()));
+          throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), GL.GetError()));
       }
     }
 

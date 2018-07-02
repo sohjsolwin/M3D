@@ -58,7 +58,7 @@ namespace M3D.Spooling.Sockets
 
     public void SendMessageToClient(Guid client_guid, string message)
     {
-      ThreadPool.QueueUserWorkItem(new WaitCallback(SendMessageToClientInternal), (object) new SocketServer.SendMessageData(client_guid, message));
+      ThreadPool.QueueUserWorkItem(new WaitCallback(SendMessageToClientInternal), new SocketServer.SendMessageData(client_guid, message));
     }
 
     public int ClientCount
@@ -87,15 +87,14 @@ namespace M3D.Spooling.Sockets
           parsedMessage.message.Contains("InitialConnect");
         }
 
-        var remoteIP = new SocketServer.IPAddressInfo((IPAddress) null, parsedMessage.port);
-        var remoteEndPoint = handler.RemoteEndPoint as IPEndPoint;
-        if (remoteEndPoint != null)
+        var remoteIP = new SocketServer.IPAddressInfo(null, parsedMessage.port);
+        if (handler.RemoteEndPoint is IPEndPoint remoteEndPoint)
         {
           remoteIP.ip = remoteEndPoint.Address;
         }
 
         ProcessGUIDPortPair(parsedMessage.guid, remoteIP);
-        var str = onClientMessage(parsedMessage.guid, parsedMessage.message);
+        var str = OnClientMessage(parsedMessage.guid, parsedMessage.message);
         if (string.IsNullOrEmpty(str))
         {
           str = "OK";
@@ -114,14 +113,11 @@ namespace M3D.Spooling.Sockets
       }
     }
 
-    public virtual void onNewClientConnection(Guid guid)
+    public virtual void OnNewClientConnection(Guid guid)
     {
     }
 
-    public virtual string onClientMessage(Guid guid, string message)
-    {
-      return (string) null;
-    }
+    public virtual string OnClientMessage(Guid guid, string message) => null;
 
     public virtual void OnClientRemoved(Guid guid)
     {
@@ -134,7 +130,7 @@ namespace M3D.Spooling.Sockets
         if (!client_addresses.ContainsKey(guid))
         {
           client_addresses.Add(guid, remoteIP);
-          onNewClientConnection(guid);
+          OnNewClientConnection(guid);
         }
         else
         {
@@ -208,7 +204,7 @@ namespace M3D.Spooling.Sockets
 
         socket.SendTimeout = 500;
         socket.ReceiveTimeout = 500;
-        socket.Connect((EndPoint) ipEndPoint);
+        socket.Connect(ipEndPoint);
         byte[] bytes = Encoding.UTF8.GetBytes(message);
         socket.Send(bytes);
         var length = bytes.Length;

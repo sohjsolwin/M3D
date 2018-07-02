@@ -62,7 +62,7 @@ namespace M3D.GUI.Views.Library_View
       var num = 0;
       foreach (RecentModelHistory.RecentRecord record in queryResults.records)
       {
-        var buttonWidget = new ButtonWidget(1064 + num, (Element2D) null);
+        var buttonWidget = new ButtonWidget(1064 + num, null);
         if (string.IsNullOrEmpty(record.iconfilename) || !File.Exists(record.iconfilename))
         {
           buttonWidget.Init(host, "null.png");
@@ -86,10 +86,10 @@ namespace M3D.GUI.Views.Library_View
         buttonWidget.Color = new Color4(0.0f, 0.5f, 1f, 1f);
         buttonWidget.Size = FontSize.Small;
         buttonWidget.VAlignment = TextVerticalAlignment.Bottom;
-        buttonWidget.Data = (object) record;
+        buttonWidget.Data = record;
         buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
         buttonWidget.SetFullyDraggable();
-        LibraryGrid.AddChildElement((Element2D) buttonWidget);
+        LibraryGrid.AddChildElement(buttonWidget);
         ++num;
       }
     }
@@ -162,7 +162,7 @@ namespace M3D.GUI.Views.Library_View
         }
         catch (IOException ex)
         {
-          str = (string) null;
+          str = null;
         }
       }
       ImageGenerated(fileName, str);

@@ -25,7 +25,7 @@ namespace M3D.Spooling.Core.Controllers.Plugins
 
     public void ProcessGCodeResult(GCode gcode, string resultFromPrinter, PrinterInfo printerInfo)
     {
-      if (!gcode.hasM || gcode.M != (ushort) 27)
+      if (!gcode.hasM || gcode.M != 27)
       {
         return;
       }
@@ -58,7 +58,7 @@ namespace M3D.Spooling.Core.Controllers.Plugins
           if (printerInfo.current_job == null && m_OnActiveSDPrint != null)
           {
             m_OnActiveSDPrint();
-            m_OnActiveSDPrint = (SDCardPlugin.ActiveSDPrintCallback) null;
+            m_OnActiveSDPrint = null;
           }
         }
       }

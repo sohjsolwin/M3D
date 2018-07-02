@@ -12,7 +12,7 @@ namespace M3D.GUI.ManageFilament
     public List<Filament> user_filaments;
 
     public Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode mode)
-      : this(mode, (FilamentSpool) null)
+      : this(mode, null)
     {
     }
 

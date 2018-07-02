@@ -58,10 +58,10 @@ namespace M3D.GUI.Views.Printer_View
       colorframe = new Frame();
       colorframe.SetPosition(1, 4);
       colorframe.BGColor = new Color4(0.5f, 0.5f, 0.5f, 0.56f);
-      AddChildElement((Element2D)colorframe);
+      AddChildElement(colorframe);
       buttonframe = new Frame();
       buttonframe.SetPosition(1, 4);
-      AddChildElement((Element2D)buttonframe);
+      AddChildElement(buttonframe);
       frameborder = new ImageWidget();
       frameborder.Init(host, "extendedcontrols2", 8f, 939f, 58f, 994f);
       frameborder.SetGrowableHeight(8, 8, 32);
@@ -70,7 +70,7 @@ namespace M3D.GUI.Views.Printer_View
       frameborder.RelativeWidth = 1f;
       frameborder.RelativeHeight = 1f;
       frameborder.Color = new Color4(1f, 1f, 1f, 0.5f);
-      AddChildElement((Element2D)frameborder);
+      AddChildElement(frameborder);
       CreateChildToolWindows(host);
       AddDefaultButtons(host);
     }
@@ -187,14 +187,14 @@ namespace M3D.GUI.Views.Printer_View
       modelListToolbox.SetSize(300, 170);
       modelListToolbox.SetPosition(96, 200);
       modelListToolbox.RelativeY = 0.175f;
-      printerview.AddChildElement((Element2D)modelListToolbox);
+      printerview.AddChildElement(modelListToolbox);
     }
 
     private void AddButton(ButtonWidget button)
     {
       button.SetPosition(0, next_button_y);
       button.SetSize(50, 48);
-      buttonframe.AddChildElement((Element2D) button);
+      buttonframe.AddChildElement(button);
       next_button_y += 48;
       SetSize(55, 8 + next_button_y);
     }
@@ -391,12 +391,12 @@ namespace M3D.GUI.Views.Printer_View
     private RecentPrintsHistory.PrintHistory GatherData()
     {
       PrintJobDetails printJobDetails = printerview.CreatePrintJobDetails(out var modelZTooSmall);
-      printJobDetails.GenerateSlicerSettings((PrinterObject) null, printerview);
+      printJobDetails.GenerateSlicerSettings(null, printerview);
       var splitFileName = new SplitFileName(printJobDetails.objectDetailsList[0].filename);
       var printerJob = new JobParams("", splitFileName.name + "." + splitFileName.ext, printJobDetails.preview_image, FilamentSpool.TypeEnum.NoFilament, 0.0f, 0.0f)
       {
         options = printJobDetails.jobOptions,
-        preprocessor = (FilamentPreprocessorData)null,
+        preprocessor = null,
         filament_temperature = 0,
         autoprint = printJobDetails.autoPrint
       };
@@ -408,7 +408,7 @@ namespace M3D.GUI.Views.Printer_View
           objectDetails.hidecontrols = true;
         }
       }
-      RecentPrintsHistory.CreatePrintHistoryFolder(printerJob, (PrinterObject)null, slicer_connection.SlicerSettings.ProfileName, keyValuePairList, printJobDetails.objectDetailsList, out RecentPrintsHistory.PrintHistory cph);
+      RecentPrintsHistory.CreatePrintHistoryFolder(printerJob, null, slicer_connection.SlicerSettings.ProfileName, keyValuePairList, printJobDetails.objectDetailsList, out RecentPrintsHistory.PrintHistory cph);
       return cph;
     }
 

@@ -43,7 +43,7 @@ namespace M3D
         message.Subject = subject;
         message.Body = "Debug log from: " + firstName + " " + lastName + " " + email + Environment.NewLine + body;
         smtpClient.Port = 587;
-        smtpClient.Credentials = (ICredentialsByHost) new NetworkCredential(SendDebugEmail.userName, SendDebugEmail.password);
+        smtpClient.Credentials = new NetworkCredential(SendDebugEmail.userName, SendDebugEmail.password);
         smtpClient.EnableSsl = true;
         smtpClient.Send(message);
       }
@@ -52,7 +52,7 @@ namespace M3D
       }
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void Button1_Click(object sender, EventArgs e)
     {
       if (textBox1.Text == "" || textBox2.Text == "" || textBox3.Text == "")
       {
@@ -65,10 +65,7 @@ namespace M3D
       }
     }
 
-    private void buttonClose_Click(object sender, EventArgs e)
-    {
-      DialogResult = DialogResult.Cancel;
-    }
+    private void ButtonClose_Click(object sender, EventArgs e) => DialogResult = DialogResult.Cancel;
 
     protected override void Dispose(bool disposing)
     {
@@ -112,7 +109,7 @@ namespace M3D
       label2.Size = new Size(60, 13);
       label2.TabIndex = 25;
       label2.Text = "First Name:";
-      label1.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      label1.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Regular, GraphicsUnit.Point, 0);
       label1.Location = new Point(9, 10);
       label1.Name = "label1";
       label1.Size = new Size(449, 16);
@@ -136,16 +133,16 @@ namespace M3D
       button1.TabIndex = 20;
       button1.Text = "Send";
       button1.UseVisualStyleBackColor = true;
-      button1.Click += new EventHandler(button1_Click);
+      button1.Click += new EventHandler(Button1_Click);
       buttonClose.Location = new Point(386, 132);
       buttonClose.Name = "buttonClose";
       buttonClose.Size = new Size(78, 28);
       buttonClose.TabIndex = 19;
       buttonClose.Text = "Cancel";
       buttonClose.UseVisualStyleBackColor = true;
-      buttonClose.Click += new EventHandler(buttonClose_Click);
-      pictureBox1.Image = (Image) Resources.m3dlogo;
-      pictureBox1.InitialImage = (Image) Resources.m3dlogo;
+      buttonClose.Click += new EventHandler(ButtonClose_Click);
+      pictureBox1.Image = Resources.m3dlogo;
+      pictureBox1.InitialImage = Resources.m3dlogo;
       pictureBox1.Location = new Point(12, 126);
       pictureBox1.Name = "pictureBox1";
       pictureBox1.Size = new Size(133, 34);
@@ -154,16 +151,16 @@ namespace M3D
       AutoScaleDimensions = new SizeF(6f, 13f);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(477, 176);
-      Controls.Add((Control)pictureBox1);
-      Controls.Add((Control)label4);
-      Controls.Add((Control)label3);
-      Controls.Add((Control)label2);
-      Controls.Add((Control)label1);
-      Controls.Add((Control)textBox3);
-      Controls.Add((Control)textBox2);
-      Controls.Add((Control)textBox1);
-      Controls.Add((Control)button1);
-      Controls.Add((Control)buttonClose);
+      Controls.Add(pictureBox1);
+      Controls.Add(label4);
+      Controls.Add(label3);
+      Controls.Add(label2);
+      Controls.Add(label1);
+      Controls.Add(textBox3);
+      Controls.Add(textBox2);
+      Controls.Add(textBox1);
+      Controls.Add(button1);
+      Controls.Add(buttonClose);
       Name = nameof (SendDebugEmail);
       Text = nameof (SendDebugEmail);
       ((ISupportInitialize)pictureBox1).EndInit();

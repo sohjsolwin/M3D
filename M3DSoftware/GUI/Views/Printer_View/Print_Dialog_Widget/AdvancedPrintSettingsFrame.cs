@@ -66,14 +66,14 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     public override void OnDeactivate()
     {
-      RemoveChildElement((Element2D)tab_frame);
-      tab_frame = (Frame) null;
+      RemoveChildElement(tab_frame);
+      tab_frame = null;
       foreach (Element2D buttonElement in buttonElements)
       {
         RemoveChildElement(buttonElement);
       }
 
-      buttonElements = (List<Element2D>) null;
+      buttonElements = null;
     }
 
     public void Init(GUIHost host)
@@ -88,12 +88,12 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
     private void CreateStandardElements()
     {
       SetSize(750, 500);
-      var borderedImageFrame = new BorderedImageFrame(ID, (Element2D) null);
+      var borderedImageFrame = new BorderedImageFrame(ID, null);
       borderedImageFrame.Init(host, "guicontrols", 640f, 320f, 704f, 383f, 41, 8, 64, 35, 8, 64);
       borderedImageFrame.SetSize(750, 500);
       borderedImageFrame.CenterHorizontallyInParent = true;
       borderedImageFrame.CenterVerticallyInParent = true;
-      AddChildElement((Element2D) borderedImageFrame);
+      AddChildElement(borderedImageFrame);
       AutoCenterYOffset = 0;
       CenterHorizontallyInParent = true;
       CenterVerticallyInParent = true;
@@ -104,25 +104,25 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       textWidget.Alignment = QFontAlignment.Left;
       textWidget.Size = FontSize.Large;
       textWidget.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      AddChildElement((Element2D) textWidget);
+      AddChildElement(textWidget);
       var x = 10;
-      AddChildElement((Element2D)CreateUserOptionButton(host, "OK", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.OK, x, -42, 100, 32, ""));
+      AddChildElement(CreateUserOptionButton(host, "OK", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.OK, x, -42, 100, 32, ""));
       int num;
-      AddChildElement((Element2D)CreateUserOptionButton(host, "Cancel", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.Cancel, num = x + 110, -42, 100, 32, ""));
-      AddChildElement((Element2D)CreateUserOptionButton(host, "Reset", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.Reset, -110, -42, 100, 32, ""));
+      AddChildElement(CreateUserOptionButton(host, "Cancel", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.Cancel, num = x + 110, -42, 100, 32, ""));
+      AddChildElement(CreateUserOptionButton(host, "Reset", AdvancedPrintSettingsFrame.AdvanceSettingsButtons.Reset, -110, -42, 100, 32, ""));
       OK_Button = FindChildElement(613) as ButtonWidget;
     }
 
     private void GenerateFromSlicerSettings(SmartSlicerSettingsBase smartSlicerSettings)
     {
       this.smartSlicerSettings = smartSlicerSettings;
-      tab_frame = new Frame(608, (Element2D)this)
+      tab_frame = new Frame(608, this)
       {
         X = 180,
         Y = 35,
         HexBorderColor = "#0C0C0C0C"
       };
-      AddChildElement((Element2D)tab_frame);
+      AddChildElement(tab_frame);
       var YPos = 35;
       var num = 10000;
       List<XMLTabCollectionSettingsItem> visualSettings = smartSlicerSettings.VisualSettings;
@@ -133,7 +133,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       }
       for (var index1 = 0; index1 < visualSettings.Count; ++index1)
       {
-        var scrollableVerticalLayout = new ScrollableVerticalLayout(num++, (Element2D)tab_frame);
+        var scrollableVerticalLayout = new ScrollableVerticalLayout(num++, tab_frame);
         scrollableVerticalLayout.Init(host);
         scrollableVerticalLayout.tag = GetTabFrameTag(visualSettings[index1].Header);
         scrollableVerticalLayout.Visible = false;
@@ -150,14 +150,14 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
             {
               case SettingItemType.IntType:
               case SettingItemType.FloatMMType:
-                element = CreateTextBox((Frame) scrollableVerticalLayout, settings, ref num);
+                element = CreateTextBox(scrollableVerticalLayout, settings, ref num);
                 break;
               case SettingItemType.BoolType:
-                element = CreateCheckBox((Frame) scrollableVerticalLayout, settings, ref num);
+                element = CreateCheckBox(scrollableVerticalLayout, settings, ref num);
                 break;
               case SettingItemType.FillPatternType:
               case SettingItemType.SupportPatternType:
-                element = CreateComboBox((Frame) scrollableVerticalLayout, settings, ref num);
+                element = CreateComboBox(scrollableVerticalLayout, settings, ref num);
                 break;
               default:
                 throw new NotImplementedException("GenerateAdvancedSettings was given an unknown setting");
@@ -168,7 +168,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
             }
           }
         }
-        tab_frame.AddChildElement((Element2D) scrollableVerticalLayout);
+        tab_frame.AddChildElement(scrollableVerticalLayout);
       }
       Refresh();
       if (visualSettings.Count == 0)
@@ -187,7 +187,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       ErrorWarningMessage.Size = FontSize.Large;
       ErrorWarningMessage.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
       ErrorWarningMessage.Visible = false;
-      AddChildElement((Element2D)ErrorWarningMessage);
+      AddChildElement(ErrorWarningMessage);
     }
 
     private void CreateTabButton(string Header, ref int tagIDBuilder, int YPos, int width, int height)
@@ -206,8 +206,8 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       buttonWidget.ClickType = ButtonType.Checkable;
       buttonWidget.GroupID = 89405;
       buttonWidget.SetCallback(new ButtonCallback(MyTabButtonCallback));
-      AddChildElement((Element2D) buttonWidget);
-      buttonElements.Add((Element2D) buttonWidget);
+      AddChildElement(buttonWidget);
+      buttonElements.Add(buttonWidget);
       var imageWidget1 = new ImageWidget(tagIDBuilder++)
       {
         tag = GetWarningImageTag(Header)
@@ -216,8 +216,8 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       imageWidget1.SetSize(24, 20);
       imageWidget1.SetPosition(width - (imageWidget1.Width + 10), YPos + 3);
       imageWidget1.Visible = false;
-      AddChildElement((Element2D) imageWidget1);
-      buttonElements.Add((Element2D) imageWidget1);
+      AddChildElement(imageWidget1);
+      buttonElements.Add(imageWidget1);
       var imageWidget2 = new ImageWidget(tagIDBuilder++)
       {
         tag = GetErrorImageTag(Header)
@@ -226,14 +226,14 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       imageWidget2.SetSize(24, 20);
       imageWidget2.SetPosition(width - (imageWidget2.Width + 10), YPos + 3);
       imageWidget2.Visible = false;
-      AddChildElement((Element2D) imageWidget2);
-      buttonElements.Add((Element2D) imageWidget2);
+      AddChildElement(imageWidget2);
+      buttonElements.Add(imageWidget2);
     }
 
     private ButtonWidget CreateUserOptionButton(GUIHost host, string content, AdvancedPrintSettingsFrame.AdvanceSettingsButtons id, int x, int y, int width = 100, int height = 32, string tooltip = "")
     {
       var buttonWidget = new ButtonWidget((int) id);
-      buttonWidget.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      buttonWidget.Init(host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget.ID = (int) id;
       buttonWidget.SetPosition(x, y);
       buttonWidget.SetSize(width, height);
@@ -247,13 +247,13 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     private Element2D CreateCheckBox(Frame vertLayout, XMLSettingsItem settings, ref int ID_Builder)
     {
-      var horzonalFrame = new Frame(ID_Builder++, (Element2D)vertLayout)
+      var horzonalFrame = new Frame(ID_Builder++, vertLayout)
       {
         RelativeWidth = 1f,
         Height = 28
       };
       CreateSettingsTitleElement(horzonalFrame, ID_Builder++, settings.Text);
-      var buttonWidget = new ButtonWidget(ID_Builder++, (Element2D) horzonalFrame);
+      var buttonWidget = new ButtonWidget(ID_Builder++, horzonalFrame);
       buttonWidget.Init(host, ButtonTemplate.CheckBox);
       buttonWidget.ToolTipMessage = settings.Tooltip;
       buttonWidget.ClickType = ButtonType.Checkable;
@@ -266,9 +266,9 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       buttonWidget.Checked = bool.Parse(settings.SlicerSettingsItem.TranslateToUserValue());
       buttonWidget.SetCallback(new ButtonCallback(CheckBoxCallback));
       buttonWidget.FadeWhenDisabled = true;
-      horzonalFrame.AddChildElement((Element2D) buttonWidget);
-      vertLayout.AddChildElement((Element2D) horzonalFrame);
-      return (Element2D) buttonWidget;
+      horzonalFrame.AddChildElement(buttonWidget);
+      vertLayout.AddChildElement(horzonalFrame);
+      return buttonWidget;
     }
 
     private Element2D CreateTextBox(Frame vertLayout, XMLSettingsItem settings, ref int ID_Builder)
@@ -280,13 +280,13 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         numFormat = slicerSettingsItem.Format;
       }
 
-      var horzonalFrame = new Frame(ID_Builder++, (Element2D)vertLayout)
+      var horzonalFrame = new Frame(ID_Builder++, vertLayout)
       {
         RelativeWidth = 1f,
         Height = 28
       };
       CreateSettingsTitleElement(horzonalFrame, ID_Builder++, settings.Text);
-      var editBoxWidget = new EditBoxWidget(ID_Builder++, (Element2D) horzonalFrame);
+      var editBoxWidget = new EditBoxWidget(ID_Builder++, horzonalFrame);
       editBoxWidget.Init(host, "guicontrols", 898f, 104f, 941f, 135f);
       editBoxWidget.Height = 25;
       editBoxWidget.Width = 75;
@@ -301,8 +301,8 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       editBoxWidget.NumFormat = numFormat;
       editBoxWidget.SetCallbackOnTextAdded(new EditBoxWidget.EditBoxCallback(EditBoxCallback));
       editBoxWidget.SetCallbackOnBackspace(new EditBoxWidget.EditBoxCallback(EditBoxCallback));
-      horzonalFrame.AddChildElement((Element2D) editBoxWidget);
-      var textWidget1 = new TextWidget(ID_Builder++, (Element2D)horzonalFrame)
+      horzonalFrame.AddChildElement(editBoxWidget);
+      var textWidget1 = new TextWidget(ID_Builder++, horzonalFrame)
       {
         Width = 65,
         Height = 35,
@@ -312,8 +312,8 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         Alignment = QFontAlignment.Left,
         Text = settings.Suffix
       };
-      horzonalFrame.AddChildElement((Element2D) textWidget1);
-      var textWidget2 = new TextWidget(ID_Builder++, (Element2D)horzonalFrame)
+      horzonalFrame.AddChildElement(textWidget1);
+      var textWidget2 = new TextWidget(ID_Builder++, horzonalFrame)
       {
         Width = 500,
         Height = 35,
@@ -324,23 +324,23 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         Visible = true,
         tag = GetRangeText(settings.Name)
       };
-      horzonalFrame.AddChildElement((Element2D) textWidget2);
-      vertLayout.AddChildElement((Element2D) horzonalFrame);
-      return (Element2D) editBoxWidget;
+      horzonalFrame.AddChildElement(textWidget2);
+      vertLayout.AddChildElement(horzonalFrame);
+      return editBoxWidget;
     }
 
     private Element2D CreateComboBox(Frame vertLayout, XMLSettingsItem settings, ref int ID_Builder)
     {
       var slicerSettingsItem = settings.SlicerSettingsItem as SlicerSettingsEnumItem;
-      var horzonalFrame = new Frame(ID_Builder++, (Element2D)vertLayout)
+      var horzonalFrame = new Frame(ID_Builder++, vertLayout)
       {
         RelativeWidth = 1f,
         Height = 28
       };
       CreateSettingsTitleElement(horzonalFrame, ID_Builder++, settings.Text);
-      var comboBoxWidget = new ComboBoxWidget(ID_Builder++, (Element2D)horzonalFrame)
+      var comboBoxWidget = new ComboBoxWidget(ID_Builder++, horzonalFrame)
       {
-        Value = (object)slicerSettingsItem.ValueInt,
+        Value = slicerSettingsItem.ValueInt,
         tag = settings.Name
       };
       comboBoxWidget.Init(host);
@@ -353,14 +353,14 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       comboBoxWidget.Size = FontSize.Medium;
       comboBoxWidget.HexColor = "#FF808080";
       comboBoxWidget.TextChangedCallback += new ComboBoxWidget.ComboBoxTextChangedCallback(comboBoxChangedCallBack);
-      horzonalFrame.AddChildElement((Element2D) comboBoxWidget);
-      vertLayout.AddChildElement((Element2D) horzonalFrame);
-      return (Element2D) comboBoxWidget;
+      horzonalFrame.AddChildElement(comboBoxWidget);
+      vertLayout.AddChildElement(horzonalFrame);
+      return comboBoxWidget;
     }
 
     private void CreateSettingsTitleElement(Frame horzonalFrame, int id, string text)
     {
-      var textWidget = new TextWidget(id, (Element2D)horzonalFrame)
+      var textWidget = new TextWidget(id, horzonalFrame)
       {
         Text = text,
         Size = FontSize.Medium,
@@ -371,7 +371,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         Width = 240,
         FadeWhenDisabled = true
       };
-      horzonalFrame.AddChildElement((Element2D) textWidget);
+      horzonalFrame.AddChildElement(textWidget);
     }
 
     private string GetTabButtonTag(string tag)
@@ -430,7 +430,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       {
         case 611:
           SlicerSettings.SetToDefault();
-          syncAllSettingWithGUI();
+          SyncAllSettingWithGUI();
           break;
         case 612:
           SlicerConnection.SlicerSettingStack.PopSettings();
@@ -463,7 +463,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       {
         active_frame.Visible = false;
         active_frame.Enabled = false;
-        active_frame = (Frame) null;
+        active_frame = null;
       }
       active_frame = frame;
       if (active_frame == null)
@@ -488,13 +488,13 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         }
 
         SlicerConnection.SlicerSettings.SmartCheckBoxCallBack(tag, button.Checked, filament);
-        syncAllSettingWithGUI();
+        SyncAllSettingWithGUI();
       }
       else
       {
         SlicerSettingsItem smartSlicerSetting = smartSlicerSettings[tag];
         smartSlicerSetting.ParseUserValue(button.Value.ToString());
-        ProcessValidity(tag, smartSlicerSetting, (Element2D) button);
+        ProcessValidity(tag, smartSlicerSetting, button);
       }
     }
 
@@ -503,7 +503,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       var tag = edit.tag;
       SlicerSettingsItem smartSlicerSetting = smartSlicerSettings[tag];
       smartSlicerSetting.ParseUserValue(edit.Value.ToString());
-      ProcessValidity(tag, smartSlicerSetting, (Element2D) edit);
+      ProcessValidity(tag, smartSlicerSetting, edit);
     }
 
     private void comboBoxChangedCallBack(ComboBoxWidget combobox)
@@ -511,10 +511,10 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       var tag = combobox.tag;
       SlicerSettingsItem smartSlicerSetting = smartSlicerSettings[tag];
       smartSlicerSetting.ParseUserValue(combobox.Value.ToString());
-      ProcessValidity(tag, smartSlicerSetting, (Element2D) combobox);
+      ProcessValidity(tag, smartSlicerSetting, combobox);
     }
 
-    private void syncAllSettingWithGUI()
+    private void SyncAllSettingWithGUI()
     {
       var count = SlicerSettings.Count;
       foreach (System.Collections.Generic.KeyValuePair<string, SlicerSettingsItem> slicerSetting in SlicerSettings)
@@ -598,7 +598,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
             --globalWarningCount;
             if (tabErrorStateCount.Warnings == 0)
             {
-              image_Helper(GetWarningImageTag(tag), false);
+              Image_Helper(GetWarningImageTag(tag), false);
               break;
             }
             break;
@@ -607,7 +607,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
             --globalErrorCount;
             if (tabErrorStateCount.Errors == 0)
             {
-              image_Helper(GetErrorImageTag(tag), false);
+              Image_Helper(GetErrorImageTag(tag), false);
               break;
             }
             break;
@@ -622,7 +622,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
             ++globalWarningCount;
             if (tabErrorStateCount.Warnings == 1)
             {
-              image_Helper(GetWarningImageTag(tag), true);
+              Image_Helper(GetWarningImageTag(tag), true);
               break;
             }
             break;
@@ -632,7 +632,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
             ++globalErrorCount;
             if (tabErrorStateCount.Errors == 1)
             {
-              image_Helper(GetErrorImageTag(tag), true);
+              Image_Helper(GetErrorImageTag(tag), true);
               break;
             }
             break;
@@ -748,7 +748,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       return flag;
     }
 
-    private void image_Helper(string name, bool visibility)
+    private void Image_Helper(string name, bool visibility)
     {
       var childElement = FindChildElement(name) as ImageWidget;
       if (childElement == null)

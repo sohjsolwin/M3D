@@ -52,7 +52,7 @@ namespace M3D.GUI
       checkBoxShowAgain.TabIndex = 8;
       checkBoxShowAgain.Text = "Do not show this message again.";
       checkBoxShowAgain.UseVisualStyleBackColor = true;
-      buttonNo.Font = new Font("Microsoft Sans Serif", 12f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      buttonNo.Font = new Font("Microsoft Sans Serif", 12f, FontStyle.Regular, GraphicsUnit.Point, 0);
       buttonNo.Location = new Point(281, 71);
       buttonNo.Name = "buttonNo";
       buttonNo.Size = new Size(148, 54);
@@ -60,7 +60,7 @@ namespace M3D.GUI
       buttonNo.Text = "No";
       buttonNo.UseVisualStyleBackColor = true;
       buttonNo.Click += new EventHandler(buttonNo_Click);
-      buttonYes.Font = new Font("Microsoft Sans Serif", 12f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      buttonYes.Font = new Font("Microsoft Sans Serif", 12f, FontStyle.Regular, GraphicsUnit.Point, 0);
       buttonYes.ForeColor = Color.Green;
       buttonYes.Location = new Point(90, 71);
       buttonYes.Name = "buttonYes";
@@ -69,7 +69,7 @@ namespace M3D.GUI
       buttonYes.Text = "Yes";
       buttonYes.UseVisualStyleBackColor = true;
       buttonYes.Click += new EventHandler(buttonYes_Click);
-      label1.Font = new Font("Microsoft Sans Serif", 11.25f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      label1.Font = new Font("Microsoft Sans Serif", 11.25f, FontStyle.Regular, GraphicsUnit.Point, 0);
       label1.Location = new Point(12, 14);
       label1.Name = "label1";
       label1.Size = new Size(499, 45);
@@ -80,10 +80,10 @@ namespace M3D.GUI
       AutoScaleMode = AutoScaleMode.Font;
       AutoSize = true;
       ClientSize = new Size(533, 148);
-      Controls.Add((Control)checkBoxShowAgain);
-      Controls.Add((Control)buttonNo);
-      Controls.Add((Control)buttonYes);
-      Controls.Add((Control)label1);
+      Controls.Add(checkBoxShowAgain);
+      Controls.Add(buttonNo);
+      Controls.Add(buttonYes);
+      Controls.Add(label1);
       Name = nameof (LoadNewModelForm);
       Text = "Load New Model";
       ResumeLayout(false);

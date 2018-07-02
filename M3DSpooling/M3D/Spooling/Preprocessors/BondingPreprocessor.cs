@@ -66,17 +66,17 @@ namespace M3D.Spooling.Preprocessors
 
               flag2 = num6 == num1;
             }
-            if (nextLine.hasG && (nextLine.G == (ushort) 0 || nextLine.G == (ushort) 1) && !flag1)
+            if (nextLine.HasG && (nextLine.G == 0 || nextLine.G == 1) && !flag1)
             {
-              if (nextLine.hasX || nextLine.hasY)
+              if (nextLine.HasX || nextLine.HasY)
               {
                 flag3 = true;
               }
 
-              var num6 = !nextLine.hasX ? 0.0f : nextLine.X - position.relativeX;
-              var num7 = !nextLine.hasY ? 0.0f : nextLine.Y - position.relativeY;
-              var num8 = !nextLine.hasZ ? 0.0f : nextLine.Z - position.relativeZ;
-              var num9 = !nextLine.hasE ? 0.0f : nextLine.E - position.relativeE;
+              var num6 = !nextLine.HasX ? 0.0f : nextLine.X - position.relativeX;
+              var num7 = !nextLine.HasY ? 0.0f : nextLine.Y - position.relativeY;
+              var num8 = !nextLine.HasZ ? 0.0f : nextLine.Z - position.relativeZ;
+              var num9 = !nextLine.HasE ? 0.0f : nextLine.E - position.relativeE;
               position.absoluteX += num6;
               position.absoluteY += num7;
               position.absoluteZ += num8;
@@ -90,11 +90,11 @@ namespace M3D.Spooling.Preprocessors
                 position.F = nextLine.F;
               }
 
-              var num10 = (float) Math.Sqrt((double) num6 * (double) num6 + (double) num7 * (double) num7);
+              var num10 = (float) Math.Sqrt(num6 * (double)num6 + num7 * (double)num7);
               var num11 = 1;
-              if ((double) num10 > 1.25)
+              if (num10 > 1.25)
               {
-                num11 = (int) ((double) num10 / 1.25);
+                num11 = (int)(num10 / 1.25);
               }
 
               var num12 = position.absoluteX - num6;
@@ -107,7 +107,7 @@ namespace M3D.Spooling.Preprocessors
               var num19 = num7 / num10;
               var num20 = num8 / num10;
               var num21 = num9 / num10;
-              if (flag2 && (double) num9 > 0.0)
+              if (flag2 && num9 > 0.0)
               {
                 for (var index = 1; index < num11 + 1; ++index)
                 {
@@ -126,26 +126,26 @@ namespace M3D.Spooling.Preprocessors
                   }
                   else
                   {
-                    num22 = num14 + (float) index * 1.25f * num18;
-                    num23 = num15 + (float) index * 1.25f * num19;
-                    num24 = num16 + (float) index * 1.25f * num20;
-                    num25 = num17 + (float) index * 1.25f * num21;
+                    num22 = num14 + index * 1.25f * num18;
+                    num23 = num15 + index * 1.25f * num19;
+                    num24 = num16 + index * 1.25f * num20;
+                    num25 = num17 + index * 1.25f * num21;
                   }
-                  var num26 = (double) num25 - (double) num5;
+                  var num26 = num25 - (double)num5;
                   if (index != num11)
                   {
                     var code = new GCode
                     {
                       G = nextLine.G
                     };
-                    if (nextLine.hasX)
+                    if (nextLine.HasX)
                     {
-                      code.X = (float) ((double) position.relativeX - (double) num6 + ((double) num22 - (double) num14));
+                      code.X = (float)(position.relativeX - (double)num6 + (num22 - (double)num14));
                     }
 
-                    if (nextLine.hasY)
+                    if (nextLine.HasY)
                     {
-                      code.Y = (float) ((double) position.relativeY - (double) num7 + ((double) num23 - (double) num15));
+                      code.Y = (float)(position.relativeY - (double)num7 + (num23 - (double)num15));
                     }
 
                     if (nextLine.hasF && index == 1)
@@ -155,21 +155,21 @@ namespace M3D.Spooling.Preprocessors
 
                     if (flag3)
                     {
-                      code.Z = (float) ((double) position.relativeZ - (double) num8 + ((double) num24 - (double) num16)) + CurrentAdjustmentsZ(ref wave_step);
+                      code.Z = (float)(position.relativeZ - (double)num8 + (num24 - (double)num16)) + CurrentAdjustmentsZ(ref wave_step);
                     }
-                    else if (nextLine.hasZ && ((double) num8 > 1.40129846432482E-45 || (double) num8 < -1.40129846432482E-45))
+                    else if (nextLine.HasZ && (num8 > 1.40129846432482E-45 || num8 < -1.40129846432482E-45))
                     {
-                      code.Z = (float) ((double) position.relativeZ - (double) num8 + ((double) num24 - (double) num16));
+                      code.Z = (float)(position.relativeZ - (double)num8 + (num24 - (double)num16));
                     }
 
-                    code.E = (float) ((double) position.relativeE - (double) num9 + ((double) num25 - (double) num17)) + num4;
+                    code.E = (float)(position.relativeE - (double)num9 + (num25 - (double)num17)) + num4;
                     output_writer.Write(code);
                   }
                   else
                   {
                     if (flag3)
                     {
-                      if (nextLine.hasZ)
+                      if (nextLine.HasZ)
                       {
                         nextLine.Z += CurrentAdjustmentsZ(ref wave_step);
                       }
@@ -184,31 +184,31 @@ namespace M3D.Spooling.Preprocessors
                 }
               }
             }
-            else if (nextLine.hasG && nextLine.G == (ushort) 92)
+            else if (nextLine.HasG && nextLine.G == 92)
             {
-              if (nextLine.hasE)
+              if (nextLine.HasE)
               {
                 position.relativeE = nextLine.E;
               }
 
               if (printerProfile.OptionsConstants.G92WorksOnAllAxes)
               {
-                if (nextLine.hasX)
+                if (nextLine.HasX)
                 {
                   position.relativeX = nextLine.X;
                 }
 
-                if (nextLine.hasY)
+                if (nextLine.HasY)
                 {
                   position.relativeY = nextLine.Y;
                 }
 
-                if (nextLine.hasZ)
+                if (nextLine.HasZ)
                 {
                   position.relativeZ = nextLine.Z;
                 }
               }
-              if (!nextLine.hasE && !nextLine.hasX && (!nextLine.hasY && !nextLine.hasZ))
+              if (!nextLine.HasE && !nextLine.HasX && (!nextLine.HasY && !nextLine.HasZ))
               {
                 position.relativeE = 0.0f;
                 if (printerProfile.OptionsConstants.G92WorksOnAllAxes)
@@ -219,11 +219,11 @@ namespace M3D.Spooling.Preprocessors
                 }
               }
             }
-            else if (nextLine.hasG && nextLine.G == (ushort) 90)
+            else if (nextLine.HasG && nextLine.G == 90)
             {
               flag1 = false;
             }
-            else if (nextLine.hasG && nextLine.G == (ushort) 91)
+            else if (nextLine.HasG && nextLine.G == 91)
             {
               flag1 = true;
             }
@@ -279,7 +279,7 @@ namespace M3D.Spooling.Preprocessors
 
     public double distance(BondingPreprocessor.Vector2 A, BondingPreprocessor.Vector2 B)
     {
-      return Math.Sqrt(Math.Pow((double) A.x - (double) B.x, 2.0) + Math.Pow((double) A.y - (double) B.y, 2.0));
+      return Math.Sqrt(Math.Pow(A.x - (double)B.x, 2.0) + Math.Pow(A.y - (double)B.y, 2.0));
     }
 
     public bool isSharpCorner(GCode currLine, GCode prevLine)
@@ -287,9 +287,9 @@ namespace M3D.Spooling.Preprocessors
       var flag = false;
       var dot1 = new BondingPreprocessor.Vector2(currLine);
       var dot2 = new BondingPreprocessor.Vector2(prevLine);
-      var num1 = Math.Pow((double) dot1.Dot(dot1), 2.0);
-      var num2 = Math.Pow((double) dot2.Dot(dot2), 2.0);
-      var num3 = Math.Acos((double) dot1.Dot(dot2) / (num1 * num2));
+      var num1 = Math.Pow(dot1.Dot(dot1), 2.0);
+      var num2 = Math.Pow(dot2.Dot(dot2), 2.0);
+      var num3 = Math.Acos(dot1.Dot(dot2) / (num1 * num2));
       if (num3 > 0.0 && num3 < 1.57079633)
       {
         flag = true;

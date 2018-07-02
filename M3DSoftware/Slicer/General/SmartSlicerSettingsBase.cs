@@ -54,12 +54,12 @@ namespace M3D.Slicer.General
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator)GetEnumerator();
+      return GetEnumerator();
     }
 
     public void LoadSettingsItemsFromFile()
     {
-      xmlSettings = XMLSetting.Load((TextReader) new StringReader(AdvancedPrintSettingsEmbeddedResource));
+      xmlSettings = XMLSetting.Load(new StringReader(AdvancedPrintSettingsEmbeddedResource));
       if (xmlSettings == null)
       {
         throw new Exception("Misbehaving slicer advanced print settings config file");
@@ -70,7 +70,7 @@ namespace M3D.Slicer.General
 
     private void BuildInternalStructures()
     {
-      internalSettingsDictionary = new Dictionary<string, SlicerSettingsItem>((IEqualityComparer<string>) StringComparer.InvariantCultureIgnoreCase);
+      internalSettingsDictionary = new Dictionary<string, SlicerSettingsItem>(StringComparer.InvariantCultureIgnoreCase);
       List<XMLSettingsItem> allSettings = xmlSettings.GetAllSettings();
       foreach (XMLSettingsItem xmlSettingsItem1 in allSettings)
       {
@@ -87,7 +87,7 @@ namespace M3D.Slicer.General
 
         if (!string.IsNullOrEmpty(setting.GroupToggle))
         {
-          XMLSettingsItem xmlSettingsItem2 = allSettings.Find((Predicate<XMLSettingsItem>) (item => item.Name == setting.GroupToggle));
+          XMLSettingsItem xmlSettingsItem2 = allSettings.Find(item => item.Name == setting.GroupToggle);
           if (xmlSettingsItem2 != null)
           {
             setting.SlicerSettingsItem.GroupToggleSetting = xmlSettingsItem2.SlicerSettingsItem;

@@ -43,7 +43,7 @@ namespace M3D.Model.FilIO
       catch (Exception ex)
       {
       }
-      return (ModelData) null;
+      return null;
     }
 
     public ModelData LoadSTLASCII(string filename)
@@ -66,7 +66,7 @@ namespace M3D.Model.FilIO
               {
                 if (strArray[index].Length > 0)
                 {
-                  numArray[num2++] = float.Parse(strArray[index], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE);
+                  numArray[num2++] = float.Parse(strArray[index], M3DGlobalization.SYSTEM_CULTURE);
                 }
               }
               verticies.AddLast(new Vector3(numArray[0], numArray[1], numArray[2]));
@@ -78,12 +78,12 @@ namespace M3D.Model.FilIO
           }
           streamReader.Close();
         }
-        return ModelData.Create(verticies, (LinkedList<int[]>) null, (ProgressHelper.PercentageDelagate) null);
+        return ModelData.Create(verticies, null, null);
       }
       catch (Exception ex)
       {
       }
-      return (ModelData) null;
+      return null;
     }
 
     public ModelData LoadSTLBinary(string filename)
@@ -94,7 +94,7 @@ namespace M3D.Model.FilIO
         byte[] buffer = new byte[80];
         using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
         {
-          using (var binaryReader = new BinaryReader((Stream) fileStream))
+          using (var binaryReader = new BinaryReader(fileStream))
           {
             binaryReader.Read(buffer, 0, 80);
             var num1 = binaryReader.ReadInt32();
@@ -110,12 +110,12 @@ namespace M3D.Model.FilIO
           }
           fileStream.Close();
         }
-        return ModelData.Create(verticies, (LinkedList<int[]>) null, (ProgressHelper.PercentageDelagate) null);
+        return ModelData.Create(verticies, null, null);
       }
       catch (Exception ex)
       {
       }
-      return (ModelData) null;
+      return null;
     }
   }
 }

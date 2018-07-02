@@ -30,14 +30,14 @@ namespace M3D.Boot
       }
 
       EraseChip();
-      SetAddress((byte) 0, (byte) 0);
+      SetAddress(0, 0);
       WriteFirmwareToFlash(newFirmware);
-      SetAddress((byte) 0, (byte) 0);
+      SetAddress(0, 0);
     }
 
     public bool WriteToEEPROM(ushort startAddress, byte[] bytes)
     {
-      SPout((byte) 85);
+      SPout(85);
       SPout((byte) ((uint) startAddress >> 8));
       SPout((byte) startAddress);
       var num = (ushort) (bytes.Length / mBytesPerEEPROMAddress);
@@ -48,7 +48,7 @@ namespace M3D.Boot
         SPout(bytes[index]);
       }
 
-      if (ReadBytes(1)[0] != (byte) 13)
+      if (ReadBytes(1)[0] != 13)
       {
         throw new Exception("Error writing to EEPROM");
       }
@@ -58,9 +58,9 @@ namespace M3D.Boot
 
     public byte[] ReadAllReadableEEPROM()
     {
-      SPout((byte) 83);
-      byte[] numArray = ReadBytes(((int)mEndOfReadableEEPROM + 1) * mBytesPerEEPROMAddress);
-      if (ReadBytes(1)[0] == (byte) 13)
+      SPout(83);
+      byte[] numArray = ReadBytes((mEndOfReadableEEPROM + 1) * mBytesPerEEPROMAddress);
+      if (ReadBytes(1)[0] == 13)
       {
         return numArray;
       }
@@ -83,14 +83,14 @@ namespace M3D.Boot
 
     public uint GetCRCFromChip(CRC_Type crcType)
     {
-      SPout((byte) 67);
+      SPout(67);
       if (crcType == CRC_Type.App)
       {
-        SPout((byte) 65);
+        SPout(65);
       }
       else
       {
-        SPout((byte) 66);
+        SPout(66);
       }
 
       var crcBytes = new CRCBytes();
@@ -104,8 +104,8 @@ namespace M3D.Boot
 
     private void EraseChip()
     {
-      SPout((byte) 69);
-      if (ReadBytes(1)[0] != (byte) 13)
+      SPout(69);
+      if (ReadBytes(1)[0] != 13)
       {
         throw new Exception("Error erasing flash");
       }
@@ -133,10 +133,10 @@ namespace M3D.Boot
 
     private void SetAddress(byte addressByte1, byte addressByte2)
     {
-      SPout((byte) 65);
+      SPout(65);
       SPout(addressByte1);
       SPout(addressByte2);
-      if (ReadBytes(1)[0] != (byte) 13)
+      if (ReadBytes(1)[0] != 13)
       {
         throw new Exception("After attempting to set address the micro controller did not reply correctly\r\n");
       }
@@ -152,9 +152,9 @@ namespace M3D.Boot
 
       for (var index1 = 0; index1 < num1; ++index1)
       {
-        SPout((byte) 66);
-        SPout((byte) (mChipData.PageSize * 2 >> 8 & (int) byte.MaxValue));
-        SPout((byte) (mChipData.PageSize * 2 & (int) byte.MaxValue));
+        SPout(66);
+        SPout((byte) (mChipData.PageSize * 2 >> 8 & byte.MaxValue));
+        SPout((byte) (mChipData.PageSize * 2 & byte.MaxValue));
         Thread.Sleep(20);
         byte[] numArray = new byte[2];
         for (var index2 = 0; index2 < mChipData.PageSize * 2; ++index2)
@@ -162,7 +162,7 @@ namespace M3D.Boot
           var num2 = index2 + mChipData.PageSize * index1 * 2;
           SPout(num2 % 2 != 0 ? (num2 - 1 >= newFirmware.Length ? m_yPaddingByte : newFirmware[num2 - 1]) : (num2 + 1 >= newFirmware.Length ? m_yPaddingByte : newFirmware[num2 + 1]));
         }
-        if (ReadBytes(1)[0] != (byte) 13)
+        if (ReadBytes(1)[0] != 13)
         {
           throw new Exception("Error writing flash memory\n");
         }
@@ -175,7 +175,7 @@ namespace M3D.Boot
     {
       try
       {
-        SPout((byte) 81);
+        SPout(81);
       }
       catch (Exception ex)
       {

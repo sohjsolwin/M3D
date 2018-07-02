@@ -29,7 +29,7 @@ namespace M3D.Spooling.Common.Utils
     {
       m_PrimaryLogs = new DebugLog[(int)m_iPrimaryMaxSize];
       m_SecondaryLogs = new DebugLog[(int)m_SecondaryMaxSize];
-      Add("DebuggLogger Init()", "Initialize debug logger. Max size: " + (object)m_iPrimaryMaxSize, DebugLogger.LogType.Primary);
+      Add("DebuggLogger Init()", "Initialize debug logger. Max size: " + m_iPrimaryMaxSize, DebugLogger.LogType.Primary);
     }
 
     public void Add(string functionName, string description, DebugLogger.LogType logType)

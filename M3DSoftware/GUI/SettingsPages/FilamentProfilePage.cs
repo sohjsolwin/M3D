@@ -51,7 +51,7 @@ namespace M3D.GUI.SettingsPages
       RelativeHeight = 1f;
       CreateAdvancedFilamentSettingsFrame();
       CreateFilamentProfilesFrame();
-      active_frame = (Frame)filamentSettingsFrame;
+      active_frame = filamentSettingsFrame;
     }
 
     private void TurnOffActiveFrame()
@@ -63,7 +63,7 @@ namespace M3D.GUI.SettingsPages
 
       active_frame.Visible = false;
       active_frame.Enabled = false;
-      active_frame = (Frame) null;
+      active_frame = null;
     }
 
     public void tabsFrameButtonCallback(ButtonWidget button)
@@ -72,18 +72,18 @@ namespace M3D.GUI.SettingsPages
       {
         case 1:
           TurnOffActiveFrame();
-          active_frame = (Frame)filamentSettingsFrame;
+          active_frame = filamentSettingsFrame;
           break;
         case 2:
           TurnOffActiveFrame();
-          active_frame = (Frame)filamentProfilesFrame;
+          active_frame = filamentProfilesFrame;
           break;
       }
       if (active_frame != null)
       {
         active_frame.Enabled = true;
         active_frame.Visible = true;
-        host.SetFocus((Element2D)active_frame);
+        host.SetFocus(active_frame);
       }
       Refresh();
     }
@@ -124,7 +124,7 @@ namespace M3D.GUI.SettingsPages
       filamentprofile_list.Items.Clear();
       foreach (KeyValuePair<FilamentProfile.TypeColorKey, FilamentProfile.CustomOptions> customValue in settingsManager.FilamentDictionary.CustomValues)
       {
-        filamentprofile_list.Items.Add((object) new FilamentProfilePage.FilamentOptions(customValue.Key, customValue.Value));
+        filamentprofile_list.Items.Add(new FilamentProfilePage.FilamentOptions(customValue.Key, customValue.Value));
       }
 
       SelectProfile(selected);
@@ -142,7 +142,7 @@ namespace M3D.GUI.SettingsPages
           index = num;
         }
 
-        filamentprofile_list.Items.Add((object) new FilamentProfilePage.FilamentOptions(customValue.Key, customValue.Value));
+        filamentprofile_list.Items.Add(new FilamentProfilePage.FilamentOptions(customValue.Key, customValue.Value));
         ++num;
       }
       SelectProfile(index);
@@ -251,7 +251,7 @@ namespace M3D.GUI.SettingsPages
       addfilament_frame.SetSize(320, 300);
       addfilament_frame.CenterHorizontallyInParent = true;
       addfilament_frame.CenterVerticallyInParent = true;
-      host.AddControlElement((Element2D)addfilament_frame);
+      host.AddControlElement(addfilament_frame);
       addfilament_frame.Visible = false;
       addfilament_frame.Enabled = false;
       filamentProfilesFrame.ID = 1001;
@@ -262,7 +262,7 @@ namespace M3D.GUI.SettingsPages
       filamentProfilesFrame.BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
       filamentProfilesFrame.Visible = false;
       filamentProfilesFrame.Enabled = false;
-      childFrame.AddChildElement((Element2D)filamentProfilesFrame);
+      childFrame.AddChildElement(filamentProfilesFrame);
       filamentProfilesFrame.Refresh();
     }
 
@@ -279,7 +279,7 @@ namespace M3D.GUI.SettingsPages
       filamentSettingsFrame.BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
       filamentSettingsFrame.Visible = true;
       filamentSettingsFrame.Enabled = true;
-      childFrame.AddChildElement((Element2D)filamentSettingsFrame);
+      childFrame.AddChildElement(filamentSettingsFrame);
       filamentSettingsFrame.Refresh();
       track_filament = (ButtonWidget)filamentSettingsFrame.FindChildElement(1100);
       if (track_filament != null)
@@ -349,7 +349,7 @@ namespace M3D.GUI.SettingsPages
           Enabled = false;
           addfilament_frame.Visible = true;
           addfilament_frame.Enabled = true;
-          host.GlobalChildDialog += (Element2D)addfilament_frame;
+          host.GlobalChildDialog += addfilament_frame;
           prevSelectedProfile = -1;
           break;
         case 1006:
@@ -360,7 +360,7 @@ namespace M3D.GUI.SettingsPages
             {
               if (spooler_connection.FilamentSpoolLoaded(((FilamentProfilePage.FilamentOptions) obj).Key, new FilamentProfile.CustomOptions()) && settingsManager.ShowAllWarnings)
               {
-                messagebox.AddMessageToQueue("Warning: Filament profile in use. Deleting custom profile will not reset temperature to default..", PopupMessageBox.MessageBoxButtons.OKCANCEL, new PopupMessageBox.OnUserSelectionDel(OnUserSelection), (object)spooler_connection.SelectedPrinter);
+                messagebox.AddMessageToQueue("Warning: Filament profile in use. Deleting custom profile will not reset temperature to default..", PopupMessageBox.MessageBoxButtons.OKCANCEL, new PopupMessageBox.OnUserSelectionDel(OnUserSelection), spooler_connection.SelectedPrinter);
               }
               else
               {
@@ -384,14 +384,13 @@ namespace M3D.GUI.SettingsPages
             if (filamentprofile_list.Selected >= 0 && filamentprofile_list.Selected < filamentprofile_list.Items.Count)
             {
               var obj = filamentprofile_list.Items[filamentprofile_list.Selected];
-              if (obj is FilamentProfilePage.FilamentOptions)
+              if (obj is FilamentProfilePage.FilamentOptions filamentOptions)
               {
-                var filamentOptions = (FilamentProfilePage.FilamentOptions) obj;
                 var num = float.Parse(temperature_edit.Text);
                 FilamentConstants.Temperature.MaxMin maxMin = FilamentConstants.Temperature.MaxMinForFilamentType(filamentOptions.Key.type);
-                if ((double) num >= (double) maxMin.Min && (double) num <= (double) maxMin.Max)
+                if (num >= (double)maxMin.Min && num <= (double)maxMin.Max)
                 {
-                  UpdateTemperature((int) num);
+                  UpdateTemperature((int)num);
                   temperature_edit.Enabled = false;
                   TemperatureEditButton.Visible = true;
                   TemperatureSaveButton.Visible = false;
@@ -399,7 +398,7 @@ namespace M3D.GUI.SettingsPages
                 }
                 else
                 {
-                  messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "Please enter a temperature from " + (object) maxMin.Min + " to " + (object) maxMin.Max));
+                  messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "Please enter a temperature from " + maxMin.Min + " to " + maxMin.Max));
                 }
               }
             }
@@ -445,9 +444,8 @@ namespace M3D.GUI.SettingsPages
     private void RemoveFilamentProfile()
     {
       var obj = filamentprofile_list.Items[filamentprofile_list.Selected];
-      if (obj is FilamentProfilePage.FilamentOptions)
+      if (obj is FilamentProfilePage.FilamentOptions filamentOptions)
       {
-        var filamentOptions = (FilamentProfilePage.FilamentOptions) obj;
         settingsManager.FilamentDictionary.RemoveCustomTemperature(filamentOptions.Key.type, filamentOptions.Key.color);
       }
       UpdateProfileList();
@@ -511,7 +509,7 @@ namespace M3D.GUI.SettingsPages
 
       public override string ToString()
       {
-        return ((int)Key.type).ToString() + " " + (object)Key.color;
+        return ((int)Key.type).ToString() + " " + Key.color;
       }
     }
   }

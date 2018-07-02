@@ -37,7 +37,7 @@ namespace M3D.Slicer.Cura15_04
     }
 
     public SmartSlicerSettingsCura15_04(SmartSlicerSettingsCura15_04 otherSettings)
-      : base((SmartSlicerSettingsBase) otherSettings)
+      : base(otherSettings)
     {
       MaxSpeed = otherSettings.MaxSpeed;
       WarningSpeed = otherSettings.WarningSpeed;
@@ -108,7 +108,7 @@ namespace M3D.Slicer.Cura15_04
 
     public override SmartSlicerSettingsBase Clone()
     {
-      return (SmartSlicerSettingsBase) new SmartSlicerSettingsCura15_04(this);
+      return new SmartSlicerSettingsCura15_04(this);
     }
 
     public override void SmartCheckBoxCallBack(string checkBoxName, bool state, FilamentSpool filament)
@@ -178,12 +178,12 @@ namespace M3D.Slicer.Cura15_04
       PrinterInfo info = m_CurrentPrinter.Info;
       PrinterProfile myPrinterProfile = m_CurrentPrinter.MyPrinterProfile;
       ProfileName = myPrinterProfile.ProfileName;
-      MaxSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.FastestPossible / 60.0);
-      DefaultSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.DefaultSpeed / 60.0);
-      TraversalSpeed = (int) ((double)MaxSpeed * 0.75);
-      WarningSpeed = (int) ((double)MaxSpeed * 0.75);
-      DefaultRetractionSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.DEFAULT_FEEDRATE_E_Negative / 60.0);
-      MaxRetractionSpeed = (int) ((double) myPrinterProfile.SpeedLimitConstants.MAX_FEEDRATE_E_Negative / 60.0);
+      MaxSpeed = (int)(myPrinterProfile.SpeedLimitConstants.FastestPossible / 60.0);
+      DefaultSpeed = (int)(myPrinterProfile.SpeedLimitConstants.DefaultSpeed / 60.0);
+      TraversalSpeed = (int)(MaxSpeed * 0.75);
+      WarningSpeed = (int)(MaxSpeed * 0.75);
+      DefaultRetractionSpeed = (int)(myPrinterProfile.SpeedLimitConstants.DEFAULT_FEEDRATE_E_Negative / 60.0);
+      MaxRetractionSpeed = (int)(myPrinterProfile.SpeedLimitConstants.MAX_FEEDRATE_E_Negative / 60.0);
       if (UsingNozzleSizeForExtrusionWidth)
       {
         (GetSettingsItem("extrusionWidth") as SettingsItemFloatMMType).value = SmartSlicerSettingsCura15_04.micronsToMM(info.extruder.iNozzleSizeMicrons);
@@ -234,12 +234,12 @@ namespace M3D.Slicer.Cura15_04
     public override void SetPrintQuality(PrintQuality level, FilamentSpool filament, int iModelCount)
     {
       FilamentFlow = 100;
-      var nProfileProposedSpeed = filament.filament_type != FilamentSpool.TypeEnum.ABS ? (filament.filament_location != FilamentSpool.Location.Internal ? DefaultSpeed : (int) ((double)DefaultSpeed * 0.899999976158142)) : (int) ((double)DefaultSpeed * 1.10000002384186);
+      var nProfileProposedSpeed = filament.filament_type != FilamentSpool.TypeEnum.ABS ? (filament.filament_location != FilamentSpool.Location.Internal ? DefaultSpeed : (int)(DefaultSpeed * 0.899999976158142)) : (int)(DefaultSpeed * 1.10000002384186);
       InitialSpeedupLayers = 4;
-      InitialLayerSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.initialLayerSpeed, (int) ((double) nProfileProposedSpeed * 0.800000011920929));
+      InitialLayerSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.initialLayerSpeed, (int)(nProfileProposedSpeed * 0.800000011920929));
       PrintSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.printSpeed, nProfileProposedSpeed);
-      Inset0Speed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.inset0Speed, (int) ((double) nProfileProposedSpeed * 0.800000011920929));
-      InsetXSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.insetXSpeed, (int) ((double) nProfileProposedSpeed * 0.899999976158142));
+      Inset0Speed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.inset0Speed, (int)(nProfileProposedSpeed * 0.800000011920929));
+      InsetXSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.insetXSpeed, (int)(nProfileProposedSpeed * 0.899999976158142));
       MoveSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.moveSpeed, TraversalSpeed);
       InfillSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.infillSpeed, nProfileProposedSpeed);
       SkinSpeed = nLocalSpeedLimit(SmartSlicerSettingsCura15_04.SpeedItem.skinSpeed, nProfileProposedSpeed);
@@ -390,7 +390,7 @@ namespace M3D.Slicer.Cura15_04
       RaftLineSpacing = 3f;
       RaftBaseThickness = 0.4f;
       RaftBaseLineWidth = 2.5f;
-      RaftBaseSpeed = (int) ((double)DefaultSpeed * 0.5);
+      RaftBaseSpeed = (int)(DefaultSpeed * 0.5);
       RaftInterfaceThickness = 0.4f;
       RaftInterfaceLinewidth = 1f;
       RaftInterfaceLineSpacing = 2f;
@@ -437,7 +437,7 @@ namespace M3D.Slicer.Cura15_04
     {
       Layer0ExtrusionWidth = 1.5f;
       InitialLayerThickness = 0.4f;
-      InitialLayerSpeed = (int) ((double)DefaultSpeed * 0.25);
+      InitialLayerSpeed = (int)(DefaultSpeed * 0.25);
     }
 
     public override void EnableSupport(M3D.Slicer.General.SupportType supportType)
@@ -519,8 +519,8 @@ namespace M3D.Slicer.Cura15_04
         return;
       }
 
-      ExtrusionWidth = (float)m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons / 1000f;
-      var num = (int)m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, "UsingNozzleSizeForExtrusionWidth", "true");
+      ExtrusionWidth = m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons / 1000f;
+      var num = (int)m_CurrentPrinter.AddUpdateKeyValuePair(null, null, "UsingNozzleSizeForExtrusionWidth", "true");
     }
 
     public override void DisableUseNozzleSizeForExtrusionWidth()
@@ -530,13 +530,13 @@ namespace M3D.Slicer.Cura15_04
         return;
       }
 
-      var num = (int)m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, "UsingNozzleSizeForExtrusionWidth", "false");
+      var num = (int)m_CurrentPrinter.AddUpdateKeyValuePair(null, null, "UsingNozzleSizeForExtrusionWidth", "false");
     }
 
     public int mmToLayerCountConverter(float mmLayerThickness)
     {
       var layerThickness = LayerThickness;
-      var num = (int) ((double) mmLayerThickness / (double) layerThickness + 0.5);
+      var num = (int)(mmLayerThickness / (double)layerThickness + 0.5);
       if (num < 3)
       {
         num = 3;
@@ -562,7 +562,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if ((double)SparseInfillLineDistance == -1.0)
+        if (SparseInfillLineDistance == -1.0)
         {
           if (InsetCount == 1)
           {
@@ -587,7 +587,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if ((double)RaftMargin > 0.0 && (double)RaftLineSpacing > 0.0 && ((double)RaftBaseThickness > 0.0 && (double)RaftBaseLineWidth > 0.0) && (RaftBaseSpeed > 0 && (double)RaftInterfaceThickness > 0.0 && ((double)RaftInterfaceLinewidth > 0.0 && (double)RaftInterfaceLineSpacing > 0.0)) && ((double)RaftSurfaceThickness > 0.0 && (double)RaftSurfaceLinewidth > 0.0 && ((double)RaftSurfaceLineSpacing > 0.0 && RaftSurfaceLayers > 0)))
+        if (RaftMargin > 0.0 && RaftLineSpacing > 0.0 && (RaftBaseThickness > 0.0 && RaftBaseLineWidth > 0.0) && (RaftBaseSpeed > 0 && RaftInterfaceThickness > 0.0 && (RaftInterfaceLinewidth > 0.0 && RaftInterfaceLineSpacing > 0.0)) && (RaftSurfaceThickness > 0.0 && RaftSurfaceLinewidth > 0.0 && (RaftSurfaceLineSpacing > 0.0 && RaftSurfaceLayers > 0)))
         {
           return RaftSurfaceSpeed > 0;
         }
@@ -608,7 +608,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        if ((double)SkirtDistance > 0.0)
+        if (SkirtDistance > 0.0)
         {
           return SkirtLineCount > 0;
         }
@@ -642,12 +642,12 @@ namespace M3D.Slicer.Cura15_04
             return "true" == valueFromPrinter;
           }
 
-          if (m_CurrentPrinter.MyPrinterProfile.AccessoriesConstants.NozzleConstants.bHasInterchangeableNozzle && (int) ((double)ExtrusionWidth * 1000.0) == m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons)
+          if (m_CurrentPrinter.MyPrinterProfile.AccessoriesConstants.NozzleConstants.bHasInterchangeableNozzle && (int)(ExtrusionWidth * 1000.0) == m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons)
           {
-            var num = (int)m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, nameof (UsingNozzleSizeForExtrusionWidth), "true");
+            var num = (int)m_CurrentPrinter.AddUpdateKeyValuePair(null, null, nameof (UsingNozzleSizeForExtrusionWidth), "true");
             return true;
           }
-          var num1 = (int)m_CurrentPrinter.AddUpdateKeyValuePair((M3D.Spooling.Client.AsyncCallback) null, (object) null, nameof (UsingNozzleSizeForExtrusionWidth), "false");
+          var num1 = (int)m_CurrentPrinter.AddUpdateKeyValuePair(null, null, nameof (UsingNozzleSizeForExtrusionWidth), "false");
         }
         return false;
       }
@@ -672,7 +672,7 @@ namespace M3D.Slicer.Cura15_04
       {
         if (m_CurrentPrinter != null)
         {
-          return (double)ExtrusionWidth != (double)m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons / 1000.0;
+          return ExtrusionWidth != m_CurrentPrinter.Info.extruder.iNozzleSizeMicrons / 1000.0;
         }
 
         return false;
@@ -727,8 +727,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("layerThickness") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("layerThickness") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -751,8 +750,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("initialLayerThickness") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("initialLayerThickness") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -775,8 +773,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("filamentDiameter") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("filamentDiameter") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -799,8 +796,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("filamentFlow") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("filamentFlow") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -823,8 +819,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("layer0extrusionWidth") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("layer0extrusionWidth") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -847,8 +842,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("extrusionWidth") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("extrusionWidth") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -871,8 +865,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("insetCount") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("insetCount") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -895,8 +888,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("downSkinCount") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("downSkinCount") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -919,8 +911,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("upSkinCount") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("upSkinCount") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -943,8 +934,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("skirtDistance") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("skirtDistance") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -967,8 +957,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("skirtLineCount") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("skirtLineCount") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -991,8 +980,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("skirtMinLength") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("skirtMinLength") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1015,8 +1003,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("initialSpeedupLayers") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("initialSpeedupLayers") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1039,8 +1026,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("initialLayerSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("initialLayerSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1063,8 +1049,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("printSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("printSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1087,8 +1072,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("skinSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("skinSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1111,8 +1095,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("inset0Speed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("inset0Speed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1135,8 +1118,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("insetXSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("insetXSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1159,8 +1141,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("moveSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("moveSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1183,8 +1164,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("fanFullOnLayerNr") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("fanFullOnLayerNr") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1207,8 +1187,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("sparseInfillLineDistance") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("sparseInfillLineDistance") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1231,8 +1210,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("infillOverlap") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("infillOverlap") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1255,8 +1233,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("infillSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("infillSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1279,8 +1256,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("infillPattern") as SettingsItemFillPatternTypeCura;
-        if (settingsItem != null)
+        if (GetSettingsItem("infillPattern") is SettingsItemFillPatternTypeCura settingsItem)
         {
           return settingsItem.value;
         }
@@ -1303,8 +1279,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("supportType") as SettingsItemSupportPatternTypeCura;
-        if (settingsItem != null)
+        if (GetSettingsItem("supportType") is SettingsItemSupportPatternTypeCura settingsItem)
         {
           return settingsItem.value;
         }
@@ -1327,8 +1302,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("supportAngle") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("supportAngle") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1351,8 +1325,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("supportEverywhere") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("supportEverywhere") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1375,8 +1348,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("supportLineDistance") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("supportLineDistance") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1399,8 +1371,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("supportXYDistance") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("supportXYDistance") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1423,8 +1394,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("supportZDistance") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("supportZDistance") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1447,8 +1417,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("supportExtruder") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("supportExtruder") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1471,8 +1440,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("retractionAmount") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("retractionAmount") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1495,8 +1463,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("retractionAmountPrime") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("retractionAmountPrime") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1519,8 +1486,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("retractionSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("retractionSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1543,8 +1509,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("retractionAmountExtruderSwitch") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("retractionAmountExtruderSwitch") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1567,8 +1532,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("retractionMinimalDistance") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("retractionMinimalDistance") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1591,8 +1555,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("minimalExtrusionBeforeRetraction") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("minimalExtrusionBeforeRetraction") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1615,8 +1578,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("retractionZHop") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("retractionZHop") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1639,8 +1601,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("enableCombing") as SettingsItemBoolType;
-        if (settingsItem != null)
+        if (GetSettingsItem("enableCombing") is SettingsItemBoolType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1663,8 +1624,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("fixHorrible") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("fixHorrible") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1687,8 +1647,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("spiralizeMode") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("spiralizeMode") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1711,8 +1670,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("simpleMode") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("simpleMode") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1735,8 +1693,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("gcodeFlavor") as SettingsItemGCodeFlavorTypeCura;
-        if (settingsItem != null)
+        if (GetSettingsItem("gcodeFlavor") is SettingsItemGCodeFlavorTypeCura settingsItem)
         {
           return settingsItem.value;
         }
@@ -1759,8 +1716,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("objectSink") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("objectSink") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1783,8 +1739,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("autoCenter") as SettingsItemBoolType;
-        if (settingsItem != null)
+        if (GetSettingsItem("autoCenter") is SettingsItemBoolType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1807,8 +1762,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftMargin") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftMargin") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1831,8 +1785,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftLineSpacing") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftLineSpacing") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1855,8 +1808,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftBaseThickness") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftBaseThickness") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1879,8 +1831,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftBaseLinewidth") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftBaseLinewidth") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1903,8 +1854,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftInterfaceThickness") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftInterfaceThickness") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1927,8 +1877,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftInterfaceLinewidth") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftInterfaceLinewidth") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1951,8 +1900,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftInterfaceLineSpacing") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftInterfaceLineSpacing") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1975,8 +1923,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftAirGap") as SettingsItemBoolType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftAirGap") is SettingsItemBoolType settingsItem)
         {
           return settingsItem.value;
         }
@@ -1999,8 +1946,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftAirGapLayer0") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftAirGapLayer0") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2023,8 +1969,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftBaseSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftBaseSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2047,8 +1992,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftFanSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftFanSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2071,8 +2015,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftSurfaceThickness") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftSurfaceThickness") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2095,8 +2038,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftSurfaceLinewidth") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftSurfaceLinewidth") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2119,8 +2061,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftSurfaceLineSpacing") as SettingsItemFloatMMType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftSurfaceLineSpacing") is SettingsItemFloatMMType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2143,8 +2084,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftSurfaceLayers") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftSurfaceLayers") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2167,8 +2107,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("raftSurfaceSpeed") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("raftSurfaceSpeed") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2191,8 +2130,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("minimalLayerTime") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("minimalLayerTime") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2215,8 +2153,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("minimalFeedrate") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("minimalFeedrate") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2239,8 +2176,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("coolHeadLift") as SettingsItemFloatSecondsType;
-        if (settingsItem != null)
+        if (GetSettingsItem("coolHeadLift") is SettingsItemFloatSecondsType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2263,8 +2199,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("fanSpeedMin") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("fanSpeedMin") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2287,8 +2222,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("fanSpeedMax") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("fanSpeedMax") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2311,8 +2245,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("enableOozeShield") as SettingsItemBoolType;
-        if (settingsItem != null)
+        if (GetSettingsItem("enableOozeShield") is SettingsItemBoolType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2335,8 +2268,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("wipeTowerSize") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("wipeTowerSize") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2359,8 +2291,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("multiVolumeOverlap") as SettingsItemIntType;
-        if (settingsItem != null)
+        if (GetSettingsItem("multiVolumeOverlap") is SettingsItemIntType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2383,8 +2314,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("startCode") as SettingsItemStringType;
-        if (settingsItem != null)
+        if (GetSettingsItem("startCode") is SettingsItemStringType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2407,8 +2337,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        var settingsItem = GetSettingsItem("endCode") as SettingsItemStringType;
-        if (settingsItem != null)
+        if (GetSettingsItem("endCode") is SettingsItemStringType settingsItem)
         {
           return settingsItem.value;
         }
@@ -2429,26 +2358,26 @@ namespace M3D.Slicer.Cura15_04
 
     public static float micronsToMM(int microns)
     {
-      return (float) microns / 1000f;
+      return microns / 1000f;
     }
 
     public static int millimetersToMicrons(float mm)
     {
-      return (int) ((double) mm * 1000.0);
+      return (int)(mm * 1000.0);
     }
 
     public override string ConfigurationFileName
     {
       get
       {
-        return string.Format("defaultCura15_04{0}.cfg", (object)ProfileName);
+        return string.Format("defaultCura15_04{0}.cfg", ProfileName);
       }
     }
 
     public override List<General.KeyValuePair<string, string>> GenerateUserKeyValuePairList()
     {
       var keyValuePairList = new List<General.KeyValuePair<string, string>>();
-      foreach (System.Collections.Generic.KeyValuePair<string, SlicerSettingsItem> keyValuePair in (SmartSlicerSettingsBase) this)
+      foreach (System.Collections.Generic.KeyValuePair<string, SlicerSettingsItem> keyValuePair in this)
       {
         if (!(keyValuePair.Value is SettingsItemStringType))
         {
@@ -2473,15 +2402,15 @@ namespace M3D.Slicer.Cura15_04
         return this[name];
       }
 
-      return (SlicerSettingsItem) null;
+      return null;
     }
 
     public override void SerializeToSlicer(StreamWriter streamwriter)
     {
       streamwriter.WriteLine("# Generated by M3D Printer Software");
-      foreach (System.Collections.Generic.KeyValuePair<string, SlicerSettingsItem> keyValuePair in (SmartSlicerSettingsBase) this)
+      foreach (System.Collections.Generic.KeyValuePair<string, SlicerSettingsItem> keyValuePair in this)
       {
-        var str = string.Format("{0} = {1}", (object) keyValuePair.Key, (object) keyValuePair.Value.TranslateToSlicerValue());
+        var str = string.Format("{0} = {1}", keyValuePair.Key, keyValuePair.Value.TranslateToSlicerValue());
         streamwriter.WriteLine(str);
       }
     }

@@ -59,7 +59,7 @@ namespace M3D.GUI.SettingsPages
       CreateMessagesFrame(host);
       CreateAdvancedFrame(host);
       SyncSettings();
-      active_frame = (Frame)appearanceFrame;
+      active_frame = appearanceFrame;
       initialized = true;
     }
 
@@ -208,7 +208,7 @@ namespace M3D.GUI.SettingsPages
 
       active_frame.Visible = false;
       active_frame.Enabled = false;
-      active_frame = (Frame) null;
+      active_frame = null;
     }
 
     public void tabsFrameButtonCallback(ButtonWidget button)
@@ -217,22 +217,22 @@ namespace M3D.GUI.SettingsPages
       {
         case 1:
           TurnOffActiveFrame();
-          active_frame = (Frame)appearanceFrame;
+          active_frame = appearanceFrame;
           break;
         case 2:
           TurnOffActiveFrame();
-          active_frame = (Frame)messagesFrame;
+          active_frame = messagesFrame;
           break;
         case 3:
           TurnOffActiveFrame();
-          active_frame = (Frame)advancedFrame;
+          active_frame = advancedFrame;
           break;
       }
       if (active_frame != null)
       {
         active_frame.Enabled = true;
         active_frame.Visible = true;
-        Host.SetFocus((Element2D)active_frame);
+        Host.SetFocus(active_frame);
       }
       Refresh();
     }
@@ -278,7 +278,7 @@ namespace M3D.GUI.SettingsPages
           rendermode_combobox.Select = 1;
           break;
       }
-      childFrame.AddChildElement((Element2D)appearanceFrame);
+      childFrame.AddChildElement(appearanceFrame);
       appearanceFrame.Refresh();
     }
 
@@ -344,7 +344,7 @@ namespace M3D.GUI.SettingsPages
       messagesFrame.BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
       messagesFrame.Visible = false;
       messagesFrame.Enabled = false;
-      childFrame.AddChildElement((Element2D)messagesFrame);
+      childFrame.AddChildElement(messagesFrame);
       messagesFrame.Refresh();
       startFullScreenButton = (ButtonWidget)messagesFrame.FindChildElement(201);
       showAllWarningsButton = (ButtonWidget)messagesFrame.FindChildElement(203);
@@ -364,7 +364,7 @@ namespace M3D.GUI.SettingsPages
         childElement1.Checked = true;
       }
 
-      childElement1.ImageHasFocusColor = new Color4((byte) 100, (byte) 230, byte.MaxValue, byte.MaxValue);
+      childElement1.ImageHasFocusColor = new Color4(100, 230, byte.MaxValue, byte.MaxValue);
     }
 
     private void MessagesFrameButtonCallback(ButtonWidget button)
@@ -449,16 +449,16 @@ namespace M3D.GUI.SettingsPages
       advancedFrame.BGColor = new Color4(byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue);
       advancedFrame.Visible = false;
       advancedFrame.Enabled = false;
-      childFrame.AddChildElement((Element2D)advancedFrame);
+      childFrame.AddChildElement(advancedFrame);
       advancedFrame.Refresh();
       softwareupdate_options = (ComboBoxWidget)advancedFrame.FindChildElement(303);
       updateSoftware_button = (ButtonWidget)advancedFrame.FindChildElement(305);
       download_progress = (SpriteAnimationWidget)advancedFrame.FindChildElement(306);
       update_text = (TextWidget)advancedFrame.FindChildElement(304);
       softwareupdate_options.TextChangedCallback = new ComboBoxWidget.ComboBoxTextChangedCallback(AdvancedSettingsComboBoxCallback);
-      softwareupdate_options.AddItem((object) Locale.GlobalLocale.T("T_UpdateOp_DownloadInstall"));
-      softwareupdate_options.AddItem((object) Locale.GlobalLocale.T("T_UpdateOp_DownloadNoInstall"));
-      softwareupdate_options.AddItem((object) Locale.GlobalLocale.T("T_UpdateOp_TakeNoAction"));
+      softwareupdate_options.AddItem(Locale.GlobalLocale.T("T_UpdateOp_DownloadInstall"));
+      softwareupdate_options.AddItem(Locale.GlobalLocale.T("T_UpdateOp_DownloadNoInstall"));
+      softwareupdate_options.AddItem(Locale.GlobalLocale.T("T_UpdateOp_TakeNoAction"));
       softwareupdate_options.Select = softwareUpdater.UpdaterMode != Updater.UpdateSettings.DownloadNotInstall ? (softwareUpdater.UpdaterMode != Updater.UpdateSettings.NoAction ? 0 : 2) : 1;
       update_text.Visible = false;
       download_progress.Visible = false;

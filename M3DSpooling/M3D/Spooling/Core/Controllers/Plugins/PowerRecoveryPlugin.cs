@@ -66,7 +66,7 @@ namespace M3D.Spooling.Core.Controllers.Plugins
       {
         filament = new FilamentSpool(jobParams.filament_type, jobParams.filament_temperature);
       }
-      else if ((FilamentSpool) null != currentPrinterInfo.filament_info)
+      else if (null != currentPrinterInfo.filament_info)
       {
         filament = new FilamentSpool(currentPrinterInfo.filament_info);
       }
@@ -83,7 +83,7 @@ namespace M3D.Spooling.Core.Controllers.Plugins
             break;
         }
       }
-      var filamentProfile = FilamentProfile.CreateFilamentProfile(currentPrinterInfo.filament_info, (PrinterProfile)m_oFirmwareController.MyPrinterProfile);
+      var filamentProfile = FilamentProfile.CreateFilamentProfile(currentPrinterInfo.filament_info, m_oFirmwareController.MyPrinterProfile);
       PrepareForPrinting(jobParams, filament, filamentProfile, bHomingRequired || float.IsNaN(m_fLocationX) || float.IsNaN(m_fLocationY));
       CommandResult commandResult = PowerRecovery.PowerResetState.PowerFailureSDPrint != m_oPrinterPowerRecovery.PrintingStatus ? RecoverSpooledPrint(currentPrinterInfo.persistantData.SavedJobInformation) : RecoverSDPrint(jobParams);
       if (commandResult == CommandResult.Success)
@@ -100,12 +100,14 @@ namespace M3D.Spooling.Core.Controllers.Plugins
 
     private void PrepareForPrinting(JobParams jobParams, FilamentSpool filament, FilamentProfile filamentProfile, bool bHomingRequired)
     {
-      var stringList = new List<string>();
-      stringList.Add(string.Format("M106 S170"));
-      stringList.Add(string.Format("M109 S{0}", (object) filament.filament_temperature));
-      stringList.Add(string.Format("M106 S255"));
-      stringList.Add(string.Format("M114"));
-      stringList.Add(string.Format("M117"));
+      var stringList = new List<string>
+      {
+        string.Format("M106 S170"),
+        string.Format("M109 S{0}", filament.filament_temperature),
+        string.Format("M106 S255"),
+        string.Format("M114"),
+        string.Format("M117")
+      };
       if (bHomingRequired)
       {
         stringList.Add(string.Format("G91"));
@@ -114,12 +116,12 @@ namespace M3D.Spooling.Core.Controllers.Plugins
       }
       else
       {
-        stringList.Add(string.Format("G92 X{0} Y{1}", (object)m_fLocationX, (object)m_fLocationY));
+        stringList.Add(string.Format("G92 X{0} Y{1}", m_fLocationX, m_fLocationY));
         stringList.Add(string.Format("M114"));
       }
       if (jobParams.options.use_heated_bed)
       {
-        stringList.Add(string.Format("M190 S{0}", (object) filamentProfile.preprocessor.initialPrint.BedTemperature));
+        stringList.Add(string.Format("M190 S{0}", filamentProfile.preprocessor.initialPrint.BedTemperature));
       }
 
       if (bHomingRequired)
@@ -142,7 +144,7 @@ namespace M3D.Spooling.Core.Controllers.Plugins
 
     private CommandResult RecoverSDPrint(JobParams jobParams)
     {
-      var num = (int)m_oFirmwareController.WriteManualCommands(new List<string>() { string.Format("M23 {0}", (object) jobParams.gcodefile), string.Format("M26 S{0}", (object)m_iPI_ProgressIndicator), string.Format("M24"), string.Format("M27") }.ToArray());
+      var num = (int)m_oFirmwareController.WriteManualCommands(new List<string>() { string.Format("M23 {0}", jobParams.gcodefile), string.Format("M26 S{0}", m_iPI_ProgressIndicator), string.Format("M24"), string.Format("M27") }.ToArray());
       return CommandResult.Success;
     }
 
@@ -162,7 +164,7 @@ namespace M3D.Spooling.Core.Controllers.Plugins
 
     public void ProcessGCodeResult(GCode gcode, string resultFromPrinter, PrinterInfo printerInfo)
     {
-      if (!gcode.hasM || gcode.M != (ushort) 404)
+      if (!gcode.hasM || gcode.M != 404)
       {
         return;
       }

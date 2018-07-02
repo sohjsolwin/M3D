@@ -52,8 +52,8 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
     public override void Init()
     {
-      var color4_1 = new Color4((byte) 246, (byte) 246, (byte) 246, byte.MaxValue);
-      var color4_2 = new Color4((byte) 220, (byte) 220, (byte) 220, byte.MaxValue);
+      var color4_1 = new Color4(246, 246, 246, byte.MaxValue);
+      var color4_2 = new Color4(220, 220, 220, byte.MaxValue);
       var color4_3 = new Color4(0.15f, 0.15f, 0.15f, 1f);
       var frame = new Frame(0)
       {
@@ -70,7 +70,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       textWidget1.VAlignment = TextVerticalAlignment.Middle;
       textWidget1.CenterHorizontallyInParent = true;
       textWidget1.Text = "Change Current Temperature Settings:";
-      AddChildElement((Element2D) textWidget1);
+      AddChildElement(textWidget1);
       var textWidget2 = new TextWidget(12)
       {
         Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -82,7 +82,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         VAlignment = TextVerticalAlignment.Middle,
         Text = "Color:"
       };
-      frame.AddChildElement((Element2D) textWidget2);
+      frame.AddChildElement(textWidget2);
       textColor = new TextWidget(14)
       {
         Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -94,7 +94,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         VAlignment = TextVerticalAlignment.Middle,
         Text = ""
       };
-      frame.AddChildElement((Element2D)textColor);
+      frame.AddChildElement(textColor);
       var textWidget3 = new TextWidget(15)
       {
         Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -106,7 +106,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         VAlignment = TextVerticalAlignment.Middle,
         Text = "Material:"
       };
-      frame.AddChildElement((Element2D) textWidget3);
+      frame.AddChildElement(textWidget3);
       textMaterial = new TextWidget(16)
       {
         Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -118,7 +118,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         VAlignment = TextVerticalAlignment.Middle,
         Text = "PLA"
       };
-      frame.AddChildElement((Element2D)textMaterial);
+      frame.AddChildElement(textMaterial);
       var textWidget4 = new TextWidget(17)
       {
         Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -130,7 +130,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         VAlignment = TextVerticalAlignment.Middle,
         Text = "Temperature:"
       };
-      frame.AddChildElement((Element2D) textWidget4);
+      frame.AddChildElement(textWidget4);
       custom_temperature_edit = new EditBoxWidget(13);
       custom_temperature_edit.Init(Host, "guicontrols", 898f, 104f, 941f, 135f);
       custom_temperature_edit.SetGrowableWidth(3, 3, 32);
@@ -143,18 +143,18 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       custom_temperature_edit.RelativeY = 0.55f;
       custom_temperature_edit.SetVisible(true);
       custom_temperature_edit.SetCallbackEnterKey(new EditBoxWidget.EditBoxCallback(TemperatureEditEnterCallback));
-      frame.AddChildElement((Element2D)custom_temperature_edit);
+      frame.AddChildElement(custom_temperature_edit);
       var buttonWidget1 = new ButtonWidget(20);
-      buttonWidget1.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      buttonWidget1.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget1.Size = FontSize.Medium;
       buttonWidget1.Text = "Reset";
       buttonWidget1.SetSize(70, 24);
       buttonWidget1.RelativeX = 0.63f;
       buttonWidget1.RelativeY = 0.55f;
       buttonWidget1.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-      frame.AddChildElement((Element2D) buttonWidget1);
-      var buttonWidget2 = new ButtonWidget(18, (Element2D) this);
-      buttonWidget2.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      frame.AddChildElement(buttonWidget1);
+      var buttonWidget2 = new ButtonWidget(18, this);
+      buttonWidget2.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget2.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
       buttonWidget2.Size = FontSize.Large;
       buttonWidget2.SetSize(100, 32);
@@ -164,9 +164,9 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       buttonWidget2.SetGrowableWidth(4, 4, 32);
       buttonWidget2.Text = "Cancel";
       buttonWidget2.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget2);
-      var buttonWidget3 = new ButtonWidget(19, (Element2D) this);
-      buttonWidget3.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      AddChildElement(buttonWidget2);
+      var buttonWidget3 = new ButtonWidget(19, this);
+      buttonWidget3.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget3.Color = color4_3;
       buttonWidget3.Size = FontSize.Large;
       buttonWidget3.SetSize(100, 32);
@@ -176,7 +176,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       buttonWidget3.SetGrowableWidth(4, 4, 32);
       buttonWidget3.Text = "Save";
       buttonWidget3.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget3);
+      AddChildElement(buttonWidget3);
       SetPosition(0, 0);
       RelativeWidth = 1f;
       RelativeHeight = 1f;
@@ -184,14 +184,14 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       frame.RelativeY = 0.2f;
       frame.RelativeWidth = 1f;
       frame.RelativeHeight = 0.5f;
-      AddChildElement((Element2D) frame);
+      AddChildElement(frame);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
     {
       base.OnActivate(details);
       filamentset.Value = false;
-      Host.SetFocus((Element2D)custom_temperature_edit);
+      Host.SetFocus(custom_temperature_edit);
       custom_temperature_edit.Text = details.current_spool.filament_temperature.ToString();
       textColor.Text = FilamentConstants.ColorsToString((FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), CurrentDetails.current_spool.filament_color_code));
       textMaterial.Text = CurrentDetails.current_spool.filament_type.ToString();
@@ -211,7 +211,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         var num1 = 260;
         if (result >= min && result <= num1)
         {
-          messagebox.AddMessageToQueue(string.Format("Changing the current temperature settings from {0} to {1}.", (object)CurrentDetails.current_spool.filament_temperature, (object)custom_temperature_edit.Text), PopupMessageBox.MessageBoxButtons.OK);
+          messagebox.AddMessageToQueue(string.Format("Changing the current temperature settings from {0} to {1}.", CurrentDetails.current_spool.filament_temperature, custom_temperature_edit.Text), PopupMessageBox.MessageBoxButtons.OK);
           var filamentSpool = new FilamentSpool(CurrentDetails.current_spool)
           {
             filament_temperature = result
@@ -222,11 +222,11 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           FilamentWaitingPage.CurrentWaitingText = "Please wait. The printer is busy perfoming the requested actions.";
           settingsManager.FilamentDictionary.AddCustomTemperature(filamentSpool.filament_type, (FilamentConstants.ColorsEnum)Enum.ToObject(typeof(FilamentConstants.ColorsEnum), filamentSpool.filament_color_code), filamentSpool.filament_temperature);
           MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page8_WaitingPage, CurrentDetails);
-          var num2 = (int)selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(SetFilamentAfterLock), (object)selectedPrinter);
+          var num2 = (int)selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(SetFilamentAfterLock), selectedPrinter);
         }
         else
         {
-          messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "Please enter a temperature from " + (object)min + " to " + (object)num1));
+          messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "Please enter a temperature from " + min + " to " + num1));
         }
       }
       else
@@ -245,7 +245,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           settingsManager.AssociateFilamentToPrinter(asyncState.Info.serial_number, CurrentDetails.current_spool);
           settingsManager.SaveSettings();
         }
-        var num = (int) asyncState.SetFilamentInfo(new M3D.Spooling.Client.AsyncCallback(AfterFilamentSet), (object) asyncState, CurrentDetails.current_spool);
+        var num = (int) asyncState.SetFilamentInfo(new M3D.Spooling.Client.AsyncCallback(AfterFilamentSet), asyncState, CurrentDetails.current_spool);
       }
       else
       {

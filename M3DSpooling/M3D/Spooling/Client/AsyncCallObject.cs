@@ -22,7 +22,7 @@ namespace M3D.Spooling.Client
 
     private uint GetNextCallID(uint lastID)
     {
-      return (uint) ((ulong) lastID + (ulong) (SpoolerServer.RandomGenerator.Next() % 256)) % 429367296U + 1U;
+      return (uint)(lastID + (ulong)(SpoolerServer.RandomGenerator.Next() % 256)) % 429367296U + 1U;
     }
 
     public object AsyncState

@@ -41,7 +41,7 @@ namespace M3D
       Program.runfirst_start = false;
       try
       {
-        var binaryReader = new BinaryReader((Stream) new FileStream(path, FileMode.Open, FileAccess.Read));
+        var binaryReader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read));
         var num1 = binaryReader.ReadUInt32();
         uint num2;
         try
@@ -85,26 +85,14 @@ namespace M3D
       Application.SetCompatibleTextRenderingDefault(false);
       if (Program.runfirst_start)
       {
-        Application.Run((Form) new SplashFormFirstRun());
+        Application.Run(new SplashFormFirstRun());
       }
 
-      Application.Run((Form) new Form1(new SplashForm(), args));
+      Application.Run(new Form1(new SplashForm(), args));
     }
 
-    public static bool isObfuscated
-    {
-      get
-      {
-        return false;
-      }
-    }
+    public static bool IsObfuscated => false;
 
-    public static bool isDEBUGBUILD
-    {
-      get
-      {
-        return false;
-      }
-    }
+    public static bool IsDEBUGBUILD => false;
   }
 }

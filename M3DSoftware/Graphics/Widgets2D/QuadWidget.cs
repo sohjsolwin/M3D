@@ -12,7 +12,7 @@ namespace M3D.Graphics.Widgets2D
     }
 
     public QuadWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -25,10 +25,10 @@ namespace M3D.Graphics.Widgets2D
     public override void OnRender(GUIHost host)
     {
       Simple2DRenderer.Quad quad;
-      quad.x0 = (float)X_Abs;
-      quad.y0 = (float)Y_Abs;
-      quad.x1 = (float) (X_Abs + Width);
-      quad.y1 = (float) (Y_Abs + Height);
+      quad.x0 = X_Abs;
+      quad.y0 = Y_Abs;
+      quad.x1 = X_Abs + Width;
+      quad.y1 = Y_Abs + Height;
       quad.color = Color;
       host.GetSimpleRenderer().DrawQuad(quad);
     }

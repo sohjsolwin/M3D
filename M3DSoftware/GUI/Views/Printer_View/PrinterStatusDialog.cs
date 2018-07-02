@@ -48,7 +48,7 @@ namespace M3D.GUI.Views.Printer_View
     private GUIHost m_host;
 
     public PrinterStatusDialog(Printer base_printer, GUIHost host, Element2D parent_element, PopupMessageBox messagebox, Form1 mainform, SettingsManager settings)
-      : base((IPrinter) base_printer)
+      : base(base_printer)
     {
       found = true;
       previous_jobs_count = 0;
@@ -56,7 +56,7 @@ namespace M3D.GUI.Views.Printer_View
       base_printer.OnUpdateData += new OnUpdateDataDel(OnUpdateData);
       this.mainform = mainform;
       this.messagebox = messagebox;
-      current_job = Info.current_job == null ? (JobInfo) null : Info.current_job;
+      current_job = Info.current_job ?? null;
       this.settings = settings;
       InitGUIElement(host, parent_element);
       m_host = host;
@@ -159,7 +159,7 @@ namespace M3D.GUI.Views.Printer_View
       }
       else
       {
-        current_job = (JobInfo) null;
+        current_job = null;
         if (modelName_text != null)
         {
           modelName_text.Text = "Model Name: ";
@@ -200,15 +200,15 @@ namespace M3D.GUI.Views.Printer_View
       {
         if (preview_image == null && !string.IsNullOrEmpty(current_job.PreviewImageFileName) && current_job.PreviewImageFileName != "null")
         {
-          mainform.AddTask(new Form1.Task(CreatePreviewImageWidget), (object)current_job.PreviewImageFileName);
+          mainform.AddTask(new Form1.Task(CreatePreviewImageWidget), current_job.PreviewImageFileName);
         }
 
         var percentComplete = current_job.PercentComplete;
         var timeRemaining = current_job.TimeRemaining;
-        var num1 = float.IsNaN(percentComplete) || (double) percentComplete < -1.0 ? 0.0f : percentComplete * 100f;
-        if ((double) timeRemaining > 0.0)
+        var num1 = float.IsNaN(percentComplete) || percentComplete < -1.0 ? 0.0f : percentComplete * 100f;
+        if (timeRemaining > 0.0)
         {
-          var num2 = (int) ((double) timeRemaining / 60.0);
+          var num2 = (int)(timeRemaining / 60.0);
           var num3 = num2 / 60;
           var num4 = num2 - num3 * 60;
           remain_text.Text = "Remaining: " + num3.ToString() + " hours, " + num4.ToString() + " minutes";
@@ -232,7 +232,7 @@ namespace M3D.GUI.Views.Printer_View
           }
           else
           {
-            quad_overlay.Height = 80 - (int) (80.0 * (double)current_job.PercentComplete);
+            quad_overlay.Height = 80 - (int) (80.0 * current_job.PercentComplete);
           }
 
           quad_overlay.Visible = true;
@@ -261,7 +261,7 @@ namespace M3D.GUI.Views.Printer_View
             continue_print.Visible = false;
             progress_indicator.Visible = true;
           }
-          else if ((double) num1 == 0.0 && !aborted && Info.Status != PrinterStatus.Firmware_IsWaitingToPause)
+          else if (num1 == 0.0 && !aborted && Info.Status != PrinterStatus.Firmware_IsWaitingToPause)
           {
             status_text.Text = "Processing";
             remain_text.Visible = false;
@@ -332,7 +332,7 @@ namespace M3D.GUI.Views.Printer_View
       }
       if (heater_temp_text != null)
       {
-        heater_temp_text.Text = "Heater Temperature: " + ((double) info.extruder.Temperature > 0.0 ? info.extruder.Temperature.ToString("0.0") + " C" : "OFF");
+        heater_temp_text.Text = "Heater Temperature: " + (info.extruder.Temperature > 0.0 ? info.extruder.Temperature.ToString("0.0") + " C" : "OFF");
       }
 
       if (heatedbed_temp_text == null)
@@ -340,7 +340,7 @@ namespace M3D.GUI.Views.Printer_View
         return;
       }
 
-      heatedbed_temp_text.Text = "Heated Bed Temperature: " + ((double) info.accessories.BedStatus.BedTemperature > 0.0 ? info.accessories.BedStatus.BedTemperature.ToString("0.0") + " C" : "OFF");
+      heatedbed_temp_text.Text = "Heated Bed Temperature: " + (info.accessories.BedStatus.BedTemperature > 0.0 ? info.accessories.BedStatus.BedTemperature.ToString("0.0") + " C" : "OFF");
     }
 
     public void ProcessSupportedFeatures(PrinterInfo info)
@@ -364,8 +364,8 @@ namespace M3D.GUI.Views.Printer_View
     public void OnRemoval(Element2D parent_element)
     {
       DestroyPreviewImageWidget();
-      parent_element.RemoveChildElement((Element2D)status_dialog_frame);
-      preview_image = (ImageWidget) null;
+      parent_element.RemoveChildElement(status_dialog_frame);
+      preview_image = null;
     }
 
     public bool HasJob
@@ -392,7 +392,7 @@ namespace M3D.GUI.Views.Printer_View
       progress_indicator.SetSize(100, 100);
       progress_indicator.SetPosition(-110, 10);
       progress_indicator.Visible = false;
-      status_dialog_frame.AddChildElement((Element2D)progress_indicator);
+      status_dialog_frame.AddChildElement(progress_indicator);
       printer_name_text = new TextWidget(2);
       printer_name_text.SetPosition(140, 10);
       printer_name_text.SetSize(250, 30);
@@ -400,7 +400,7 @@ namespace M3D.GUI.Views.Printer_View
       printer_name_text.Size = FontSize.Medium;
       printer_name_text.Alignment = QFontAlignment.Left;
       printer_name_text.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
-      status_dialog_frame.AddChildElement((Element2D)printer_name_text);
+      status_dialog_frame.AddChildElement(printer_name_text);
       status_text = new TextWidget(3);
       status_text.SetPosition(140, 40);
       status_text.SetSize(250, 30);
@@ -408,7 +408,7 @@ namespace M3D.GUI.Views.Printer_View
       status_text.Size = FontSize.Medium;
       status_text.Alignment = QFontAlignment.Left;
       status_text.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
-      status_dialog_frame.AddChildElement((Element2D)status_text);
+      status_dialog_frame.AddChildElement(status_text);
       remain_text = new TextWidget(4);
       remain_text.SetPosition(140, 70);
       remain_text.SetSize(350, 30);
@@ -416,9 +416,9 @@ namespace M3D.GUI.Views.Printer_View
       remain_text.Size = FontSize.Medium;
       remain_text.Alignment = QFontAlignment.Left;
       remain_text.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
-      status_dialog_frame.AddChildElement((Element2D)remain_text);
+      status_dialog_frame.AddChildElement(remain_text);
       abort_button = new ButtonWidget(0);
-      abort_button.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      abort_button.Init(host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       abort_button.Size = FontSize.Medium;
       abort_button.Text = "Abort";
       abort_button.TextColor = new Color4(0.95f, 0.5f, 0.0f, 1f);
@@ -427,9 +427,9 @@ namespace M3D.GUI.Views.Printer_View
       abort_button.SetSize(90, 32);
       abort_button.SetPosition(140, 110);
       abort_button.SetCallback(new ButtonCallback(MyButtonCallback));
-      status_dialog_frame.AddChildElement((Element2D)abort_button);
+      status_dialog_frame.AddChildElement(abort_button);
       pause_print = new ButtonWidget(1);
-      pause_print.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      pause_print.Init(host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       pause_print.Size = FontSize.Medium;
       pause_print.Text = "Pause";
       pause_print.TextColor = new Color4(0.95f, 0.5f, 0.0f, 1f);
@@ -439,9 +439,9 @@ namespace M3D.GUI.Views.Printer_View
       pause_print.SetPosition(250, 110);
       pause_print.SetCallback(new ButtonCallback(MyButtonCallback));
       pause_print.Enabled = true;
-      status_dialog_frame.AddChildElement((Element2D)pause_print);
+      status_dialog_frame.AddChildElement(pause_print);
       continue_print = new ButtonWidget(2);
-      continue_print.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      continue_print.Init(host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       continue_print.Size = FontSize.Medium;
       continue_print.Text = "Continue";
       continue_print.TextColor = new Color4(0.95f, 0.5f, 0.0f, 1f);
@@ -451,7 +451,7 @@ namespace M3D.GUI.Views.Printer_View
       continue_print.SetPosition(250, 110);
       continue_print.SetCallback(new ButtonCallback(MyButtonCallback));
       continue_print.Enabled = true;
-      status_dialog_frame.AddChildElement((Element2D)continue_print);
+      status_dialog_frame.AddChildElement(continue_print);
       modelName_text = new TextWidget();
       modelName_text.SetPosition(10, 150);
       modelName_text.SetSize(380, 30);
@@ -460,7 +460,7 @@ namespace M3D.GUI.Views.Printer_View
       modelName_text.Alignment = QFontAlignment.Left;
       modelName_text.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
       modelName_text.Visible = false;
-      status_dialog_frame.AddChildElement((Element2D)modelName_text);
+      status_dialog_frame.AddChildElement(modelName_text);
       quality_text = new TextWidget();
       quality_text.SetPosition(10, 180);
       quality_text.SetSize(380, 30);
@@ -469,7 +469,7 @@ namespace M3D.GUI.Views.Printer_View
       quality_text.Alignment = QFontAlignment.Left;
       quality_text.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
       quality_text.Visible = false;
-      status_dialog_frame.AddChildElement((Element2D)quality_text);
+      status_dialog_frame.AddChildElement(quality_text);
       infill_text = new TextWidget();
       infill_text.SetPosition(10, 210);
       infill_text.SetSize(380, 30);
@@ -478,7 +478,7 @@ namespace M3D.GUI.Views.Printer_View
       infill_text.Alignment = QFontAlignment.Left;
       infill_text.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
       infill_text.Visible = false;
-      status_dialog_frame.AddChildElement((Element2D)infill_text);
+      status_dialog_frame.AddChildElement(infill_text);
       options_text = new TextWidget();
       options_text.SetPosition(10, 240);
       options_text.SetSize(380, 30);
@@ -487,7 +487,7 @@ namespace M3D.GUI.Views.Printer_View
       options_text.Alignment = QFontAlignment.Left;
       options_text.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
       options_text.Visible = false;
-      status_dialog_frame.AddChildElement((Element2D)options_text);
+      status_dialog_frame.AddChildElement(options_text);
       heater_temp_text = new TextWidget();
       heater_temp_text.SetPosition(10, 270);
       heater_temp_text.SetSize(380, 30);
@@ -496,7 +496,7 @@ namespace M3D.GUI.Views.Printer_View
       heater_temp_text.Alignment = QFontAlignment.Left;
       heater_temp_text.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
       heater_temp_text.Visible = false;
-      status_dialog_frame.AddChildElement((Element2D)heater_temp_text);
+      status_dialog_frame.AddChildElement(heater_temp_text);
       heatedbed_temp_text = new TextWidget();
       heatedbed_temp_text.SetPosition(10, 300);
       heatedbed_temp_text.SetSize(380, 30);
@@ -505,7 +505,7 @@ namespace M3D.GUI.Views.Printer_View
       heatedbed_temp_text.Alignment = QFontAlignment.Left;
       heatedbed_temp_text.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
       heatedbed_temp_text.Visible = false;
-      status_dialog_frame.AddChildElement((Element2D)heatedbed_temp_text);
+      status_dialog_frame.AddChildElement(heatedbed_temp_text);
       more_info = new ButtonWidget(3)
       {
         Text = "",
@@ -517,8 +517,8 @@ namespace M3D.GUI.Views.Printer_View
       more_info.Enabled = true;
       more_info.Init(host, "guicontrols", 448f, 512f, 511f, 575f, 512f, 512f, 575f, 575f, 576f, 512f, 639f, 575f);
       more_info.ToolTipMessage = host.Locale.T("T_TOOLTIP_INFORMATION");
-      status_dialog_frame.AddChildElement((Element2D)more_info);
-      parent_element.AddChildElement((Element2D)status_dialog_frame);
+      status_dialog_frame.AddChildElement(more_info);
+      parent_element.AddChildElement(status_dialog_frame);
     }
 
     public void MyButtonCallback(ButtonWidget button)
@@ -542,7 +542,7 @@ namespace M3D.GUI.Views.Printer_View
           messagebox.AddMessageToQueue("Are you sure you want to pause?\r\n\r\nA print can be paused 5 minutes\r\nafter the start of the print.", PopupMessageBox.MessageBoxButtons.YESNO, new PopupMessageBox.OnUserSelectionDel(PauseCallBack));
           break;
         case 2:
-          if (GetCurrentFilament() == (FilamentSpool) null)
+          if (GetCurrentFilament() == null)
           {
             messagebox.AddMessageToQueue("Please load 3D ink into your printer before resuming the print.");
             break;
@@ -601,7 +601,7 @@ namespace M3D.GUI.Views.Printer_View
         messagebox.AddMessageToQueue("Aborting print. Please do not unplug your printer while it is aborting. If you unplug your printer, you will have to recalibrate it.");
       }
 
-      var num = (int)AbortPrint((AsyncCallback) null, (object) null);
+      var num = (int)AbortPrint(null, null);
       aborted = true;
       status_text.Visible = false;
       remain_text.Visible = false;
@@ -626,7 +626,7 @@ namespace M3D.GUI.Views.Printer_View
         messagebox.AddMessageToQueue("Please do not unplug your printer while it is Moving. If you unplug your printer, you will have to recalibrate it.");
       }
 
-      var num = (int)PausePrint(new AsyncCallback(ShowLockError), (object)base_obj);
+      var num = (int)PausePrint(new AsyncCallback(ShowLockError), base_obj);
       paused = true;
       continued = false;
       pause_print.Visible = false;
@@ -645,7 +645,7 @@ namespace M3D.GUI.Views.Printer_View
 
     public void ContinuePrint()
     {
-      var num = (int)AcquireLock(new AsyncCallback(DoPrinterTask), (object) new PrinterStatusDialog.PrinterTaskData((IPrinter) this, PrinterStatusDialog.PrinterTask.ContinuePrint));
+      var num = (int)AcquireLock(new AsyncCallback(DoPrinterTask), new PrinterStatusDialog.PrinterTaskData((IPrinter)this, PrinterStatusDialog.PrinterTask.ContinuePrint));
       continued = true;
       paused = false;
       pause_print.Visible = true;
@@ -658,7 +658,7 @@ namespace M3D.GUI.Views.Printer_View
       preview_image = new ImageWidget(0);
       if (!preview_image.Init(m_host, texture))
       {
-        preview_image = (ImageWidget) null;
+        preview_image = null;
       }
       else
       {
@@ -669,13 +669,13 @@ namespace M3D.GUI.Views.Printer_View
 
         preview_image.SetSize(120, 80);
         preview_image.SetPosition(10, 10);
-        status_dialog_frame.AddChildElement((Element2D)preview_image);
+        status_dialog_frame.AddChildElement(preview_image);
         quad_overlay = new QuadWidget(1);
         quad_overlay.SetSize(120, 80);
         quad_overlay.SetPosition(10, 10);
         quad_overlay.Color = new Color4(0.99f, 0.54f, 0.35f, 0.75f);
         quad_overlay.Visible = false;
-        status_dialog_frame.AddChildElement((Element2D)quad_overlay);
+        status_dialog_frame.AddChildElement(quad_overlay);
         status_dialog_frame.X = status_dialog_frame.X;
       }
     }
@@ -684,16 +684,16 @@ namespace M3D.GUI.Views.Printer_View
     {
       if (preview_image != null)
       {
-        status_dialog_frame.RemoveChildElement((Element2D)preview_image);
-        preview_image = (ImageWidget) null;
+        status_dialog_frame.RemoveChildElement(preview_image);
+        preview_image = null;
       }
       if (quad_overlay == null)
       {
         return;
       }
 
-      status_dialog_frame.RemoveChildElement((Element2D)quad_overlay);
-      quad_overlay = (QuadWidget) null;
+      status_dialog_frame.RemoveChildElement(quad_overlay);
+      quad_overlay = null;
     }
 
     public bool ValidZ
@@ -717,10 +717,10 @@ namespace M3D.GUI.Views.Printer_View
         switch (asyncState.task)
         {
           case PrinterStatusDialog.PrinterTask.ContinuePrint:
-            var num1 = (int) asyncState.printer.ContinuePrint(new AsyncCallback(ShowLockError), (object) asyncState.printer);
+            var num1 = (int) asyncState.printer.ContinuePrint(new AsyncCallback(ShowLockError), asyncState.printer);
             break;
           case PrinterStatusDialog.PrinterTask.ReleasePrinter:
-            var num2 = (int) asyncState.printer.ReleaseLock(new AsyncCallback(ShowLockError), (object) asyncState.printer);
+            var num2 = (int) asyncState.printer.ReleaseLock(new AsyncCallback(ShowLockError), asyncState.printer);
             break;
         }
       }

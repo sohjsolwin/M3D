@@ -20,7 +20,7 @@ namespace M3D.Spooling.Common
 
     public StackedBoundingBox(StackedBoundingBox other)
     {
-      bounds_list = new List<BoundingBox>((IEnumerable<BoundingBox>) other.bounds_list);
+      bounds_list = new List<BoundingBox>(other.bounds_list);
       min_z = other.min_z;
       max_z = other.max_z;
     }
@@ -32,12 +32,12 @@ namespace M3D.Spooling.Common
         throw new ArgumentException("Must include at least one region.");
       }
 
-      bounds_list = new List<BoundingBox>((IEnumerable<BoundingBox>) regions);
+      bounds_list = new List<BoundingBox>(regions);
       min_z = bounds_list[0].min.z;
       max_z = bounds_list[0].max.z;
       foreach (BoundingBox bounds in bounds_list)
       {
-        if ((double) bounds.max.z < (double)max_z)
+        if (bounds.max.z < (double)max_z)
         {
           throw new ArgumentException("Bounding boxes must be in order from Z min to Z max.");
         }
@@ -106,23 +106,23 @@ namespace M3D.Spooling.Common
       return false;
     }
 
-    public int outOfBoundsCheck(float X, float Y, float Z)
+    public int OutOfBoundsCheck(float X, float Y, float Z)
     {
-      if ((double) Z < (double)min_z)
+      if (Z < (double)min_z)
       {
         return 16;
       }
 
-      if ((double) Z > (double)max_z)
+      if (Z > (double)max_z)
       {
         return 32;
       }
 
       foreach (BoundingBox bounds in bounds_list)
       {
-        if ((double) Z <= (double) bounds.max.z && (double) Z >= (double) bounds.min.z)
+        if (Z <= (double)bounds.max.z && Z >= (double)bounds.min.z)
         {
-          return bounds.outOfBoundsCheck(X, Y, Z);
+          return bounds.OutOfBoundsCheck(X, Y, Z);
         }
       }
       return 0;
@@ -147,7 +147,7 @@ namespace M3D.Spooling.Common
 
     public bool Equals(StackedBoundingBox other)
     {
-      if (bounds_list.Count != other.bounds_list.Count || (double)min_z != (double) other.min_z || (double)max_z != (double) other.max_z)
+      if (bounds_list.Count != other.bounds_list.Count || min_z != (double)other.min_z || max_z != (double)other.max_z)
       {
         return false;
       }

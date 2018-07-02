@@ -98,7 +98,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemFillPatternTypeCura(value);
+      return new SettingsItemFillPatternTypeCura(value);
     }
   }
 }

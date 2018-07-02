@@ -31,7 +31,7 @@ namespace M3D.Spooling.Client
       available_lock = new object();
       socket_client = new SocketClient
       {
-        OnReceivedRawMessage = new CallBackOnReceivedRawMessage(((ISpoolerConnection)this).OnRawMessage)
+        OnReceivedRawMessage = new CallBackOnReceivedRawMessage((this).OnRawMessage)
       };
     }
 
@@ -83,10 +83,7 @@ namespace M3D.Spooling.Client
           return SpoolerResult.Error;
         }
 
-        if (XMLProcessor != null)
-        {
-          XMLProcessor(xml_message);
-        }
+        XMLProcessor?.Invoke(xml_message);
       }
       return SpoolerResult.OK;
     }

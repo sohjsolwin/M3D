@@ -55,8 +55,8 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     public void Init(GUIHost host)
     {
-      var borderedImageFrame = new BorderedImageFrame(ID, (Element2D) null);
-      AddChildElement((Element2D) borderedImageFrame);
+      var borderedImageFrame = new BorderedImageFrame(ID, null);
+      AddChildElement(borderedImageFrame);
       SetSize(480, 340);
       borderedImageFrame.Init(host, "guicontrols", 640f, 256f, 703f, 319f, 8, 8, 64, 8, 8, 64);
       borderedImageFrame.SetSize(480, 340);
@@ -68,32 +68,32 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         Alignment = QFontAlignment.Centre,
         VAlignment = TextVerticalAlignment.Middle,
         Text = "T_PrintDialog_SlicingWarning",
-        Color = new Color4((byte)100, (byte)100, (byte)100, byte.MaxValue)
+        Color = new Color4(100, 100, 100, byte.MaxValue)
       };
       textWidget.SetPosition(0, 10);
       textWidget.SetSize(480, 80);
       textWidget.CenterHorizontallyInParent = true;
-      borderedImageFrame.AddChildElement((Element2D) textWidget);
+      borderedImageFrame.AddChildElement(textWidget);
       pleasewait_text = new TextWidget(0)
       {
         Size = FontSize.Medium,
         Alignment = QFontAlignment.Centre,
         VAlignment = TextVerticalAlignment.Middle,
         Text = "T_PrintDialog_SlicingPleaseWait",
-        Color = new Color4((byte)100, (byte)100, (byte)100, byte.MaxValue)
+        Color = new Color4(100, 100, 100, byte.MaxValue)
       };
       pleasewait_text.SetPosition(0, 109);
       pleasewait_text.SetSize(247, 50);
       pleasewait_text.CenterHorizontallyInParent = true;
-      borderedImageFrame.AddChildElement((Element2D)pleasewait_text);
+      borderedImageFrame.AddChildElement(pleasewait_text);
       progressbar = new ProgressBarWidget(0);
       progressbar.Init(host, "guicontrols", 944f, 96f, 960f, 144f, 2, 2, 16, 2, 2, 16);
       progressbar.SetPosition(42, 185);
       progressbar.SetSize(401, 24);
       progressbar.PercentComplete = 0.0f;
-      borderedImageFrame.AddChildElement((Element2D)progressbar);
+      borderedImageFrame.AddChildElement(progressbar);
       cancel_button = new ButtonWidget(0);
-      cancel_button.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      cancel_button.Init(host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       cancel_button.Size = FontSize.Medium;
       cancel_button.Text = "Cancel";
       cancel_button.SetGrowableWidth(4, 4, 32);
@@ -102,7 +102,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       cancel_button.SetPosition(0, -46);
       cancel_button.CenterHorizontallyInParent = true;
       cancel_button.SetCallback(new ButtonCallback(MyButtonCallback));
-      borderedImageFrame.AddChildElement((Element2D)cancel_button);
+      borderedImageFrame.AddChildElement(cancel_button);
     }
 
     public void MyButtonCallback(ButtonWidget button)
@@ -123,7 +123,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         return;
       }
 
-      var num = (int)CurrentJobDetails.printer.SendManualGCode(new AsyncCallback(ReleasePrinterAfterCommand), (object)CurrentJobDetails.printer, "M106 S0");
+      var num = (int)CurrentJobDetails.printer.SendManualGCode(new AsyncCallback(ReleasePrinterAfterCommand), CurrentJobDetails.printer, "M106 S0");
     }
 
     private void ReleasePrinterAfterCommand(IAsyncCallResult ar)
@@ -134,7 +134,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         return;
       }
 
-      var num = (int) asyncState.ReleaseLock((AsyncCallback) null, (object) null);
+      var num = (int) asyncState.ReleaseLock(null, null);
     }
 
     private void FailedReleaseCallback(IAsyncCallResult ar)
@@ -150,7 +150,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         return;
       }
 
-      var num = (int) asyncState.ReleaseLock(new AsyncCallback(FailedReleaseCallback), (object) asyncState);
+      var num = (int) asyncState.ReleaseLock(new AsyncCallback(FailedReleaseCallback), asyncState);
     }
 
     public override void OnUpdate()
@@ -182,13 +182,13 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
           progressbar.PercentComplete = 1f;
         }
       }
-      if (bHasSlicingCompleted)
+      if (BHasSlicingCompleted)
       {
-        if ((double)CurrentJobDetails.Estimated_Print_Time < 0.0)
+        if (CurrentJobDetails.Estimated_Print_Time < 0.0)
         {
-          CurrentJobDetails.Estimated_Print_Time = (float)SlicerConnection.EstimatedPrintTimeSeconds;
+          CurrentJobDetails.Estimated_Print_Time = SlicerConnection.EstimatedPrintTimeSeconds;
         }
-        else if ((double)CurrentJobDetails.Estimated_Filament < 0.0)
+        else if (CurrentJobDetails.Estimated_Filament < 0.0)
         {
           CurrentJobDetails.Estimated_Filament = SlicerConnection.EstimatedFilament;
         }
@@ -198,7 +198,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
           EvaluateRemainingFilament();
         }
       }
-      if (!bHasSlicerStarted)
+      if (!BHasSlicerStarted)
       {
         return;
       }
@@ -215,11 +215,11 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
     {
       var num = 0.75f * CurrentJobDetails.settings.filament_info.GetMaxFilamentBySpoolSize();
       FilamentSpool filamentInfo = CurrentJobDetails.settings.filament_info;
-      if (settings_manager.CurrentFilamentSettings.TrackFilament && (double) filamentInfo.estimated_filament_length_printed >= (double) num && (double)CurrentJobDetails.Estimated_Filament < (double) filamentInfo.GetMaxFilamentBySpoolSize() - (double) filamentInfo.estimated_filament_length_printed)
+      if (settings_manager.CurrentFilamentSettings.TrackFilament && filamentInfo.estimated_filament_length_printed >= (double)num && CurrentJobDetails.Estimated_Filament < filamentInfo.GetMaxFilamentBySpoolSize() - (double)filamentInfo.estimated_filament_length_printed)
       {
         message_box.AddMessageToQueue(Locale.GlobalLocale.T("T_PrintDialog_LowFilament"), PopupMessageBox.MessageBoxButtons.YESNO, new PopupMessageBox.OnUserSelectionDel(OrderFilamentCallBack));
       }
-      else if (settings_manager.CurrentFilamentSettings.TrackFilament && (double)CurrentJobDetails.Estimated_Filament > (double) filamentInfo.GetMaxFilamentBySpoolSize() - (double) filamentInfo.estimated_filament_length_printed)
+      else if (settings_manager.CurrentFilamentSettings.TrackFilament && CurrentJobDetails.Estimated_Filament > filamentInfo.GetMaxFilamentBySpoolSize() - (double)filamentInfo.estimated_filament_length_printed)
       {
         message_box.AddMessageToQueue(Locale.GlobalLocale.T("T_PrintDialog_LowFilamentContinue"), PopupMessageBox.MessageBoxButtons.YESNO, new PopupMessageBox.OnUserSelectionDel(ContinuePrintCallBack));
       }
@@ -253,7 +253,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
           return;
         }
 
-        var num = (int)CurrentJobDetails.printer.SendManualGCode(new AsyncCallback(ReleasePrinterAfterCommand), (object)CurrentJobDetails.printer, "M106 S0");
+        var num = (int)CurrentJobDetails.printer.SendManualGCode(new AsyncCallback(ReleasePrinterAfterCommand), CurrentJobDetails.printer, "M106 S0");
       }
     }
 

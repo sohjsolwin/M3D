@@ -44,10 +44,10 @@ namespace M3D.GUI.Controller
 
     public ModelLoadingManager()
     {
-      libraryview = (LibraryView) null;
-      printerview = (PrinterView) null;
-      messagebox = (PopupMessageBox) null;
-      informationbox = (MessagePopUp) null;
+      libraryview = null;
+      printerview = null;
+      messagebox = null;
+      informationbox = null;
       modelLoadedQueue = new ConcurrentQueue<ModelLoadingManager.ModelLoadDetails>();
     }
 
@@ -98,7 +98,7 @@ namespace M3D.GUI.Controller
       {
         if (!OptimizingModel && !LoadingNewModel)
         {
-          return LoadModelIntoPrinter(filename, new ModelLoadingManager.OnModelLoadedDel(OnModelLoadedCallback), onFailCallback, (PrintDetails.ObjectDetails) null);
+          return LoadModelIntoPrinter(filename, new ModelLoadingManager.OnModelLoadedDel(OnModelLoadedCallback), onFailCallback, null);
         }
 
         return true;
@@ -141,13 +141,13 @@ namespace M3D.GUI.Controller
       catch (IOException ex)
       {
         DecFilesLoading();
-        ShowFileLoadingExeption((Exception) ex, zipFileName, onFailCallback);
+        ShowFileLoadingExeption(ex, zipFileName, onFailCallback);
         return false;
       }
       try
       {
         asyncZipLoadData.zf = new ZipFile(file);
-        asyncZipLoadData.iconFile = (string) null;
+        asyncZipLoadData.iconFile = null;
         asyncZipLoadData.extractTo = Path.Combine(Paths.PublicDataFolder, "ExtractedZipFiles", Path.GetFileNameWithoutExtension(zipFileName));
         foreach (ZipEntry zipEntry in asyncZipLoadData.zf)
         {
@@ -190,7 +190,7 @@ namespace M3D.GUI.Controller
       if (asyncZipLoadData.modelFiles.Count > 0)
       {
         libraryview.RecentModels.CopyAndAssignIconForLibrary(zipFileName, asyncZipLoadData.iconFile);
-        ThreadPool.QueueUserWorkItem(new WaitCallback(LoadZipWorkerThread), (object) asyncZipLoadData);
+        ThreadPool.QueueUserWorkItem(new WaitCallback(LoadZipWorkerThread), asyncZipLoadData);
         return true;
       }
       file.Close();
@@ -212,12 +212,12 @@ namespace M3D.GUI.Controller
             byte[] buffer = new byte[4096];
             using (FileStream fileStream = File.Create(Path.Combine(asyncZipLoadData.extractTo, Path.GetFileName(entry.Name))))
             {
-              StreamUtils.Copy(asyncZipLoadData.zf.GetInputStream(entry), (Stream) fileStream, buffer);
+              StreamUtils.Copy(asyncZipLoadData.zf.GetInputStream(entry), fileStream, buffer);
             }
           }
         }
-        var settingsFromList1 = FindXMLSettingsFromList(asyncZipLoadData.xmlFiles, (string) null, "printerview.xml");
-        var settingsFromList2 = FindXMLSettingsFromList(asyncZipLoadData.xmlFiles, (string) null, "printersettings.xml");
+        var settingsFromList1 = FindXMLSettingsFromList(asyncZipLoadData.xmlFiles, null, "printerview.xml");
+        var settingsFromList2 = FindXMLSettingsFromList(asyncZipLoadData.xmlFiles, null, "printersettings.xml");
         if (asyncZipLoadData.xmlFiles.Count == 2 && !string.IsNullOrEmpty(settingsFromList1) && !string.IsNullOrEmpty(settingsFromList2))
         {
           LoadPrinterView(settingsFromList1, settingsFromList2, asyncZipLoadData.extractTo, zipFileName);
@@ -270,8 +270,8 @@ namespace M3D.GUI.Controller
         var profileMismatchDialog = Resources.profileMismatchDialog;
         var profileName = printSettings.Value.profileName;
         var currentFamilyName = printerview.CurrentFamilyName;
-        var newValue = string.Format(string.Format(Locale.GlobalLocale.T("T_ProfileMismatchDialog_Message"), (object) profileName, (object) currentFamilyName), (object) profileName, (object) currentFamilyName);
-        messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), profileMismatchDialog.Replace("{MESSAGE}", newValue), new PopupMessageBox.XMLButtonCallback(TypeMismatchButtonCallback), (object) data));
+        var newValue = string.Format(string.Format(Locale.GlobalLocale.T("T_ProfileMismatchDialog_Message"), profileName, currentFamilyName), profileName, currentFamilyName);
+        messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), profileMismatchDialog.Replace("{MESSAGE}", newValue), new PopupMessageBox.XMLButtonCallback(TypeMismatchButtonCallback), data));
       }
       else
       {
@@ -291,7 +291,7 @@ namespace M3D.GUI.Controller
         var objectDetails = new PrintDetails.ObjectDetails(other)
         {
           zipFileName = data.zipfile,
-          printerSettingsXMLFile = (string)null
+          printerSettingsXMLFile = null
         };
         var str = other.filename;
         if (!string.IsNullOrEmpty(data.directory))
@@ -305,20 +305,19 @@ namespace M3D.GUI.Controller
 
     private void OnPrinterViewModelLoadFailed(string name)
     {
-      messagebox.AddMessageToQueue(string.Format("Unable to load model, {0}, from collection.", (object) name));
+      messagebox.AddMessageToQueue(string.Format("Unable to load model, {0}, from collection.", name));
     }
 
     private void OnFileLoadFailure(string name)
     {
-      messagebox.AddMessageToQueue(string.Format("Unable to load model, {0}.", (object) name));
+      messagebox.AddMessageToQueue(string.Format("Unable to load model, {0}.", name));
     }
 
     private void TypeMismatchButtonCallback(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)
     {
       if (button.tag == "Yes")
       {
-        var data1 = data as ModelLoadingManager.PrinterViewLoadData;
-        if (data1 != null)
+        if (data is ModelLoadingManager.PrinterViewLoadData data1)
         {
           LoadPrinterView(data1);
         }
@@ -385,7 +384,7 @@ namespace M3D.GUI.Controller
           if (settings.CurrentAppearanceSettings.ShowRemoveModelWarning && printerview.ModelLoaded && (objectDetails == null || objectDetails.printerSettingsXMLFile == null || objectDetails.printerViewXMLFile == null))
           {
             DecFilesLoading();
-            messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), Resources.removeModelDialog, new PopupMessageBox.XMLButtonCallback(RemoveModelButtonCallback), (object) state));
+            messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), Resources.removeModelDialog, new PopupMessageBox.XMLButtonCallback(RemoveModelButtonCallback), state));
             return true;
           }
           if (printerview.ModelLoaded && !settings.CurrentAppearanceSettings.UseMultipleModels)
@@ -426,7 +425,7 @@ namespace M3D.GUI.Controller
     private void StartLoadModelThread(ModelLoadingManager.AsyncModelLoadData state)
     {
       printerview.ResetPrinterView();
-      ThreadPool.QueueUserWorkItem(new WaitCallback(LoadModelThread), (object) state);
+      ThreadPool.QueueUserWorkItem(new WaitCallback(LoadModelThread), state);
     }
 
     private void LoadModelThread(object state)
@@ -477,8 +476,7 @@ namespace M3D.GUI.Controller
           settings.CurrentAppearanceSettings.UseMultipleModels = true;
         }
 
-        var state = data as ModelLoadingManager.AsyncModelLoadData;
-        if (state != null)
+        if (data is ModelLoadingManager.AsyncModelLoadData state)
         {
           IncFilesLoading();
           StartLoadModelThread(state);
@@ -489,10 +487,7 @@ namespace M3D.GUI.Controller
 
     private void ShowFileLoadingExeption(Exception e, string filename, ModelLoadingManager.LoadFailedCallback onLoadFailed)
     {
-      if (onLoadFailed != null)
-      {
-        onLoadFailed(filename);
-      }
+      onLoadFailed?.Invoke(filename);
 
       if (e is FileNotFoundException)
       {
@@ -515,19 +510,19 @@ namespace M3D.GUI.Controller
       var importerInterface = (ModelImporterInterface) null;
       if (lowerInvariant == "stl")
       {
-        importerInterface = (ModelImporterInterface) new ModelSTLImporter();
+        importerInterface = new ModelSTLImporter();
       }
       else if (lowerInvariant == "obj")
       {
-        importerInterface = (ModelImporterInterface) new ModelOBJImporter();
+        importerInterface = new ModelOBJImporter();
       }
       else if (lowerInvariant == "m3d")
       {
-        importerInterface = (ModelImporterInterface) new ModelM3DImporter();
+        importerInterface = new ModelM3DImporter();
       }
       else if (lowerInvariant == "smf")
       {
-        importerInterface = (ModelImporterInterface) new ModelSMFImporter();
+        importerInterface = new ModelSMFImporter();
       }
 
       return importerInterface;

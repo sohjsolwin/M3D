@@ -38,7 +38,7 @@ namespace M3D.Spooling.Common
       preprocessor = new FilamentPreprocessorData();
       jobGuid = Guid.NewGuid().ToString();
       jobMode = JobParams.Mode.DirectPrinting;
-      outputfile = (string) null;
+      outputfile = null;
     }
 
     public JobParams(JobParams other)

@@ -20,7 +20,7 @@ namespace M3D.GUI.SettingsPages
     private PrinterObject mExclusivePrinter;
 
     public FeaturePanel(int ID, GUIHost host, SpoolerConnection spooler_connection)
-      : this(ID, host, spooler_connection, (PrinterObject) null)
+      : this(ID, host, spooler_connection, null)
     {
     }
 
@@ -56,7 +56,7 @@ namespace M3D.GUI.SettingsPages
       }
       else
       {
-        currentPrinter = (PrinterObject) null;
+        currentPrinter = null;
       }
 
       base.SetVisible(bVisible);
@@ -67,7 +67,7 @@ namespace M3D.GUI.SettingsPages
       PrinterObject printer = spooler_connection.SelectedPrinter;
       if (mExclusivePrinter != null)
       {
-        printer = !mExclusivePrinter.isConnected() ? (PrinterObject) null : mExclusivePrinter;
+        printer = !mExclusivePrinter.IsConnected() ? null : mExclusivePrinter;
       }
 
       if (currentPrinter == printer)
@@ -106,7 +106,7 @@ namespace M3D.GUI.SettingsPages
         var key = enumerate.Key;
         var feature_slot = enumerate.Value;
         SupportedFeatures.Status status = printer.Info.supportedFeatures.GetStatus(feature_slot);
-        featureListBox.AddChildElement((Element2D)CreateFeatureButton(mHost, enumerate, status));
+        featureListBox.AddChildElement(CreateFeatureButton(mHost, enumerate, status));
       }
     }
 

@@ -128,17 +128,17 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        var num = (float) ((double)JobBeginTimer.ElapsedMilliseconds / 1000.0 / 60.0);
-        if ((double) num > 5.0)
+        var num = (float)(JobBeginTimer.ElapsedMilliseconds / 1000.0 / 60.0);
+        if (num > 5.0)
         {
-          if ((double)Details.jobParams.estimatedTime > 0.0)
+          if (Details.jobParams.estimatedTime > 0.0)
           {
             return Details.jobParams.estimatedTime - Details.jobParams.estimatedTime * PercentComplete;
           }
 
-          if ((double)PercentComplete > 0.0)
+          if (PercentComplete > 0.0)
           {
-            return (float) TimeSpan.FromMinutes((double) num / (double)PercentComplete - (double) num).TotalSeconds;
+            return (float) TimeSpan.FromMinutes(num / (double)PercentComplete - num).TotalSeconds;
           }
         }
         return 0.0f;

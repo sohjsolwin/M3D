@@ -37,7 +37,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemFloatSecondsType(value, warning_range, error_range);
+      return new SettingsItemFloatSecondsType(value, warning_range, error_range);
     }
   }
 }

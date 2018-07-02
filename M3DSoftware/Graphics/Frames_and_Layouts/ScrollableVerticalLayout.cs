@@ -8,12 +8,12 @@ namespace M3D.Graphics.Frames_and_Layouts
     private const int ChildWidthDiff = 32;
 
     public ScrollableVerticalLayout()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public ScrollableVerticalLayout(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -37,7 +37,7 @@ namespace M3D.Graphics.Frames_and_Layouts
 
     public new void Init(GUIHost host)
     {
-      InitChildren(Parent, host, (ButtonCallback) null);
+      InitChildren(Parent, host, null);
     }
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)

@@ -33,7 +33,7 @@ namespace M3D.Spooling.Common
       bootloader_version = 0;
       hours_used = 0.0f;
       MyRestartAction = PersistantData.RestartAction.None;
-      SavedJobInformation = (PersistantJobData) null;
+      SavedJobInformation = null;
       SavedData = new SerializableDictionary<string, string>();
     }
 
@@ -45,8 +45,8 @@ namespace M3D.Spooling.Common
       bootloader_version = other.bootloader_version;
       hours_used = other.hours_used;
       MyRestartAction = other.MyRestartAction;
-      SavedData = new SerializableDictionary<string, string>((Dictionary<string, string>) other.SavedData);
-      SavedJobInformation = other.SavedJobInformation != null ? new PersistantJobData(other.SavedJobInformation) : (PersistantJobData) null;
+      SavedData = new SerializableDictionary<string, string>(other.SavedData);
+      SavedJobInformation = other.SavedJobInformation != null ? new PersistantJobData(other.SavedJobInformation) : null;
     }
 
     [XmlIgnore]
@@ -54,7 +54,7 @@ namespace M3D.Spooling.Common
     {
       get
       {
-        return (double)UnsavedPrintTime < 1.0;
+        return UnsavedPrintTime < 1.0;
       }
     }
 

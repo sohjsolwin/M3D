@@ -32,7 +32,7 @@ namespace M3D.Spooling.ConnectionManager
         printer_profiles.Add(new PrinterConnectionManager.PrinterTypeData(vid_pid));
       }
 
-      printerFinder = (IUSBPrinterFinder) new WinUSBPrinterFinder();
+      printerFinder = new WinUSBPrinterFinder();
     }
 
     public void Start(ThreadSafeVariable<bool> shared_shutdown)
@@ -105,11 +105,8 @@ namespace M3D.Spooling.ConnectionManager
             {
               var message = "Already removed this printer :" + key;
               // ISSUE: reference to a compiler-generated field
-              if (LogEventHandler != null)
-              {
-                // ISSUE: reference to a compiler-generated field
-                LogEventHandler((object) this, new LogMessageEventArgs(message));
-              }
+              // ISSUE: reference to a compiler-generated field
+              LogEventHandler?.Invoke(this, new LogMessageEventArgs(message));
             }
           }
           RemovePrinterHelper(printerToRemove);
@@ -142,11 +139,8 @@ namespace M3D.Spooling.ConnectionManager
       catch (Exception ex)
       {
         // ISSUE: reference to a compiler-generated field
-        if (LogEventHandler != null)
-        {
-          // ISSUE: reference to a compiler-generated field
-          LogEventHandler((object) this, new LogMessageEventArgs("Error: " + ex.Message));
-        }
+        // ISSUE: reference to a compiler-generated field
+        LogEventHandler?.Invoke(this, new LogMessageEventArgs("Error: " + ex.Message));
       }
       return true;
     }
@@ -165,16 +159,13 @@ namespace M3D.Spooling.ConnectionManager
             return;
           }
           // ISSUE: reference to a compiler-generated field
-          LogEventHandler((object) this, new LogMessageEventArgs("Could not connect to printer on port " + comPort));
+          LogEventHandler(this, new LogMessageEventArgs("Could not connect to printer on port " + comPort));
         }
         else
         {
           // ISSUE: reference to a compiler-generated field
-          if (LogEventHandler != null)
-          {
-            // ISSUE: reference to a compiler-generated field
-            LogEventHandler((object) this, new LogMessageEventArgs("Successfully connected to printer on port " + comPort));
-          }
+          // ISSUE: reference to a compiler-generated field
+          LogEventHandler?.Invoke(this, new LogMessageEventArgs("Successfully connected to printer on port " + comPort));
           printers.TryAdd(comPort, printer);
           // ISSUE: reference to a compiler-generated field
           if (PrinterConnectedEventHandler == null)
@@ -182,7 +173,7 @@ namespace M3D.Spooling.ConnectionManager
             return;
           }
           // ISSUE: reference to a compiler-generated field
-          PrinterConnectedEventHandler((object) this, new PrinterConnEventArgs(printer, comPort, e.vid_pid));
+          PrinterConnectedEventHandler(this, new PrinterConnEventArgs(printer, comPort, e.vid_pid));
         }
       }
     }
@@ -194,28 +185,19 @@ namespace M3D.Spooling.ConnectionManager
         if (printerToRemove.SerialPort != null)
         {
           // ISSUE: reference to a compiler-generated field
-          if (LogEventHandler != null)
-          {
-            // ISSUE: reference to a compiler-generated field
-            LogEventHandler((object) this, new LogMessageEventArgs("Disconnecting from printer " + printerToRemove.SerialNumber + " on port " + printerToRemove.ComPort + "..."));
-          }
+          // ISSUE: reference to a compiler-generated field
+          LogEventHandler?.Invoke(this, new LogMessageEventArgs("Disconnecting from printer " + printerToRemove.SerialNumber + " on port " + printerToRemove.ComPort + "..."));
           printerToRemove.SerialPort.Dispose();
           // ISSUE: reference to a compiler-generated field
-          if (LogEventHandler != null)
-          {
-            // ISSUE: reference to a compiler-generated field
-            LogEventHandler((object) this, new LogMessageEventArgs("Disconnected from printer " + printerToRemove.SerialNumber + " on port " + printerToRemove.ComPort ?? ""));
-          }
+          // ISSUE: reference to a compiler-generated field
+          LogEventHandler?.Invoke(this, new LogMessageEventArgs("Disconnected from printer " + printerToRemove.SerialNumber + " on port " + printerToRemove.ComPort ?? ""));
         }
       }
       catch (Exception ex)
       {
         // ISSUE: reference to a compiler-generated field
-        if (LogEventHandler != null)
-        {
-          // ISSUE: reference to a compiler-generated field
-          LogEventHandler((object) this, new LogMessageEventArgs("Error: " + ex.Message));
-        }
+        // ISSUE: reference to a compiler-generated field
+        LogEventHandler?.Invoke(this, new LogMessageEventArgs("Error: " + ex.Message));
       }
       // ISSUE: reference to a compiler-generated field
       if (PrinterDisconnectedEventHandler == null)
@@ -223,7 +205,7 @@ namespace M3D.Spooling.ConnectionManager
         return;
       }
       // ISSUE: reference to a compiler-generated field
-      PrinterDisconnectedEventHandler((object) this, new PrinterConnEventArgs(printerToRemove));
+      PrinterDisconnectedEventHandler(this, new PrinterConnEventArgs(printerToRemove));
     }
 
     internal class PrinterTypeData

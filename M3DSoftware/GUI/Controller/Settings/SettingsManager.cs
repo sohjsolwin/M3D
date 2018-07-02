@@ -108,7 +108,7 @@ namespace M3D.GUI.Controller.Settings
         var textWriter = (TextWriter) new StreamWriter(M3D.GUI.Paths.SettingsPath);
         var namespaces = new XmlSerializerNamespaces();
         namespaces.Add(string.Empty, string.Empty);
-        SettingsManager.M3DSettings.ClassSerializer.Serialize(textWriter, (object)Settings, namespaces);
+        SettingsManager.M3DSettings.ClassSerializer.Serialize(textWriter, Settings, namespaces);
         textWriter.Close();
       }
       catch (Exception ex)
@@ -130,13 +130,13 @@ namespace M3D.GUI.Controller.Settings
 
     public FilamentSpool FindMatchingUsedSpool(FilamentSpool spool)
     {
-      return CurrentFilamentSettings.usedFilamentSpools.filament.Find((Predicate<FilamentSpool>) (x => x.Matches(spool)));
+      return CurrentFilamentSettings.usedFilamentSpools.filament.Find(x => x.Matches(spool));
     }
 
     public void AssociateFilamentToPrinter(PrinterSerialNumber printer, FilamentSpool spool)
     {
       DisassociateFilamentFromPrinter(printer);
-      if (!(spool != (FilamentSpool) null))
+      if (!(spool != null))
       {
         return;
       }
@@ -163,19 +163,19 @@ namespace M3D.GUI.Controller.Settings
 
     public void UpdateUsedFilamentSpool(FilamentSpool spool)
     {
-      if (!(spool != (FilamentSpool) null))
+      if (!(spool != null))
       {
         return;
       }
 
       FilamentSpool usedSpool = FindUsedSpool(spool.filament_uid);
-      if (usedSpool == (FilamentSpool) null)
+      if (usedSpool == null)
       {
         CurrentFilamentSettings.usedFilamentSpools.filament.Add(spool);
       }
       else
       {
-        if ((double) spool.estimated_filament_length_printed <= (double) usedSpool.estimated_filament_length_printed)
+        if (spool.estimated_filament_length_printed <= (double)usedSpool.estimated_filament_length_printed)
         {
           return;
         }
@@ -220,7 +220,7 @@ namespace M3D.GUI.Controller.Settings
 
     public FilamentSpool FindUsedSpool(uint filament_uid)
     {
-      return CurrentFilamentSettings.usedFilamentSpools.filament.Find((Predicate<FilamentSpool>) (x => (int) x.filament_uid == (int) filament_uid));
+      return CurrentFilamentSettings.usedFilamentSpools.filament.Find(x => (int)x.filament_uid == (int)filament_uid);
     }
 
     public void OnShutdown()
@@ -241,7 +241,7 @@ namespace M3D.GUI.Controller.Settings
         var textWriter = (TextWriter) new StreamWriter(printerViewFile);
         var namespaces = new XmlSerializerNamespaces();
         namespaces.Add(string.Empty, string.Empty);
-        PrintDetails.PrintJobObjectViewDetails.ClassSerializer.Serialize(textWriter, (object) objectViewDetails, namespaces);
+        PrintDetails.PrintJobObjectViewDetails.ClassSerializer.Serialize(textWriter, objectViewDetails, namespaces);
         textWriter.Close();
       }
       catch (Exception ex)
@@ -268,7 +268,7 @@ namespace M3D.GUI.Controller.Settings
       }
       catch (Exception ex)
       {
-        printerview_settings = (PrintDetails.PrintJobObjectViewDetails) null;
+        printerview_settings = null;
         return false;
       }
     }
@@ -286,7 +286,7 @@ namespace M3D.GUI.Controller.Settings
         var textWriter = (TextWriter) new StreamWriter(printerSettingsFile);
         var namespaces = new XmlSerializerNamespaces();
         namespaces.Add(string.Empty, string.Empty);
-        PrintDetails.M3DSettings.ClassSerializer.Serialize(textWriter, (object) m3Dsettings, namespaces);
+        PrintDetails.M3DSettings.ClassSerializer.Serialize(textWriter, m3Dsettings, namespaces);
         textWriter.Close();
       }
       catch (Exception ex)
@@ -428,7 +428,7 @@ namespace M3D.GUI.Controller.Settings
         ShowRemoveModelWarning = true;
         UseMultipleModels = true;
         UpdaterMode = Updater.UpdateSettings.DownloadNotInstall;
-        auto_filament_color = new Color4((byte) 98, (byte) 181, (byte) 233, byte.MaxValue);
+        auto_filament_color = new Color4(98, 181, 233, byte.MaxValue);
         Units = SettingsManager.GridUnit.MM;
         RenderMode = OpenGLRendererObject.OpenGLRenderMode.VBOs;
         AutoDetectModelUnits = true;

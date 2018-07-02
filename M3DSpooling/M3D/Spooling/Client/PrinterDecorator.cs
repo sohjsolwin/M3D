@@ -240,16 +240,16 @@ namespace M3D.Spooling.Client
       return base_obj.GetValidatedValueFromPrinter(key);
     }
 
-    public bool isConnected()
+    public bool IsConnected()
     {
-      return base_obj.isConnected();
+      return base_obj.IsConnected();
     }
 
     public bool Connected
     {
       get
       {
-        return isConnected();
+        return IsConnected();
       }
     }
 

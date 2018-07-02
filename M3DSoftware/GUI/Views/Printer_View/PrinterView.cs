@@ -109,7 +109,7 @@ namespace M3D.GUI.Views.Printer_View
           return sceneGraph.GetModel(selected_model_index);
         }
 
-        return (ModelTransformPair) null;
+        return null;
       }
     }
 
@@ -247,7 +247,7 @@ namespace M3D.GUI.Views.Printer_View
     {
       CurrentGridUnits = settings_manager.CurrentAppearanceSettings.Units;
       sceneGraph = new PrinterViewSceneGraph(m_gui_host, CurrentGridUnits, settings_manager.CurrentAppearanceSettings.CaseType);
-      AddChildElement((Element2D)sceneGraph);
+      AddChildElement(sceneGraph);
       xAxisVector = new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f);
       yAxisVector = new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f);
       SetPrinterColor(settings_manager.CurrentAppearanceSettings.PrinterColor);
@@ -265,26 +265,26 @@ namespace M3D.GUI.Views.Printer_View
       m_gui_host.SetFontProperty(FontSize.Medium, 11f);
       m_gui_host.SetFontProperty(FontSize.Small, 8f);
       WrapOnNegative = false;
-      EditFrame = new Frame(0, (Element2D) this);
+      EditFrame = new Frame(0, this);
       EditFrame.SetPosition(0, 0);
       EditFrame.RelativeWidth = 2f;
       EditFrame.RelativeHeight = 1f;
-      AddChildElement((Element2D)EditFrame);
+      AddChildElement(EditFrame);
       AdjustmentsDialog = new ModelAdjustmentsDialog(8001, this);
       AdjustmentsDialog.Init(m_gui_host);
       AdjustmentsDialog.Width = 339;
       AdjustmentsDialog.Height = 182;
       AdjustmentsDialog.X = 96;
       AdjustmentsDialog.Visible = false;
-      AddChildElement((Element2D)AdjustmentsDialog);
+      AddChildElement(AdjustmentsDialog);
       BottomControlBar = new EditViewControlBar(9001, this);
       BottomControlBar.Init(m_gui_host);
-      AddChildElement((Element2D)BottomControlBar);
+      AddChildElement(BottomControlBar);
       toolbar = new ToolBar(10001, this, libraryview, AdjustmentsDialog, slicer_connection);
       toolbar.Init(m_gui_host);
       toolbar.SetPosition(0, 200);
       toolbar.CenterVerticallyInParent = true;
-      AddChildElement((Element2D)toolbar);
+      AddChildElement(toolbar);
       printerdialog = new PrintDialogMainWindow(11001, m_gui_host, this, spooler_connection, messagebox, model_loading_manager, slicer_connection, libraryview.RecentPrints, settings_manager)
       {
         Visible = false
@@ -373,12 +373,12 @@ namespace M3D.GUI.Views.Printer_View
           if (index1 < 0)
           {
             index1 = index2;
-            vector3_1 = new M3D.Model.Utils.Vector3(local.x, local.y, local.z);
+            vector3_1 = new M3D.Model.Utils.Vector3(local.X, local.Y, local.Z);
           }
           else
           {
-            var vector3_5 = new M3D.Model.Utils.Vector3(local.x, local.y, local.z);
-            if ((double) vector3_5.Distance(pickRay.Position) < (double) vector3_1.Distance(pickRay.Position))
+            var vector3_5 = new M3D.Model.Utils.Vector3(local.X, local.Y, local.Z);
+            if (vector3_5.Distance(pickRay.Position) < (double)vector3_1.Distance(pickRay.Position))
             {
               index1 = index2;
               vector3_1 = vector3_5;
@@ -439,7 +439,7 @@ namespace M3D.GUI.Views.Printer_View
           return model;
         }
       }
-      return (ModelTransformPair) null;
+      return null;
     }
 
     public bool SelectModelbyID(uint id)
@@ -476,28 +476,28 @@ namespace M3D.GUI.Views.Printer_View
       {
         ModelTransformPair model = sceneGraph.GetModel(index);
         model.CalculateExtents();
-        if ((double) model.modelSize.Min.x < (double) vector3_1.x)
+        if (model.modelSize.Min.X < (double)vector3_1.X)
         {
-          vector3_1.x = model.modelSize.Min.x;
+          vector3_1.X = model.modelSize.Min.X;
         }
 
-        if ((double) model.modelSize.Min.y < (double) vector3_1.y)
+        if (model.modelSize.Min.Y < (double)vector3_1.Y)
         {
-          vector3_1.y = model.modelSize.Min.y;
+          vector3_1.Y = model.modelSize.Min.Y;
         }
 
-        if ((double) model.modelSize.Max.x > (double) vector3_2.x)
+        if (model.modelSize.Max.X > (double)vector3_2.X)
         {
-          vector3_2.x = model.modelSize.Max.x;
+          vector3_2.X = model.modelSize.Max.X;
         }
 
-        if ((double) model.modelSize.Max.y > (double) vector3_2.y)
+        if (model.modelSize.Max.Y > (double)vector3_2.Y)
         {
-          vector3_2.y = model.modelSize.Max.y;
+          vector3_2.Y = model.modelSize.Max.Y;
         }
       }
-      matrix4x4.m[3, 0] = (float) (((double) vector3_1.x + (double) vector3_2.x) / 2.0);
-      matrix4x4.m[3, 1] = (float) (((double) vector3_1.y + (double) vector3_2.y) / 2.0);
+      matrix4x4.m[3, 0] = (float)((vector3_1.X + (double)vector3_2.X) / 2.0);
+      matrix4x4.m[3, 1] = (float)((vector3_1.Y + (double)vector3_2.Y) / 2.0);
       return matrix4x4;
     }
 
@@ -549,7 +549,7 @@ namespace M3D.GUI.Views.Printer_View
         }
       }
       var modelSize = new ModelSize(model.modelData.Min, model.modelData.Max);
-      M3D.Model.Utils.Vector3 freePosition = sceneGraph.FindFreePosition(new OpenTK.Vector2(modelSize.Ext.x, modelSize.Ext.y));
+      M3D.Model.Utils.Vector3 freePosition = sceneGraph.FindFreePosition(new OpenTK.Vector2(modelSize.Ext.X, modelSize.Ext.Y));
       var num = sceneGraph.AddModel(model, out ModelTransformPair modtrans_pair);
       modtrans_pair.data.name = GetSimplifiedName(model.fileName);
       modtrans_pair.data.ID = objectDetails == null || objectDetails.UID == uint.MaxValue ? GetNextModelIndex() : objectDetails.UID;
@@ -580,12 +580,12 @@ namespace M3D.GUI.Views.Printer_View
 
     private PrinterView.Units DetectUnits(ModelSize modelSize)
     {
-      if ((double) modelSize.Ext.x < 10.0 && (double) modelSize.Ext.y < 10.0 && (double) modelSize.Ext.z < 10.0)
+      if (modelSize.Ext.X < 10.0 && modelSize.Ext.Y < 10.0 && modelSize.Ext.Z < 10.0)
       {
         return PrinterView.Units.Inches;
       }
 
-      return (double) modelSize.Ext.x > 10000.0 || (double) modelSize.Ext.y > 10000.0 || (double) modelSize.Ext.z > 10000.0 ? PrinterView.Units.Microns : PrinterView.Units.MMs;
+      return modelSize.Ext.X > 10000.0 || modelSize.Ext.Y > 10000.0 || modelSize.Ext.Z > 10000.0 ? PrinterView.Units.Microns : PrinterView.Units.MMs;
     }
 
     private void RescaleModel(M3D.Graphics.Ext3D.ModelRendering.Model model, PrinterView.Units sourceUnits)
@@ -622,52 +622,52 @@ namespace M3D.GUI.Views.Printer_View
       var num2 = 1f;
       modelTransformPair.modelNode.CalculateMinMax();
       M3D.Model.Utils.Vector3 ext = modelTransformPair.modelNode.Ext;
-      var num3 = Math.Abs((float) ((double) ext.x * (double) scaleValues1.x * ((double) ext.y * (double) scaleValues1.y)));
-      if ((double) num3 < 0.01 * (double) num1)
+      var num3 = Math.Abs((float)(ext.X * (double)scaleValues1.X * ext.Y * (double)scaleValues1.Y));
+      if (num3 < 0.01 * num1)
       {
-        if ((double) num3 > 1.0)
+        if (num3 > 1.0)
         {
           num2 = 0.01f * num1 / num3;
         }
-        else if ((double) num3 < 1.0)
+        else if (num3 < 1.0)
         {
           num2 = num1 * 0.1f * num3;
         }
       }
-      if ((double) num2 > (double)MaxScale.x)
+      if (num2 > (double)MaxScale.X)
       {
-        num2 = MaxScale.x;
+        num2 = MaxScale.X;
       }
 
-      if ((double) num2 > (double)MaxScale.y)
+      if (num2 > (double)MaxScale.Y)
       {
-        num2 = MaxScale.y;
+        num2 = MaxScale.Y;
       }
 
-      if ((double) num2 > (double)MaxScale.z)
+      if (num2 > (double)MaxScale.Z)
       {
-        num2 = MaxScale.z;
+        num2 = MaxScale.Z;
       }
 
-      if ((double) num2 < (double)MinScale.x)
+      if (num2 < (double)MinScale.X)
       {
-        num2 = MinScale.x;
+        num2 = MinScale.X;
       }
 
-      if ((double) num2 < (double)MinScale.y)
+      if (num2 < (double)MinScale.Y)
       {
-        num2 = MinScale.y;
+        num2 = MinScale.Y;
       }
 
-      if ((double) num2 < (double)MinScale.z)
+      if (num2 < (double)MinScale.Z)
       {
-        num2 = MinScale.z;
+        num2 = MinScale.Z;
       }
 
-      scaleValues2.x *= num2;
-      scaleValues2.y *= num2;
-      scaleValues2.z *= num2;
-      if ((double) scaleValues2.x < (double) scaleValues1.x / 2.0 || (double) scaleValues2.x > (double) scaleValues1.x * 2.0)
+      scaleValues2.X *= num2;
+      scaleValues2.Y *= num2;
+      scaleValues2.Z *= num2;
+      if (scaleValues2.X < scaleValues1.X / 2.0 || scaleValues2.X > scaleValues1.X * 2.0)
       {
         messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, Locale.GlobalLocale.T("T_WARNING_LargeScaleUsedMaybeCorrupt")), PopupMessageBox.MessageBoxButtons.OK);
       }
@@ -685,7 +685,7 @@ namespace M3D.GUI.Views.Printer_View
           return model.modelNode.GetModelInfo();
         }
       }
-      return (M3D.Graphics.Ext3D.ModelRendering.Model) null;
+      return null;
     }
 
     private void SetModelAdjustmentsFromObjectDetails(ModelTransformPair modtrans_pair, PrintDetails.ObjectDetails objectDetails)
@@ -788,12 +788,12 @@ namespace M3D.GUI.Views.Printer_View
     public void ResetPrinterView()
     {
       sceneGraph.ResetPrinterTransformation();
-      xAxisVector.x = 1f;
-      xAxisVector.y = 0.0f;
-      xAxisVector.z = 0.0f;
-      yAxisVector.x = 0.0f;
-      yAxisVector.y = -1f;
-      yAxisVector.z = 0.0f;
+      xAxisVector.X = 1f;
+      xAxisVector.Y = 0.0f;
+      xAxisVector.Z = 0.0f;
+      yAxisVector.X = 0.0f;
+      yAxisVector.Y = -1f;
+      yAxisVector.Z = 0.0f;
     }
 
     public void CenterPrinterObject()
@@ -820,9 +820,9 @@ namespace M3D.GUI.Views.Printer_View
         return;
       }
 
-      modelTransformation.Translation.x = position.x;
-      modelTransformation.Translation.y = position.y;
-      AdjustmentsDialog.SetTranslationValues(position.x, position.y);
+      modelTransformation.Translation.X = position.X;
+      modelTransformation.Translation.Y = position.Y;
+      AdjustmentsDialog.SetTranslationValues(position.X, position.Y);
     }
 
     public void AdjustPrinterObjectTranslation(float x, float y, float z)
@@ -833,7 +833,7 @@ namespace M3D.GUI.Views.Printer_View
         return;
       }
 
-      AdjustmentsDialog.SetTranslationValues(new M3D.Model.Utils.Vector3(modelTransformPair.transformNode.Translation.x + x, modelTransformPair.transformNode.Translation.y + y, modelTransformPair.transformNode.Translation.z + z));
+      AdjustmentsDialog.SetTranslationValues(new M3D.Model.Utils.Vector3(modelTransformPair.transformNode.Translation.X + x, modelTransformPair.transformNode.Translation.Y + y, modelTransformPair.transformNode.Translation.Z + z));
     }
 
     public void ScalePrinterObject(float x, float y, float z)
@@ -854,12 +854,12 @@ namespace M3D.GUI.Views.Printer_View
         return;
       }
 
-      AdjustmentsDialog.SetRotationValues(new M3D.Model.Utils.Vector3(modelTransformPair.transformNode.Rotation.x + x, modelTransformPair.transformNode.Rotation.y + y, modelTransformPair.transformNode.Rotation.z + z));
+      AdjustmentsDialog.SetRotationValues(new M3D.Model.Utils.Vector3(modelTransformPair.transformNode.Rotation.X + x, modelTransformPair.transformNode.Rotation.Y + y, modelTransformPair.transformNode.Rotation.Z + z));
     }
 
     public void SetPrinterObjectTranslation(M3D.Model.Utils.Vector3 vector)
     {
-      SetPrinterObjectTranslation(vector.x, vector.y);
+      SetPrinterObjectTranslation(vector.X, vector.Y);
     }
 
     public void SetPrinterObjectTranslation(float x, float y)
@@ -874,7 +874,7 @@ namespace M3D.GUI.Views.Printer_View
 
     public void SetPrinterObjectRotatation(M3D.Model.Utils.Vector3 vector)
     {
-      SetPrinterObjectRotatation(vector.x, vector.y, vector.z);
+      SetPrinterObjectRotatation(vector.X, vector.Y, vector.Z);
     }
 
     public void SetPrinterObjectRotatation(float x, float y, float z)
@@ -889,7 +889,7 @@ namespace M3D.GUI.Views.Printer_View
 
     public void SetPrinterObjectScale(M3D.Model.Utils.Vector3 vector)
     {
-      SetPrinterObjectScale(vector.x, vector.y, vector.z);
+      SetPrinterObjectScale(vector.X, vector.Y, vector.Z);
     }
 
     public void SetPrinterObjectScale(float x, float y, float z)
@@ -985,7 +985,7 @@ namespace M3D.GUI.Views.Printer_View
           filamentSpool = selectedPrinter.GetCurrentFilament();
         }
 
-        if (filamentSpool != (FilamentSpool) null)
+        if (filamentSpool != null)
         {
           var num = (int) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), filamentSpool.filament_color_code);
           color = FilamentConstants.ColorsToString((FilamentConstants.ColorsEnum) num);
@@ -1100,8 +1100,8 @@ namespace M3D.GUI.Views.Printer_View
       }
 
       OpenTK.Vector2 vector2;
-      vector2.X = (float) mouseevent.pos.x;
-      vector2.Y = (float) mouseevent.pos.y;
+      vector2.X = mouseevent.pos.x;
+      vector2.Y = mouseevent.pos.y;
       MouseButton button = mouseevent.button;
       if (mouseevent.type == MouseEventType.Down)
       {
@@ -1121,8 +1121,8 @@ namespace M3D.GUI.Views.Printer_View
           }
         }
         dragging = true;
-        vector2.X = (float) (int) vector2.X;
-        vector2.Y = (float) (int) vector2.Y;
+        vector2.X = (int)vector2.X;
+        vector2.Y = (int)vector2.Y;
         prevX = (int) vector2.X;
         prevY = (int) vector2.Y;
       }
@@ -1137,9 +1137,9 @@ namespace M3D.GUI.Views.Printer_View
           switch (button)
           {
             case MouseButton.Left:
-              rotVelocity = (float) (((double) vector2.X - (double)prevX) / 3.0);
-              var tilt = (float) (((double) vector2.Y - (double)prevY) / 3.0);
-              if ((double) tilt < 1.0 && (double) tilt > -1.0)
+              rotVelocity = (float)((vector2.X - (double)prevX) / 3.0);
+              var tilt = (float)((vector2.Y - (double)prevY) / 3.0);
+              if (tilt < 1.0 && tilt > -1.0)
               {
                 tilt = 0.0f;
               }
@@ -1147,24 +1147,24 @@ namespace M3D.GUI.Views.Printer_View
               sceneGraph.TiltPrinter(tilt);
               break;
             case MouseButton.Right:
-              if (!animating && selected_model_index >= 0 && ((double)prevX != (double) vector2.X || (double)prevY != (double) vector2.Y))
+              if (!animating && selected_model_index >= 0 && (prevX != (double)vector2.X || prevY != (double)vector2.Y))
               {
                 if (AdjustmentsDialog.Mode == ModelAdjustmentsDialog.EditMode.Rotation)
                 {
-                  AdjustmentsDialog.AdjustRotationValues(0.0f, 0.0f, (float) ((int) vector2.X - prevX));
+                  AdjustmentsDialog.AdjustRotationValues(0.0f, 0.0f, (int)vector2.X - prevX);
                 }
 
                 if (AdjustmentsDialog.Mode == ModelAdjustmentsDialog.EditMode.Scale)
                 {
                   AdjustmentsDialog.CheckLinkedRescalingCheckbox(true);
-                  var num = (float) (((double) vector2.Y - (double)prevY) / 100.0);
+                  var num = (float)((vector2.Y - (double)prevY) / 100.0);
                   AdjustmentsDialog.AdjustScaleValues(num, num, num);
                 }
                 if (AdjustmentsDialog.Mode == ModelAdjustmentsDialog.EditMode.Translation)
                 {
                   var num = 0.5f;
-                  M3D.Model.Utils.Vector3 vector3 = xAxisVector * ((vector2.X - (float)prevX) * num) + yAxisVector * ((vector2.Y - (float)prevY) * num);
-                  AdjustmentsDialog.AdjustTranslationValues(vector3.x, vector3.y, 0.0f);
+                  M3D.Model.Utils.Vector3 vector3 = xAxisVector * ((vector2.X - prevX) * num) + yAxisVector * ((vector2.Y - prevY) * num);
+                  AdjustmentsDialog.AdjustTranslationValues(vector3.X, vector3.Y, 0.0f);
                   break;
                 }
                 break;
@@ -1196,12 +1196,12 @@ namespace M3D.GUI.Views.Printer_View
     {
       if (sceneGraph.PrinterModelCaseType == PrinterSizeProfile.CaseType.Micro1Case)
       {
-        CurrentSizeProfile = (PrinterSizeProfile) new Micro1PrinterSizeProfile();
+        CurrentSizeProfile = new Micro1PrinterSizeProfile();
         CurrentFamilyName = PrinterObject.GetFamilyFromProfile("Micro");
       }
       else if (sceneGraph.PrinterModelCaseType == PrinterSizeProfile.CaseType.ProCase)
       {
-        CurrentSizeProfile = (PrinterSizeProfile) new ProPrinterSizeProfile();
+        CurrentSizeProfile = new ProPrinterSizeProfile();
         CurrentFamilyName = PrinterObject.GetFamilyFromProfile("Pro");
       }
       if (SelectedModelTransformPair != null)
@@ -1251,7 +1251,7 @@ namespace M3D.GUI.Views.Printer_View
       CheckUpdatedColors();
       CheckUpdatedMeasumentUnits();
       CheckUpdatedCaseType();
-      if (sceneGraph.ViewPointPos != targetViewPointPos && targetViewPointPos != (M3D.Model.Utils.Vector3) null || (double)RelativeWidth != (double)targetWidth)
+      if (sceneGraph.ViewPointPos != targetViewPointPos && targetViewPointPos != null || RelativeWidth != (double)targetWidth)
       {
         if (viewstate == ViewState.ToHidden)
         {
@@ -1266,25 +1266,25 @@ namespace M3D.GUI.Views.Printer_View
         }
 
         ++frameCount;
-        fps = 1000f / (float) (elapsed / (long)frameCount);
+        fps = 1000f / (elapsed / (long)frameCount);
         var num1 = movementMultiplier * 60f / fps;
         if (sceneGraph.ViewPointPos != targetViewPointPos)
         {
           vectorToTargetViewPointPos = targetViewPointPos - originalViewPointPos;
           var num2 = (sceneGraph.ViewPointPos - originalViewPointPos).Length() / (targetViewPointPos - originalViewPointPos).Length();
-          if ((double) num2 <= 0.509999990463257)
+          if (num2 <= 0.509999990463257)
           {
             mCameraVelocity += vectorToTargetViewPointPos * num1;
           }
           else
           {
             mCameraVelocity -= vectorToTargetViewPointPos * num1;
-            if ((double)mCameraVelocity.Dot(vectorToTargetViewPointPos) < 0.0)
+            if (mCameraVelocity.Dot(vectorToTargetViewPointPos) < 0.0)
             {
               num2 = 1f;
             }
           }
-          if ((double) num2 >= 1.0)
+          if (num2 >= 1.0)
           {
             sceneGraph.ViewPointPos = targetViewPointPos;
             mCameraVelocity = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 0.0f);
@@ -1306,14 +1306,14 @@ namespace M3D.GUI.Views.Printer_View
             sceneGraph.ViewPointPos = sceneGraph.ViewPointPos + mCameraVelocity;
           }
         }
-        if ((double)RelativeWidth == (double)targetWidth)
+        if (RelativeWidth == (double)targetWidth)
         {
           return;
         }
 
         var num3 = targetWidth - originalWidth;
         var num4 = Math.Abs(RelativeWidth - originalWidth) / Math.Abs(num3);
-        if ((double) num4 <= 0.509999990463257)
+        if (num4 <= 0.509999990463257)
         {
           mWidthVelocity += num3 * num1;
         }
@@ -1325,7 +1325,7 @@ namespace M3D.GUI.Views.Printer_View
             num4 = 1f;
           }
         }
-        if ((double) num4 >= 1.0)
+        if (num4 >= 1.0)
         {
           RelativeWidth = targetWidth;
           mWidthVelocity = 0.0f;
@@ -1340,24 +1340,24 @@ namespace M3D.GUI.Views.Printer_View
         ShowView(true);
         elapsed = DateTime.Now.Ticks / 10000L - startTime;
         realanimtiontime = 400;
-        if (elapsed >= (long)realanimtiontime)
+        if (elapsed >= realanimtiontime)
         {
-          elapsed = (long)realanimtiontime;
+          elapsed = realanimtiontime;
           viewstate = ViewState.Active;
           EditFrame.RelativeWidth = 1f;
         }
-        var num1 = (float)elapsed / (float)realanimtiontime;
-        var num2 = (int) ((double)mainForm.glControl1.Height * 0.174999997019768);
+        var num1 = elapsed / (float)realanimtiontime;
+        var num2 = (int)(mainForm.glControl1.Height * 0.174999997019768);
         var num3 = Height + 10;
         var num4 = Height - 121;
-        AdjustmentsDialog.Y = (int) ((double) (num2 - -291) * (double) num1) - 291;
-        BottomControlBar.Y = (int) ((double) (num4 - num3) * (double) num1) + num3;
-        EditFrame.RelativeWidth = (float) (1.5 - (double) num1 * 0.5);
+        AdjustmentsDialog.Y = (int)((num2 - -291) * (double)num1) - 291;
+        BottomControlBar.Y = (int)((num4 - num3) * (double)num1) + num3;
+        EditFrame.RelativeWidth = (float) (1.5 - num1 * 0.5);
       }
       else
       {
         animating = false;
-        if ((double)rotVelocity == 0.0)
+        if (rotVelocity == 0.0)
         {
           return;
         }
@@ -1367,15 +1367,15 @@ namespace M3D.GUI.Views.Printer_View
         xAxisVector.RotateVector(-rotVelocity * num, false, false, true);
         yAxisVector.RotateVector(-rotVelocity * num, false, false, true);
         rotateVelocityFriction = Math.Abs(rotVelocity) / 5f;
-        if ((double)rotateVelocityFriction < (double)minRotateVelocityFriction)
+        if (rotateVelocityFriction < (double)minRotateVelocityFriction)
         {
           rotateVelocityFriction = minRotateVelocityFriction;
         }
 
-        if ((double)rotVelocity > 0.0)
+        if (rotVelocity > 0.0)
         {
           rotVelocity -= rotateVelocityFriction;
-          if ((double)rotVelocity >= 0.0)
+          if (rotVelocity >= 0.0)
           {
             return;
           }
@@ -1384,13 +1384,13 @@ namespace M3D.GUI.Views.Printer_View
         }
         else
         {
-          if ((double)rotVelocity >= 0.0)
+          if (rotVelocity >= 0.0)
           {
             return;
           }
 
           rotVelocity += rotateVelocityFriction;
-          if ((double)rotVelocity <= 0.0)
+          if (rotVelocity <= 0.0)
           {
             return;
           }
@@ -1444,7 +1444,7 @@ namespace M3D.GUI.Views.Printer_View
 
     public void SetTargetViewPointPos(M3D.Model.Utils.Vector3 vector)
     {
-      SetTargetViewPointPos(vector.x, vector.y, vector.z);
+      SetTargetViewPointPos(vector.X, vector.Y, vector.Z);
     }
 
     public void SetTargetViewPointPos(float x, float y, float z)
@@ -1482,7 +1482,7 @@ namespace M3D.GUI.Views.Printer_View
 
       if (AdjustmentsDialog != null)
       {
-        AdjustmentsDialog.Y = (int) ((double)mainForm.glControl1.Height * 0.174999997019768);
+        AdjustmentsDialog.Y = (int)(mainForm.glControl1.Height * 0.174999997019768);
       }
 
       if (BottomControlBar == null)
@@ -1532,7 +1532,7 @@ namespace M3D.GUI.Views.Printer_View
 
     private bool SetToEditView()
     {
-      if (!(targetViewPointPos == (M3D.Model.Utils.Vector3) null) && !(targetViewPointPos != PrinterView.editViewPoint))
+      if (!(targetViewPointPos == null) && !(targetViewPointPos != PrinterView.editViewPoint))
       {
         return false;
       }
@@ -1544,7 +1544,7 @@ namespace M3D.GUI.Views.Printer_View
 
     private bool SetToLibraryView()
     {
-      if (!(targetViewPointPos == (M3D.Model.Utils.Vector3) null) && !(targetViewPointPos != PrinterView.libraryViewPoint))
+      if (!(targetViewPointPos == null) && !(targetViewPointPos != PrinterView.libraryViewPoint))
       {
         return false;
       }
@@ -1611,7 +1611,7 @@ namespace M3D.GUI.Views.Printer_View
       {
         messagebox.AddMessageToQueue(Locale.GlobalLocale.T("T_PrinterViewError_NotCalibrated"));
       }
-      else if (selectedPrinter.GetCurrentFilament() == (FilamentSpool) null)
+      else if (selectedPrinter.GetCurrentFilament() == null)
       {
         messagebox.AddMessageToQueue(Locale.GlobalLocale.T("T_PrinterViewError_No3DInk"));
       }
@@ -1636,7 +1636,7 @@ namespace M3D.GUI.Views.Printer_View
         ModelTransformPair model = sceneGraph.GetModel(index);
         Model3DNode modelNode = model.modelNode;
         TransformationNode transformNode = model.transformNode;
-        modelZTooSmall |= (double) model.modelSize.Ext.z < 0.400000005960464;
+        modelZTooSmall |= model.modelSize.Ext.Z < 0.400000005960464;
         UpdateMin(ref total1, model.modelSize.Min);
         UpdateMax(ref total2, model.modelSize.Max);
         printJobDetails.slicer_objects.Add(new ModelTransform(modelNode.ModelData, transformNode.GetTransformationMatrix()));
@@ -1644,7 +1644,7 @@ namespace M3D.GUI.Views.Printer_View
         libraryview.RecentModels.GenerateIconForLibrary(model);
       }
       var icon_file = Path.Combine(Paths.WorkingFolder, "previewimage.jpg");
-      var center = new M3D.Model.Utils.Vector3((float) (((double) total1.x + (double) total2.x) / 2.0), (float) (((double) total1.z + (double) total2.z) / 2.0), (float) (((double) total1.y + (double) total2.y) / 2.0));
+      var center = new M3D.Model.Utils.Vector3((float)((total1.X + (double)total2.X) / 2.0), (float)((total1.Z + (double)total2.Z) / 2.0), (float)((total1.Y + (double)total2.Y) / 2.0));
       ImageCapture.GenerateMultiModelPreview(sceneGraph.GetAllModels(), icon_file, new OpenTK.Vector2(400f, 400f), new Color4(0.8431373f, 0.8901961f, 0.9921569f, 1f), OpenGLConnection.GLControl1, center);
       printJobDetails.preview_image = icon_file;
       return printJobDetails;
@@ -1656,7 +1656,7 @@ namespace M3D.GUI.Views.Printer_View
       printJobDetails.printer = printer;
       if (modelZTooSmall)
       {
-        messagebox.AddMessageToQueue(Locale.GlobalLocale.T("T_WARNING_ModelToSmall"), PopupMessageBox.MessageBoxButtons.YESNO, new PopupMessageBox.OnUserSelectionDel(DoPrintCallback), (object) new PrinterView.PrintDialogDetails(printJobDetails, printer));
+        messagebox.AddMessageToQueue(Locale.GlobalLocale.T("T_WARNING_ModelToSmall"), PopupMessageBox.MessageBoxButtons.YESNO, new PopupMessageBox.OnUserSelectionDel(DoPrintCallback), new PrinterView.PrintDialogDetails(printJobDetails, printer));
       }
       else
       {
@@ -1666,42 +1666,42 @@ namespace M3D.GUI.Views.Printer_View
 
     private void UpdateMin(ref M3D.Model.Utils.Vector3 total, M3D.Model.Utils.Vector3 min)
     {
-      if ((double) min.x < (double) total.x)
+      if (min.X < (double)total.X)
       {
-        total.x = min.x;
+        total.X = min.X;
       }
 
-      if ((double) min.y < (double) total.y)
+      if (min.Y < (double)total.Y)
       {
-        total.y = min.y;
+        total.Y = min.Y;
       }
 
-      if ((double) min.z >= (double) total.z)
+      if (min.Z >= (double)total.Z)
       {
         return;
       }
 
-      total.z = min.z;
+      total.Z = min.Z;
     }
 
     private void UpdateMax(ref M3D.Model.Utils.Vector3 total, M3D.Model.Utils.Vector3 max)
     {
-      if ((double) max.x > (double) total.x)
+      if (max.X > (double)total.X)
       {
-        total.x = max.x;
+        total.X = max.X;
       }
 
-      if ((double) max.y > (double) total.y)
+      if (max.Y > (double)total.Y)
       {
-        total.y = max.y;
+        total.Y = max.Y;
       }
 
-      if ((double) max.z <= (double) total.z)
+      if (max.Z <= (double)total.Z)
       {
         return;
       }
 
-      total.z = max.z;
+      total.Z = max.Z;
     }
 
     private void ShowPrintDialog(PrintJobDetails details, PrinterObject printer)
@@ -1736,8 +1736,8 @@ namespace M3D.GUI.Views.Printer_View
     {
       AdjustmentsDialog.SetTranslationValues(0.0f, 0.0f);
       AdjustmentsDialog.SetRotationValues(0.0f, 0.0f, 0.0f);
-      var num = (double)MaxScale.x < (double)MaxScale.y ? ((double)MaxScale.z < (double)MaxScale.x ? MaxScale.z : MaxScale.x) : MaxScale.y;
-      if ((double) num < 1.0)
+      var num = MaxScale.X < (double)MaxScale.Y ? MaxScale.Z < (double)MaxScale.X ? MaxScale.Z : MaxScale.X : MaxScale.Y;
+      if (num < 1.0)
       {
         AdjustmentsDialog.SetScaleValues(num, num, num);
       }
@@ -1810,8 +1810,8 @@ namespace M3D.GUI.Views.Printer_View
           }
 
           CurrentFamilyName = PrinterObject.GetFamilyFromProfile(printerBySerialNumber.MyPrinterProfile.ProfileName);
-          slicer_connection.SlicerSettingStack.SetCurrentSettingsFromPrinterProfile((IPrinter) printerBySerialNumber);
-          if (!((FilamentSpool) null == printerBySerialNumber.GetCurrentFilament()) || !printerdialog.Visible)
+          slicer_connection.SlicerSettingStack.SetCurrentSettingsFromPrinterProfile(printerBySerialNumber);
+          if (!(null == printerBySerialNumber.GetCurrentFilament()) || !printerdialog.Visible)
           {
             return;
           }
@@ -1834,8 +1834,8 @@ namespace M3D.GUI.Views.Printer_View
 
     public void SetModelRanges(ModelTransformPair selectedmodel, PrinterSizeProfile sizeProfile)
     {
-      var max = new M3D.Model.Utils.Vector3(sizeProfile.shell_size.x / selectedmodel.OriginalModelSize.Ext.x, sizeProfile.shell_size.y / selectedmodel.OriginalModelSize.Ext.y, sizeProfile.shell_size.z / selectedmodel.OriginalModelSize.Ext.z);
-      SetScaleRange(new M3D.Model.Utils.Vector3(0.1f / selectedmodel.OriginalModelSize.Ext.x, 0.1f / selectedmodel.OriginalModelSize.Ext.y, 0.1f / selectedmodel.OriginalModelSize.Ext.z), max);
+      var max = new M3D.Model.Utils.Vector3(sizeProfile.shell_size.x / selectedmodel.OriginalModelSize.Ext.X, sizeProfile.shell_size.y / selectedmodel.OriginalModelSize.Ext.Y, sizeProfile.shell_size.z / selectedmodel.OriginalModelSize.Ext.Z);
+      SetScaleRange(new M3D.Model.Utils.Vector3(0.1f / selectedmodel.OriginalModelSize.Ext.X, 0.1f / selectedmodel.OriginalModelSize.Ext.Y, 0.1f / selectedmodel.OriginalModelSize.Ext.Z), max);
       AdjustmentsDialog.RefreshSliders();
       ObjectTransformed = true;
     }

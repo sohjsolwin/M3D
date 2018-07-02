@@ -19,12 +19,12 @@ namespace M3D.Graphics.Ext3D
     private OpenGLRendererObject geometryData;
 
     public Model3DNode()
-      : this(0, (Element3D) null)
+      : this(0, null)
     {
     }
 
     public Model3DNode(int ID)
-      : this(ID, (Element3D) null)
+      : this(ID, null)
     {
     }
 
@@ -69,7 +69,7 @@ namespace M3D.Graphics.Ext3D
         GL.Disable(EnableCap.Lighting);
       }
 
-      GL.Color4(new Color4(byte.MaxValue, (byte) 128, (byte) 0, byte.MaxValue));
+      GL.Color4(new Color4(byte.MaxValue, 128, 0, byte.MaxValue));
       GL.DepthMask(false);
       if (geometryData != null)
       {
@@ -92,7 +92,7 @@ namespace M3D.Graphics.Ext3D
         GL.Disable(EnableCap.Lighting);
       }
 
-      GL.Color4(new Color4(byte.MaxValue, (byte) 128, (byte) 0, byte.MaxValue));
+      GL.Color4(new Color4(byte.MaxValue, 128, 0, byte.MaxValue));
       GL.LineWidth(4f);
       GL.PolygonMode(MaterialFace.Front, PolygonMode.Line);
       GL.DepthMask(false);

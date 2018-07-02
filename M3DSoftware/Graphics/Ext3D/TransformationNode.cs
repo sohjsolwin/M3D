@@ -17,7 +17,7 @@ namespace M3D.Graphics.Ext3D
     }
 
     public TransformationNode(M3D.Model.Utils.Vector3 translate, M3D.Model.Utils.Vector3 scale, M3D.Model.Utils.Vector3 rotate)
-      : base(0, (Element3D) null)
+      : base(0, null)
     {
       Rotation = new M3D.Model.Utils.Vector3(rotate);
       Scale = new M3D.Model.Utils.Vector3(scale);
@@ -35,9 +35,9 @@ namespace M3D.Graphics.Ext3D
 
     public Matrix4 GetTransformationMatrix()
     {
-      var scale = Matrix4.CreateScale(_transform.scaling.x, _transform.scaling.y, _transform.scaling.z);
-      Matrix4 matrix4_1 = Matrix4.CreateRotationY(_transform.rotation.y * ((float) Math.PI / 180f)) * Matrix4.CreateRotationX(_transform.rotation.x * ((float) Math.PI / 180f)) * Matrix4.CreateRotationZ(_transform.rotation.z * ((float) Math.PI / 180f));
-      var translation = Matrix4.CreateTranslation(_transform.translation.x, _transform.translation.y, _transform.translation.z);
+      var scale = Matrix4.CreateScale(_transform.scaling.X, _transform.scaling.Y, _transform.scaling.Z);
+      Matrix4 matrix4_1 = Matrix4.CreateRotationY(_transform.rotation.Y * ((float) Math.PI / 180f)) * Matrix4.CreateRotationX(_transform.rotation.X * ((float) Math.PI / 180f)) * Matrix4.CreateRotationZ(_transform.rotation.Z * ((float) Math.PI / 180f));
+      var translation = Matrix4.CreateTranslation(_transform.translation.X, _transform.translation.Y, _transform.translation.Z);
       Matrix4 matrix4_2 = matrix4_1;
       return scale * matrix4_2 * translation;
     }
@@ -122,9 +122,9 @@ namespace M3D.Graphics.Ext3D
 
       public bool Equals(ref TransformationNode.Transform transform)
       {
-        if (rotation == transform.rotation && scaling == transform.scaling && (double)translation.x == (double) transform.translation.x)
+        if (rotation == transform.rotation && scaling == transform.scaling && translation.X == (double)transform.translation.X)
         {
-          return (double)translation.y == (double) transform.translation.y;
+          return translation.Y == (double)transform.translation.Y;
         }
 
         return false;

@@ -26,8 +26,8 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
       formatError = false;
       try
       {
-        value = (float) int.Parse(val) / 1000f;
-        if ((double)value < 0.0)
+        value = int.Parse(val) / 1000f;
+        if (value < 0.0)
         {
           value = -1f;
         }
@@ -48,9 +48,9 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     public override string TranslateToSlicerValue()
     {
       var num = -1;
-      if ((double)value >= 0.0)
+      if (value >= 0.0)
       {
-        num = (int) ((double)value * 1000.0);
+        num = (int)(value * 1000.0);
       }
 
       return num.ToString();
@@ -112,7 +112,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemFloatMMType(value, warning_range, error_range);
+      return new SettingsItemFloatMMType(value, warning_range, error_range);
     }
 
     [XmlAttribute("Number_Format")]

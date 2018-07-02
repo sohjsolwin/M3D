@@ -76,7 +76,7 @@ namespace M3D.GUI.Controller
           return;
         }
 
-        WorkerCheckForUpdateThread = new Thread((ThreadStart)(() => CheckForUpdate_Thread(bCommandedByUser)))
+        WorkerCheckForUpdateThread = new Thread(() => CheckForUpdate_Thread(bCommandedByUser))
         {
           IsBackground = true
         };
@@ -93,7 +93,7 @@ namespace M3D.GUI.Controller
           return;
         }
 
-        WorkerDownloaderThread = new Thread((ThreadStart)(() => DownloadUpdate_Thread(bCommandedByUser)))
+        WorkerDownloaderThread = new Thread(() => DownloadUpdate_Thread(bCommandedByUser))
         {
           IsBackground = true
         };
@@ -113,7 +113,7 @@ namespace M3D.GUI.Controller
           }
 
           WorkerDownloaderThread.Join();
-          WorkerCheckForUpdateThread = (Thread) null;
+          WorkerCheckForUpdateThread = null;
         }
         catch (Exception ex)
         {
@@ -132,7 +132,7 @@ namespace M3D.GUI.Controller
         }
 
         WorkerCheckForUpdateThread.Join();
-        WorkerCheckForUpdateThread = (Thread) null;
+        WorkerCheckForUpdateThread = null;
       }
       catch (Exception ex)
       {
@@ -186,7 +186,7 @@ namespace M3D.GUI.Controller
       {
         lock (ThreadWatcherLock)
         {
-          WorkerCheckForUpdateThread = (Thread) null;
+          WorkerCheckForUpdateThread = null;
         }
       }
     }
@@ -291,7 +291,7 @@ namespace M3D.GUI.Controller
       {
         lock (ThreadWatcherLock)
         {
-          WorkerDownloaderThread = (Thread) null;
+          WorkerDownloaderThread = null;
         }
       }
     }
@@ -303,7 +303,7 @@ namespace M3D.GUI.Controller
         return;
       }
 
-      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), Resources.updateInstallAskDialog, new PopupMessageBox.XMLButtonCallback(Callback), (object) null));
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(), Resources.updateInstallAskDialog, new PopupMessageBox.XMLButtonCallback(Callback), null));
     }
 
     private void Callback(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)
@@ -337,7 +337,7 @@ namespace M3D.GUI.Controller
           }
 
           UpdaterMode = Updater.UpdateSettings.NoAction;
-          parentFrame.AddMessageToQueue("You can check for future updates in the \"Settings\" menu under \"User Interface Options\".", "Software Update", PopupMessageBox.MessageBoxButtons.OK, (PopupMessageBox.OnUserSelectionDel) null);
+          parentFrame.AddMessageToQueue("You can check for future updates in the \"Settings\" menu under \"User Interface Options\".", "Software Update", PopupMessageBox.MessageBoxButtons.OK, null);
         }
       }
     }
@@ -455,7 +455,7 @@ namespace M3D.GUI.Controller
         if (packageManager != null)
         {
           Package.DistributionType thisDistro = Package.DistributionType.Windows;
-          var source = (IEnumerable<Package>) packageManager.items.Where<Package>((Func<Package, bool>) (s => s.Distribution == thisDistro)).OrderBy<Package, VersionNumber>((Func<Package, VersionNumber>) (s => s.Version));
+          var source = (IEnumerable<Package>) packageManager.items.Where<Package>(s => s.Distribution == thisDistro).OrderBy<Package, VersionNumber>(s => s.Version);
           if (source.Count<Package>() > 0)
           {
             package = source.Last<Package>();
@@ -464,7 +464,7 @@ namespace M3D.GUI.Controller
       }
       catch (Exception ex)
       {
-        package = (Package) null;
+        package = null;
         if (ex is ThreadAbortException)
         {
           throw ex;
@@ -475,7 +475,7 @@ namespace M3D.GUI.Controller
 
     private bool VersionNumberTryCreate(string str, out VersionNumber Version)
     {
-      Version = (VersionNumber) null;
+      Version = null;
       try
       {
         Version = new VersionNumber(str);
@@ -503,10 +503,10 @@ namespace M3D.GUI.Controller
         {
           using (FileStream fileStream = System.IO.File.OpenRead(fileName))
           {
-            numArray = md5.ComputeHash((Stream) fileStream);
+            numArray = md5.ComputeHash(fileStream);
           }
         }
-        Array.Reverse((Array) numArray);
+        Array.Reverse(numArray);
         nullable2 = new BigInteger?(new BigInteger(numArray));
       }
       catch (Exception ex)

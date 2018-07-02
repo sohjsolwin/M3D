@@ -49,7 +49,7 @@ namespace M3D.Spooling.Sockets
       }
 
       Thread socketListenerThread = SocketListenerThread;
-      SocketListenerThread = (Thread) null;
+      SocketListenerThread = null;
       CloseListener();
       socketListenerThread.Abort();
     }
@@ -57,7 +57,7 @@ namespace M3D.Spooling.Sockets
     private void CloseListener()
     {
       Socket listener = this.listener;
-      this.listener = (Socket) null;
+      this.listener = null;
       if (listener == null)
       {
         return;
@@ -113,7 +113,7 @@ namespace M3D.Spooling.Sockets
       };
       try
       {
-        listener.Bind((EndPoint)localEndPoint);
+        listener.Bind(localEndPoint);
         listener.Listen(10);
       }
       catch (SocketException ex)
@@ -124,7 +124,7 @@ namespace M3D.Spooling.Sockets
         }
 
         num = -2;
-        listener = (Socket) null;
+        listener = null;
       }
       catch (ObjectDisposedException ex)
       {
@@ -148,7 +148,7 @@ namespace M3D.Spooling.Sockets
             Socket socket = listener.Accept();
             if (socket != null)
             {
-              ThreadPool.QueueUserWorkItem(new WaitCallback(HandleIncomingConnection), (object) socket);
+              ThreadPool.QueueUserWorkItem(new WaitCallback(HandleIncomingConnection), socket);
             }
           }
           catch (SocketException ex)

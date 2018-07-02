@@ -88,10 +88,10 @@ namespace M3D.Graphics
 
       Simple2DRenderer simpleRenderer = host.GetSimpleRenderer();
       simpleRenderer.SetCurrentTexture(texture);
-      cur_quad.x0 = (float) x;
-      cur_quad.y0 = (float) y;
-      cur_quad.x1 = (float) (x + Width);
-      cur_quad.y1 = (float) (y + Height);
+      cur_quad.x0 = x;
+      cur_quad.y0 = y;
+      cur_quad.x1 = x + Width;
+      cur_quad.y1 = y + Height;
       simpleRenderer.DrawQuad(cur_quad);
     }
 
@@ -110,17 +110,17 @@ namespace M3D.Graphics
 
         Simple2DRenderer simpleRenderer = host.GetSimpleRenderer();
         simpleRenderer.SetCurrentTexture(texture);
-        cur_quad.x0 = (float) x;
-        cur_quad.y0 = (float) y;
-        cur_quad.x1 = (float) (x + Width);
-        cur_quad.y1 = (float) (y + Height);
+        cur_quad.x0 = x;
+        cur_quad.y0 = y;
+        cur_quad.x1 = x + Width;
+        cur_quad.y1 = y + Height;
         Simple2DRenderer.TexturedQuad curQuad1 = cur_quad;
         Simple2DRenderer.TexturedQuad curQuad2 = cur_quad;
         Simple2DRenderer.TexturedQuad curQuad3 = cur_quad;
         curQuad1.u1 = curQuad1.u0 + growablewidthparams.leftbordersize_texels;
-        curQuad1.x1 = curQuad1.x0 + (float)growablewidthparams.leftbordersize_pixels;
+        curQuad1.x1 = curQuad1.x0 + growablewidthparams.leftbordersize_pixels;
         curQuad3.u0 = curQuad3.u1 - growablewidthparams.rightbordersize_texels;
-        curQuad3.x0 = curQuad3.x1 - (float)growablewidthparams.rightbordersize_pixels;
+        curQuad3.x0 = curQuad3.x1 - growablewidthparams.rightbordersize_pixels;
         curQuad2.x0 = curQuad1.x1;
         curQuad2.u0 = curQuad1.u1;
         curQuad2.x1 = curQuad3.x0;
@@ -146,17 +146,17 @@ namespace M3D.Graphics
 
         Simple2DRenderer simpleRenderer = host.GetSimpleRenderer();
         simpleRenderer.SetCurrentTexture(texture);
-        cur_quad.x0 = (float) x;
-        cur_quad.y0 = (float) y;
-        cur_quad.x1 = (float) (x + Width);
-        cur_quad.y1 = (float) (y + Height);
+        cur_quad.x0 = x;
+        cur_quad.y0 = y;
+        cur_quad.x1 = x + Width;
+        cur_quad.y1 = y + Height;
         Simple2DRenderer.TexturedQuad curQuad1 = cur_quad;
         Simple2DRenderer.TexturedQuad curQuad2 = cur_quad;
         Simple2DRenderer.TexturedQuad curQuad3 = cur_quad;
         curQuad1.u1 = curQuad1.u0 + growablewidthparams.leftbordersize_texels;
-        curQuad1.x1 = curQuad1.x0 + (float)growablewidthparams.leftbordersize_pixels;
+        curQuad1.x1 = curQuad1.x0 + growablewidthparams.leftbordersize_pixels;
         curQuad3.u0 = curQuad3.u1 - growablewidthparams.rightbordersize_texels;
-        curQuad3.x0 = curQuad3.x1 - (float)growablewidthparams.rightbordersize_pixels;
+        curQuad3.x0 = curQuad3.x1 - growablewidthparams.rightbordersize_pixels;
         curQuad2.x0 = curQuad1.x1;
         curQuad2.u0 = curQuad1.u1;
         curQuad2.x1 = curQuad3.x0;
@@ -165,9 +165,9 @@ namespace M3D.Graphics
         Simple2DRenderer.TexturedQuad curQuad5 = cur_quad;
         Simple2DRenderer.TexturedQuad curQuad6 = cur_quad;
         curQuad4.v1 = curQuad4.v0 + growableheightparams.topbordersize_texels;
-        curQuad4.y1 = curQuad4.y0 + (float)growableheightparams.topbordersize_pixels;
+        curQuad4.y1 = curQuad4.y0 + growableheightparams.topbordersize_pixels;
         curQuad6.v0 = curQuad6.v1 - growableheightparams.bottombordersize_texels;
-        curQuad6.y0 = curQuad6.y1 - (float)growableheightparams.bottombordersize_pixels;
+        curQuad6.y0 = curQuad6.y1 - growableheightparams.bottombordersize_pixels;
         curQuad5.y0 = curQuad4.y1;
         curQuad5.v0 = curQuad4.v1;
         curQuad5.y1 = curQuad6.y0;
@@ -226,17 +226,17 @@ namespace M3D.Graphics
 
         Simple2DRenderer simpleRenderer = host.GetSimpleRenderer();
         simpleRenderer.SetCurrentTexture(texture);
-        cur_quad.x0 = (float) x;
-        cur_quad.y0 = (float) y;
-        cur_quad.x1 = (float) (x + Width);
-        cur_quad.y1 = (float) (y + Height);
+        cur_quad.x0 = x;
+        cur_quad.y0 = y;
+        cur_quad.x1 = x + Width;
+        cur_quad.y1 = y + Height;
         Simple2DRenderer.TexturedQuad curQuad1 = cur_quad;
         Simple2DRenderer.TexturedQuad curQuad2 = cur_quad;
         Simple2DRenderer.TexturedQuad curQuad3 = cur_quad;
         curQuad1.v1 = curQuad1.v0 + growableheightparams.topbordersize_texels;
-        curQuad1.y1 = curQuad1.y0 + (float)growableheightparams.topbordersize_pixels;
+        curQuad1.y1 = curQuad1.y0 + growableheightparams.topbordersize_pixels;
         curQuad3.v0 = curQuad3.v1 - growableheightparams.bottombordersize_texels;
-        curQuad3.y0 = curQuad3.y1 - (float)growableheightparams.bottombordersize_pixels;
+        curQuad3.y0 = curQuad3.y1 - growableheightparams.bottombordersize_pixels;
         curQuad2.y0 = curQuad1.y1;
         curQuad2.v0 = curQuad1.v1;
         curQuad2.y1 = curQuad3.y0;
@@ -261,36 +261,36 @@ namespace M3D.Graphics
       float num4;
       if (Sprite.pixel_perfect)
       {
-        num1 = 1f / (float) Sprite.texture_width_pixels;
-        num2 = 1f / (float) Sprite.texture_height_pixels;
-        num3 = 1f / (float) Sprite.texture_width_pixels;
-        num4 = 1f / (float) Sprite.texture_height_pixels;
+        num1 = 1f / Sprite.texture_width_pixels;
+        num2 = 1f / Sprite.texture_height_pixels;
+        num3 = 1f / Sprite.texture_width_pixels;
+        num4 = 1f / Sprite.texture_height_pixels;
       }
       else
       {
-        num3 = 1f / (float) Sprite.texture_width_pixels;
-        num4 = 1f / (float) Sprite.texture_height_pixels;
+        num3 = 1f / Sprite.texture_width_pixels;
+        num4 = 1f / Sprite.texture_height_pixels;
       }
       normal_quad.x0 = 0.0f;
       normal_quad.y0 = 0.0f;
       normal_quad.x1 = 1f;
       normal_quad.y1 = 1f;
       over_quad = down_quad = normal_quad;
-      if ((double) over_u0 == 0.0 && (double) over_v0 == 0.0 && ((double) over_u1 == 0.0 && (double) over_v1 == 0.0))
+      if (over_u0 == 0.0 && over_v0 == 0.0 && (over_u1 == 0.0 && over_v1 == 0.0))
       {
         over_u0 = normal_u0;
         over_v0 = normal_v0;
         over_u1 = normal_u1;
         over_v1 = normal_v1;
       }
-      if ((double) down_u0 == 0.0 && (double) down_v0 == 0.0 && ((double) down_u1 == 0.0 && (double) down_v1 == 0.0))
+      if (down_u0 == 0.0 && down_v0 == 0.0 && (down_u1 == 0.0 && down_v1 == 0.0))
       {
         down_u0 = normal_u0;
         down_v0 = normal_v0;
         down_u1 = normal_u1;
         down_v1 = normal_v1;
       }
-      if ((double) disabled_u0 == 0.0 && (double) disabled_v0 == 0.0 && ((double) disabled_u1 == 0.0 && (double) disabled_v1 == 0.0))
+      if (disabled_u0 == 0.0 && disabled_v0 == 0.0 && (disabled_u1 == 0.0 && disabled_v1 == 0.0))
       {
         disabled_u0 = normal_u0;
         disabled_v0 = normal_v0;
@@ -348,8 +348,8 @@ namespace M3D.Graphics
       growablewidthparams.leftbordersize_pixels = leftbordersize_pixels;
       growablewidthparams.rightbordersize_pixels = rightbordersize_pixels;
       growablewidthparams.minimum_width_pixels = minimumwidth;
-      growablewidthparams.leftbordersize_texels = (float) leftbordersize_pixels / (float) Sprite.texture_width_pixels;
-      growablewidthparams.rightbordersize_texels = (float) rightbordersize_pixels / (float) Sprite.texture_width_pixels;
+      growablewidthparams.leftbordersize_texels = leftbordersize_pixels / (float)Sprite.texture_width_pixels;
+      growablewidthparams.rightbordersize_texels = rightbordersize_pixels / (float)Sprite.texture_width_pixels;
       if (spritetype == SpriteType.Normal || spritetype == SpriteType.GrowableWidth)
       {
         spritetype = SpriteType.GrowableWidth;
@@ -365,8 +365,8 @@ namespace M3D.Graphics
       growableheightparams.topbordersize_pixels = topbordersize_pixels;
       growableheightparams.bottombordersize_pixels = bottombordersize_pixels;
       growableheightparams.minimum_height_pixels = minimumheight;
-      growableheightparams.topbordersize_texels = (float) topbordersize_pixels / (float) Sprite.texture_height_pixels;
-      growableheightparams.bottombordersize_texels = (float) bottombordersize_pixels / (float) Sprite.texture_height_pixels;
+      growableheightparams.topbordersize_texels = topbordersize_pixels / (float)Sprite.texture_height_pixels;
+      growableheightparams.bottombordersize_texels = bottombordersize_pixels / (float)Sprite.texture_height_pixels;
       if (spritetype == SpriteType.Normal || spritetype == SpriteType.GrowableHeight)
       {
         spritetype = SpriteType.GrowableHeight;

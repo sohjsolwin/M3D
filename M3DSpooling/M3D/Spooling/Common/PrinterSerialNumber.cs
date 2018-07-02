@@ -138,7 +138,7 @@ namespace M3D.Spooling.Common
 
     public static bool operator ==(PrinterSerialNumber a, PrinterSerialNumber b)
     {
-      if ((object) a == (object) b)
+      if (a == (object)b)
       {
         return true;
       }

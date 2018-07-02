@@ -27,7 +27,7 @@ namespace M3D.Graphics.Widgets2D
           return m_olStoragelist.Last<Element2D>();
         }
 
-        return (Element2D) null;
+        return null;
       }
     }
 
@@ -57,7 +57,7 @@ namespace M3D.Graphics.Widgets2D
         return true;
       }
 
-      child.SetParent((Element2D) null);
+      child.SetParent(null);
       lock (m_olStoragelist)
       {
         return m_olStoragelist.Remove(child);
@@ -68,7 +68,7 @@ namespace M3D.Graphics.Widgets2D
     {
       lock (m_olStoragelist)
       {
-        m_olStoragelist[index].SetParent((Element2D) null);
+        m_olStoragelist[index].SetParent(null);
         m_olStoragelist.RemoveAt(index);
       }
     }
@@ -155,7 +155,7 @@ namespace M3D.Graphics.Widgets2D
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator) ((IEnumerable<Element2D>) this).GetEnumerator();
+      return ((IEnumerable<Element2D>)this).GetEnumerator();
     }
 
     int IList.Add(object o)
@@ -216,7 +216,7 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return (object) this;
+        return this;
       }
     }
 
@@ -240,7 +240,7 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return (object) this[index];
+        return this[index];
       }
       set
       {
@@ -273,7 +273,7 @@ namespace M3D.Graphics.Widgets2D
     {
       lock (m_olStoragelist)
       {
-        return new List<Element2D>((IEnumerable<Element2D>)m_olStoragelist);
+        return new List<Element2D>(m_olStoragelist);
       }
     }
 
@@ -296,7 +296,7 @@ namespace M3D.Graphics.Widgets2D
 
       IEnumerator IEnumerable.GetEnumerator()
       {
-        return (IEnumerator) ((IEnumerable<Element2D>) this).GetEnumerator();
+        return ((IEnumerable<Element2D>)this).GetEnumerator();
       }
     }
   }

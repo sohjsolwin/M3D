@@ -34,7 +34,7 @@ namespace M3D.GUI.Views.Printer_View
     private ModelAdjustmentsDialog.EditMode editmode;
 
     public ModelAdjustmentsDialog(int ID, PrinterView printerview)
-      : this(ID, printerview, (Element2D) null)
+      : this(ID, printerview, null)
     {
     }
 
@@ -57,40 +57,40 @@ namespace M3D.GUI.Views.Printer_View
       X_Text.SetSize(56, 56);
       X_Text.Init(host, "guicontrols", 64f, 192f, 119f, 247f, 64f, 192f, 119f, 247f, 64f, 192f, 119f, 247f);
       X_Text.Text = "";
-      AddChildElement((Element2D)X_Text);
+      AddChildElement(X_Text);
       Y_Text = new ImageWidget(0);
       Y_Text.SetPosition(6, 63);
       Y_Text.SetSize(56, 56);
       Y_Text.Init(host, "guicontrols", 192f, 192f, 247f, 247f, 192f, 192f, 247f, 247f, 192f, 192f, 247f, 247f);
       Y_Text.Text = "";
-      AddChildElement((Element2D)Y_Text);
+      AddChildElement(Y_Text);
       Z_Text = new ImageWidget(0);
       Z_Text.SetPosition(6, 119);
       Z_Text.SetSize(56, 56);
       Z_Text.Init(host, "guicontrols", 320f, 192f, 375f, 247f, 320f, 192f, 375f, 247f, 320f, 192f, 375f, 247f);
       Z_Text.Text = "";
-      AddChildElement((Element2D)Z_Text);
+      AddChildElement(Z_Text);
       XPitch_Text = new ImageWidget(0);
       XPitch_Text.SetPosition(6, 7);
       XPitch_Text.SetSize(56, 56);
       XPitch_Text.Init(host, "guicontrols", 0.0f, 192f, 55f, 247f, 0.0f, 192f, 55f, 247f, 0.0f, 192f, 55f, 247f);
       XPitch_Text.Text = "";
       XPitch_Text.Visible = true;
-      AddChildElement((Element2D)XPitch_Text);
+      AddChildElement(XPitch_Text);
       YRoll_Text = new ImageWidget(0);
       YRoll_Text.SetPosition(6, 63);
       YRoll_Text.SetSize(56, 56);
       YRoll_Text.Init(host, "guicontrols", 128f, 192f, 183f, 247f, 128f, 192f, 183f, 247f, 128f, 192f, 183f, 247f);
       YRoll_Text.Text = "";
       YRoll_Text.Visible = true;
-      AddChildElement((Element2D)YRoll_Text);
+      AddChildElement(YRoll_Text);
       ZYaw_Text = new ImageWidget(0);
       ZYaw_Text.SetPosition(6, 119);
       ZYaw_Text.SetSize(56, 56);
       ZYaw_Text.Init(host, "guicontrols", 256f, 192f, 311f, 247f, 256f, 192f, 311f, 247f, 256f, 192f, 311f, 247f);
       ZYaw_Text.Text = "";
       ZYaw_Text.Visible = true;
-      AddChildElement((Element2D)ZYaw_Text);
+      AddChildElement(ZYaw_Text);
       X_Edit = new EditBoxWidget(8006);
       X_Edit.Init(host, "guicontrols", 384f, 192f, 447f, 247f);
       X_Edit.SetTextWindowBorders(6, 6, 19, 17);
@@ -102,7 +102,7 @@ namespace M3D.GUI.Views.Printer_View
       X_Edit.SetPosition(51, 7);
       X_Edit.SetSize(68, 56);
       X_Edit.tabIndex = 1;
-      AddChildElement((Element2D)X_Edit);
+      AddChildElement(X_Edit);
       Y_Edit = new EditBoxWidget(8007);
       Y_Edit.Init(host, "guicontrols", 384f, 192f, 447f, 247f);
       Y_Edit.SetTextWindowBorders(6, 6, 19, 17);
@@ -114,7 +114,7 @@ namespace M3D.GUI.Views.Printer_View
       Y_Edit.SetPosition(51, 63);
       Y_Edit.SetSize(68, 56);
       Y_Edit.tabIndex = 2;
-      AddChildElement((Element2D)Y_Edit);
+      AddChildElement(Y_Edit);
       Z_Edit = new EditBoxWidget(8008);
       Z_Edit.Init(host, "guicontrols", 384f, 192f, 447f, 247f);
       Z_Edit.SetTextWindowBorders(6, 6, 19, 17);
@@ -126,20 +126,20 @@ namespace M3D.GUI.Views.Printer_View
       Z_Edit.SetPosition(51, 119);
       Z_Edit.SetSize(68, 56);
       Z_Edit.tabIndex = 3;
-      AddChildElement((Element2D)Z_Edit);
+      AddChildElement(Z_Edit);
       Sprite.pixel_perfect = false;
       top_bracket_image = new ImageWidget(0);
       top_bracket_image.Init(host, "extendedcontrols3", 0.0f, 0.0f, 22f, 31f, 0.0f, 0.0f, 22f, 31f, 0.0f, 0.0f, 22f, 31f);
       top_bracket_image.SetSize(22, 30);
       top_bracket_image.SetPosition(131, 33);
       top_bracket_image.Visible = true;
-      AddChildElement((Element2D)top_bracket_image);
+      AddChildElement(top_bracket_image);
       link_image = new ImageWidget(1);
       link_image.Init(host, "extendedcontrols3", 24f, 0.0f, 48f, 9f, 0.0f, 0.0f, 48f, 9f, 0.0f, 0.0f, 48f, 9f, 24f, 12f, 48f, 20f);
       link_image.SetSize(20, 10);
       link_image.SetPosition(124, 69);
       link_image.Visible = false;
-      AddChildElement((Element2D)link_image);
+      AddChildElement(link_image);
       linkScaling_button = new ButtonWidget(8015);
       linkScaling_button.Init(host, "guicontrols", 640f, 448f, 671f, 479f, 672f, 448f, 703f, 479f, 640f, 480f, 671f, 511f, 672f, 480f, 703f, 511f);
       linkScaling_button.Size = FontSize.Small;
@@ -154,21 +154,21 @@ namespace M3D.GUI.Views.Printer_View
       linkScaling_button.CanClickOff = true;
       linkScaling_button.Checked = true;
       linkScaling_button.Visible = false;
-      linkScaling_button.ImageHasFocusColor = new Color4((byte) 100, (byte) 230, byte.MaxValue, byte.MaxValue);
+      linkScaling_button.ImageHasFocusColor = new Color4(100, 230, byte.MaxValue, byte.MaxValue);
       linkScaling_button.tabIndex = 4;
-      AddChildElement((Element2D)linkScaling_button);
+      AddChildElement(linkScaling_button);
       middle_bracket_image = new ImageWidget(2);
       middle_bracket_image.Init(host, "extendedcontrols3", 5f, 0.0f, 22f, 5f, 0.0f, 0.0f, 22f, 31f, 0.0f, 0.0f, 22f, 31f);
       middle_bracket_image.SetSize(11, 5);
       middle_bracket_image.SetPosition(150, 88);
       middle_bracket_image.Visible = true;
-      AddChildElement((Element2D)middle_bracket_image);
+      AddChildElement(middle_bracket_image);
       bottom_bracket_image = new ImageWidget(3);
       bottom_bracket_image.Init(host, "extendedcontrols3", 0.0f, 85f, 22f, 115f, 0.0f, 85f, 22f, 115f, 0.0f, 85f, 22f, 115f);
       bottom_bracket_image.SetSize(22, 35);
       bottom_bracket_image.SetPosition(131, 113);
       bottom_bracket_image.Visible = true;
-      AddChildElement((Element2D)bottom_bracket_image);
+      AddChildElement(bottom_bracket_image);
       X_Slider = new HorizontalSliderWidget(8009);
       X_Slider.InitTrack(host, "guicontrols", 809f, 72f, 831f, 95f, 4, 24);
       X_Slider.InitButton(host, "guicontrols", 808f, 0.0f, 831f, 23f, 808f, 24f, 831f, 47f, 808f, 48f, 831f, 71f, 4, 4, 24);
@@ -181,7 +181,7 @@ namespace M3D.GUI.Views.Printer_View
       X_Slider.SetRange(-360f, 360f);
       X_Slider.PushButtonStep = 15f;
       X_Slider.SetTrackPosition(0.0f);
-      AddChildElement((Element2D)X_Slider);
+      AddChildElement(X_Slider);
       Y_Slider = new HorizontalSliderWidget(8010);
       Y_Slider.InitTrack(host, "guicontrols", 809f, 72f, 831f, 95f, 4, 24);
       Y_Slider.InitButton(host, "guicontrols", 904f, 0.0f, 927f, 23f, 904f, 24f, 927f, 47f, 904f, 48f, 927f, 71f, 4, 4, 24);
@@ -194,7 +194,7 @@ namespace M3D.GUI.Views.Printer_View
       Y_Slider.SetRange(-360f, 360f);
       Y_Slider.PushButtonStep = 15f;
       Y_Slider.SetTrackPosition(0.0f);
-      AddChildElement((Element2D)Y_Slider);
+      AddChildElement(Y_Slider);
       Z_Slider = new HorizontalSliderWidget(8011);
       Z_Slider.InitTrack(host, "guicontrols", 809f, 72f, 831f, 95f, 4, 24);
       Z_Slider.InitButton(host, "guicontrols", 1000f, 0.0f, 1023f, 23f, 1000f, 24f, 1023f, 47f, 1000f, 48f, 1023f, 71f, 4, 4, 24);
@@ -207,7 +207,7 @@ namespace M3D.GUI.Views.Printer_View
       Z_Slider.SetRange(-360f, 360f);
       Z_Slider.PushButtonStep = 15f;
       Z_Slider.SetTrackPosition(0.0f);
-      AddChildElement((Element2D)Z_Slider);
+      AddChildElement(Z_Slider);
       Sprite.pixel_perfect = true;
       Sprite.texture_height_pixels = 1024;
       Sprite.texture_width_pixels = 1024;
@@ -345,9 +345,9 @@ namespace M3D.GUI.Views.Printer_View
       X_Slider.Visible = true;
       X_Text.Visible = true;
       XPitch_Text.Visible = false;
-      X_Slider.SetRange(printerview.MinScale.x, printerview.MaxScale.x);
-      X_Slider.PushButtonStep = (float) (((double)printerview.MaxScale.x - 0.100000001490116) / 20.0);
-      if ((double)X_Slider.PushButtonStep > 10.0)
+      X_Slider.SetRange(printerview.MinScale.X, printerview.MaxScale.X);
+      X_Slider.PushButtonStep = (float)((printerview.MaxScale.X - 0.100000001490116) / 20.0);
+      if (X_Slider.PushButtonStep > 10.0)
       {
         X_Slider.PushButtonStep = 10f;
       }
@@ -356,9 +356,9 @@ namespace M3D.GUI.Views.Printer_View
       Y_Slider.Visible = true;
       Y_Text.Visible = true;
       YRoll_Text.Visible = false;
-      Y_Slider.SetRange(printerview.MinScale.y, printerview.MaxScale.y);
-      Y_Slider.PushButtonStep = (float) (((double)printerview.MaxScale.y - 0.100000001490116) / 20.0);
-      if ((double)Y_Slider.PushButtonStep > 10.0)
+      Y_Slider.SetRange(printerview.MinScale.Y, printerview.MaxScale.Y);
+      Y_Slider.PushButtonStep = (float)((printerview.MaxScale.Y - 0.100000001490116) / 20.0);
+      if (Y_Slider.PushButtonStep > 10.0)
       {
         Y_Slider.PushButtonStep = 10f;
       }
@@ -367,9 +367,9 @@ namespace M3D.GUI.Views.Printer_View
       Z_Slider.Visible = true;
       Z_Text.Visible = true;
       ZYaw_Text.Visible = false;
-      Z_Slider.SetRange(printerview.MinScale.z, printerview.MaxScale.z);
-      Z_Slider.PushButtonStep = (float) (((double)printerview.MaxScale.z - 0.100000001490116) / 20.0);
-      if ((double)Z_Slider.PushButtonStep > 10.0)
+      Z_Slider.SetRange(printerview.MinScale.Z, printerview.MaxScale.Z);
+      Z_Slider.PushButtonStep = (float)((printerview.MaxScale.Z - 0.100000001490116) / 20.0);
+      if (Z_Slider.PushButtonStep > 10.0)
       {
         Z_Slider.PushButtonStep = 10f;
       }
@@ -382,9 +382,9 @@ namespace M3D.GUI.Views.Printer_View
         return;
       }
 
-      X_Slider.TrackPosition = modelTransformation.Scale.x;
-      Y_Slider.TrackPosition = modelTransformation.Scale.y;
-      Z_Slider.TrackPosition = modelTransformation.Scale.z;
+      X_Slider.TrackPosition = modelTransformation.Scale.X;
+      Y_Slider.TrackPosition = modelTransformation.Scale.Y;
+      Z_Slider.TrackPosition = modelTransformation.Scale.Z;
       printerview.ObjectTransformed = false;
     }
 
@@ -418,8 +418,8 @@ namespace M3D.GUI.Views.Printer_View
         return;
       }
 
-      X_Slider.TrackPosition = modelTransformation.Translation.x;
-      Y_Slider.TrackPosition = modelTransformation.Translation.y;
+      X_Slider.TrackPosition = modelTransformation.Translation.X;
+      Y_Slider.TrackPosition = modelTransformation.Translation.Y;
       printerview.ObjectTransformed = false;
     }
 
@@ -453,9 +453,9 @@ namespace M3D.GUI.Views.Printer_View
         return;
       }
 
-      X_Slider.TrackPosition = modelTransformation.Rotation.x;
-      Y_Slider.TrackPosition = modelTransformation.Rotation.y;
-      Z_Slider.TrackPosition = modelTransformation.Rotation.z;
+      X_Slider.TrackPosition = modelTransformation.Rotation.X;
+      Y_Slider.TrackPosition = modelTransformation.Rotation.Y;
+      Z_Slider.TrackPosition = modelTransformation.Rotation.Z;
       printerview.ObjectTransformed = false;
     }
 
@@ -469,7 +469,7 @@ namespace M3D.GUI.Views.Printer_View
       base.OnUpdate();
       if (!X_Edit.HasFocus || enter_hit)
       {
-        if (float.TryParse(X_Edit.Text, out var result) && Math.Round((double)result, 2) != Math.Round((double)X_Slider.TrackPosition, 2))
+        if (float.TryParse(X_Edit.Text, out var result) && Math.Round(result, 2) != Math.Round(X_Slider.TrackPosition, 2))
         {
           X_Slider.TrackPosition = result;
           printerview.ObjectTransformed = true;
@@ -477,7 +477,7 @@ namespace M3D.GUI.Views.Printer_View
       }
       if (!Y_Edit.HasFocus || enter_hit)
       {
-        if (float.TryParse(Y_Edit.Text, out var result) && Math.Round((double)result, 2) != Math.Round((double)Y_Slider.TrackPosition, 2))
+        if (float.TryParse(Y_Edit.Text, out var result) && Math.Round(result, 2) != Math.Round(Y_Slider.TrackPosition, 2))
         {
           Y_Slider.TrackPosition = result;
           printerview.ObjectTransformed = true;
@@ -485,7 +485,7 @@ namespace M3D.GUI.Views.Printer_View
       }
       if (!Z_Edit.HasFocus || enter_hit)
       {
-        if (float.TryParse(Z_Edit.Text, out var result) && Math.Round((double)result, 2) != Math.Round((double)Z_Slider.TrackPosition, 2))
+        if (float.TryParse(Z_Edit.Text, out var result) && Math.Round(result, 2) != Math.Round(Z_Slider.TrackPosition, 2))
         {
           Z_Slider.TrackPosition = result;
           printerview.ObjectTransformed = true;
@@ -519,15 +519,15 @@ namespace M3D.GUI.Views.Printer_View
     {
       if (editmode == ModelAdjustmentsDialog.EditMode.Rotation)
       {
-        X_Slider.TrackPosition = model.transformNode.Rotation.x;
-        Y_Slider.TrackPosition = model.transformNode.Rotation.y;
-        Z_Slider.TrackPosition = model.transformNode.Rotation.z;
+        X_Slider.TrackPosition = model.transformNode.Rotation.X;
+        Y_Slider.TrackPosition = model.transformNode.Rotation.Y;
+        Z_Slider.TrackPosition = model.transformNode.Rotation.Z;
       }
       else if (editmode == ModelAdjustmentsDialog.EditMode.Scale)
       {
-        X_Slider.TrackPosition = model.transformNode.Scale.x;
-        Y_Slider.TrackPosition = model.transformNode.Scale.y;
-        Z_Slider.TrackPosition = model.transformNode.Scale.z;
+        X_Slider.TrackPosition = model.transformNode.Scale.X;
+        Y_Slider.TrackPosition = model.transformNode.Scale.Y;
+        Z_Slider.TrackPosition = model.transformNode.Scale.Z;
       }
       else
       {
@@ -536,8 +536,8 @@ namespace M3D.GUI.Views.Printer_View
           return;
         }
 
-        X_Slider.TrackPosition = model.transformNode.Translation.x;
-        Y_Slider.TrackPosition = model.transformNode.Translation.y;
+        X_Slider.TrackPosition = model.transformNode.Translation.X;
+        Y_Slider.TrackPosition = model.transformNode.Translation.Y;
       }
     }
 
@@ -558,15 +558,15 @@ namespace M3D.GUI.Views.Printer_View
 
       if (editmode == ModelAdjustmentsDialog.EditMode.Rotation)
       {
-        modelTransformation.Rotation.x = X_Slider.TrackPosition;
-        modelTransformation.Rotation.y = Y_Slider.TrackPosition;
-        modelTransformation.Rotation.z = Z_Slider.TrackPosition;
+        modelTransformation.Rotation.X = X_Slider.TrackPosition;
+        modelTransformation.Rotation.Y = Y_Slider.TrackPosition;
+        modelTransformation.Rotation.Z = Z_Slider.TrackPosition;
       }
       else if (editmode == ModelAdjustmentsDialog.EditMode.Scale)
       {
-        modelTransformation.Scale.x = X_Slider.TrackPosition;
-        modelTransformation.Scale.y = Y_Slider.TrackPosition;
-        modelTransformation.Scale.z = Z_Slider.TrackPosition;
+        modelTransformation.Scale.X = X_Slider.TrackPosition;
+        modelTransformation.Scale.Y = Y_Slider.TrackPosition;
+        modelTransformation.Scale.Z = Z_Slider.TrackPosition;
       }
       else
       {
@@ -575,14 +575,14 @@ namespace M3D.GUI.Views.Printer_View
           return;
         }
 
-        modelTransformation.Translation.x = X_Slider.TrackPosition;
-        modelTransformation.Translation.y = Y_Slider.TrackPosition;
+        modelTransformation.Translation.X = X_Slider.TrackPosition;
+        modelTransformation.Translation.Y = Y_Slider.TrackPosition;
       }
     }
 
     public void SetRotationValues(Vector3 rotation)
     {
-      SetRotationValues(rotation.x, rotation.y, rotation.z);
+      SetRotationValues(rotation.X, rotation.Y, rotation.Z);
     }
 
     public void SetRotationValues(float x, float y, float z)
@@ -603,7 +603,7 @@ namespace M3D.GUI.Views.Printer_View
 
     public void SetTranslationValues(Vector3 translation)
     {
-      SetTranslationValues(translation.x, translation.y);
+      SetTranslationValues(translation.X, translation.Y);
     }
 
     public void SetTranslationValues(float x, float y)
@@ -623,7 +623,7 @@ namespace M3D.GUI.Views.Printer_View
 
     public void SetScaleValues(Vector3 scale)
     {
-      SetScaleValues(scale.x, scale.y, scale.z);
+      SetScaleValues(scale.X, scale.Y, scale.Z);
     }
 
     public void SetScaleValues(float x, float y, float z)
@@ -710,23 +710,23 @@ namespace M3D.GUI.Views.Printer_View
       TransformationNode modelTransformation = printerview.ModelTransformation;
       if (modelTransformation != null)
       {
-        initialscalevalues.x = modelTransformation.Scale.x;
-        initialscalevalues.y = modelTransformation.Scale.y;
-        initialscalevalues.z = modelTransformation.Scale.z;
+        initialscalevalues.X = modelTransformation.Scale.X;
+        initialscalevalues.Y = modelTransformation.Scale.Y;
+        initialscalevalues.Z = modelTransformation.Scale.Z;
       }
       else
       {
-        initialscalevalues.x = 1f;
-        initialscalevalues.y = 1f;
-        initialscalevalues.z = 1f;
+        initialscalevalues.X = 1f;
+        initialscalevalues.Y = 1f;
+        initialscalevalues.Z = 1f;
       }
     }
 
     private void LinkedScaleX(float value)
     {
       var fPosition1 = value;
-      var fPosition2 = fPosition1 * (initialscalevalues.y / initialscalevalues.x);
-      var fPosition3 = fPosition1 * (initialscalevalues.z / initialscalevalues.x);
+      var fPosition2 = fPosition1 * (initialscalevalues.Y / initialscalevalues.X);
+      var fPosition3 = fPosition1 * (initialscalevalues.Z / initialscalevalues.X);
       X_Slider.SetTrackPositionNoCallBack(fPosition1);
       Y_Slider.SetTrackPositionNoCallBack(fPosition2);
       Z_Slider.SetTrackPositionNoCallBack(fPosition3);
@@ -738,8 +738,8 @@ namespace M3D.GUI.Views.Printer_View
     private void LinkedScaleY(float value)
     {
       var fPosition1 = value;
-      var fPosition2 = fPosition1 * (initialscalevalues.x / initialscalevalues.y);
-      var fPosition3 = fPosition1 * (initialscalevalues.z / initialscalevalues.y);
+      var fPosition2 = fPosition1 * (initialscalevalues.X / initialscalevalues.Y);
+      var fPosition3 = fPosition1 * (initialscalevalues.Z / initialscalevalues.Y);
       X_Slider.SetTrackPositionNoCallBack(fPosition2);
       Y_Slider.SetTrackPositionNoCallBack(fPosition1);
       Z_Slider.SetTrackPositionNoCallBack(fPosition3);
@@ -751,8 +751,8 @@ namespace M3D.GUI.Views.Printer_View
     private void LinkedScaleZ(float value)
     {
       var fPosition1 = value;
-      var fPosition2 = fPosition1 * (initialscalevalues.x / initialscalevalues.z);
-      var fPosition3 = fPosition1 * (initialscalevalues.y / initialscalevalues.z);
+      var fPosition2 = fPosition1 * (initialscalevalues.X / initialscalevalues.Z);
+      var fPosition3 = fPosition1 * (initialscalevalues.Y / initialscalevalues.Z);
       X_Slider.SetTrackPositionNoCallBack(fPosition2);
       Y_Slider.SetTrackPositionNoCallBack(fPosition3);
       Z_Slider.SetTrackPositionNoCallBack(fPosition1);

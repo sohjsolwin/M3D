@@ -46,7 +46,7 @@ namespace RepetierHost.model
     {
       get
       {
-        return fields != (ushort) 128;
+        return fields != 128;
       }
     }
 
@@ -54,7 +54,7 @@ namespace RepetierHost.model
     {
       get
       {
-        return ((uint)fields & 32768U) > 0U;
+        return (fields & 32768U) > 0U;
       }
     }
 
@@ -62,7 +62,7 @@ namespace RepetierHost.model
     {
       get
       {
-        if (fields == (ushort) 128)
+        if (fields == 128)
         {
           return comment;
         }
@@ -85,17 +85,11 @@ namespace RepetierHost.model
           ActivateV2OrForceAscii();
         }
 
-        fields |= (ushort) 32768;
+        fields |= 32768;
       }
     }
 
-    public bool hasN
-    {
-      get
-      {
-        return ((uint)fields & 1U) > 0U;
-      }
-    }
+    public bool HasN => (fields & 1U) > 0U;
 
     public int N
     {
@@ -106,7 +100,7 @@ namespace RepetierHost.model
       set
       {
         n = value;
-        fields |= (ushort) 1;
+        fields |= 1;
       }
     }
 
@@ -114,7 +108,7 @@ namespace RepetierHost.model
     {
       get
       {
-        return ((uint)fields & 2U) > 0U;
+        return (fields & 2U) > 0U;
       }
     }
 
@@ -127,17 +121,11 @@ namespace RepetierHost.model
       set
       {
         m = value;
-        fields |= (ushort) 2;
+        fields |= 2;
       }
     }
 
-    public bool hasG
-    {
-      get
-      {
-        return ((uint)fields & 4U) > 0U;
-      }
-    }
+    public bool HasG => (fields & 4U) > 0U;
 
     public ushort G
     {
@@ -148,17 +136,11 @@ namespace RepetierHost.model
       set
       {
         g = value;
-        fields |= (ushort) 4;
+        fields |= 4;
       }
     }
 
-    public bool hasT
-    {
-      get
-      {
-        return ((uint)fields & 512U) > 0U;
-      }
-    }
+    public bool HasT => (fields & 512U) > 0U;
 
     public byte T
     {
@@ -169,17 +151,11 @@ namespace RepetierHost.model
       set
       {
         t = value;
-        fields |= (ushort) 512;
+        fields |= 512;
       }
     }
 
-    public bool hasS
-    {
-      get
-      {
-        return ((uint)fields & 1024U) > 0U;
-      }
-    }
+    public bool HasS => (fields & 1024U) > 0U;
 
     public int S
     {
@@ -190,7 +166,7 @@ namespace RepetierHost.model
       set
       {
         s = value;
-        fields |= (ushort) 1024;
+        fields |= 1024;
       }
     }
 
@@ -198,7 +174,7 @@ namespace RepetierHost.model
     {
       get
       {
-        return ((uint)fields & 2048U) > 0U;
+        return (fields & 2048U) > 0U;
       }
     }
 
@@ -211,15 +187,15 @@ namespace RepetierHost.model
       set
       {
         p = value;
-        fields |= (ushort) 2048;
+        fields |= 2048;
       }
     }
 
-    public bool hasX
+    public bool HasX
     {
       get
       {
-        return ((uint)fields & 8U) > 0U;
+        return (fields & 8U) > 0U;
       }
     }
 
@@ -232,17 +208,11 @@ namespace RepetierHost.model
       set
       {
         x = value;
-        fields |= (ushort) 8;
+        fields |= 8;
       }
     }
 
-    public bool hasY
-    {
-      get
-      {
-        return ((uint)fields & 16U) > 0U;
-      }
-    }
+    public bool HasY => (fields & 16U) > 0U;
 
     public float Y
     {
@@ -253,17 +223,11 @@ namespace RepetierHost.model
       set
       {
         y = value;
-        fields |= (ushort) 16;
+        fields |= 16;
       }
     }
 
-    public bool hasZ
-    {
-      get
-      {
-        return ((uint)fields & 32U) > 0U;
-      }
-    }
+    public bool HasZ => (fields & 32U) > 0U;
 
     public float Z
     {
@@ -274,17 +238,11 @@ namespace RepetierHost.model
       set
       {
         z = value;
-        fields |= (ushort) 32;
+        fields |= 32;
       }
     }
 
-    public bool hasE
-    {
-      get
-      {
-        return ((uint)fields & 64U) > 0U;
-      }
-    }
+    public bool HasE => (fields & 64U) > 0U;
 
     public float E
     {
@@ -295,7 +253,7 @@ namespace RepetierHost.model
       set
       {
         e = value;
-        fields |= (ushort) 64;
+        fields |= 64;
       }
     }
 
@@ -303,7 +261,7 @@ namespace RepetierHost.model
     {
       get
       {
-        return ((uint)fields & 256U) > 0U;
+        return (fields & 256U) > 0U;
       }
     }
 
@@ -316,17 +274,11 @@ namespace RepetierHost.model
       set
       {
         f = value;
-        fields |= (ushort) 256;
+        fields |= 256;
       }
     }
 
-    public bool hasI
-    {
-      get
-      {
-        return ((uint)fields2 & 1U) > 0U;
-      }
-    }
+    public bool HasI => (fields2 & 1U) > 0U;
 
     public float I
     {
@@ -337,7 +289,7 @@ namespace RepetierHost.model
       set
       {
         ii = value;
-        fields2 |= (ushort) 1;
+        fields2 |= 1;
         ActivateV2OrForceAscii();
       }
     }
@@ -346,7 +298,7 @@ namespace RepetierHost.model
     {
       get
       {
-        return ((uint)fields2 & 2U) > 0U;
+        return (fields2 & 2U) > 0U;
       }
     }
 
@@ -359,18 +311,12 @@ namespace RepetierHost.model
       set
       {
         j = value;
-        fields2 |= (ushort) 2;
+        fields2 |= 2;
         ActivateV2OrForceAscii();
       }
     }
 
-    public bool hasR
-    {
-      get
-      {
-        return ((uint)fields2 & 4U) > 0U;
-      }
-    }
+    public bool HasR => (fields2 & 4U) > 0U;
 
     public float R
     {
@@ -381,7 +327,7 @@ namespace RepetierHost.model
       set
       {
         r = value;
-        fields2 |= (ushort) 4;
+        fields2 |= 4;
         ActivateV2OrForceAscii();
       }
     }
@@ -390,7 +336,7 @@ namespace RepetierHost.model
     {
       get
       {
-        return ((uint)fields & 4096U) > 0U;
+        return (fields & 4096U) > 0U;
       }
     }
 
@@ -403,7 +349,7 @@ namespace RepetierHost.model
 
       var isV2 = this.isV2;
       var memoryStream = new MemoryStream();
-      var binaryWriter = new BinaryWriter((Stream) memoryStream, Encoding.ASCII);
+      var binaryWriter = new BinaryWriter(memoryStream, Encoding.ASCII);
       binaryWriter.Write(fields);
       if (isV2)
       {
@@ -413,9 +359,9 @@ namespace RepetierHost.model
           binaryWriter.Write((byte)text.Length);
         }
       }
-      if (hasN)
+      if (HasN)
       {
-        binaryWriter.Write((ushort) (n & (int) ushort.MaxValue));
+        binaryWriter.Write((ushort) (n & ushort.MaxValue));
       }
 
       if (isV2)
@@ -425,7 +371,7 @@ namespace RepetierHost.model
           binaryWriter.Write(m);
         }
 
-        if (hasG)
+        if (HasG)
         {
           binaryWriter.Write(g);
         }
@@ -437,27 +383,27 @@ namespace RepetierHost.model
           binaryWriter.Write((byte)m);
         }
 
-        if (hasG)
+        if (HasG)
         {
           binaryWriter.Write((byte)g);
         }
       }
-      if (hasX)
+      if (HasX)
       {
         binaryWriter.Write(x);
       }
 
-      if (hasY)
+      if (HasY)
       {
         binaryWriter.Write(y);
       }
 
-      if (hasZ)
+      if (HasZ)
       {
         binaryWriter.Write(z);
       }
 
-      if (hasE)
+      if (HasE)
       {
         binaryWriter.Write(e);
       }
@@ -467,12 +413,12 @@ namespace RepetierHost.model
         binaryWriter.Write(f);
       }
 
-      if (hasT)
+      if (HasT)
       {
         binaryWriter.Write(t);
       }
 
-      if (hasS)
+      if (HasS)
       {
         binaryWriter.Write(s);
       }
@@ -482,7 +428,7 @@ namespace RepetierHost.model
         binaryWriter.Write(p);
       }
 
-      if (hasI)
+      if (HasI)
       {
         binaryWriter.Write(ii);
       }
@@ -492,7 +438,7 @@ namespace RepetierHost.model
         binaryWriter.Write(j);
       }
 
-      if (hasR)
+      if (HasR)
       {
         binaryWriter.Write(r);
       }
@@ -532,8 +478,8 @@ namespace RepetierHost.model
       memoryStream.Flush();
       foreach (var num3 in memoryStream.ToArray())
       {
-        num1 = (num1 + (int) num3) % (int) byte.MaxValue;
-        num2 = (num2 + num1) % (int) byte.MaxValue;
+        num1 = (num1 + num3) % byte.MaxValue;
+        num2 = (num2 + num1) % byte.MaxValue;
       }
       binaryWriter.Write((byte) num1);
       binaryWriter.Write((byte) num2);
@@ -550,7 +496,7 @@ namespace RepetierHost.model
       }
 
       var stringBuilder = new StringBuilder();
-      if (inclLine && hasN)
+      if (inclLine && HasN)
       {
         stringBuilder.Append("N");
         stringBuilder.Append(n);
@@ -575,12 +521,12 @@ namespace RepetierHost.model
           stringBuilder.Append("M");
           stringBuilder.Append(m);
         }
-        if (hasG)
+        if (HasG)
         {
           stringBuilder.Append("G");
           stringBuilder.Append(g);
         }
-        if (hasT)
+        if (HasT)
         {
           if (hasM)
           {
@@ -590,47 +536,47 @@ namespace RepetierHost.model
           stringBuilder.Append("T");
           stringBuilder.Append(t);
         }
-        if (hasX)
+        if (HasX)
         {
           stringBuilder.Append(" X");
-          stringBuilder.Append(x.ToString(GCode.floatNoExp, (IFormatProvider) GCode.format));
+          stringBuilder.Append(x.ToString(GCode.floatNoExp, GCode.format));
         }
-        if (hasY)
+        if (HasY)
         {
           stringBuilder.Append(" Y");
-          stringBuilder.Append(y.ToString(GCode.floatNoExp, (IFormatProvider) GCode.format));
+          stringBuilder.Append(y.ToString(GCode.floatNoExp, GCode.format));
         }
-        if (hasZ)
+        if (HasZ)
         {
           stringBuilder.Append(" Z");
-          stringBuilder.Append(z.ToString(GCode.floatNoExp, (IFormatProvider) GCode.format));
+          stringBuilder.Append(z.ToString(GCode.floatNoExp, GCode.format));
         }
-        if (hasE)
+        if (HasE)
         {
           stringBuilder.Append(" E");
-          stringBuilder.Append(e.ToString(GCode.floatNoExp, (IFormatProvider) GCode.format));
+          stringBuilder.Append(e.ToString(GCode.floatNoExp, GCode.format));
         }
         if (hasF)
         {
           stringBuilder.Append(" F");
-          stringBuilder.Append(f.ToString(GCode.floatNoExp, (IFormatProvider) GCode.format));
+          stringBuilder.Append(f.ToString(GCode.floatNoExp, GCode.format));
         }
-        if (hasI)
+        if (HasI)
         {
           stringBuilder.Append(" I");
-          stringBuilder.Append(ii.ToString(GCode.floatNoExp, (IFormatProvider) GCode.format));
+          stringBuilder.Append(ii.ToString(GCode.floatNoExp, GCode.format));
         }
         if (hasJ)
         {
           stringBuilder.Append(" J");
-          stringBuilder.Append(j.ToString(GCode.floatNoExp, (IFormatProvider) GCode.format));
+          stringBuilder.Append(j.ToString(GCode.floatNoExp, GCode.format));
         }
-        if (hasR)
+        if (HasR)
         {
           stringBuilder.Append(" R");
-          stringBuilder.Append(r.ToString(GCode.floatNoExp, (IFormatProvider) GCode.format));
+          stringBuilder.Append(r.ToString(GCode.floatNoExp, GCode.format));
         }
-        if (hasS)
+        if (HasS)
         {
           stringBuilder.Append(" S");
           stringBuilder.Append(s);
@@ -651,7 +597,7 @@ namespace RepetierHost.model
         var num1 = 0;
         foreach (var ch in stringBuilder.ToString())
         {
-          num1 ^= (int) ch & (int) byte.MaxValue;
+          num1 ^= ch & byte.MaxValue;
         }
 
         var num2 = num1 ^ 32;
@@ -668,12 +614,12 @@ namespace RepetierHost.model
 
     private void ActivateV2OrForceAscii()
     {
-      fields |= (ushort) 4096;
+      fields |= 4096;
     }
 
     private void AddCode(char c, string val)
     {
-      double.TryParse(val, NumberStyles.Float, (IFormatProvider)GCode.format, out var result);
+      double.TryParse(val, NumberStyles.Float, GCode.format, out var result);
       switch (c)
       {
         case 'A':
@@ -687,7 +633,7 @@ namespace RepetierHost.model
           F = (float) result;
           break;
         case 'G':
-          if (result > (double) byte.MaxValue)
+          if (result > byte.MaxValue)
           {
             ActivateV2OrForceAscii();
           }
@@ -701,7 +647,7 @@ namespace RepetierHost.model
           J = (float) result;
           break;
         case 'M':
-          if (result > (double) byte.MaxValue)
+          if (result > byte.MaxValue)
           {
             ActivateV2OrForceAscii();
           }
@@ -721,7 +667,7 @@ namespace RepetierHost.model
           S = (int) result;
           break;
         case 'T':
-          if (result > (double) byte.MaxValue)
+          if (result > byte.MaxValue)
           {
             forceAscii = true;
           }
@@ -753,8 +699,8 @@ namespace RepetierHost.model
       }
       else
       {
-        fields = (ushort) 128;
-        fields2 = (ushort) 0;
+        fields = 128;
+        fields2 = 0;
         var length1 = orig.Length;
         var num = 0;
         var c = ';';
@@ -779,7 +725,7 @@ namespace RepetierHost.model
             {
               AddCode(c, orig.Substring(startIndex1, length2 - startIndex1));
               num = 0;
-              if (hasM && (m == (ushort) 23 || m == (ushort) 28 || (m == (ushort) 29 || m == (ushort) 30) || (m == (ushort) 32 || m == (ushort) 117)))
+              if (hasM && (m == 23 || m == 28 || (m == 29 || m == 30) || (m == 32 || m == 117)))
               {
                 var startIndex2 = length2;
                 while (startIndex2 < orig.Length && char.IsWhiteSpace(orig[startIndex2]))
@@ -788,7 +734,7 @@ namespace RepetierHost.model
                 }
 
                 var index = startIndex2;
-                while (index < orig.Length && (m == (ushort) 117 || !char.IsWhiteSpace(orig[index])))
+                while (index < orig.Length && (m == 117 || !char.IsWhiteSpace(orig[index])))
                 {
                   ++index;
                 }
@@ -813,7 +759,7 @@ namespace RepetierHost.model
           AddCode(c, orig.Substring(startIndex1, orig.Length - startIndex1));
         }
 
-        comment = fields == (ushort) 128;
+        comment = fields == 128;
       }
     }
 
@@ -831,15 +777,15 @@ namespace RepetierHost.model
         return;
       }
 
-      if (hasG && hasM)
+      if (HasG && hasM)
       {
         throw new Exception("Gcode cannot be set to both M and G Types");
       }
 
       string command;
-      if (hasG)
+      if (HasG)
       {
-        command = string.Format("G{0}", (object)G);
+        command = string.Format("G{0}", G);
         switch (G)
         {
           case 0:
@@ -891,7 +837,7 @@ namespace RepetierHost.model
             AtLeastOnePeramiter = new bool?(false);
             break;
           default:
-            throw new Exception(string.Format("Unknown G Code:{0}", (object)G));
+            throw new Exception(string.Format("Unknown G Code:{0}", G));
         }
       }
       else
@@ -901,7 +847,7 @@ namespace RepetierHost.model
           throw new Exception("Gcode must be a M or G code");
         }
 
-        command = string.Format("M{0}", (object)M);
+        command = string.Format("M{0}", M);
         switch (M)
         {
           case 0:
@@ -978,7 +924,7 @@ namespace RepetierHost.model
             AtLeastOnePeramiter = new bool?(false);
             break;
           case 115:
-            if (hasS && S == 628)
+            if (HasS && S == 628)
             {
               parametersEnumArray = new GCode.ParametersEnum[1]
               {
@@ -1095,7 +1041,7 @@ namespace RepetierHost.model
             AtLeastOnePeramiter = new bool?(false);
             break;
           default:
-            throw new Exception(string.Format("Unknown M Code:{0}", (object)M));
+            throw new Exception(string.Format("Unknown M Code:{0}", M));
         }
       }
       if (string.IsNullOrEmpty(command))
@@ -1120,34 +1066,34 @@ namespace RepetierHost.model
     private void AssertHelperMustHave(string command, GCode.ParametersEnum[] optionalFeilds, bool? AtLeastOnePeramiter)
     {
       GenerateFeildFlags(optionalFeilds, out var feildFlag1, out var feildFlag2);
-      if (!(!AtLeastOnePeramiter.Value ? ((int) feildFlag1 & (int)fields) != (int)fields && ((int) feildFlag2 & (int)fields2) != (int)fields2 : ((int) feildFlag1 & (int)fields) <= 0 && ((int) feildFlag2 & (int)fields2) <= 0))
+      if (!(!AtLeastOnePeramiter.Value ? (feildFlag1 & fields) != fields && (feildFlag2 & fields2) != fields2 : (feildFlag1 & fields) <= 0 && (feildFlag2 & fields2) <= 0))
       {
         return;
       }
 
       var list = new List<string>();
-      FeildListBuilderF1((ushort) ((uint) feildFlag1 & (uint)fields), ref list);
-      FeildListBuilderF2((ushort) ((uint) feildFlag2 & (uint)fields2), ref list);
-      var str = (list.Count != 1 ? string.Format("{0} must have at least one of the following argument", (object) command) : string.Format("{0} must have the following argument", (object) command)) + listBuilder(list, "or") + " in numeric form";
+      FeildListBuilderF1((ushort)(feildFlag1 & (uint)fields), ref list);
+      FeildListBuilderF2((ushort)(feildFlag2 & (uint)fields2), ref list);
+      var str = (list.Count != 1 ? string.Format("{0} must have at least one of the following argument", command) : string.Format("{0} must have the following argument", command)) + listBuilder(list, "or") + " in numeric form";
     }
 
     private void AssertHelperCanOnlyBe(string command, GCode.ParametersEnum[] arrayParramiters)
     {
       GenerateFeildFlags(arrayParramiters, out var feildFlag1, out var feildFlag2);
-      var num = (ushort) ((uint)fields & 4294930297U);
-      if (((int) feildFlag1 & (int) num) != (int) num || ((int) feildFlag2 & (int)fields2) != (int)fields2)
+      var num = (ushort)(fields & 4294930297U);
+      if ((feildFlag1 & num) != num || (feildFlag2 & fields2) != fields2)
       {
         var list = new List<string>();
-        FeildListBuilderF1((ushort) ((uint) ~feildFlag1 & (uint) num), ref list);
-        FeildListBuilderF2((ushort) ((uint) ~feildFlag2 & (uint)fields2), ref list);
-        throw new Exception(string.Format("{0} does not take argument ", (object) command) + listBuilder(list, "and"));
+        FeildListBuilderF1((ushort) ((uint) ~feildFlag1 & num), ref list);
+        FeildListBuilderF2((ushort) ((uint) ~feildFlag2 & fields2), ref list);
+        throw new Exception(string.Format("{0} does not take argument ", command) + listBuilder(list, "and"));
       }
     }
 
     private void GenerateFeildFlags(GCode.ParametersEnum[] arrayParramiters, out ushort feildFlag1, out ushort feildFlag2)
     {
-      feildFlag1 = (ushort) 1;
-      feildFlag2 = (ushort) 0;
+      feildFlag1 = 1;
+      feildFlag2 = 0;
       foreach (GCode.ParametersEnum arrayParramiter in arrayParramiters)
       {
         switch (arrayParramiter)
@@ -1165,7 +1111,7 @@ namespace RepetierHost.model
             goto case GCode.ParametersEnum.M;
           case GCode.ParametersEnum.M:
           case GCode.ParametersEnum.G:
-            feildFlag1 |= (ushort) 1;
+            feildFlag1 |= 1;
             continue;
           case GCode.ParametersEnum.I:
           case GCode.ParametersEnum.J:
@@ -1183,7 +1129,7 @@ namespace RepetierHost.model
       foreach (var obj in Enum.GetValues(typeof (GCode.Feilds1TypeEnum)))
       {
         var num = (ushort) (GCode.Feilds1TypeEnum) obj;
-        if (((int) num & (int) feildsFlag) == (int) num)
+        if ((num & feildsFlag) == num)
         {
           list.Add(obj.ToString());
         }
@@ -1195,7 +1141,7 @@ namespace RepetierHost.model
       foreach (var obj in Enum.GetValues(typeof (GCode.Feilds2TypeEnum)))
       {
         var num = (ushort) (GCode.Feilds2TypeEnum) obj;
-        if (((int) num & (int) feildsFlag) == (int) num)
+        if ((num & feildsFlag) == num)
         {
           list.Add(obj.ToString());
         }

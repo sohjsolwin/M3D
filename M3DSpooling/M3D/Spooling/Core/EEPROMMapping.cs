@@ -14,7 +14,7 @@ namespace M3D.Spooling.Core
     private byte[] eeprom_data;
 
     public EEPROMMapping(EEPROMProfile eepromProfile)
-      : this(((int) eepromProfile.EndOfBootloaderReadableEEPROM + 1) * eepromProfile.BytesPerEEPROMAddress, eepromProfile)
+      : this((eepromProfile.EndOfBootloaderReadableEEPROM + 1) * eepromProfile.BytesPerEEPROMAddress, eepromProfile)
     {
     }
 
@@ -32,8 +32,8 @@ namespace M3D.Spooling.Core
 
     public void Dispose()
     {
-      eeprom_data = (byte[]) null;
-      eepromProfile = (EEPROMProfile) null;
+      eeprom_data = null;
+      eepromProfile = null;
     }
 
     public byte[] GetAllEEPROMData()
@@ -70,7 +70,7 @@ namespace M3D.Spooling.Core
       EepromAddressInfo eepromInfo = eepromProfile.GetEepromInfo(name);
       if (eepromInfo != null)
       {
-        return (int) eepromInfo.EepromAddr;
+        return eepromInfo.EepromAddr;
       }
 
       return -1;
@@ -98,10 +98,10 @@ namespace M3D.Spooling.Core
       EepromAddressInfo eepromInfo = eepromProfile.GetEepromInfo(name);
       if (eepromInfo != null)
       {
-        var mappedAddr = EepromAddrToMappedAddr((int) eepromInfo.EepromAddr);
+        var mappedAddr = EepromAddrToMappedAddr(eepromInfo.EepromAddr);
         if (eepromInfo.Type == typeof (byte))
         {
-          return (ushort)eeprom_data[mappedAddr];
+          return eeprom_data[mappedAddr];
         }
 
         if (eepromInfo.Type == typeof (ushort))
@@ -143,7 +143,7 @@ namespace M3D.Spooling.Core
           Debugger.Break();
         }
 
-        return (byte[]) null;
+        return null;
       }
       byte[] numArray = new byte[count];
       for (var index = 0; index < count; ++index)
@@ -238,11 +238,11 @@ namespace M3D.Spooling.Core
       TextWriter textWriter;
       try
       {
-        textWriter = (TextWriter) new StreamWriter(filename);
+        textWriter = new StreamWriter(filename);
       }
       catch (IOException ex)
       {
-        textWriter = (TextWriter) null;
+        textWriter = null;
       }
       if (textWriter == null)
       {
@@ -257,9 +257,9 @@ namespace M3D.Spooling.Core
         SerializableEEPROMMapping.SerializableData serializableData;
         serializableData.key = eepromAddressInfo.Name;
         serializableData.value = "";
-        if ((int) eepromAddressInfo.EepromAddr <= eeprom_data.Length)
+        if (eepromAddressInfo.EepromAddr <= eeprom_data.Length)
         {
-          var mappedAddr = EepromAddrToMappedAddr((int) eepromAddressInfo.EepromAddr);
+          var mappedAddr = EepromAddrToMappedAddr(eepromAddressInfo.EepromAddr);
           if (eepromAddressInfo.Type == typeof (float))
           {
             var single = BitConverter.ToSingle(eeprom_data, mappedAddr);
@@ -295,7 +295,7 @@ namespace M3D.Spooling.Core
       }
       var namespaces = new XmlSerializerNamespaces();
       namespaces.Add(string.Empty, string.Empty);
-      new XmlSerializer(typeof (SerializableEEPROMMapping)).Serialize(textWriter, (object) serializableEepromMapping, namespaces);
+      new XmlSerializer(typeof (SerializableEEPROMMapping)).Serialize(textWriter, serializableEepromMapping, namespaces);
       textWriter.Close();
       return true;
     }
@@ -331,10 +331,10 @@ namespace M3D.Spooling.Core
         return;
       }
 
-      eeprom_data[location] = (byte) 0;
-      eeprom_data[location + 1] = (byte) 0;
-      eeprom_data[location + 2] = (byte) 0;
-      eeprom_data[location + 3] = (byte) 0;
+      eeprom_data[location] = 0;
+      eeprom_data[location + 1] = 0;
+      eeprom_data[location + 2] = 0;
+      eeprom_data[location + 3] = 0;
     }
 
     private int EepromAddrToMappedAddr(int eepromAddr)

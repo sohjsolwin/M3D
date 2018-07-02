@@ -35,6 +35,6 @@ public class SerialPortConfig
 
   public override string ToString()
   {
-    return string.Format("{0} (Baud: {1}/DataBits: {2}/Parity: {3}/StopBits: {4}/{5})", (object)Name, (object)BaudRate, (object)DataBits, (object)Parity, (object)StopBits, RtsEnable ? (object) "RTS" : (object) "No RTS");
+    return string.Format("{0} (Baud: {1}/DataBits: {2}/Parity: {3}/StopBits: {4}/{5})", Name, BaudRate, DataBits, Parity, StopBits, RtsEnable ? "RTS" : "No RTS");
   }
 }

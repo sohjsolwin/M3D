@@ -79,7 +79,7 @@ namespace M3D.GUI.Views.Library_View
       var num = 0;
       foreach (RecentPrintsHistory.PrintHistory record in queryResults.records)
       {
-        var buttonWidget = new ButtonWidget(1064 + num, (Element2D) null);
+        var buttonWidget = new ButtonWidget(1064 + num, null);
         if (string.IsNullOrEmpty(record.iconfilename) || !File.Exists(record.iconfilename))
         {
           buttonWidget.Init(host, "null.png");
@@ -103,10 +103,10 @@ namespace M3D.GUI.Views.Library_View
         buttonWidget.Color = new Color4(0.0f, 0.5f, 1f, 1f);
         buttonWidget.Size = FontSize.Small;
         buttonWidget.VAlignment = TextVerticalAlignment.Bottom;
-        buttonWidget.Data = (object) record;
+        buttonWidget.Data = record;
         buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
         buttonWidget.SetFullyDraggable();
-        LibraryGrid.AddChildElement((Element2D) buttonWidget);
+        LibraryGrid.AddChildElement(buttonWidget);
         ++num;
       }
       host.Refresh();
@@ -125,9 +125,8 @@ namespace M3D.GUI.Views.Library_View
     public void LoadRecord(LibraryRecord record)
     {
       var flag = false;
-      if (record is RecentPrintsHistory.PrintHistory)
+      if (record is RecentPrintsHistory.PrintHistory printHistory)
       {
-        var printHistory = (RecentPrintsHistory.PrintHistory) record;
         if (Directory.Exists(printHistory.folder))
         {
           model_loading_manager.LoadPrinterView(Path.Combine(printHistory.folder, "printerview.xml"), Path.Combine(printHistory.folder, "printersettings.xml"), printHistory.folder, "313a13a6-9edf-44c7-a81d-50b914e423cc-6bb0e036-df11-4d66-82b3-8b7f0de03d2c");

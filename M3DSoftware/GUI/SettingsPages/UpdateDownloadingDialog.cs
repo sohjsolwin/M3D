@@ -17,7 +17,7 @@ namespace M3D.GUI.SettingsPages
       UpdateDownloadingDialog.updater = updater;
       UpdateDownloadingDialog.messagebox = messagebox;
       var updateDownloading = Resources.updateDownloading;
-      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(MessageType.UserDefined, ""), updateDownloading, new PopupMessageBox.XMLButtonCallback(UpdateDownloadingDialog.ButtonCallback), (object) updater, new ElementStandardDelegate(UpdateDownloadingDialog.OnUpdate)));
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(MessageType.UserDefined, ""), updateDownloading, new PopupMessageBox.XMLButtonCallback(UpdateDownloadingDialog.ButtonCallback), updater, new ElementStandardDelegate(UpdateDownloadingDialog.OnUpdate)));
     }
 
     private static void ButtonCallback(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)

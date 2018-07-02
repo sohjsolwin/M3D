@@ -30,9 +30,9 @@ namespace M3D.Spooling.Common
 
     public override bool TestSizeWarning(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
     {
-      if ((double) maxX - (double) minX <= (double)ABSWarningDim && (double) maxY - (double) minY <= (double)ABSWarningDim)
+      if (maxX - (double)minX <= ABSWarningDim && maxY - (double)minY <= ABSWarningDim)
       {
-        return (double) maxZ - (double) minZ > (double)ABSWarningDim;
+        return maxZ - (double)minZ > ABSWarningDim;
       }
 
       return true;

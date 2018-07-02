@@ -64,7 +64,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemIntType(value, warning_range, error_range);
+      return new SettingsItemIntType(value, warning_range, error_range);
     }
 
     [XmlIgnore]

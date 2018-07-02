@@ -14,7 +14,7 @@ namespace M3D.GUI.Tools
       stringList.Add(PrinterCompatibleString.Format("M109 S{0}", (object) temperature));
       stringList.Add(PrinterCompatibleString.Format(";ideal temp:{0}", (object) temperature));
       stringList.Add("G90");
-      stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} Z0.15 F900", (object) x1, (object) y1));
+      stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} Z0.15 F900", x1, y1));
       var num2 = num1 + 6f;
       stringList.Add(PrinterCompatibleString.Format("G0 Z0.4 E{0}", (object) num2));
       stringList.Add("G4 S10");
@@ -37,9 +37,9 @@ namespace M3D.GUI.Tools
       var num3 = E4 + 0.3f;
       stringList.Add(PrinterCompatibleString.Format("G0 E{0}", (object) num3));
       var num4 = num3 + 1.5169f;
-      stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} Z0.4 E{2}", (object) (float) ((double) x1 - 1.5), (object) (float) ((double) y1 - 1.0), (object) num4));
+      stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} Z0.4 E{2}", (float)((double)x1 - 1.5), (float)((double)y1 - 1.0), num4));
       var num5 = num4 + 5.3093f;
-      stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} Z2.4 E{2} F1800", (object) (float) ((double) x1 - 3.0), (object) (float) ((double) y1 - 2.5), (object) num5));
+      stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} Z2.4 E{2} F1800", (float)((double)x1 - 3.0), (float)((double)y1 - 2.5), num5));
       var num6 = num5 - 3f;
       stringList.Add(PrinterCompatibleString.Format("G0 E{0}", (object) num6));
       stringList.Add("G0 X4 Y12.5 Z25 F1800");
@@ -50,15 +50,15 @@ namespace M3D.GUI.Tools
     {
       var extrusion = GCodeGeneration.CalculateExtrusion(x1, y1, x2, y2, layer_height, line_thickness, flow_rate, filament_diameter);
       E += extrusion;
-      return PrinterCompatibleString.Format("G0 X{0} Y{1} E{2}", (object) x2, (object) y2, (object) E);
+      return PrinterCompatibleString.Format("G0 X{0} Y{1} E{2}", x2, y2, E);
     }
 
     public static float CalculateExtrusion(float x1, float y1, float x2, float y2, float layer_height, float extrusion_width, float flow_rate, float filament_diameter)
     {
-      var num1 = Math.Sqrt(((double) x2 - (double) x1) * ((double) x2 - (double) x1) + ((double) y2 - (double) y1) * ((double) y2 - (double) y1));
+      var num1 = Math.Sqrt((x2 - (double)x1) * (x2 - (double)x1) + (y2 - (double)y1) * (y2 - (double)y1));
       var num2 = filament_diameter / 2f;
       var num3 = (double) layer_height;
-      return (float) (num1 * num3 * (double) extrusion_width / (3.1415901184082 * (double) num2 * (double) num2));
+      return (float) (num1 * num3 * extrusion_width / (3.1415901184082 * num2 * num2));
     }
   }
 }

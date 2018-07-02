@@ -41,7 +41,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public override bool Pause(out List<string> pause_gcode, FilamentSpool spool)
     {
-      pause_gcode = (List<string>) null;
+      pause_gcode = null;
       Status = JobStatus.Paused;
       ExtrusionAtPause = CurrentPrintJobExtrusion;
       CurrentPrintJobExtrusion = 0.0f;
@@ -50,13 +50,13 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public override JobController.Result Resume(out List<string> resume_gcode, FilamentSpool spool)
     {
-      resume_gcode = (List<string>) null;
-      if (spool == (FilamentSpool) null)
+      resume_gcode = null;
+      if (spool == null)
       {
         spool = InitialSpoolUsed;
       }
 
-      if (spool == (FilamentSpool) null)
+      if (spool == null)
       {
         return JobController.Result.FAILED_NoFilament;
       }
@@ -76,8 +76,8 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public override bool Start(out List<string> start_gcode)
     {
-      m_oGCodeReader = (IGCodeReader)new GCodeBufferedFileReader(GCodeFilename, m_ulFastForward, out var fEStartingLocation);
-      start_gcode = (List<string>) null;
+      m_oGCodeReader = new GCodeBufferedFileReader(GCodeFilename, m_ulFastForward, out var fEStartingLocation);
+      start_gcode = null;
       if (!m_oGCodeReader.IsOpen)
       {
         return false;
@@ -88,7 +88,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
         MaxLines = m_oGCodeReader.MaxLines;
         if (m_bSDOnly)
         {
-          Details.jobParams.estimatedTime = (float)MaxLines / 50f;
+          Details.jobParams.estimatedTime = MaxLines / 50f;
         }
       }
       catch (NotImplementedException ex)
@@ -101,11 +101,11 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       CurrentLineNumber = m_ulFastForward;
       start_gcode = new List<string>()
       {
-        string.Format("N{0} M110", (object) (CurrentLineNumber % 65536UL))
+        string.Format("N{0} M110",  CurrentLineNumber % 65536UL)
       };
       if (m_ulFastForward != 0UL)
       {
-        start_gcode.Insert(0, string.Format("G92 E{0}", (object) fEStartingLocation));
+        start_gcode.Insert(0, string.Format("G92 E{0}", fEStartingLocation));
       }
 
       return true;
@@ -131,12 +131,12 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
         GCode nextLine = m_oGCodeReader.GetNextLine(true);
         if (nextLine != null)
         {
-          if (nextLine.hasM && nextLine.M == (ushort) 109 || nextLine.M == (ushort) 116 || nextLine.hasG && nextLine.G == (ushort) 4)
+          if (nextLine.hasM && nextLine.M == 109 || nextLine.M == 116 || nextLine.HasG && nextLine.G == 4)
           {
             Status = JobStatus.Heating;
           }
 
-          if (nextLine.hasG && (nextLine.G == (ushort) 0 || nextLine.G == (ushort) 1) && nextLine.hasE)
+          if (nextLine.HasG && (nextLine.G == 0 || nextLine.G == 1) && nextLine.HasE)
           {
             CurrentPrintJobExtrusion = nextLine.E;
           }
@@ -147,7 +147,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
         }
         endreadched.Value = true;
       }
-      return (GCode) null;
+      return null;
     }
 
     public override float PercentComplete
@@ -156,7 +156,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       {
         if (MaxLines > 0L)
         {
-          return (float)CurrentLineNumber / (float)MaxLines;
+          return CurrentLineNumber / (float)MaxLines;
         }
 
         return 0.0f;
@@ -216,7 +216,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       get
       {
-        if ((double)CurrentPrintJobExtrusion > 0.0)
+        if (CurrentPrintJobExtrusion > 0.0)
         {
           return !m_bSDOnly;
         }

@@ -31,7 +31,7 @@ namespace M3D.Spooling.Printer_Profiles
       G32ProbePoints: new SerializableDictionary<int, RectCoordinates>(){
         { 0, new RectCoordinates(2f, 105f, 0.0f, 109f) },
         { 1, new RectCoordinates(5f, 95f, 9f, 99f)},
-        { (int) byte.MaxValue, new RectCoordinates(9.5f, 99f, 1f, 102.9f) }
+        {  byte.MaxValue, new RectCoordinates(9.5f, 99f, 1f, 102.9f) }
       }
     )
     { }

@@ -13,13 +13,13 @@ namespace M3D.Spooling.Common.Utils
     }
 
     public SerializableDictionary(Dictionary<TKey, TValue> other)
-      : base((IDictionary<TKey, TValue>) other)
+      : base(other)
     {
     }
 
     public XmlSchema GetSchema()
     {
-      return (XmlSchema) null;
+      return null;
     }
 
     public void ReadXml(XmlReader reader)
@@ -59,11 +59,11 @@ namespace M3D.Spooling.Common.Utils
       {
         writer.WriteStartElement("item");
         writer.WriteStartElement("key");
-        xmlSerializer1.Serialize(writer, (object) key, namespaces);
+        xmlSerializer1.Serialize(writer, key, namespaces);
         writer.WriteEndElement();
         writer.WriteStartElement("value");
         TValue obj = this[key];
-        xmlSerializer2.Serialize(writer, (object) obj);
+        xmlSerializer2.Serialize(writer, obj);
         writer.WriteEndElement();
         writer.WriteEndElement();
       }

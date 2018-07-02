@@ -62,9 +62,9 @@ namespace M3D.Model
       List<M3D.Model.Utils.Vector3> convexHullVertices = GetAllConvexHullVertices();
       for (var index = 0; index < convexHullVertices.Count; ++index)
       {
-        MinMaxBounds_Helper(ref maxValue1, ref minValue1, convexHullVertices[index].x);
-        MinMaxBounds_Helper(ref maxValue2, ref minValue2, convexHullVertices[index].y);
-        MinMaxBounds_Helper(ref maxValue3, ref minValue3, convexHullVertices[index].z);
+        MinMaxBounds_Helper(ref maxValue1, ref minValue1, convexHullVertices[index].X);
+        MinMaxBounds_Helper(ref maxValue2, ref minValue2, convexHullVertices[index].Y);
+        MinMaxBounds_Helper(ref maxValue3, ref minValue3, convexHullVertices[index].Z);
       }
       Min = new M3D.Model.Utils.Vector3(maxValue1, maxValue2, maxValue3);
       Max = new M3D.Model.Utils.Vector3(minValue1, minValue2, minValue3);
@@ -82,9 +82,9 @@ namespace M3D.Model
       for (var index = 0; index < convexHullVertices.Count; ++index)
       {
         var vector3 = M3D.Model.Utils.Vector3.MatrixProduct(matrix, convexHullVertices[index]);
-        MinMaxBounds_Helper(ref maxValue1, ref minValue1, vector3.x);
-        MinMaxBounds_Helper(ref maxValue2, ref minValue2, vector3.y);
-        MinMaxBounds_Helper(ref maxValue3, ref minValue3, vector3.z);
+        MinMaxBounds_Helper(ref maxValue1, ref minValue1, vector3.X);
+        MinMaxBounds_Helper(ref maxValue2, ref minValue2, vector3.Y);
+        MinMaxBounds_Helper(ref maxValue3, ref minValue3, vector3.Z);
       }
       min = new M3D.Model.Utils.Vector3(maxValue1, maxValue2, maxValue3);
       max = new M3D.Model.Utils.Vector3(minValue1, minValue2, minValue3);
@@ -92,12 +92,12 @@ namespace M3D.Model
 
     private void MinMaxBounds_Helper(ref float min, ref float max, float var)
     {
-      if ((double) min > (double) var)
+      if (min > (double)var)
       {
         min = var;
       }
 
-      if ((double) max >= (double) var)
+      if (max >= (double)var)
       {
         return;
       }
@@ -231,13 +231,13 @@ namespace M3D.Model
 
       if (verticies.Count % 3 != 0)
       {
-        return (ModelData) null;
+        return null;
       }
 
       progressHelper.SetStage(verticies.Count<M3D.Model.Utils.Vector3>());
       if (!ModelData.HashVertexesAndFaces_Helper(verticies, ref progressHelper, out List<Utils.Vector3> newVerticesList, out List<FaceIndex> newFaceList))
       {
-        return (ModelData)null;
+        return null;
       }
 
       progressHelper.SetStage(newFaceList.Count<ModelData.FaceIndex>());
@@ -294,15 +294,15 @@ namespace M3D.Model
 
             continue;
           default:
-            throw new Exception(string.Format("ExpandVertices: was give a face with {0} indicies", (object) numArray.Length));
+            throw new Exception(string.Format("ExpandVertices: was give a face with {0} indicies", numArray.Length));
         }
       }
     }
 
     private static bool HashVertexesAndFaces_Helper(LinkedList<M3D.Model.Utils.Vector3> verticies, ref ProgressHelper progressHelper, out List<M3D.Model.Utils.Vector3> newVerticesList, out List<ModelData.FaceIndex> newFaceList)
     {
-      newVerticesList = (List<M3D.Model.Utils.Vector3>) null;
-      newFaceList = (List<ModelData.FaceIndex>) null;
+      newVerticesList = null;
+      newFaceList = null;
       var num1 = 0;
       var num2 = 0;
       var source = new Dictionary<M3D.Model.Utils.Vector3, int>();
@@ -326,7 +326,7 @@ namespace M3D.Model
           vector3_3 = vector3_4;
         }
         M3D.Model.Utils.Vector3 normal = ModelData.CalcNormal(vector3_1, vector3_2, vector3_3);
-        if (!double.IsNaN((double) normal.x) && !double.IsNaN((double) normal.y) && !double.IsNaN((double) normal.z))
+        if (!double.IsNaN(normal.X) && !double.IsNaN(normal.Y) && !double.IsNaN(normal.Z))
         {
           int[] faceIndicies = new int[3];
           M3D.Model.Utils.Vector3[] vector3Array = new M3D.Model.Utils.Vector3[3]
@@ -369,22 +369,22 @@ namespace M3D.Model
           progressHelper.Process(num2 += 3);
         }
       }
-      IEnumerable<M3D.Model.Utils.Vector3> collection = source.OrderBy<KeyValuePair<M3D.Model.Utils.Vector3, int>, int>((Func<KeyValuePair<M3D.Model.Utils.Vector3, int>, int>) (pair => pair.Value)).Select<KeyValuePair<M3D.Model.Utils.Vector3, int>, M3D.Model.Utils.Vector3>((Func<KeyValuePair<M3D.Model.Utils.Vector3, int>, M3D.Model.Utils.Vector3>) (pair => pair.Key));
+      IEnumerable<M3D.Model.Utils.Vector3> collection = source.OrderBy<KeyValuePair<M3D.Model.Utils.Vector3, int>, int>(pair => pair.Value).Select<KeyValuePair<M3D.Model.Utils.Vector3, int>, M3D.Model.Utils.Vector3>(pair => pair.Key);
       newVerticesList = new List<M3D.Model.Utils.Vector3>(collection);
       source.Clear();
-      newFaceList = new List<ModelData.FaceIndex>((IEnumerable<ModelData.FaceIndex>) faceIndexSet);
+      newFaceList = new List<ModelData.FaceIndex>(faceIndexSet);
       faceIndexSet.Clear();
       return true;
     }
 
     private static void AssertIfNANOrNULL(M3D.Model.Utils.Vector3 p1)
     {
-      if (p1 == (M3D.Model.Utils.Vector3) null)
+      if (p1 == null)
       {
         throw new NullReferenceException("Null point in loading");
       }
 
-      if (double.IsNaN((double) p1.x) || double.IsNaN((double) p1.y) || double.IsNaN((double) p1.z))
+      if (double.IsNaN(p1.X) || double.IsNaN(p1.Y) || double.IsNaN(p1.Z))
       {
         throw new Exception("Point contains a NAN");
       }
@@ -488,7 +488,7 @@ namespace M3D.Model
         M3D.Model.Utils.Vector3 vertex1 = vertices[faces[index].P1];
         M3D.Model.Utils.Vector3 vertex2 = vertices[faces[index].P2];
         M3D.Model.Utils.Vector3 vertex3 = vertices[faces[index].P3];
-        var num2 = vertex1.x * (double) vertex2.y * (double) vertex3.z + (double) vertex1.y * (double) vertex2.z * (double) vertex3.x + (double) vertex1.z * (double) vertex2.x * (double) vertex3.y - (double) vertex1.z * (double) vertex2.y * (double) vertex3.x - (double) vertex1.y * (double) vertex2.x * (double) vertex3.z - (double) vertex1.x * (double) vertex2.z * (double) vertex3.y;
+        var num2 = vertex1.X * (double) vertex2.Y * vertex3.Z + vertex1.Y * (double)vertex2.Z * vertex3.X + vertex1.Z * (double)vertex2.X * vertex3.Y - vertex1.Z * (double)vertex2.Y * vertex3.X - vertex1.Y * (double)vertex2.X * vertex3.Z - vertex1.X * (double)vertex2.Z * vertex3.Y;
         num1 += num2 / 6.0;
       }
       return num1;
@@ -506,7 +506,7 @@ namespace M3D.Model
         LinkedListNode<M3D.Model.Utils.Vector3> next2 = next1.Next;
         M3D.Model.Utils.Vector3 vector3_3 = next2.Value;
         linkedListNode = next2.Next;
-        var num2 = (double) vector3_1.x * (double) vector3_2.y * (double) vector3_3.z + (double) vector3_1.y * (double) vector3_2.z * (double) vector3_3.x + (double) vector3_1.z * (double) vector3_2.x * (double) vector3_3.y - (double) vector3_1.z * (double) vector3_2.y * (double) vector3_3.x - (double) vector3_1.y * (double) vector3_2.x * (double) vector3_3.z - (double) vector3_1.x * (double) vector3_2.z * (double) vector3_3.y;
+        var num2 = vector3_1.X * (double)vector3_2.Y * vector3_3.Z + vector3_1.Y * (double)vector3_2.Z * vector3_3.X + vector3_1.Z * (double)vector3_2.X * vector3_3.Y - vector3_1.Z * (double)vector3_2.Y * vector3_3.X - vector3_1.Y * (double)vector3_2.X * vector3_3.Z - vector3_1.X * (double)vector3_2.Z * vector3_3.Y;
         num1 += num2 / 6.0;
       }
       return num1 < 0.0;
@@ -514,16 +514,16 @@ namespace M3D.Model
 
     public static M3D.Model.Utils.Vector3 CalcNormal(M3D.Model.Utils.Vector3 _a, M3D.Model.Utils.Vector3 _b, M3D.Model.Utils.Vector3 _c)
     {
-      var num1 = _b.x - _a.x;
-      var num2 = _b.y - _a.y;
-      var num3 = _b.z - _a.z;
-      var num4 = _c.x - _a.x;
-      var num5 = _c.y - _a.y;
-      var num6 = _c.z - _a.z;
-      var num7 = num2 * (double)num6 - (double) num3 * (double) num5;
-      var num8 = (float) ((double) num3 * (double) num4 - (double) num1 * (double) num6);
-      var num9 = (float) ((double) num1 * (double) num5 - (double) num2 * (double) num4);
-      var num10 = (float) Math.Sqrt(num7 * num7 + (double) num8 * (double) num8 + (double) num9 * (double) num9);
+      var num1 = _b.X - _a.X;
+      var num2 = _b.Y - _a.Y;
+      var num3 = _b.Z - _a.Z;
+      var num4 = _c.X - _a.X;
+      var num5 = _c.Y - _a.Y;
+      var num6 = _c.Z - _a.Z;
+      var num7 = num2 * (double)num6 - num3 * (double)num5;
+      var num8 = (float)(num3 * (double)num4 - num1 * (double)num6);
+      var num9 = (float)(num1 * (double)num5 - num2 * (double)num4);
+      var num10 = (float) Math.Sqrt(num7 * num7 + num8 * (double)num8 + num9 * (double)num9);
       return new M3D.Model.Utils.Vector3((float) num7 / num10, num8 / num10, num9 / num10);
     }
 
@@ -557,7 +557,7 @@ namespace M3D.Model
         num1 += faceCount;
         num2 += vertexCount;
       }
-      List<ModelData.VertexIndex> faceLinkHelper = ModelData.GenerateFaceLink_Helper(newVerticesList, newFaceList, (ProgressHelper) null);
+      List<ModelData.VertexIndex> faceLinkHelper = ModelData.GenerateFaceLink_Helper(newVerticesList, newFaceList, null);
       return new ModelData(newFaceList, newVerticesList, faceLinkHelper);
     }
 
@@ -667,7 +667,7 @@ namespace M3D.Model
 
       public override string ToString()
       {
-        var str = string.Format("Edge {2} [{0} - {1}]: ", p1_ID, (object)p2_ID, (object)GetHashCode());
+        var str = string.Format("Edge {2} [{0} - {1}]: ", p1_ID, p2_ID, GetHashCode());
         if (Faces == null)
         {
           str += "has no faces";
@@ -848,7 +848,7 @@ namespace M3D.Model
       {
         get
         {
-          return ModelData.Verticies[index].x;
+          return ModelData.Verticies[index].X;
         }
       }
 
@@ -856,7 +856,7 @@ namespace M3D.Model
       {
         get
         {
-          return ModelData.Verticies[index].y;
+          return ModelData.Verticies[index].Y;
         }
       }
 
@@ -864,7 +864,7 @@ namespace M3D.Model
       {
         get
         {
-          return ModelData.Verticies[index].z;
+          return ModelData.Verticies[index].Z;
         }
       }
 
@@ -882,9 +882,9 @@ namespace M3D.Model
         {
           return new double[3]
           {
-            (double) X,
-            (double) Y,
-            (double) Z
+             X,
+             Y,
+             Z
           };
         }
       }
@@ -896,7 +896,7 @@ namespace M3D.Model
 
       public VertexIndex(List<int> FaceIndecies)
       {
-        Faces = new List<int>((IEnumerable<int>) FaceIndecies);
+        Faces = new List<int>(FaceIndecies);
       }
     }
   }

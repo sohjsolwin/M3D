@@ -20,7 +20,7 @@ namespace M3D.Spooling.Core
   {
     private static ConcurrentDictionary<string, PrinterConnection.ConnectAttemptData> serial_failed_list = new ConcurrentDictionary<string, PrinterConnection.ConnectAttemptData>();
     internal ThreadSafeVariable<uint> CurrentRPC_id = new ThreadSafeVariable<uint>(0U);
-    private ThreadSafeVariable<BaseController> m_oController = new ThreadSafeVariable<BaseController>((BaseController) null);
+    private ThreadSafeVariable<BaseController> m_oController = new ThreadSafeVariable<BaseController>(null);
     private object shutdownlock = new object();
     private object statusthreadsync = new object();
     private Stopwatch lockResetTimer = new Stopwatch();
@@ -335,7 +335,7 @@ namespace M3D.Spooling.Core
       }
 
       Status = PrinterStatus.Firmware_PowerRecovery;
-      BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.PowerOutageRecovery, Info.serial_number, (string) null).Serialize());
+      BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.PowerOutageRecovery, Info.serial_number, null).Serialize());
       return (CommandResult) num;
     }
 
@@ -394,7 +394,7 @@ namespace M3D.Spooling.Core
       shared_shutdown = new ThreadSafeVariable<bool>(false);
       internal_logger = new Logger(shared_shutdown);
       printerInfo = new PrinterInfo();
-      CurrentRPC_id.Value = printerInfo.synchronization.LastCompletedRPCID = (uint) (SpoolerServer.RandomGenerator.Next() % (int) byte.MaxValue);
+      CurrentRPC_id.Value = printerInfo.synchronization.LastCompletedRPCID = (uint) (SpoolerServer.RandomGenerator.Next() % byte.MaxValue);
       printerInfo.hardware.com_port = _safeSerialPort.PortName;
       Info.serial_number = PrinterSerialNumber.Undefined;
       Status = PrinterStatus.Uninitialized;
@@ -407,7 +407,7 @@ namespace M3D.Spooling.Core
     public PrinterConnection(string com_port)
     {
       var portThreadSync = new object();
-      _safeSerialPort = (ISerialPortIo) new SafeSerialPort(com_port, portThreadSync)
+      _safeSerialPort = new SafeSerialPort(com_port, portThreadSync)
       {
         Parity = Parity.None,
         StopBits = StopBits.One,
@@ -631,7 +631,7 @@ namespace M3D.Spooling.Core
     {
       if (PrinterInfo.InBootloaderMode && SpoolerServer.AUTO_UPDATE_FIRMWARE || PrinterInfo.Status == PrinterStatus.Bootloader_StartingUp)
       {
-        return (string) null;
+        return null;
       }
 
       return PrinterInfo.Serialize();
@@ -692,7 +692,7 @@ namespace M3D.Spooling.Core
 
             stopwatch1.Stop();
             InternalLogger.WriteLog(">> " + str2, Logger.TextType.Read);
-            ControllerSelf = (BaseController) new BootloaderController(result, this, printerInfo, internal_logger, shared_shutdown, broadcastserver, MyPrinterProfile);
+            ControllerSelf = new BootloaderController(result, this, printerInfo, internal_logger, shared_shutdown, broadcastserver, MyPrinterProfile);
             return true;
           }
           var startIndex = input.IndexOf("ok");
@@ -704,7 +704,7 @@ namespace M3D.Spooling.Core
             }
 
             stopwatch1.Stop();
-            ControllerSelf = (BaseController) new FirmwareController(input.Substring(startIndex), this, printerInfo, internal_logger, shared_shutdown, broadcastserver, MyPrinterProfile);
+            ControllerSelf = new FirmwareController(input.Substring(startIndex), this, printerInfo, internal_logger, shared_shutdown, broadcastserver, MyPrinterProfile);
             RegisterFirmwarePlugins();
             return true;
           }
@@ -723,7 +723,7 @@ namespace M3D.Spooling.Core
           {
             flag3 = false;
             input = "";
-            if (!WriteToSerial(new GCode() { M = (ushort) 115 }.getBinary(2)))
+            if (!WriteToSerial(new GCode() { M = 115 }.getBinary(2)))
             {
               return false;
             }
@@ -749,7 +749,7 @@ namespace M3D.Spooling.Core
         return controllerSelf as FirmwareController;
       }
 
-      return (FirmwareController) null;
+      return null;
     }
 
     private BootloaderController GetBootloaderController()
@@ -760,7 +760,7 @@ namespace M3D.Spooling.Core
         return controllerSelf as BootloaderController;
       }
 
-      return (BootloaderController) null;
+      return null;
     }
 
     private BaseController ControllerSelf
@@ -1123,7 +1123,7 @@ label_11:
         return _safeSerialPort.ReadExisting();
       }
 
-      return (string) null;
+      return null;
     }
 
     public bool IsOpen
@@ -1197,9 +1197,9 @@ label_11:
       }
 
       var sdCardPlugin = new SDCardPlugin(PrinterInfo.accessories.SDCardStatus, new SDCardPlugin.ActiveSDPrintCallback(firmwareController.ConnectToActiveSDPrint));
-      var num1 = (int) firmwareController.RegisterPlugin((FirmwareControllerPlugin) sdCardPlugin);
-      m_oPowerRecoveryPlugin = new PowerRecoveryPlugin(PrinterInfo.powerRecovery, (IPublicFirmwareController) firmwareController, new PowerRecoveryPlugin.RecoverySpoolerPrintCallback(firmwareController.RecoverySpoolerPrintCallback));
-      var num2 = (int) firmwareController.RegisterPlugin((FirmwareControllerPlugin)m_oPowerRecoveryPlugin);
+      var num1 = (int) firmwareController.RegisterPlugin(sdCardPlugin);
+      m_oPowerRecoveryPlugin = new PowerRecoveryPlugin(PrinterInfo.powerRecovery, firmwareController, new PowerRecoveryPlugin.RecoverySpoolerPrintCallback(firmwareController.RecoverySpoolerPrintCallback));
+      var num2 = (int) firmwareController.RegisterPlugin(m_oPowerRecoveryPlugin);
     }
 
     protected IBroadcastServer BroadcastServer

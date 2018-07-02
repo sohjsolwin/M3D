@@ -109,7 +109,7 @@ namespace M3D.Spooling.Common
       }
     }
 
-    public bool isFull
+    public bool IsFull
     {
       get
       {
@@ -120,7 +120,7 @@ namespace M3D.Spooling.Common
       }
     }
 
-    public bool isEmpty
+    public bool IsEmpty
     {
       get
       {
@@ -144,7 +144,7 @@ namespace M3D.Spooling.Common
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator)GetEnumerator();
+      return GetEnumerator();
     }
   }
 }

@@ -19,7 +19,7 @@ namespace M3D.Spooling.ConnectionManager
         com_ports = find_all_tty_usb();
       }
 
-      return new List<string>((IEnumerable<string>)com_ports);
+      return new List<string>(com_ports);
     }
 
     private List<string> find_all_tty_usb()

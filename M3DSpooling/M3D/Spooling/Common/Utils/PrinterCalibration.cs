@@ -9,7 +9,7 @@ namespace M3D.Spooling.Common.Utils
     internal static List<string> CreateCalibrationGCode(PrinterCalibration.Type type, float calibrationZ, float startingZ, SpoolerOptionsProfile spoolerOptions)
     {
       var stringList = new List<string>();
-      if (1.0 < (double) startingZ)
+      if (1.0 < startingZ)
       {
         stringList.Add("M104 S150");
         stringList.Add("G90");
@@ -18,7 +18,7 @@ namespace M3D.Spooling.Common.Utils
       }
       if (spoolerOptions.HomeAndSetTempOnCalibration)
       {
-        if (1.0 > (double) startingZ)
+        if (1.0 > startingZ)
         {
           stringList.Add("M104 S150");
         }
@@ -41,7 +41,7 @@ namespace M3D.Spooling.Common.Utils
         str = "G30";
       }
 
-      stringList.Add(PrinterCompatibleString.Format("{0} Z{1}", (object) str, (object) calibrationZ));
+      stringList.Add(PrinterCompatibleString.Format("{0} Z{1}", str, calibrationZ));
       stringList.Add("M104 S0");
       stringList.Add("M18");
       return stringList;

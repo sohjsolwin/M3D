@@ -14,28 +14,28 @@ namespace M3D.Slicer.General
     public void RotationX(float angle)
     {
       Identity();
-      m[1, 1] = (float) Math.Cos((double) angle);
-      m[1, 2] = (float) -Math.Sin((double) angle);
-      m[2, 1] = (float) Math.Sin((double) angle);
-      m[2, 2] = (float) Math.Cos((double) angle);
+      m[1, 1] = (float) Math.Cos(angle);
+      m[1, 2] = (float) -Math.Sin(angle);
+      m[2, 1] = (float) Math.Sin(angle);
+      m[2, 2] = (float) Math.Cos(angle);
     }
 
     public void RotationY(float angle)
     {
       Identity();
-      m[0, 0] = (float) Math.Cos((double) angle);
-      m[0, 2] = (float) Math.Sin((double) angle);
-      m[2, 0] = (float) -Math.Sin((double) angle);
-      m[2, 2] = (float) Math.Cos((double) angle);
+      m[0, 0] = (float) Math.Cos(angle);
+      m[0, 2] = (float) Math.Sin(angle);
+      m[2, 0] = (float) -Math.Sin(angle);
+      m[2, 2] = (float) Math.Cos(angle);
     }
 
     public void RotationZ(float angle)
     {
       Identity();
-      m[0, 0] = (float) Math.Cos((double) angle);
-      m[0, 1] = (float) -Math.Sin((double) angle);
-      m[1, 0] = (float) Math.Sin((double) angle);
-      m[1, 1] = (float) Math.Cos((double) angle);
+      m[0, 0] = (float) Math.Cos(angle);
+      m[0, 1] = (float) -Math.Sin(angle);
+      m[1, 0] = (float) Math.Sin(angle);
+      m[1, 1] = (float) Math.Cos(angle);
     }
 
     public void Identity()
@@ -53,7 +53,7 @@ namespace M3D.Slicer.General
       m[3, 3] = 1f;
     }
 
-    public static Matrix4x4 mul(Matrix4x4 lhs, Matrix4x4 rhs)
+    public static Matrix4x4 Mul(Matrix4x4 lhs, Matrix4x4 rhs)
     {
       var matrix4x4 = new Matrix4x4();
       for (var index1 = 0; index1 < 4; ++index1)

@@ -54,7 +54,7 @@ namespace M3D.Graphics.Widgets2D
           }
           ++num4;
         }
-        num3 = (float) num1 / (float) num5;
+        num3 = num1 / (float)num5;
       }
       var borderWidth = border_width;
       var num6 = 0;
@@ -62,7 +62,7 @@ namespace M3D.Graphics.Widgets2D
       {
         if (num6 >= startIndex && num6 < startIndex + visibleCount)
         {
-          var width = use_fixed_column_width || info.prefered_size == 0 ? num2 - border_width : (info.prefered_size > 0 ? (!info.ispercent ? (int) ((double) num3 * (double) info.prefered_size) : (int) ((double) num3 * (double) info.prefered_size * (double) num1)) - border_width : num1 - borderWidth - border_height);
+          var width = use_fixed_column_width || info.prefered_size == 0 ? num2 - border_width : (info.prefered_size > 0 ? (!info.ispercent ? (int)(num3 * (double)info.prefered_size) : (int)(num3 * (double)info.prefered_size * num1)) - border_width : num1 - borderWidth - border_height);
           info.element.SetPosition(borderWidth, border_height);
           info.element.SetSize(width, Height - border_height * 2);
           borderWidth += width + border_width;
@@ -88,7 +88,7 @@ namespace M3D.Graphics.Widgets2D
     public override void RemoveChildElement(Element2D child)
     {
       base.RemoveChildElement(child);
-      var index = info_list.FindIndex((Predicate<HorizontalLayout.ColumnInfo>) (ci => child == ci.element));
+      var index = info_list.FindIndex(ci => child == ci.element);
       if (index < 0)
       {
         return;

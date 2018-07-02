@@ -56,8 +56,7 @@ namespace M3D.Spooling.Sockets
       remoteEP = new IPEndPoint(ipAddress, serverport);
       if (StartSocketPeer(0) >= 0)
       {
-        var localEndPoint = listener.LocalEndPoint as IPEndPoint;
-        if (localEndPoint != null)
+        if (listener.LocalEndPoint is IPEndPoint localEndPoint)
         {
           myListenerPort = localEndPoint.Port;
           StartListening();
@@ -84,7 +83,7 @@ namespace M3D.Spooling.Sockets
       byte[] numArray = new byte[1024];
       try
       {
-        socket.Connect((EndPoint)remoteEP);
+        socket.Connect(remoteEP);
         byte[] bytes = Encoding.UTF8.GetBytes(s);
         socket.Send(bytes);
         while (true)

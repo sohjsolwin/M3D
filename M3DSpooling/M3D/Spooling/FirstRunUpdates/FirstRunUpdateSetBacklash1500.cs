@@ -11,7 +11,7 @@ namespace M3D.Spooling.FirstRunUpdates
     {
       try
       {
-        var uint32 = (int) BitConverter.ToUInt32(eeprom, (int) printerProfile.EEPROMConstants.GetEepromInfo("FirmwareVersion").EepromAddr);
+        var uint32 = (int) BitConverter.ToUInt32(eeprom, printerProfile.EEPROMConstants.GetEepromInfo("FirmwareVersion").EepromAddr);
         var num1 = 1500f;
         var num2 = 2015080402;
         if ((uint) uint32 < (uint) num2)

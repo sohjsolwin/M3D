@@ -37,13 +37,13 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         return;
       }
 
-      if (CurrentDetails.current_spool == (FilamentSpool) null)
+      if (CurrentDetails.current_spool == null)
       {
         MainWindow.ResetToStartup();
       }
       else
       {
-        var num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(selectedPrinter, Manage3DInkMainWindow.PageID.Page2_RetractingFilament, CurrentDetails), "G4 S5", "G91", PrinterCompatibleString.Format("G0 E{0} F{1}", (object) 50f, (object) 90.0));
+        var num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(MainWindow.GotoPageAfterOperation), new Manage3DInkMainWindow.PageAfterLockDetails(selectedPrinter, Manage3DInkMainWindow.PageID.Page2_RetractingFilament, CurrentDetails), "G4 S5", "G91", PrinterCompatibleString.Format("G0 E{0} F{1}", 50f, 90.0));
       }
     }
   }

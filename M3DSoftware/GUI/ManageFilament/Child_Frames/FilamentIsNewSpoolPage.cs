@@ -36,9 +36,9 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         if (button.ID == 6)
         {
           FilamentSpool filamentSpool = SearchForFilamentDuplicate();
-          if (filamentSpool != (FilamentSpool) null)
+          if (filamentSpool != null)
           {
-            if ((double) filamentSpool.estimated_filament_length_printed > (double)CurrentDetails.current_spool.estimated_filament_length_printed)
+            if (filamentSpool.estimated_filament_length_printed > (double)CurrentDetails.current_spool.estimated_filament_length_printed)
             {
               CurrentDetails.current_spool.estimated_filament_length_printed = filamentSpool.estimated_filament_length_printed;
             }

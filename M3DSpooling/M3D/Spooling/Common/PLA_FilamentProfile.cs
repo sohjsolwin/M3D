@@ -8,7 +8,7 @@ namespace M3D.Spooling.Common
       : base(spool)
     {
       preprocessor.initialPrint.StartingTemp = filament.filament_temperature;
-      preprocessor.initialPrint.StartingFanValue = (int) byte.MaxValue;
+      preprocessor.initialPrint.StartingFanValue = byte.MaxValue;
       preprocessor.initialPrint.StartingTempStabilizationDelay = 15;
       preprocessor.bonding.FirstLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature + 10);
       preprocessor.bonding.SecondLayerTemp = printer_profile.TemperatureConstants.GetBoundedTemp(filament.filament_temperature + 5);

@@ -9,7 +9,7 @@ namespace M3D.Spooling.Printer_Profiles
 
     public FirstRunProfile(params IFirstRunUpdater[] updater)
     {
-      updater_list = new List<IFirstRunUpdater>((IEnumerable<IFirstRunUpdater>) updater);
+      updater_list = new List<IFirstRunUpdater>(updater);
     }
   }
 }

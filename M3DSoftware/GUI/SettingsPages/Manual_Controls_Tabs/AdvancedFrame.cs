@@ -40,7 +40,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     {
       base.OnUpdate();
       PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
-      if (selectedPrinter == null || !selectedPrinter.isConnected() || !selectedPrinter.HasHeatedBed)
+      if (selectedPrinter == null || !selectedPrinter.IsConnected() || !selectedPrinter.HasHeatedBed)
       {
         if (heater_text != null)
         {
@@ -61,11 +61,11 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
           heatedbedFrame.Enabled = true;
         }
 
-        if ((double) selectedPrinter.Info.accessories.BedStatus.BedTemperature == -1.0)
+        if (selectedPrinter.Info.accessories.BedStatus.BedTemperature == -1.0)
         {
           heater_text.Text = "ON";
         }
-        else if ((double) selectedPrinter.Info.accessories.BedStatus.BedTemperature < 1.0)
+        else if (selectedPrinter.Info.accessories.BedStatus.BedTemperature < 1.0)
         {
           heater_text.Text = "OFF";
         }
@@ -79,7 +79,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     public void MyButtonCallback(ButtonWidget button)
     {
       PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
-      if (selectedPrinter == null || !selectedPrinter.isConnected())
+      if (selectedPrinter == null || !selectedPrinter.IsConnected())
       {
         return;
       }
@@ -87,20 +87,20 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
       switch (button.ID)
       {
         case 1000:
-          var num1 = (int) selectedPrinter.SendEmergencyStop((AsyncCallback) null, (object) null);
+          var num1 = (int) selectedPrinter.SendEmergencyStop(null, null);
           break;
         case 1014:
           FilamentSpool currentFilament = selectedPrinter.GetCurrentFilament();
-          if (currentFilament == (FilamentSpool) null)
+          if (currentFilament == null)
           {
             messagebox.AddMessageToQueue("Sorry, but you must insert filament first.");
             break;
           }
           var num2 = FilamentConstants.Temperature.BedDefault(currentFilament.filament_type);
-          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, PrinterCompatibleString.Format("M190 S{0}", (object) num2));
+          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, PrinterCompatibleString.Format("M190 S{0}", (object) num2));
           break;
         case 1015:
-          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, "M140 S0");
+          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, "M140 S0");
           break;
       }
     }

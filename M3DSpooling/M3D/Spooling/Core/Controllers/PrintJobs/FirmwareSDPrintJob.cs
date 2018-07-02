@@ -33,18 +33,18 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       }
       catch (Exception ex)
       {
-        return new JobCreateResult((AbstractJob) this, ProcessReturn.FAILURE, (List<MessageType>) null);
+        return new JobCreateResult(this, ProcessReturn.FAILURE, null);
       }
       FilamentSpool.TypeEnum filamentTypeFromName = FirmwareSDPrintJob.GetFilamentTypeFromName(Details.jobParams.gcodefile);
       switch (filamentTypeFromName)
       {
         case FilamentSpool.TypeEnum.NoFilament:
         case FilamentSpool.TypeEnum.OtherOrUnknown:
-          return new JobCreateResult((AbstractJob) this, ProcessReturn.SUCCESS, (List<MessageType>) null);
+          return new JobCreateResult(this, ProcessReturn.SUCCESS, null);
         default:
-          if (FilamentProfile.CreateFilamentProfile(printerInfo.filament_info, (PrinterProfile)MyPrinterProfile).Type != filamentTypeFromName)
+          if (FilamentProfile.CreateFilamentProfile(printerInfo.filament_info, MyPrinterProfile).Type != filamentTypeFromName)
           {
-            return new JobCreateResult((AbstractJob) null, ProcessReturn.FAILURE_FILAMENT_MISMATCH, (List<MessageType>) null);
+            return new JobCreateResult(null, ProcessReturn.FAILURE_FILAMENT_MISMATCH, null);
           }
 
           goto case FilamentSpool.TypeEnum.NoFilament;
@@ -66,7 +66,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     {
       start_gcode = new List<string>()
       {
-        string.Format("M32 {0}", (object) m_sGCodeFileOnSDCard)
+        string.Format("M32 {0}",  m_sGCodeFileOnSDCard)
       };
       ConnectToRunningSDPrint();
       return true;
@@ -105,7 +105,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       OnGetNextCommand();
       if (Status == JobStatus.Paused || m_oswRefreshTimer.ElapsedMilliseconds <= 1000L)
       {
-        return (GCode) null;
+        return null;
       }
 
       m_oswRefreshTimer.Restart();
@@ -145,7 +145,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
           return 0.0f;
         }
 
-        return (float)m_lSDFilePos / (float)m_lSDFileSize;
+        return m_lSDFilePos / (float)m_lSDFileSize;
       }
     }
 

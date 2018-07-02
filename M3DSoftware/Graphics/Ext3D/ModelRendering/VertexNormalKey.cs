@@ -13,12 +13,12 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     {
       this.vertice = vertice;
       this.normal = normal;
-      hash = vertice.x.GetHashCode();
-      hash ^= vertice.y.GetHashCode();
-      hash ^= vertice.z.GetHashCode();
-      hash ^= normal.y.GetHashCode();
-      hash ^= normal.z.GetHashCode();
-      hash ^= normal.y.GetHashCode();
+      hash = vertice.X.GetHashCode();
+      hash ^= vertice.Y.GetHashCode();
+      hash ^= vertice.Z.GetHashCode();
+      hash ^= normal.Y.GetHashCode();
+      hash ^= normal.Z.GetHashCode();
+      hash ^= normal.Y.GetHashCode();
     }
 
     public override int GetHashCode()

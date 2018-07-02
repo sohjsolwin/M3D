@@ -94,7 +94,7 @@ namespace M3D.Spooling.Common.Utils
 
     IEnumerator<T> IEnumerable<T>.GetEnumerator()
     {
-      return (IEnumerator<T>)buffer.GetEnumerator();
+      return buffer.GetEnumerator();
     }
 
     int ICollection.Count
@@ -117,7 +117,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (object) this;
+        return this;
       }
     }
 
@@ -128,7 +128,7 @@ namespace M3D.Spooling.Common.Utils
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator)buffer.GetEnumerator();
+      return buffer.GetEnumerator();
     }
   }
 }

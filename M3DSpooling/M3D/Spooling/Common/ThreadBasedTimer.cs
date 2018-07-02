@@ -19,7 +19,7 @@ namespace M3D.Spooling.Common
       thread_sync = new object();
       _interval = 100;
       _isRunning = false;
-      Tick = (EventHandler) null;
+      Tick = null;
       this.shared_shutdown = shared_shutdown;
     }
 
@@ -58,7 +58,7 @@ namespace M3D.Spooling.Common
 
         _isRunning = false;
         runThread.Abort();
-        runThread = (Thread) null;
+        runThread = null;
       }
     }
 
@@ -87,10 +87,7 @@ namespace M3D.Spooling.Common
         while (!shared_shutdown.Value)
         {
           Thread.Sleep(Interval);
-          if (Tick != null)
-          {
-            Tick((object) null, (EventArgs) null);
-          }
+          Tick?.Invoke(null, null);
         }
       }
       catch (ThreadAbortException ex)

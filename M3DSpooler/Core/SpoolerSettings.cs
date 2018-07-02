@@ -10,7 +10,7 @@ namespace M3D.Spooler.Core
   public class SpoolerSettings
   {
     private static object threadsync = new object();
-    private static XmlSerializer __class_serializer = (XmlSerializer) null;
+    private static XmlSerializer __class_serializer = null;
     public bool DoNotShowPrinterLockOutWarning;
     public bool StartAdvanced;
 
@@ -23,7 +23,7 @@ namespace M3D.Spooler.Core
       {
         try
         {
-          textReader = (TextReader) new StreamReader(path);
+          textReader = new StreamReader(path);
           spoolerSettings = (SpoolerSettings) SpoolerSettings.ClassSerializer.Deserialize(textReader);
         }
         catch (Exception ex)
@@ -49,11 +49,11 @@ namespace M3D.Spooler.Core
           var serializerNamespaces = new XmlSerializerNamespaces();
           serializerNamespaces.Add(string.Empty, string.Empty);
           XmlSerializer classSerializer = SpoolerSettings.ClassSerializer;
-          textWriter1 = (TextWriter) new StreamWriter(str);
+          textWriter1 = new StreamWriter(str);
           TextWriter textWriter2 = textWriter1;
           SpoolerSettings spoolerSettings = settings;
           XmlSerializerNamespaces namespaces = serializerNamespaces;
-          classSerializer.Serialize(textWriter2, (object) spoolerSettings, namespaces);
+          classSerializer.Serialize(textWriter2, spoolerSettings, namespaces);
         }
         catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException || ex is IOException || ex is InvalidOperationException)
         {

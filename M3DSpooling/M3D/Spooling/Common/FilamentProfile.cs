@@ -23,15 +23,15 @@ namespace M3D.Spooling.Common
       {
         case FilamentSpool.TypeEnum.ABS:
         case FilamentSpool.TypeEnum.HIPS:
-          return (FilamentProfile) new ABS_FilamentProfile(spool, printer_profile);
+          return new ABS_FilamentProfile(spool, printer_profile);
         case FilamentSpool.TypeEnum.PLA:
         case FilamentSpool.TypeEnum.CAM:
-          return (FilamentProfile) new PLA_FilamentProfile(spool, printer_profile);
+          return new PLA_FilamentProfile(spool, printer_profile);
         case FilamentSpool.TypeEnum.FLX:
         case FilamentSpool.TypeEnum.TGH:
-          return (FilamentProfile) new TGH_FilamentProfile(spool, printer_profile);
+          return new TGH_FilamentProfile(spool, printer_profile);
         case FilamentSpool.TypeEnum.ABS_R:
-          return (FilamentProfile) new ABS_R_FilamentProfile(spool, printer_profile);
+          return new ABS_R_FilamentProfile(spool, printer_profile);
         default:
           throw new ArgumentException("FilamentProfile.CreateFilamentProfile does not know that type :(");
       }

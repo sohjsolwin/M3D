@@ -15,7 +15,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     }
 
     public HorizontalLayout(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -32,7 +32,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       base.InitChildren(parent, host, MyButtonCallback);
       var index = 0;
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         HorizontalLayout.ColumnInfo columnInfo;
         columnInfo.element = child;
@@ -121,7 +121,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       var borderHeight = border_height;
       var borderWidth = border_width;
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         if (child.SelfIsVisible)
         {
@@ -130,7 +130,7 @@ namespace M3D.Graphics.Frames_and_Layouts
         }
       }
       Width = borderWidth;
-      OnControlMsg((Element2D) this, ControlMsg.LAYOUT_RESIZED_BY_CHILDREN, 0.0f, 0.0f);
+      OnControlMsg(this, ControlMsg.LAYOUT_RESIZED_BY_CHILDREN, 0.0f, 0.0f);
     }
 
     protected override void RecalcChildSizes()
@@ -165,12 +165,12 @@ namespace M3D.Graphics.Frames_and_Layouts
             num4 += info.prefered_size;
           }
         }
-        num3 = (float) num1 / (float) num4;
+        num3 = num1 / (float)num4;
       }
       var borderWidth = border_width;
       foreach (HorizontalLayout.ColumnInfo info in info_list)
       {
-        var width = use_fixed_column_width || info.prefered_size == 0 ? num2 - border_width : (info.prefered_size > 0 ? (!info.ispercent ? (int) ((double) num3 * (double) info.prefered_size) : (int) ((double) num3 * (double) info.prefered_size * (double) num1)) - border_width : num1 - borderWidth - border_height);
+        var width = use_fixed_column_width || info.prefered_size == 0 ? num2 - border_width : (info.prefered_size > 0 ? (!info.ispercent ? (int)(num3 * (double)info.prefered_size) : (int)(num3 * (double)info.prefered_size * num1)) - border_width : num1 - borderWidth - border_height);
         info.element.SetPosition(borderWidth, border_height);
         info.element.SetSize(width, Height - border_height * 2);
         borderWidth += width + border_width;

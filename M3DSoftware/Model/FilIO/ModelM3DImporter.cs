@@ -15,7 +15,7 @@ namespace M3D.Model.FilIO
         var triangleIndecies = new LinkedList<int[]>();
         using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
         {
-          using (var binaryReader = new BinaryReader((Stream) fileStream))
+          using (var binaryReader = new BinaryReader(fileStream))
           {
             var num1 = binaryReader.ReadInt32();
             for (var index = 0; index < num1; ++index)
@@ -26,7 +26,7 @@ namespace M3D.Model.FilIO
               verticies.AddLast(new Vector3(x, y, z));
             }
             var num2 = binaryReader.ReadInt32();
-            binaryReader.BaseStream.Seek((long) (12 * num2), SeekOrigin.Current);
+            binaryReader.BaseStream.Seek(12 * num2, SeekOrigin.Current);
             var num3 = binaryReader.ReadInt32();
             for (var index = 0; index < num3; ++index)
             {
@@ -45,12 +45,12 @@ namespace M3D.Model.FilIO
           }
           fileStream.Close();
         }
-        return ModelData.Create(verticies, triangleIndecies, (ProgressHelper.PercentageDelagate) null);
+        return ModelData.Create(verticies, triangleIndecies, null);
       }
       catch (Exception ex)
       {
       }
-      return (ModelData) null;
+      return null;
     }
   }
 }

@@ -74,7 +74,7 @@ namespace M3D.GUI.Forms
 
     public static void ShowExceptionForm(Exception e)
     {
-      ExceptionForm.ShowExceptionForm(e, (string) null);
+      ExceptionForm.ShowExceptionForm(e, null);
     }
 
     public static void ShowExceptionForm(Exception e, string extra_info)
@@ -126,7 +126,7 @@ namespace M3D.GUI.Forms
       buttonClose.Text = "Close Application";
       buttonClose.UseVisualStyleBackColor = true;
       buttonClose.Click += new EventHandler(buttonClose_Click);
-      label1.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      label1.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Regular, GraphicsUnit.Point, 0);
       label1.Location = new Point(8, 5);
       label1.Name = "label1";
       label1.Size = new Size(582, 47);
@@ -143,8 +143,8 @@ namespace M3D.GUI.Forms
       labelVersion.Size = new Size(130, 12);
       labelVersion.TabIndex = 4;
       labelVersion.Text = "Version 2015-02-11-01";
-      pictureBox1.Image = (Image) Resources.m3dlogo;
-      pictureBox1.InitialImage = (Image) Resources.m3dlogo;
+      pictureBox1.Image = Resources.m3dlogo;
+      pictureBox1.InitialImage = Resources.m3dlogo;
       pictureBox1.Location = new Point(14, 217);
       pictureBox1.Name = "pictureBox1";
       pictureBox1.Size = new Size(155, 35);
@@ -163,12 +163,12 @@ namespace M3D.GUI.Forms
       AutoSize = true;
       ClientSize = new Size(605, 258);
       ControlBox = false;
-      Controls.Add((Control)button1);
-      Controls.Add((Control)labelVersion);
-      Controls.Add((Control)pictureBox1);
-      Controls.Add((Control)textBox1);
-      Controls.Add((Control)label1);
-      Controls.Add((Control)buttonClose);
+      Controls.Add(button1);
+      Controls.Add(labelVersion);
+      Controls.Add(pictureBox1);
+      Controls.Add(textBox1);
+      Controls.Add(label1);
+      Controls.Add(buttonClose);
       FormBorderStyle = FormBorderStyle.Fixed3D;
       Name = nameof (ExceptionForm);
       Text = "M3D GUI";

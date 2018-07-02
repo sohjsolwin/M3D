@@ -51,7 +51,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       }
 
       FilamentSpool currentFilament = selectedPrinter.GetCurrentFilament();
-      if (selectedPrinter.IsPausedorPausing && currentFilament != (FilamentSpool) null && currentFilament.filament_location == FilamentSpool.Location.Internal)
+      if (selectedPrinter.IsPausedorPausing && currentFilament != null && currentFilament.filament_location == FilamentSpool.Location.Internal)
       {
         messagebox.AddMessageToQueue("Sorry, but changes cannot be made to internal spools while paused.");
       }
@@ -61,7 +61,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         switch (button.ID)
         {
           case 19:
-            if (current_spool == (FilamentSpool) null)
+            if (current_spool == null)
             {
               messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "Please insert filament"));
               break;
@@ -80,7 +80,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
             MainWindow.LockPrinterAndGotoPage(selectedPrinter, Manage3DInkMainWindow.PageID.Page11_CheatCodePage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.AddFilament));
             break;
           case 22:
-            if (!(currentFilament != (FilamentSpool) null))
+            if (!(currentFilament != null))
             {
               break;
             }
@@ -111,7 +111,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           VAlignment = TextVerticalAlignment.Middle,
           Text = "Color:"
         };
-        childElement.AddChildElement((Element2D) textWidget1);
+        childElement.AddChildElement(textWidget1);
         var textWidget2 = new TextWidget(12)
         {
           Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -123,7 +123,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           VAlignment = TextVerticalAlignment.Middle,
           Text = "purple"
         };
-        childElement.AddChildElement((Element2D) textWidget2);
+        childElement.AddChildElement(textWidget2);
         var textWidget3 = new TextWidget(13)
         {
           Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -135,7 +135,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           VAlignment = TextVerticalAlignment.Middle,
           Text = "Material:"
         };
-        childElement.AddChildElement((Element2D) textWidget3);
+        childElement.AddChildElement(textWidget3);
         var textWidget4 = new TextWidget(14)
         {
           Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -147,7 +147,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           VAlignment = TextVerticalAlignment.Middle,
           Text = "PLA"
         };
-        childElement.AddChildElement((Element2D) textWidget4);
+        childElement.AddChildElement(textWidget4);
         var textWidget5 = new TextWidget(15)
         {
           Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -159,7 +159,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           VAlignment = TextVerticalAlignment.Middle,
           Text = "Temperature:"
         };
-        childElement.AddChildElement((Element2D) textWidget5);
+        childElement.AddChildElement(textWidget5);
         var textWidget6 = new TextWidget(16)
         {
           Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -171,7 +171,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           VAlignment = TextVerticalAlignment.Middle,
           Text = "9001"
         };
-        childElement.AddChildElement((Element2D) textWidget6);
+        childElement.AddChildElement(textWidget6);
         var textWidget7 = new TextWidget(17)
         {
           Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -183,7 +183,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           VAlignment = TextVerticalAlignment.Middle,
           Text = "3D Ink Used (mm):"
         };
-        childElement.AddChildElement((Element2D) textWidget7);
+        childElement.AddChildElement(textWidget7);
         var textWidget8 = new TextWidget(18)
         {
           Color = new Color4(0.35f, 0.35f, 0.35f, 1f),
@@ -195,7 +195,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           VAlignment = TextVerticalAlignment.Middle,
           Text = "0"
         };
-        childElement.AddChildElement((Element2D) textWidget8);
+        childElement.AddChildElement(textWidget8);
         var buttonWidget1 = new ButtonWidget(19);
         buttonWidget1.Init(Host, "guicontrols", 194f, 1f, 253f, 64f, 194f, 65f, 253f, 128f, 194f, 129f, 253f, 192f);
         buttonWidget1.Size = FontSize.Large;
@@ -204,7 +204,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget1.SetSize(60, 60);
         buttonWidget1.SetPosition(-60, 0);
         buttonWidget1.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-        childElement.AddChildElement((Element2D) buttonWidget1);
+        childElement.AddChildElement(buttonWidget1);
         var buttonWidget2 = new ButtonWidget(20);
         buttonWidget2.Init(Host, "guicontrols", 200f, 705f, 220f, 725f, 200f, 705f, 220f, 725f, 200f, 705f, 220f, 725f, 200f, 705f, 220f, 725f);
         buttonWidget2.Size = FontSize.Medium;
@@ -217,9 +217,9 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget2.TextColor = new Color4(0.3529412f, 0.7450981f, 0.8627451f, 1f);
         buttonWidget2.TextOverColor = new Color4(0.4392157f, 0.8392157f, 0.9372549f, 1f);
         buttonWidget2.TextDownColor = new Color4(0.2f, 0.6078432f, 0.7098039f, 1f);
-        childElement.AddChildElement((Element2D) buttonWidget2);
+        childElement.AddChildElement(buttonWidget2);
         var buttonWidget3 = new ButtonWidget(21);
-        buttonWidget3.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        buttonWidget3.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget3.Size = FontSize.Medium;
         buttonWidget3.Text = "INSERT FILAMENT";
         buttonWidget3.SetGrowableWidth(4, 4, 32);
@@ -228,9 +228,9 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget3.SetPosition(-270, -100);
         buttonWidget3.CenterHorizontallyInParent = true;
         buttonWidget3.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-        AddChildElement((Element2D) buttonWidget3);
+        AddChildElement(buttonWidget3);
         var buttonWidget4 = new ButtonWidget(22);
-        buttonWidget4.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        buttonWidget4.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget4.Size = FontSize.Medium;
         buttonWidget4.Text = "REMOVE FILAMENT";
         buttonWidget4.SetGrowableWidth(4, 4, 32);
@@ -239,13 +239,13 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         buttonWidget4.SetPosition(-270, -100);
         buttonWidget4.CenterHorizontallyInParent = true;
         buttonWidget4.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-        AddChildElement((Element2D) buttonWidget4);
+        AddChildElement(buttonWidget4);
         var spriteAnimationWidget = new SpriteAnimationWidget(23);
         spriteAnimationWidget.Init(Host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
         spriteAnimationWidget.SetPosition(0, -100);
         spriteAnimationWidget.SetSize(96, 81);
         spriteAnimationWidget.CenterHorizontallyInParent = true;
-        AddChildElement((Element2D) spriteAnimationWidget);
+        AddChildElement(spriteAnimationWidget);
       }
       PopulateStartupControlsList();
     }
@@ -273,10 +273,10 @@ namespace M3D.GUI.ManageFilament.Child_Frames
           if (!IsPrinterInErrorState)
           {
             FilamentSpool currentFilament = selectedPrinter.GetCurrentFilament();
-            current_spool = !(currentFilament != (FilamentSpool) null) || currentFilament.filament_type == FilamentSpool.TypeEnum.NoFilament ? (FilamentSpool) null : new FilamentSpool(currentFilament);
+            current_spool = !(currentFilament != null) || currentFilament.filament_type == FilamentSpool.TypeEnum.NoFilament ? null : new FilamentSpool(currentFilament);
             if (!selectedPrinter.isBusy)
             {
-              if (current_spool == (FilamentSpool) null)
+              if (current_spool == null)
               {
                 correct_button.Visible = true;
                 correct_button.Enabled = true;
@@ -317,12 +317,12 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
       selectedPrinter.MarkedAsBusy = false;
       FilamentSpool filamentSpool = selectedPrinter.GetCurrentFilament();
-      if (filamentSpool != (FilamentSpool) null)
+      if (filamentSpool != null)
       {
         filamentSpool = new FilamentSpool(filamentSpool);
       }
 
-      if (filamentSpool == (FilamentSpool) null)
+      if (filamentSpool == null)
       {
         text_title.Text = "3D Ink Currently in use:";
         text_main.Text = selectedPrinter.isBusy || selectedPrinter.Info.Status == PrinterStatus.Connecting ? (selectedPrinter.Info.current_job == null ? "Unable to read information from the printer because it is working." : "Unable to read information from the printer because it is printing.") : "Looks like your printer doesn't have 3D Ink loaded.";

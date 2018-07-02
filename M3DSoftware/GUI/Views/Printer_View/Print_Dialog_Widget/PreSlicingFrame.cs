@@ -28,7 +28,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       PrintDialogWindow.Refresh();
       myPrinter = details.printer;
       canceled.Value = false;
-      var num = (int) details.printer.AcquireLock(new AsyncCallback(OnLockedBeforeSlicing), (object) details);
+      var num = (int) details.printer.AcquireLock(new AsyncCallback(OnLockedBeforeSlicing), details);
     }
 
     public override void OnDeactivate()
@@ -38,32 +38,32 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
     public void Init(GUIHost host)
     {
       SetSize(480, 340);
-      var borderedImageFrame = new BorderedImageFrame(ID, (Element2D) null);
+      var borderedImageFrame = new BorderedImageFrame(ID, null);
       borderedImageFrame.Init(host, "guicontrols", 640f, 256f, 703f, 319f, 8, 8, 64, 8, 8, 64);
       borderedImageFrame.SetSize(480, 340);
       borderedImageFrame.CenterHorizontallyInParent = true;
       borderedImageFrame.CenterVerticallyInParent = true;
-      AddChildElement((Element2D) borderedImageFrame);
+      AddChildElement(borderedImageFrame);
       var textWidget = new TextWidget(0)
       {
         Size = FontSize.Medium,
         Alignment = QFontAlignment.Centre,
         VAlignment = TextVerticalAlignment.Middle,
         Text = "T_PrintDialog_PreparingModel",
-        Color = new Color4((byte)100, (byte)100, (byte)100, byte.MaxValue)
+        Color = new Color4(100, 100, 100, byte.MaxValue)
       };
       textWidget.SetPosition(0, 10);
       textWidget.SetSize(480, 80);
       textWidget.CenterHorizontallyInParent = true;
-      borderedImageFrame.AddChildElement((Element2D) textWidget);
+      borderedImageFrame.AddChildElement(textWidget);
       var spriteAnimationWidget = new SpriteAnimationWidget(1);
       spriteAnimationWidget.Init(host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
       spriteAnimationWidget.SetSize(128, 108);
       spriteAnimationWidget.SetPosition(238, 100);
       spriteAnimationWidget.CenterHorizontallyInParent = true;
-      borderedImageFrame.AddChildElement((Element2D) spriteAnimationWidget);
+      borderedImageFrame.AddChildElement(spriteAnimationWidget);
       var buttonWidget = new ButtonWidget(101);
-      buttonWidget.Init(host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      buttonWidget.Init(host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget.Size = FontSize.Medium;
       buttonWidget.Text = "T_Cancel";
       buttonWidget.SetGrowableWidth(4, 4, 32);
@@ -72,7 +72,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       buttonWidget.SetPosition(0, -46);
       buttonWidget.CenterHorizontallyInParent = true;
       buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget);
+      AddChildElement(buttonWidget);
     }
 
     private void OnLockedBeforeSlicing(IAsyncCallResult ar)
@@ -82,7 +82,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       {
         if (!asyncState.print_to_file)
         {
-          var num = (int) asyncState.printer.SendManualGCode(new AsyncCallback(StartSlicingOnSuccess), (object) asyncState, "M106 S1");
+          var num = (int) asyncState.printer.SendManualGCode(new AsyncCallback(StartSlicingOnSuccess), asyncState, "M106 S1");
         }
         else
         {
@@ -147,7 +147,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
       canceled.Value = true;
       myPrinter.ClearAsyncCallbacks();
-      var num = (int)myPrinter.ReleaseLock((AsyncCallback) null, (object) null);
+      var num = (int)myPrinter.ReleaseLock(null, null);
       PrintDialogWindow.CloseWindow();
     }
 

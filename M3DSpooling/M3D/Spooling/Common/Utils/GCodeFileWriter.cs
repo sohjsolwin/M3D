@@ -32,11 +32,11 @@ namespace M3D.Spooling.Common.Utils
       }
       if (m_bIsBinaryMode)
       {
-        writeBinary = new BinaryWriter((Stream) fileStream, Encoding.ASCII);
+        writeBinary = new BinaryWriter(fileStream, Encoding.ASCII);
       }
       else
       {
-        writeAscii = new StreamWriter((Stream) fileStream, Encoding.ASCII);
+        writeAscii = new StreamWriter(fileStream, Encoding.ASCII);
       }
     }
 

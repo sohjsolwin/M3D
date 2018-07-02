@@ -51,7 +51,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
         PrinterObject selectedPrinter = m_oSpoolerConnection.SelectedPrinter;
         if (selectedPrinter != null && selectedPrinter.SDCardExtension.Available)
         {
-          DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null);
+          DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, null);
           m_opLastPrinterSelected = selectedPrinter;
         }
         SyncFromSettings();
@@ -76,7 +76,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     public void MyButtonCallback(ButtonWidget button)
     {
       PrinterObject selectedPrinter = m_oSpoolerConnection.SelectedPrinter;
-      if (selectedPrinter == null || !selectedPrinter.isConnected())
+      if (selectedPrinter == null || !selectedPrinter.IsConnected())
       {
         return;
       }
@@ -84,13 +84,13 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
       switch (button.ID)
       {
         case 1000:
-          var num = (int) selectedPrinter.SendEmergencyStop((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+          var num = (int) selectedPrinter.SendEmergencyStop(null, null);
           break;
         case 1101:
-          DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null);
+          DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, null);
           break;
         case 1102:
-          if ((FilamentSpool) null == selectedPrinter.GetCurrentFilament())
+          if (null == selectedPrinter.GetCurrentFilament())
           {
             m_oMessagebox.AddMessageToQueue("Unable to start print because the printer doesn't have any filament.");
             break;
@@ -129,7 +129,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
         return m_oSDFilesListbox.Items[selected].ToString();
       }
 
-      return (string) null;
+      return null;
     }
 
     private void VerifySelectedPrinter()
@@ -146,13 +146,13 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
         return;
       }
 
-      DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null);
+      DoPrinterOperation(SDCardFrame.Operation.Refresh, selectedPrinter, null);
     }
 
     private void SaveGCodeToSDCard()
     {
       PrinterObject selectedPrinter1 = m_oSpoolerConnection.SelectedPrinter;
-      if (selectedPrinter1 == null || !selectedPrinter1.isConnected())
+      if (selectedPrinter1 == null || !selectedPrinter1.IsConnected())
       {
         return;
       }
@@ -183,7 +183,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
       UserJob.filament_temperature = selectedPrinter1.MyFilamentProfile.Temperature;
       UserJob.jobMode = JobParams.Mode.SavingToSDCard;
       PrinterObject selectedPrinter2 = m_oSpoolerConnection.SelectedPrinter;
-      if (selectedPrinter2 == null || !selectedPrinter2.isConnected())
+      if (selectedPrinter2 == null || !selectedPrinter2.IsConnected())
       {
         m_oMessagebox.AddMessageToQueue("Printer Disconnected", PopupMessageBox.MessageBoxButtons.OK);
       }
@@ -209,7 +209,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
 
     private void DoPrinterOperation(SDCardFrame.Operation op, PrinterObject printer, string file)
     {
-      var num = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoOperationOnLock), (object) new SDCardFrame.OnLockOperationData(op, printer, file));
+      var num = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoOperationOnLock), new SDCardFrame.OnLockOperationData(op, printer, file));
     }
 
     private void DoOperationOnLock(IAsyncCallResult ar)
@@ -227,7 +227,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
         switch (asyncState.op)
         {
           case SDCardFrame.Operation.Refresh:
-            var num1 = (int) selectedPrinter.SDCardExtension.RefreshSDCardList(new M3D.Spooling.Client.AsyncCallback(OnRefreshCallback), (object) selectedPrinter);
+            var num1 = (int) selectedPrinter.SDCardExtension.RefreshSDCardList(new M3D.Spooling.Client.AsyncCallback(OnRefreshCallback), selectedPrinter);
             return;
           case SDCardFrame.Operation.Print:
             var file1 = asyncState.file;
@@ -240,15 +240,15 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
             var filamentProfile = FilamentProfile.CreateFilamentProfile(selectedPrinter.GetCurrentFilament(), selectedPrinter.MyPrinterProfile);
             jobParams.preprocessor = filamentProfile.preprocessor;
             jobParams.filament_temperature = filamentProfile.Temperature;
-            var num2 = (int) selectedPrinter.PrintModel(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, jobParams);
+            var num2 = (int) selectedPrinter.PrintModel(new M3D.Spooling.Client.AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, jobParams);
             return;
           case SDCardFrame.Operation.Delete:
             var file2 = asyncState.file;
-            var num3 = (int) selectedPrinter.SDCardExtension.DeleteFileFromSDCard(new M3D.Spooling.Client.AsyncCallback(DoOperationOnLock), (object) new SDCardFrame.OnLockOperationData(SDCardFrame.Operation.Refresh, selectedPrinter, (string) null), file2);
+            var num3 = (int) selectedPrinter.SDCardExtension.DeleteFileFromSDCard(new M3D.Spooling.Client.AsyncCallback(DoOperationOnLock), new SDCardFrame.OnLockOperationData(SDCardFrame.Operation.Refresh, selectedPrinter, (string)null), file2);
             return;
         }
       }
-      var num4 = (int) printer.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+      var num4 = (int) printer.ReleaseLock(null, null);
     }
 
     private void OnRefreshCallback(IAsyncCallResult ar)
@@ -268,7 +268,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
           m_oSDFilesListbox.Items.Add(sdCardFile);
         }
       }
-      var num = (int) asyncState.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+      var num = (int) asyncState.ReleaseLock(null, null);
     }
 
     private enum AdvancedControlsID

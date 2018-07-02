@@ -47,7 +47,7 @@ namespace M3D.Spooling.Common
       }
 
       var num = (ushort) (feature_slot * 2);
-      return (SupportedFeatures.Status) ((FeaturesBitField & 3U << (int) num) >> (int) num);
+      return (SupportedFeatures.Status) ((FeaturesBitField & 3U << num) >> num);
     }
 
     public enum Status

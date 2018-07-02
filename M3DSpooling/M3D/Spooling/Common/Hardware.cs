@@ -33,7 +33,7 @@ namespace M3D.Spooling.Common
         var num = 1;
         while (num <= 32)
         {
-          var resetCauseEnum = (ResetCauseEnum) (num & (int)LastResetCauseMask);
+          var resetCauseEnum = (ResetCauseEnum) (num & LastResetCauseMask);
           if (resetCauseEnum != ResetCauseEnum.None)
           {
             resetCauseEnumList.Add(resetCauseEnum);
@@ -62,7 +62,7 @@ namespace M3D.Spooling.Common
     {
       com_port = "";
       machine_type = "";
-      LastResetCauseMask = (ushort) 0;
+      LastResetCauseMask = 0;
       firmware_version = 0U;
       firmware_name = "unknown";
       firmware_url = "unknown";

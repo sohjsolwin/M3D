@@ -14,12 +14,12 @@ namespace M3D.Graphics.Ext3D
     public bool LightOnlyChildren;
 
     public LightNode()
-      : this(0, (Element3D) null)
+      : this(0, null)
     {
     }
 
     public LightNode(int ID)
-      : this(ID, (Element3D) null)
+      : this(ID, null)
     {
     }
 

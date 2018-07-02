@@ -7,7 +7,7 @@ namespace M3D.Model.Utils
   {
     private double[] position = new double[3];
 
-    public float x
+    public float X
     {
       get
       {
@@ -15,11 +15,11 @@ namespace M3D.Model.Utils
       }
       set
       {
-        position[0] = (double) value;
+        position[0] = value;
       }
     }
 
-    public float y
+    public float Y
     {
       get
       {
@@ -27,11 +27,11 @@ namespace M3D.Model.Utils
       }
       set
       {
-        position[1] = (double) value;
+        position[1] = value;
       }
     }
 
-    public float z
+    public float Z
     {
       get
       {
@@ -39,29 +39,29 @@ namespace M3D.Model.Utils
       }
       set
       {
-        position[2] = (double) value;
+        position[2] = value;
       }
     }
 
     public Vector3()
     {
-      x = 0.0f;
-      y = 0.0f;
-      z = 0.0f;
+      X = 0.0f;
+      Y = 0.0f;
+      Z = 0.0f;
     }
 
     public Vector3(float x, float y, float z)
     {
-      this.x = x;
-      this.y = y;
-      this.z = z;
+      this.X = x;
+      this.Y = y;
+      this.Z = z;
     }
 
     public Vector3(Vector3 v)
     {
-      x = v.x;
-      y = v.y;
-      z = v.z;
+      X = v.X;
+      Y = v.Y;
+      Z = v.Z;
     }
 
     public static uint SizeInBytes
@@ -76,44 +76,44 @@ namespace M3D.Model.Utils
     {
       Vector3 vector3_1 = this;
       var vector3_2 = obj as Vector3;
-      return (object) vector3_1 == null && (object) vector3_2 == null || (object) vector3_1 != null && (object) vector3_2 != null && ((double) vector3_1.x == (double) vector3_2.x && (double) vector3_1.y == (double) vector3_2.y) && (double) vector3_1.z == (double) vector3_2.z;
+      return (object) vector3_1 == null && (object) vector3_2 == null || (object) vector3_1 != null && (object) vector3_2 != null && (vector3_1.X == (double)vector3_2.X && vector3_1.Y == (double)vector3_2.Y) && vector3_1.Z == (double)vector3_2.Z;
     }
 
     public bool Equals(Vector3 other)
     {
-      return (double)x == (double) other.x && (double)y == (double) other.y && (double)z == (double) other.z;
+      return X == (double)other.X && Y == (double)other.Y && Z == (double)other.Z;
     }
 
     public override int GetHashCode()
     {
-      var num1 = x;
+      var num1 = X;
       var hashCode1 = num1.GetHashCode();
-      num1 = y;
+      num1 = Y;
       var hashCode2 = num1.GetHashCode();
       var num2 = hashCode1 ^ hashCode2;
-      num1 = z;
+      num1 = Z;
       var hashCode3 = num1.GetHashCode();
       return num2 ^ hashCode3;
     }
 
     public static bool operator ==(Vector3 a, Vector3 b)
     {
-      return (object) a == null && (object) b == null || (object) a != null && (object) b != null && ((double) a.x == (double) b.x && (double) a.y == (double) b.y) && (double) a.z == (double) b.z;
+      return (object) a == null && (object) b == null || (object) a != null && (object) b != null && (a.X == (double)b.X && a.Y == (double)b.Y) && a.Z == (double)b.Z;
     }
 
     public static bool operator !=(Vector3 a, Vector3 b)
     {
-      return ((object) a != null || (object) b != null) && ((object) a == null || (object) b == null || ((double) a.x != (double) b.x || (double) a.y != (double) b.y) || (double) a.z != (double) b.z);
+      return ((object) a != null || (object) b != null) && ((object) a == null || (object) b == null || (a.X != (double)b.X || a.Y != (double)b.Y) || a.Z != (double)b.Z);
     }
 
     public static Vector3 operator +(Vector3 a, Vector3 b)
     {
-      return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+      return new Vector3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
     }
 
     public static Vector3 operator -(Vector3 a, Vector3 b)
     {
-      return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
+      return new Vector3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
     }
 
     public static Vector3 operator -(Vector3 a)
@@ -123,38 +123,38 @@ namespace M3D.Model.Utils
 
     public static Vector3 operator *(Vector3 a, Vector3 b)
     {
-      return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+      return new Vector3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
     }
 
     public static Vector3 operator /(Vector3 a, Vector3 b)
     {
-      return new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
+      return new Vector3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
     }
 
     public static Vector3 operator +(Vector3 a, float b)
     {
-      return new Vector3(a.x + b, a.y + b, a.z + b);
+      return new Vector3(a.X + b, a.Y + b, a.Z + b);
     }
 
     public static Vector3 operator -(Vector3 a, float b)
     {
-      return new Vector3(a.x - b, a.y - b, a.z - b);
+      return new Vector3(a.X - b, a.Y - b, a.Z - b);
     }
 
     public static Vector3 operator *(Vector3 a, float b)
     {
-      return new Vector3(a.x * b, a.y * b, a.z * b);
+      return new Vector3(a.X * b, a.Y * b, a.Z * b);
     }
 
     public static Vector3 operator *(float b, Vector3 a)
     {
-      return new Vector3(a.x * b, a.y * b, a.z * b);
+      return new Vector3(a.X * b, a.Y * b, a.Z * b);
     }
 
     public static Vector3 operator /(Vector3 a, float b)
     {
       var num = 1f / b;
-      return new Vector3(a.x * num, a.y * num, a.z * num);
+      return new Vector3(a.X * num, a.Y * num, a.Z * num);
     }
 
     public static Vector3 CrossProduct(Vector3 a, Vector3 b)
@@ -164,17 +164,17 @@ namespace M3D.Model.Utils
 
     public float SqLength()
     {
-      return (float) ((double)x * (double)x + (double)y * (double)y + (double)z * (double)z);
+      return (float)(X * (double)X + Y * (double)Y + Z * (double)Z);
     }
 
     public float Length()
     {
-      return (float) Math.Sqrt((double)x * (double)x + (double)y * (double)y + (double)z * (double)z);
+      return (float) Math.Sqrt(X * (double)X + Y * (double)Y + Z * (double)Z);
     }
 
     public float Dot(Vector3 v)
     {
-      return (float) ((double)x * (double) v.x + (double)y * (double) v.y + (double)z * (double) v.z);
+      return (float)(X * (double)v.X + Y * (double)v.Y + Z * (double)v.Z);
     }
 
     public Vector3 Normalize()
@@ -190,7 +190,7 @@ namespace M3D.Model.Utils
 
     public Vector3 Cross(Vector3 v)
     {
-      return new Vector3((float) ((double)y * (double) v.z - (double)z * (double) v.y), (float) ((double)z * (double) v.x - (double)x * (double) v.z), (float) ((double)x * (double) v.y - (double)y * (double) v.x));
+      return new Vector3((float)(Y * (double)v.Z - Z * (double)v.Y), (float)(Z * (double)v.X - X * (double)v.Z), (float)(X * (double)v.Y - Y * (double)v.X));
     }
 
     public float Distance(Vector3 vector2)
@@ -200,23 +200,23 @@ namespace M3D.Model.Utils
 
     public Vector3 Inverse()
     {
-      return new Vector3(-x, -y, -z);
+      return new Vector3(-X, -Y, -Z);
     }
 
     public void RotateVector(float angle, bool x, bool y, bool z)
     {
       if (x)
       {
-        var num = (float) ((double) this.z * Math.Cos((double) angle) - (double) this.y * Math.Sin((double) angle));
-        this.y = (float) ((double) this.z * Math.Sin((double) angle) + (double) this.y * Math.Cos((double) angle));
-        this.z = num;
+        var num = (float)(this.Z * Math.Cos(angle) - this.Y * Math.Sin(angle));
+        this.Y = (float)(this.Z * Math.Sin(angle) + this.Y * Math.Cos(angle));
+        this.Z = num;
       }
       else if (y)
       {
-        var num1 = (float) ((double) this.x * Math.Cos((double) angle) - (double) this.z * Math.Sin((double) angle));
-        var num2 = (float) ((double) this.x * Math.Sin((double) angle) + (double) this.z * Math.Cos((double) angle));
-        this.x = num1;
-        this.z = num2;
+        var num1 = (float)(this.X * Math.Cos(angle) - this.Z * Math.Sin(angle));
+        var num2 = (float)(this.X * Math.Sin(angle) + this.Z * Math.Cos(angle));
+        this.X = num1;
+        this.Z = num2;
       }
       else
       {
@@ -225,32 +225,32 @@ namespace M3D.Model.Utils
           return;
         }
 
-        var num1 = (float) ((double) this.x * Math.Cos((double) angle) - (double) this.y * Math.Sin((double) angle));
-        var num2 = (float) ((double) this.x * Math.Sin((double) angle) + (double) this.y * Math.Cos((double) angle));
-        this.x = num1;
-        this.y = num2;
+        var num1 = (float)(this.X * Math.Cos(angle) - this.Y * Math.Sin(angle));
+        var num2 = (float)(this.X * Math.Sin(angle) + this.Y * Math.Cos(angle));
+        this.X = num1;
+        this.Y = num2;
       }
     }
 
     public static Vector3 MatrixProduct(Matrix4 matrix, Vector3 vector)
     {
-      var vector4 = Vector4.Transform(new Vector4(vector.x, vector.y, vector.z, 1f), matrix);
+      var vector4 = Vector4.Transform(new Vector4(vector.X, vector.Y, vector.Z, 1f), matrix);
       return new Vector3(vector4.X, vector4.Y, vector4.Z);
     }
 
     public void MatrixProduct(Matrix4 matrix)
     {
-      var vector4 = Vector4.Transform(new Vector4(x, y, z, 1f), matrix);
-      x = vector4.X;
-      y = vector4.Y;
-      z = vector4.Z;
+      var vector4 = Vector4.Transform(new Vector4(X, Y, Z, 1f), matrix);
+      X = vector4.X;
+      Y = vector4.Y;
+      Z = vector4.Z;
     }
 
     public bool isZero()
     {
-      if ((double)x == 0.0 && (double)y == 0.0)
+      if (X == 0.0 && Y == 0.0)
       {
-        return (double)z == 0.0;
+        return Z == 0.0;
       }
 
       return false;

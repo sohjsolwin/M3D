@@ -56,12 +56,12 @@ namespace M3D.Graphics.Widgets2D
     private QFont my_font;
 
     public EditBoxWidget()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public EditBoxWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -90,7 +90,7 @@ namespace M3D.Graphics.Widgets2D
       cursor_quad.x0 = 0.0f;
       cursor_quad.x1 = 2f;
       cursor_quad.y0 = 0.0f;
-      cursor_quad.y1 = (float) (Height - (text_window_top_border + text_window_bottom_border));
+      cursor_quad.y1 = Height - (text_window_top_border + text_window_bottom_border);
       SetToolTipRegion(0, width, 0, height);
     }
 
@@ -161,10 +161,7 @@ namespace M3D.Graphics.Widgets2D
       else if (mouseevent.type == MouseEventType.Up && mouseevent.button == MouseButton.Left)
       {
         mouse_dragging = false;
-        if (clickkeycallback != null)
-        {
-          clickkeycallback(this);
-        }
+        clickkeycallback?.Invoke(this);
       }
       else if (mouse_dragging)
       {
@@ -261,7 +258,7 @@ namespace M3D.Graphics.Widgets2D
           DeleteHighlightedRegion();
           if (inputKeyEvent.Ch == '\r' || inputKeyEvent.Ch == '\n')
           {
-            OnControlMsg((Element2D) this, ControlMsg.ENTERHIT, 0.0f, 0.0f);
+            OnControlMsg(this, ControlMsg.ENTERHIT, 0.0f, 0.0f);
           }
           else if (inputKeyEvent.Ch == '\b')
           {
@@ -270,11 +267,7 @@ namespace M3D.Graphics.Widgets2D
               textline.DeleteAt(cursor - 1);
             }
 
-            EditBoxWidget.EditBoxCallback onbackspace = this.onbackspace;
-            if (onbackspace != null)
-            {
-              onbackspace(this);
-            }
+            this.onbackspace?.Invoke(this);
 
             if (cursor > 0)
             {
@@ -290,11 +283,7 @@ namespace M3D.Graphics.Widgets2D
             }
 
             textline.AddCharAt(ch, cursor);
-            EditBoxWidget.EditBoxCallback onnewtext = this.onnewtext;
-            if (onnewtext != null)
-            {
-              onnewtext(this);
-            }
+            this.onnewtext?.Invoke(this);
 
             ++cursor;
           }
@@ -456,7 +445,7 @@ namespace M3D.Graphics.Widgets2D
       DrawHighlight(host.GetSimpleRenderer(), my_font);
       QFont.Begin();
       my_font.Options.Colour = Enabled ? Color : new Color4(0.7f, 0.7f, 0.7f, 0.5f);
-      my_font.Print(str.Substring(processed_start), (float) (Width - (text_window_left_border + text_window_right_border)), new Vector2(x, y));
+      my_font.Print(str.Substring(processed_start), Width - (text_window_left_border + text_window_right_border), new Vector2(x, y));
       QFont.End();
     }
 
@@ -466,14 +455,14 @@ namespace M3D.Graphics.Widgets2D
       if (!charsAllowed)
       {
         var source = Value as string;
-        Func<char, bool> func = (Func<char, bool>) (x => char.IsLetter(x));
+        Func<char, bool> func = x => char.IsLetter(x);
         if (!source.Any())
         {
           flag = true;
         }
         else
         {
-          Value = (object) Regex.Replace((string)Value, "[^0-9.+-]", "");
+          Value = Regex.Replace((string)Value, "[^0-9.+-]", "");
         }
       }
       if (checkNumFormat & flag)
@@ -484,7 +473,7 @@ namespace M3D.Graphics.Widgets2D
         }
         else
         {
-          Value = (object)RoundNumberToFormat(Convert.ToDouble(Value.ToString()), GetPrecision(_numFormat));
+          Value = RoundNumberToFormat(Convert.ToDouble(Value.ToString()), GetPrecision(_numFormat));
         }
       }
       return flag;
@@ -512,7 +501,7 @@ namespace M3D.Graphics.Widgets2D
         }
         if (flag)
         {
-          Value = (object)RoundNumberToFormat(result, GetPrecision(_numFormat));
+          Value = RoundNumberToFormat(result, GetPrecision(_numFormat));
         }
       }
       return flag;
@@ -577,9 +566,9 @@ namespace M3D.Graphics.Widgets2D
       }
       lock (ChildList)
       {
-        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+        foreach (Element2D child in ChildList)
         {
-          child.InitChildren((Element2D) this, host, MyButtonCallback);
+          child.InitChildren(this, host, MyButtonCallback);
         }
       }
     }
@@ -715,7 +704,7 @@ namespace M3D.Graphics.Widgets2D
           textline.SetText((!value.StartsWith("T_") ? value.Replace('\n', ' ') : Locale.GlobalLocale.T(value)).Replace('\r', ' ').Replace('\t', ' '));
           cursor = value.Length;
         }
-        OnControlMsg((Element2D) this, ControlMsg.TEXT_CHANGED, 0.0f, 0.0f);
+        OnControlMsg(this, ControlMsg.TEXT_CHANGED, 0.0f, 0.0f);
       }
     }
 
@@ -795,10 +784,10 @@ namespace M3D.Graphics.Widgets2D
       }
 
       Simple2DRenderer simpleRenderer = host.GetSimpleRenderer();
-      cursor_quad.x0 = (float) (X_Abs + text_window_left_border + processedCursorLocation);
-      cursor_quad.y0 = (float) (Y_Abs + text_window_top_border - 2);
-      cursor_quad.x1 = (float) (int) ((double)cursor_quad.x0 + 2.0);
-      cursor_quad.y1 = cursor_quad.y0 + (float)Height - (float) (text_window_top_border + text_window_bottom_border);
+      cursor_quad.x0 = X_Abs + text_window_left_border + processedCursorLocation;
+      cursor_quad.y0 = Y_Abs + text_window_top_border - 2;
+      cursor_quad.x1 = (int)((double)cursor_quad.x0 + 2.0);
+      cursor_quad.y1 = cursor_quad.y0 + Height - (text_window_top_border + text_window_bottom_border);
       Simple2DRenderer.Quad cursorQuad = cursor_quad;
       simpleRenderer.DrawQuad(cursorQuad);
     }
@@ -886,10 +875,10 @@ namespace M3D.Graphics.Widgets2D
       var num2 = Y_Abs + text_window_top_border;
       var num3 = Height - text_window_top_border * 2;
       Simple2DRenderer.Quad cursorQuad = cursor_quad;
-      cursorQuad.x0 = (float) (num1 + highlight_start_offset);
-      cursorQuad.x1 = (float) (num1 + highlight_end_offset);
-      cursorQuad.y0 = (float) num2;
-      cursorQuad.y1 = (float) (num2 + num3);
+      cursorQuad.x0 = num1 + highlight_start_offset;
+      cursorQuad.x1 = num1 + highlight_end_offset;
+      cursorQuad.y0 = num2;
+      cursorQuad.y1 = num2 + num3;
       cursorQuad.color = new Color4(0.854902f, 0.945098f, 0.972549f, 1f);
       render.DrawQuad(cursorQuad);
     }

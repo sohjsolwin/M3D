@@ -48,7 +48,7 @@ namespace M3D.GUI.Views.Printer_View
       listbox.Items.Clear();
       foreach (ModelTransformPair.Data data in modelData)
       {
-        listbox.Items.Add((object) data);
+        listbox.Items.Add(data);
       }
     }
 

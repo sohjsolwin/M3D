@@ -48,7 +48,7 @@ namespace M3D.Spooler.Forms
             listViewItem.SubItems[1].Text = str1;
           }
 
-          var str2 = (double) connectedPrinter.extruder.Temperature != -1.0 ? ((double) connectedPrinter.extruder.Temperature >= 1.0 ? connectedPrinter.extruder.Temperature.ToString() : "OFF") : "ON";
+          var str2 = connectedPrinter.extruder.Temperature != -1.0 ? connectedPrinter.extruder.Temperature >= 1.0 ? connectedPrinter.extruder.Temperature.ToString() : "OFF" : "ON";
           if (str2 != listViewItem.SubItems[2].Text)
           {
             listViewItem.SubItems[2].Text = str2;
@@ -79,7 +79,7 @@ namespace M3D.Spooler.Forms
           return view.Items[index];
         }
       }
-      return (ListViewItem) null;
+      return null;
     }
 
     protected override void Dispose(bool disposing)
@@ -138,7 +138,7 @@ namespace M3D.Spooler.Forms
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(879, 146);
       ControlBox = false;
-      Controls.Add((Control)listViewPrinterInfo);
+      Controls.Add(listViewPrinterInfo);
       Name = nameof (AdvancedStatistics);
       Text = nameof (AdvancedStatistics);
       ResumeLayout(false);

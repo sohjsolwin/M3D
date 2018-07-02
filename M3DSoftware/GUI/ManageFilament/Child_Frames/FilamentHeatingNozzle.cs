@@ -46,7 +46,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         return;
       }
 
-      if (CurrentDetails.current_spool == (FilamentSpool) null)
+      if (CurrentDetails.current_spool == null)
       {
         MainWindow.ResetToStartup();
       }
@@ -58,7 +58,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       else
       {
         var colors = (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), CurrentDetails.current_spool.filament_color_code);
-        MainWindow.TurnOnHeater(new M3D.Spooling.Client.AsyncCallback(MainWindow.HeaterStartedSuccess), (object) selectedPrinter, settingsManager.GetFilamentTemperature(CurrentDetails.current_spool.filament_type, colors), CurrentDetails.current_spool.filament_type);
+        MainWindow.TurnOnHeater(new M3D.Spooling.Client.AsyncCallback(MainWindow.HeaterStartedSuccess), selectedPrinter, settingsManager.GetFilamentTemperature(CurrentDetails.current_spool.filament_type, colors), CurrentDetails.current_spool.filament_type);
       }
     }
 
@@ -77,7 +77,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       }
 
       var targetTemperature = MainWindow.TargetTemperature;
-      if ((double) selectedPrinter.Info.extruder.Temperature < 50.0)
+      if (selectedPrinter.Info.extruder.Temperature < 50.0)
       {
         progressBar.PercentComplete = 0.0f;
       }
@@ -85,7 +85,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       {
         if (progressBar != null)
         {
-          var num = (double) selectedPrinter.Info.extruder.Temperature / (double) targetTemperature;
+          var num = selectedPrinter.Info.extruder.Temperature / (double)targetTemperature;
           if (num > 1.0)
           {
             num = 1.0;
@@ -93,7 +93,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
 
           progressBar.PercentComplete = (float) (Math.Exp((num * 100.0 + 23.1809997558594) / 24.2569999694824) / 166.0);
         }
-        if ((double) selectedPrinter.Info.extruder.Temperature <= (double) (targetTemperature - 10) || (double) selectedPrinter.Info.extruder.Temperature >= (double) (targetTemperature + 10) || selectedPrinter.WaitingForCommandToComplete || selectedPrinter.Info.Status != PrinterStatus.Firmware_Idle && selectedPrinter.Info.Status != PrinterStatus.Firmware_PrintingPaused)
+        if (selectedPrinter.Info.extruder.Temperature <= (double)(targetTemperature - 10) || selectedPrinter.Info.extruder.Temperature >= (double)(targetTemperature + 10) || selectedPrinter.WaitingForCommandToComplete || selectedPrinter.Info.Status != PrinterStatus.Firmware_Idle && selectedPrinter.Info.Status != PrinterStatus.Firmware_PrintingPaused)
         {
           return;
         }

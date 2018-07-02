@@ -37,7 +37,7 @@ namespace M3D.Spooling.Common
       position = new Vector3DE(0.0f, 0.0f, 0.0f, 0.0f);
       Z_Valid = true;
       Temperature = -273f;
-      Fan = (byte) 0;
+      Fan = 0;
       iNozzleSizeMicrons = 0;
     }
   }

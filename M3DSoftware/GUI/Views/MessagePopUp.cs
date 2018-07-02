@@ -24,7 +24,7 @@ namespace M3D.GUI.Views
     private Stopwatch mytimer;
 
     public MessagePopUp(int ID, SettingsManager mainLogicController)
-      : base(ID, (Element2D) null)
+      : base(ID, null)
     {
       threadsync_spooler = new object();
       this.mainLogicController = mainLogicController;
@@ -65,8 +65,8 @@ namespace M3D.GUI.Views
       text_information.SetPosition(14, 14);
       text_information.SetSize(272, 72);
       text_information.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
-      AddChildElement((Element2D)text_information);
-      host.AddControlElement((Element2D) this);
+      AddChildElement(text_information);
+      host.AddControlElement(this);
       Sprite.pixel_perfect = false;
     }
 
@@ -96,17 +96,17 @@ namespace M3D.GUI.Views
       {
         mytimer.Stop();
         var elapsedMilliseconds = (float)mytimer.ElapsedMilliseconds;
-        if ((double) elapsedMilliseconds < 500.0)
+        if (elapsedMilliseconds < 500.0)
         {
-          Y = (int) (-100.0 * (double) (elapsedMilliseconds / 500f));
+          Y = (int) (-100.0 * (elapsedMilliseconds / 500f));
         }
-        else if ((double) elapsedMilliseconds < 3500.0)
+        else if (elapsedMilliseconds < 3500.0)
         {
           Y = -100;
         }
-        else if ((double) elapsedMilliseconds < 4000.0)
+        else if (elapsedMilliseconds < 4000.0)
         {
-          Y = (int) (-100.0 * (1.0 - ((double) elapsedMilliseconds - 3500.0) / 500.0));
+          Y = (int) (-100.0 * (1.0 - (elapsedMilliseconds - 3500.0) / 500.0));
         }
         else
         {

@@ -61,7 +61,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       m_odRegisteredPlugins = new ConcurrentDictionary<string, FirmwareControllerPlugin>();
       m_odLinkedPluginGCodes = new ConcurrentDictionary<string, string>();
-      m_oJobController = new JobController((IPublicFirmwareController) this);
+      m_oJobController = new JobController(this);
       eeprom_mapping = new EEPROMMapping(printerProfile.EEPROMConstants);
       read_accumulator = initial_read_accumulator;
       Status = PrinterStatus.Connecting;
@@ -136,7 +136,7 @@ namespace M3D.Spooling.Core.Controllers
         return PluginResult.FAILED_PluginIDAlreadyInUse;
       }
 
-      plugin.RegisterGCodes((IGCodePluginable) this);
+      plugin.RegisterGCodes(this);
       return PluginResult.Success;
     }
 
@@ -144,7 +144,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       var upperInvariant = gcode.ToUpperInvariant();
       var gcode1 = new GCode(upperInvariant);
-      if (!gcode1.hasG && !gcode1.hasM)
+      if (!gcode1.HasG && !gcode1.hasM)
       {
         return PluginResult.FAILED_NotaValidMorGCode;
       }
@@ -195,21 +195,21 @@ namespace M3D.Spooling.Core.Controllers
         base_printer.BroadcastPluginMessage(new SpoolerMessage(MessageType.PluginMessage, MySerialNumber, mPluginResultAccumulator, mPluginToReceiveCommand, mPluginGCodeSent.getAscii(false, false)));
       }
 
-      mPluginToReceiveCommand = (string) null;
-      mPluginGCodeSent = (GCode) null;
+      mPluginToReceiveCommand = null;
+      mPluginGCodeSent = null;
     }
 
     private void CheckForPluginCommand(GCode manual_gcode)
     {
-      mPluginToReceiveCommand = (string) null;
-      mPluginGCodeSent = (GCode) null;
+      mPluginToReceiveCommand = null;
+      mPluginGCodeSent = null;
       mPluginResultAccumulator = "";
       var key = (string) null;
       if (manual_gcode.hasM)
       {
         key = PrinterCompatibleString.Format("M{0}", (object) manual_gcode.M);
       }
-      else if (manual_gcode.hasG)
+      else if (manual_gcode.HasG)
       {
         key = PrinterCompatibleString.Format("G{0}", (object) manual_gcode.G);
       }
@@ -261,7 +261,7 @@ namespace M3D.Spooling.Core.Controllers
 
     private void OnFirmwareUpdateFailed()
     {
-      BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.FirmwareErrorCyclePower, MySerialNumber, (string) null).Serialize());
+      BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.FirmwareErrorCyclePower, MySerialNumber, null).Serialize());
     }
 
     private string ReadDataFromSerial()
@@ -353,7 +353,7 @@ namespace M3D.Spooling.Core.Controllers
         }
         else if (str1 == "UNABLE TO INIT HARDWARE. CHECK MICRO MOTION CABLE CONNECTION.")
         {
-          BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.MicroMotionControllerFailed, MySerialNumber, (string) null).Serialize());
+          BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.MicroMotionControllerFailed, MySerialNumber, null).Serialize());
         }
         else if (str1.Contains("?"))
         {
@@ -387,7 +387,7 @@ namespace M3D.Spooling.Core.Controllers
             if (error_code == 1008)
             {
               ExtruderDetails.Temperature = 0.0f;
-              spoolerMessage = new SpoolerMessage(MessageType.PrinterTimeout, MySerialNumber, (string) null);
+              spoolerMessage = new SpoolerMessage(MessageType.PrinterTimeout, MySerialNumber, null);
             }
             else
             {
@@ -439,7 +439,7 @@ namespace M3D.Spooling.Core.Controllers
       catch (Exception ex)
       {
         ErrorLogger.LogException("Exception in FirmwareConnection.ProcessREads 1 " + ex.Message, ex);
-        WriteLog(string.Format("FirmwareConnection.ProcessReads 1 Exception: {0}", (object) ex.Message), Logger.TextType.Error);
+        WriteLog(string.Format("FirmwareConnection.ProcessReads 1 Exception: {0}", ex.Message), Logger.TextType.Error);
       }
     }
 
@@ -466,7 +466,7 @@ namespace M3D.Spooling.Core.Controllers
         var length = parameters.IndexOf(' ');
         if (int.TryParse(length >= 0 ? parameters.Substring(0, length) : parameters, out result1))
         {
-          parameters = length <= 0 ? (string) null : parameters.Substring(length + 1);
+          parameters = length <= 0 ? null : parameters.Substring(length + 1);
         }
         else
         {
@@ -621,7 +621,7 @@ namespace M3D.Spooling.Core.Controllers
           {
             if (LastGCodeType == RequestGCode.M114GetExtruderLocation)
             {
-              if (float.TryParse(parameter, NumberStyles.Float, (IFormatProvider)PrinterCompatibleString.NUMBER_FORMAT, out var result4))
+              if (float.TryParse(parameter, NumberStyles.Float, PrinterCompatibleString.NUMBER_FORMAT, out var result4))
               {
                 ExtruderDetails.position.e = result4;
               }
@@ -633,7 +633,7 @@ namespace M3D.Spooling.Core.Controllers
           {
             if (LastGCodeType == RequestGCode.M114GetExtruderLocation)
             {
-              if (float.TryParse(parameter, NumberStyles.Float, (IFormatProvider)PrinterCompatibleString.NUMBER_FORMAT, out var result4))
+              if (float.TryParse(parameter, NumberStyles.Float, PrinterCompatibleString.NUMBER_FORMAT, out var result4))
               {
                 ExtruderDetails.position.pos.x = result4;
               }
@@ -645,7 +645,7 @@ namespace M3D.Spooling.Core.Controllers
           {
             if (LastGCodeType == RequestGCode.M114GetExtruderLocation)
             {
-              if (float.TryParse(parameter, NumberStyles.Float, (IFormatProvider)PrinterCompatibleString.NUMBER_FORMAT, out var result4))
+              if (float.TryParse(parameter, NumberStyles.Float, PrinterCompatibleString.NUMBER_FORMAT, out var result4))
               {
                 ExtruderDetails.position.pos.y = result4;
               }
@@ -658,7 +658,7 @@ namespace M3D.Spooling.Core.Controllers
           {
             if (LastGCodeType == RequestGCode.M114GetExtruderLocation)
             {
-              if (float.TryParse(parameter, NumberStyles.Float, (IFormatProvider)PrinterCompatibleString.NUMBER_FORMAT, out var result4))
+              if (float.TryParse(parameter, NumberStyles.Float, PrinterCompatibleString.NUMBER_FORMAT, out var result4))
               {
                 ExtruderDetails.position.pos.z = result4;
               }
@@ -690,7 +690,7 @@ namespace M3D.Spooling.Core.Controllers
                     ++startIndex;
                   }
                 }
-                WriteLog(string.Format(" - {0}", (object)str), Logger.TextType.Write);
+                WriteLog(string.Format(" - {0}", str), Logger.TextType.Write);
               }
             }
           }
@@ -704,8 +704,8 @@ namespace M3D.Spooling.Core.Controllers
         {
           if (OnGotUpdatedPosition != null)
           {
-            OnGotUpdatedPosition((IPublicFirmwareController) this, new PrinterInfo(MyPrinterInfo));
-            OnGotUpdatedPosition = (ScriptCallback) null;
+            OnGotUpdatedPosition(this, new PrinterInfo(MyPrinterInfo));
+            OnGotUpdatedPosition = null;
           }
         }
       }
@@ -717,7 +717,7 @@ namespace M3D.Spooling.Core.Controllers
         }
 
         ErrorLogger.LogException("Exception in FirmwareConnection.ProcessParameters 12 " + ex.Message, ex);
-        WriteLog(string.Format("FirmwareConnection.ProcessParameters 10 Exception: {0}", (object) ex.Message), Logger.TextType.Error);
+        WriteLog(string.Format("FirmwareConnection.ProcessParameters 10 Exception: {0}", ex.Message), Logger.TextType.Error);
       }
       return result1;
     }
@@ -726,12 +726,12 @@ namespace M3D.Spooling.Core.Controllers
     {
       foreach (Match match in new Regex("(\\w*):(\\d+\\.?\\d?)").Matches(message))
       {
-        if (!float.TryParse(match.Groups[2].Value, NumberStyles.Float, (IFormatProvider)PrinterCompatibleString.NUMBER_FORMAT, out var result))
+        if (!float.TryParse(match.Groups[2].Value, NumberStyles.Float, PrinterCompatibleString.NUMBER_FORMAT, out var result))
         {
           result = -273f;
         }
 
-        if ((double) result > 500.0)
+        if (result > 500.0)
         {
           result = 0.0f;
         }
@@ -776,7 +776,7 @@ namespace M3D.Spooling.Core.Controllers
           return;
         }
 
-        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.InvalidZ, MySerialNumber, (string) null).Serialize());
+        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.InvalidZ, MySerialNumber, null).Serialize());
         invalid_z_sent = true;
       }
     }
@@ -790,14 +790,14 @@ namespace M3D.Spooling.Core.Controllers
       }
       catch (Exception ex)
       {
-        ErrorLogger.LogException(string.Format("PrinterConnection.UpdateStatsTime Exception: {0}", (object) ex.Message), ex);
-        WriteLog(string.Format("PrinterConnection.UpdateStatsTime Exception: {0}", (object) ex.Message), Logger.TextType.Error);
+        ErrorLogger.LogException(string.Format("PrinterConnection.UpdateStatsTime Exception: {0}", ex.Message), ex);
+        WriteLog(string.Format("PrinterConnection.UpdateStatsTime Exception: {0}", ex.Message), Logger.TextType.Error);
       }
     }
 
     protected void UpdateStatsOnPrinter()
     {
-      if ((double)PersistantDetails.UnsavedPrintTime > 0.0)
+      if (PersistantDetails.UnsavedPrintTime > 0.0)
       {
         var num = (int)WriteManualCommands(PrinterCompatibleString.Format("M5321 X{0}", (object)PersistantDetails.UnsavedPrintTime));
         PersistantDetails.UnsavedPrintTime = 0.0f;
@@ -807,7 +807,7 @@ namespace M3D.Spooling.Core.Controllers
 
     public void SaveJobParamsToPersistantData(PersistantJobData parameters)
     {
-      PersistantDetails.SavedJobInformation = parameters != null ? new PersistantJobData(parameters) : (PersistantJobData) null;
+      PersistantDetails.SavedJobInformation = parameters != null ? new PersistantJobData(parameters) : null;
       SavePersistantData();
     }
 
@@ -826,11 +826,11 @@ namespace M3D.Spooling.Core.Controllers
 
     private void ProcessResend(int line_number)
     {
-      if (line_number < 0 && !m_ogcLastGCodeSent.hasN)
+      if (line_number < 0 && !m_ogcLastGCodeSent.HasN)
       {
         ResendLastCommand = true;
       }
-      else if (line_number >= 0 && m_ogcLastGCodeSent.hasN)
+      else if (line_number >= 0 && m_ogcLastGCodeSent.HasN)
       {
         var n = m_ogcLastGCodeSent.N;
         if (n == line_number)
@@ -839,7 +839,7 @@ namespace M3D.Spooling.Core.Controllers
         }
         else
         {
-          WriteLog(string.Format("Error::Invalid line number resending {0} expected {1}", (object) line_number, (object) n), Logger.TextType.Error);
+          WriteLog(string.Format("Error::Invalid line number resending {0} expected {1}", line_number, n), Logger.TextType.Error);
         }
       }
       else if (line_number >= 0)
@@ -890,7 +890,7 @@ namespace M3D.Spooling.Core.Controllers
       }
       else
       {
-        if ((!m_ogcLastGCodeSent.hasN || m_ogcLastGCodeSent.N != line_number) && (m_ogcLastGCodeSent.hasN || line_number > 0))
+        if ((!m_ogcLastGCodeSent.HasN || m_ogcLastGCodeSent.N != line_number) && (m_ogcLastGCodeSent.HasN || line_number > 0))
         {
           return;
         }
@@ -907,7 +907,7 @@ namespace M3D.Spooling.Core.Controllers
       if (m_bDoStartupOnWait && !MyPrinterInfo.FirmwareIsInvalid)
       {
         LastMessageClear = true;
-        MyPrinterProfile.Scripts.StartupScript((IPublicFirmwareController) this, new PrinterInfo(MyPrinterInfo));
+        MyPrinterProfile.Scripts.StartupScript(this, new PrinterInfo(MyPrinterInfo));
         m_bDoStartupOnWait = false;
       }
       else if (!LastMessageClear)
@@ -949,12 +949,12 @@ namespace M3D.Spooling.Core.Controllers
 
     private void TryToAutoResend()
     {
-      if (m_ogcLastGCodeSent != null && m_ogcLastGCodeSent.hasN && m_oJobController.HasJob)
+      if (m_ogcLastGCodeSent != null && m_ogcLastGCodeSent.HasN && m_oJobController.HasJob)
       {
         if (++_auto_resend_count.Value > 1)
         {
           var gcode = new GCode("G4 S0");
-          if (m_ogcLastGCodeSent.hasN)
+          if (m_ogcLastGCodeSent.HasN)
           {
             gcode.N = m_ogcLastGCodeSent.N;
           }
@@ -973,13 +973,13 @@ namespace M3D.Spooling.Core.Controllers
     {
       if (string.IsNullOrEmpty(unprocessed))
       {
-        return (string) null;
+        return null;
       }
 
       var str = unprocessed.TrimStart();
       if (str.Length < 1)
       {
-        return (string) null;
+        return null;
       }
 
       var num = str.IndexOf(' ');
@@ -990,7 +990,7 @@ namespace M3D.Spooling.Core.Controllers
       }
       else
       {
-        unprocessed = (string) null;
+        unprocessed = null;
       }
 
       return str;
@@ -1042,9 +1042,9 @@ namespace M3D.Spooling.Core.Controllers
       foreach (KeyValuePair<int, EepromAddressInfo> keyValuePair in allData)
       {
         EepromAddressInfo eepromAddressInfo = keyValuePair.Value;
-        if ((int) eepromAddressInfo.EepromAddr <= firmwareReadableEeprom)
+        if (eepromAddressInfo.EepromAddr <= firmwareReadableEeprom)
         {
-          var num = (int)WriteManualCommands("M619 S" + eepromAddressInfo.EepromAddr + " T" + (object) eepromAddressInfo.Size);
+          var num = (int)WriteManualCommands("M619 S" + eepromAddressInfo.EepromAddr + " T" + eepromAddressInfo.Size);
         }
       }
     }
@@ -1180,16 +1180,16 @@ namespace M3D.Spooling.Core.Controllers
         var alignedByte1 = (int)eeprom_mapping.GetAlignedByte("FilamentTypeID");
         KnownFilament.filament_location = (alignedByte1 & 192) >> 6 != 1 ? FilamentSpool.Location.External : FilamentSpool.Location.Internal;
         var num = alignedByte1 & -193;
-        KnownFilament.filament_type = !Enum.IsDefined(typeof (FilamentSpool.TypeEnum), (object) num) ? FilamentSpool.TypeEnum.NoFilament : (FilamentSpool.TypeEnum) num;
-        KnownFilament.filament_temperature = (int)eeprom_mapping.GetAlignedByte("FilamentTemperature") + 100;
+        KnownFilament.filament_type = !Enum.IsDefined(typeof (FilamentSpool.TypeEnum), num) ? FilamentSpool.TypeEnum.NoFilament : (FilamentSpool.TypeEnum) num;
+        KnownFilament.filament_temperature = eeprom_mapping.GetAlignedByte("FilamentTemperature") + 100;
         KnownFilament.estimated_filament_length_printed = eeprom_mapping.GetFloat("FilamentAmount");
         var alignedByte2 = eeprom_mapping.GetAlignedByte("FilamentSize");
-        if (!Enum.IsDefined(typeof (FilamentSpool.SizeEnum), (object) (int) alignedByte2))
+        if (!Enum.IsDefined(typeof (FilamentSpool.SizeEnum), (int)alignedByte2))
         {
           return;
         }
 
-        if (alignedByte2 == (ushort) 1)
+        if (alignedByte2 == 1)
         {
           KnownFilament.filament_size = FilamentSpool.SizeEnum.Pro;
         }
@@ -1212,8 +1212,8 @@ namespace M3D.Spooling.Core.Controllers
       CalibrationDetails.CORNER_HEIGHT_BACK_LEFT = eeprom_mapping.GetFloat("BedCompensationBackLeft");
       CalibrationDetails.CORNER_HEIGHT_FRONT_RIGHT = eeprom_mapping.GetFloat("BedCompensationFrontRight");
       CalibrationDetails.CORNER_HEIGHT_FRONT_LEFT = eeprom_mapping.GetFloat("BedCompensationFrontLeft");
-      CalibrationDetails.G32_VERSION = (int)eeprom_mapping.GetAlignedByte("BedCompensationVersion");
-      if (CalibrationDetails.G32_VERSION == (int) byte.MaxValue)
+      CalibrationDetails.G32_VERSION = eeprom_mapping.GetAlignedByte("BedCompensationVersion");
+      if (CalibrationDetails.G32_VERSION == byte.MaxValue)
       {
         CalibrationDetails.G32_VERSION = 0;
       }
@@ -1223,7 +1223,7 @@ namespace M3D.Spooling.Core.Controllers
       var flag2 = float.IsNaN(CalibrationDetails.CORNER_HEIGHT_BACK_LEFT) || float.IsNaN(CalibrationDetails.CORNER_HEIGHT_BACK_RIGHT) || float.IsNaN(CalibrationDetails.CORNER_HEIGHT_FRONT_LEFT) || float.IsNaN(CalibrationDetails.CORNER_HEIGHT_FRONT_RIGHT);
       if (((num == 0 || !MyPrinterProfile.OptionsConstants.VerifyGantryNonZeroValues ? (!flag1 ? 0 : ("Pro" != MyPrinterProfile.ProfileName ? 1 : 0)) : 1) | (flag2 ? 1 : 0)) != 0)
       {
-        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.BedOrientationMustBeCalibrated, MySerialNumber, (string) null).Serialize());
+        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.BedOrientationMustBeCalibrated, MySerialNumber, null).Serialize());
       }
       else if (flag1 && "Pro" == MyPrinterProfile.ProfileName)
       {
@@ -1265,12 +1265,12 @@ namespace M3D.Spooling.Core.Controllers
       var flag = false;
       CalibrationDetails.BACKLASH_X = eeprom_mapping.GetFloat("BacklashX");
       CalibrationDetails.BACKLASH_Y = eeprom_mapping.GetFloat("BacklashY");
-      if (float.IsNaN(CalibrationDetails.BACKLASH_X) || (double)CalibrationDetails.BACKLASH_X > 2.0)
+      if (float.IsNaN(CalibrationDetails.BACKLASH_X) || CalibrationDetails.BACKLASH_X > 2.0)
       {
         flag = true;
       }
 
-      if (float.IsNaN(CalibrationDetails.BACKLASH_Y) || (double)CalibrationDetails.BACKLASH_Y > 2.0)
+      if (float.IsNaN(CalibrationDetails.BACKLASH_Y) || CalibrationDetails.BACKLASH_Y > 2.0)
       {
         flag = true;
       }
@@ -1280,13 +1280,13 @@ namespace M3D.Spooling.Core.Controllers
         return;
       }
 
-      BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.BacklashOutOfRange, MySerialNumber, (string) null).Serialize());
+      BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.BacklashOutOfRange, MySerialNumber, null).Serialize());
     }
 
     public void ProcessBacklashSpeedEEPROM()
     {
       CalibrationDetails.BACKLASH_SPEED = eeprom_mapping.GetFloat("BacklashSpeed");
-      if (!float.IsNaN(CalibrationDetails.BACKLASH_SPEED) && (double)CalibrationDetails.BACKLASH_SPEED > 1.0)
+      if (!float.IsNaN(CalibrationDetails.BACKLASH_SPEED) && CalibrationDetails.BACKLASH_SPEED > 1.0)
       {
         return;
       }
@@ -1329,7 +1329,7 @@ namespace M3D.Spooling.Core.Controllers
       EepromAddressInfo eepromInfo10 = MyPrinterProfile.EEPROMConstants.GetEepromInfo("BedCompensationVersion");
       if (eepromInfo1 != null && eepromInfo2 != null && (eepromInfo3 != null && eepromInfo4 != null))
       {
-        var num1 = (int)WriteManualCommands("M619 S" + eepromInfo1.EepromAddr + " T" + eepromInfo1.Size, "M619 S" + eepromInfo2.EepromAddr + " T" + eepromInfo2.Size, "M619 S" + eepromInfo3.EepromAddr + " T" + eepromInfo3.Size, "M619 S" + eepromInfo4.EepromAddr + " T" + (object) eepromInfo4.Size);
+        var num1 = (int)WriteManualCommands("M619 S" + eepromInfo1.EepromAddr + " T" + eepromInfo1.Size, "M619 S" + eepromInfo2.EepromAddr + " T" + eepromInfo2.Size, "M619 S" + eepromInfo3.EepromAddr + " T" + eepromInfo3.Size, "M619 S" + eepromInfo4.EepromAddr + " T" + eepromInfo4.Size);
       }
       if (eepromInfo5 != null && eepromInfo6 != null && (eepromInfo7 != null && eepromInfo8 != null))
       {
@@ -1344,7 +1344,7 @@ namespace M3D.Spooling.Core.Controllers
         return;
       }
 
-      var num4 = (int)WriteManualCommands("M619 S" + (object) eepromInfo10.EepromAddr + " T" + (object) eepromInfo10.Size);
+      var num4 = (int)WriteManualCommands("M619 S" + eepromInfo10.EepromAddr + " T" + eepromInfo10.Size);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1414,7 +1414,7 @@ namespace M3D.Spooling.Core.Controllers
             }
 
             jobmessage_not_sent = false;
-            BroadcastServer.BroadcastMessage(new SpoolerMessage(m_oJobController.GetNextWarning(), MySerialNumber, (string) null).Serialize());
+            BroadcastServer.BroadcastMessage(new SpoolerMessage(m_oJobController.GetNextWarning(), MySerialNumber, null).Serialize());
           }
           else
           {
@@ -1451,7 +1451,7 @@ namespace M3D.Spooling.Core.Controllers
       }
       else
       {
-        MyPrinterInfo.current_job = (JobInfo) null;
+        MyPrinterInfo.current_job = null;
       }
     }
 
@@ -1475,7 +1475,7 @@ namespace M3D.Spooling.Core.Controllers
 
       if (MyPrinterInfo.FirmwareIsInvalid)
       {
-        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.FirmwareMustBeUpdated, MySerialNumber, (string) null).Serialize());
+        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.FirmwareMustBeUpdated, MySerialNumber, null).Serialize());
         lock (manual_commands)
         {
           manual_commands.Clear();
@@ -1499,7 +1499,7 @@ namespace M3D.Spooling.Core.Controllers
           return CommandResult.Failed_Exception;
         }
 
-        if (IsPausedorPausing && newgcode.hasG && (newgcode.G == (ushort) 28 || newgcode.G == (ushort) 32 || newgcode.G == (ushort) 30))
+        if (IsPausedorPausing && newgcode.HasG && (newgcode.G == 28 || newgcode.G == 32 || newgcode.G == 30))
         {
           lock (manual_commands)
           {
@@ -1509,18 +1509,18 @@ namespace M3D.Spooling.Core.Controllers
           var num = (int)base_printer.ReleaseLock(base_printer.MyLock);
           return CommandResult.Failed_G28_G30_G32_NotAllowedWhilePaused;
         }
-        if (newgcode.hasM && newgcode.hasS && (newgcode.M == (ushort) 115 && newgcode.S == 628))
+        if (newgcode.hasM && newgcode.HasS && (newgcode.M == 115 && newgcode.S == 628))
         {
           GotoBootloader();
           return CommandResult.Success;
         }
-        if (newgcode.hasM && newgcode.M <= (ushort) 1)
+        if (newgcode.hasM && newgcode.M <= 1)
         {
-          if (newgcode.M == (ushort) 0)
+          if (newgcode.M == 0)
           {
             SendEmergencyStop();
           }
-          else if (newgcode.M == (ushort) 1)
+          else if (newgcode.M == 1)
           {
             HaltAllMoves();
           }
@@ -1553,7 +1553,7 @@ namespace M3D.Spooling.Core.Controllers
 
     private bool CheckGantryClipsBeforeCommand(GCode newgcode)
     {
-      if (!MyPrinterProfile.OptionsConstants.CheckGantryClips || PersistantDetails.GantryClipsRemoved || !SpoolerServer.CHECK_GANTRY_CLIPS || (!newgcode.hasM || newgcode.M != (ushort) 104 && newgcode.M != (ushort) 109) && (!newgcode.hasG || newgcode.G == (ushort) 90 || newgcode.G == (ushort) 91))
+      if (!MyPrinterProfile.OptionsConstants.CheckGantryClips || PersistantDetails.GantryClipsRemoved || !SpoolerServer.CHECK_GANTRY_CLIPS || (!newgcode.hasM || newgcode.M != 104 && newgcode.M != 109) && (!newgcode.HasG || newgcode.G == 90 || newgcode.G == 91))
       {
         return true;
       }
@@ -1567,7 +1567,7 @@ namespace M3D.Spooling.Core.Controllers
       {
         oswGantryTimer.Restart();
         WriteLog("Gantry clip check has not occurred", Logger.TextType.Error);
-        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.CheckGantryClips, MySerialNumber, (string) null).Serialize());
+        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.CheckGantryClips, MySerialNumber, null).Serialize());
         var num = (int)base_printer.ReleaseLock(base_printer.MyLock);
       }
       return false;
@@ -1648,7 +1648,7 @@ namespace M3D.Spooling.Core.Controllers
       Status = PrinterStatus.Firmware_Executing;
       UpdateStatsOnPrinter();
       PushFilamentUsedToPrinter();
-      MyPrinterInfo.current_job = (JobInfo) null;
+      MyPrinterInfo.current_job = null;
     }
 
     public CommandResult ContinuePrint()
@@ -1712,7 +1712,7 @@ namespace M3D.Spooling.Core.Controllers
 
       var gcodeList = new List<GCode>();
       var num = MyPrinterInfo.extruder.position.pos.z - MyPrinterProfile.PrinterSizeConstants.BoxTopLimitZ;
-      if ((double) num <= 0.0)
+      if (num <= 0.0)
       {
         return;
       }
@@ -1743,56 +1743,56 @@ namespace M3D.Spooling.Core.Controllers
 
     protected void TrackExtruderPosition(GCode gcode)
     {
-      if (gcode.hasG)
+      if (gcode.HasG)
       {
-        if (gcode.G == (ushort) 90)
+        if (gcode.G == 90)
         {
           MyPrinterInfo.extruder.inRelativeMode = Trilean.False;
         }
-        else if (gcode.G == (ushort) 91)
+        else if (gcode.G == 91)
         {
           MyPrinterInfo.extruder.inRelativeMode = Trilean.True;
         }
-        else if (gcode.G == (ushort) 28)
+        else if (gcode.G == 28)
         {
           SetToHomeLocation();
         }
-        else if (gcode.G == (ushort) 30 || gcode.G == (ushort) 32)
+        else if (gcode.G == 30 || gcode.G == 32)
         {
           SetToHomeLocation();
           MyPrinterInfo.extruder.position.pos.z = MyPrinterProfile.PrinterSizeConstants.ZAfterProbing;
           MyPrinterInfo.extruder.Z_Valid = true;
         }
-        else if (gcode.G == (ushort) 33)
+        else if (gcode.G == 33)
         {
           MyPrinterInfo.extruder.position.pos.z = MyPrinterProfile.PrinterSizeConstants.ZAfterG33;
           MyPrinterInfo.extruder.Z_Valid = true;
         }
-        else if (gcode.G == (ushort) 92)
+        else if (gcode.G == 92)
         {
-          if (gcode.hasE)
+          if (gcode.HasE)
           {
             MyPrinterInfo.extruder.position.e = gcode.E;
           }
 
           if (MyPrinterProfile.OptionsConstants.G92WorksOnAllAxes)
           {
-            if (gcode.hasX)
+            if (gcode.HasX)
             {
               MyPrinterInfo.extruder.position.pos.x = gcode.X;
             }
 
-            if (gcode.hasY)
+            if (gcode.HasY)
             {
               MyPrinterInfo.extruder.position.pos.y = gcode.Y;
             }
 
-            if (gcode.hasZ)
+            if (gcode.HasZ)
             {
               MyPrinterInfo.extruder.position.pos.z = gcode.Z;
             }
           }
-          if (!gcode.hasE && !gcode.hasX && (!gcode.hasY && !gcode.hasZ))
+          if (!gcode.HasE && !gcode.HasX && (!gcode.HasY && !gcode.HasZ))
           {
             MyPrinterInfo.extruder.position.e = 0.0f;
             if (MyPrinterProfile.OptionsConstants.G92WorksOnAllAxes)
@@ -1803,18 +1803,18 @@ namespace M3D.Spooling.Core.Controllers
             }
           }
         }
-        else if ((gcode.G == (ushort) 0 || gcode.G == (ushort) 1) && MyPrinterInfo.extruder.inRelativeMode != Trilean.Unknown)
+        else if ((gcode.G == 0 || gcode.G == 1) && MyPrinterInfo.extruder.inRelativeMode != Trilean.Unknown)
         {
           var op3dInitial = new Vector3D(MyPrinterInfo.extruder.position.pos);
-          Vector3D destination = MovementUtility.op3dCalculateDestination(MyPrinterInfo.extruder.ishomed, MyPrinterInfo.extruder.Z_Valid, MyPrinterInfo.extruder.inRelativeMode, gcode, op3dInitial);
+          Vector3D destination = MovementUtility.Op3dCalculateDestination(MyPrinterInfo.extruder.ishomed, MyPrinterInfo.extruder.Z_Valid, MyPrinterInfo.extruder.inRelativeMode, gcode, op3dInitial);
           if (!IsPrinting && BoundsCheckingEnabled)
           {
             var vector3D = new Vector3D(0.0f, 0.0f, 0.0f);
             var bDestinationHasBeenClipped = false;
-            Vector3D destinationWithClipping = MovementUtility.op3dCalculateDestinationWithClipping(MyPrinterInfo.extruder.ishomed, MyPrinterInfo.extruder.Z_Valid, ref bDestinationHasBeenClipped, destination, MyPrinterInfo.extruder.position.pos, (PrinterProfile)MyPrinterProfile);
+            Vector3D destinationWithClipping = MovementUtility.Op3dCalculateDestinationWithClipping(MyPrinterInfo.extruder.ishomed, MyPrinterInfo.extruder.Z_Valid, ref bDestinationHasBeenClipped, destination, MyPrinterInfo.extruder.position.pos, MyPrinterProfile);
             if (bDestinationHasBeenClipped)
             {
-              MovementUtility.vGetEffectiveMovementGCode(MyPrinterInfo.extruder.ishomed, MyPrinterInfo.extruder.Z_Valid, MyPrinterInfo.extruder.inRelativeMode, destinationWithClipping, MyPrinterInfo.extruder.position.pos, ref gcode);
+              MovementUtility.VGetEffectiveMovementGCode(MyPrinterInfo.extruder.ishomed, MyPrinterInfo.extruder.Z_Valid, MyPrinterInfo.extruder.inRelativeMode, destinationWithClipping, MyPrinterInfo.extruder.position.pos, ref gcode);
             }
 
             MyPrinterInfo.extruder.position.pos = destinationWithClipping;
@@ -1825,7 +1825,7 @@ namespace M3D.Spooling.Core.Controllers
           }
         }
       }
-      if (!gcode.hasM || gcode.M != (ushort) 0 && gcode.M != (ushort) 1)
+      if (!gcode.hasM || gcode.M != 0 && gcode.M != 1)
       {
         return;
       }
@@ -1835,7 +1835,7 @@ namespace M3D.Spooling.Core.Controllers
 
     protected void TrackFilament(GCode gcode)
     {
-      if (!gcode.hasG || !gcode.hasE || gcode.G != (ushort) 0 && gcode.G != (ushort) 1)
+      if (!gcode.HasG || !gcode.HasE || gcode.G != 0 && gcode.G != 1)
       {
         return;
       }
@@ -1871,7 +1871,7 @@ namespace M3D.Spooling.Core.Controllers
     protected GCode ConvertToSafeEmptyGCode(GCode gcode)
     {
       var gcode1 = new GCode("G4 S0");
-      if (gcode.hasN)
+      if (gcode.HasN)
       {
         gcode1.N = gcode.N;
       }
@@ -1881,7 +1881,7 @@ namespace M3D.Spooling.Core.Controllers
 
     private byte[] TranslateGCode(GCode gcode)
     {
-      if (gcode.hasG && gcode.G == (ushort) 28 && MyPrinterInfo.extruder.Z_Valid)
+      if (gcode.HasG && gcode.G == 28 && MyPrinterInfo.extruder.Z_Valid)
       {
         VerifyHomingPosition(ref gcode);
       }
@@ -1889,10 +1889,10 @@ namespace M3D.Spooling.Core.Controllers
       TrackExtruderPosition(gcode);
       TrackFilament(gcode);
       LastGCodeType = RequestGCode.NonRequestGCode;
-      if (!gcode.hasM || gcode.M != (ushort) 5321 && gcode.M != (ushort) 619 && gcode.M != (ushort) 618 && (gcode.M != (ushort) 115 || gcode.hasS && gcode.S != 628))
+      if (!gcode.hasM || gcode.M != 5321 && gcode.M != 619 && gcode.M != 618 && (gcode.M != 115 || gcode.HasS && gcode.S != 628))
       {
         var flag = false;
-        if (!gcode.hasN || flag || !IsPrinting)
+        if (!gcode.HasN || flag || !IsPrinting)
         {
           WriteLog("<< " + gcode.getAscii(true, false), Logger.TextType.Write);
         }
@@ -1902,13 +1902,13 @@ namespace M3D.Spooling.Core.Controllers
         LastGCodeType = RequestGCode.HiddenType;
       }
 
-      if (gcode.hasM && gcode.M != (ushort) 0)
+      if (gcode.hasM && gcode.M != 0)
       {
         if (MyPrinterProfile.VirtualCodes.ProcessVirtualCode(gcode, this))
         {
-          if (!gcode.hasN)
+          if (!gcode.HasN)
           {
-            return (byte[]) null;
+            return null;
           }
 
           var n = gcode.N;
@@ -1917,20 +1917,20 @@ namespace M3D.Spooling.Core.Controllers
             N = n
           };
         }
-        if (gcode.M == (ushort) 117)
+        if (gcode.M == 117)
         {
           LastGCodeType = RequestGCode.M117GetInternalState;
         }
-        else if (gcode.M == (ushort) 114)
+        else if (gcode.M == 114)
         {
           LastGCodeType = RequestGCode.M114GetExtruderLocation;
           ExtruderDetails.position.Reset();
         }
-        else if (gcode.M == (ushort) 576)
+        else if (gcode.M == 576)
         {
           LastGCodeType = RequestGCode.M576GetFilamentInfo;
         }
-        else if (gcode.M == (ushort) 618)
+        else if (gcode.M == 618)
         {
           var s = gcode.S;
           var p = gcode.P;
@@ -1938,17 +1938,17 @@ namespace M3D.Spooling.Core.Controllers
           if (infoFromLocation != null)
           {
             eeprom_mapping.SetValue(infoFromLocation, p);
-            CheckUpdatedPTValue((int) infoFromLocation.EepromAddr);
+            CheckUpdatedPTValue(infoFromLocation.EepromAddr);
           }
         }
-        else if ((gcode.M == (ushort) 109 || gcode.M == (ushort) 116) && (!IsPrinting && !IsPausedorPausing) && !IsRecovering)
+        else if ((gcode.M == 109 || gcode.M == 116) && (!IsPrinting && !IsPausedorPausing) && !IsRecovering)
         {
           Status = PrinterStatus.Firmware_WarmingUp;
         }
       }
-      if (gcode.hasG)
+      if (gcode.HasG)
       {
-        if (gcode.G == (ushort) 30 || gcode.G == (ushort) 32 || gcode.G == (ushort) 33)
+        if (gcode.G == 30 || gcode.G == 32 || gcode.G == 33)
         {
           var flag1 = true;
           var flag2 = true;
@@ -1966,40 +1966,40 @@ namespace M3D.Spooling.Core.Controllers
               flag2 = (uint)MyPrinterInfo.supportedFeatures.GetStatus(featureSlot2) > 0U;
             }
           }
-          if (gcode.G == (ushort) 32 && !flag1)
+          if (gcode.G == 32 && !flag1)
           {
             gcode = ConvertToSafeEmptyGCode(gcode);
-            BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.MultiPointCalibrationNotSupported, MySerialNumber, (string) null).Serialize());
+            BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.MultiPointCalibrationNotSupported, MySerialNumber, null).Serialize());
           }
-          else if (gcode.G == (ushort) 30 && !flag2)
+          else if (gcode.G == 30 && !flag2)
           {
             gcode = ConvertToSafeEmptyGCode(gcode);
-            BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.SinglePointCalibrationNotSupported, MySerialNumber, (string) null).Serialize());
+            BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.SinglePointCalibrationNotSupported, MySerialNumber, null).Serialize());
           }
           else if (Status != PrinterStatus.Firmware_Printing)
           {
             LastGCodeType = RequestGCode.G30_32_30_ZSaveGcode;
             ExtruderDetails.position.Reset();
             ClearCalibrationErrors();
-            if (gcode.G == (ushort) 30)
+            if (gcode.G == 30)
             {
               SetOffsetInformationZOnly(0.0f);
               RequestUpdatedG32ValuesFromFirmware();
               var num = (int)WriteManualCommands("M117", "M578");
             }
-            else if (gcode.G == (ushort) 32)
+            else if (gcode.G == 32)
             {
               SetOffsetInformation(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, false);
               RequestUpdatedG32ValuesFromFirmware();
               var num = (int)WriteManualCommands("M117", "M578");
             }
           }
-          if (gcode.G != (ushort) 33 && !IsRecovering)
+          if (gcode.G != 33 && !IsRecovering)
           {
             Status = PrinterStatus.Firmware_Calibrating;
           }
         }
-        if (gcode.G == (ushort) 28 && PrinterStatus.Firmware_PowerRecovery != Status)
+        if (gcode.G == 28 && PrinterStatus.Firmware_PowerRecovery != Status)
         {
           Status = PrinterStatus.Firmware_Homing;
         }
@@ -2050,7 +2050,7 @@ namespace M3D.Spooling.Core.Controllers
         return;
       }
 
-      if (!gcode1.hasN)
+      if (!gcode1.HasN)
       {
         CheckForPluginCommand(gcode1);
       }
@@ -2116,7 +2116,7 @@ namespace M3D.Spooling.Core.Controllers
       newJobData.user = user;
       try
       {
-        newJobData.jobParam.VerifyOptionsWithPrinter((PrinterProfile)MyPrinterProfile, MyPrinterInfo);
+        newJobData.jobParam.VerifyOptionsWithPrinter(MyPrinterProfile, MyPrinterInfo);
       }
       catch (Exception ex)
       {
@@ -2124,7 +2124,7 @@ namespace M3D.Spooling.Core.Controllers
         BroadcastServer.BroadcastMessage("");
         return;
       }
-      ThreadPool.QueueUserWorkItem(new WaitCallback(AddJobWorker), (object) newJobData);
+      ThreadPool.QueueUserWorkItem(new WaitCallback(AddJobWorker), newJobData);
     }
 
     private void AddJobWorker(object data)
@@ -2134,7 +2134,7 @@ namespace M3D.Spooling.Core.Controllers
       {
         if (IsWorking || GetJobsCount() > 0)
         {
-          BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.CantStartJobPrinterBusy, (string) null).Serialize());
+          BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.CantStartJobPrinterBusy, null).Serialize());
         }
         else
         {
@@ -2160,15 +2160,15 @@ namespace M3D.Spooling.Core.Controllers
       }
       if (!ExtruderDetails.Z_Valid && SpoolerServer.CHECK_BED_CALIBRATION)
       {
-        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.InvalidZ, MySerialNumber, (string) null).Serialize());
+        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.InvalidZ, MySerialNumber, null).Serialize());
       }
       else if (!CalibrationDetails.Calibration_Valid && SpoolerServer.CHECK_BED_CALIBRATION)
       {
-        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.BedOrientationMustBeCalibrated, MySerialNumber, (string) null).Serialize());
+        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.BedOrientationMustBeCalibrated, MySerialNumber, null).Serialize());
       }
       else if (!PersistantDetails.GantryClipsRemoved && SpoolerServer.CHECK_GANTRY_CLIPS)
       {
-        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.CheckGantryClips, MySerialNumber, (string) null).Serialize());
+        BroadcastServer.BroadcastMessage(new SpoolerMessage(MessageType.CheckGantryClips, MySerialNumber, null).Serialize());
       }
       else
       {
@@ -2259,7 +2259,7 @@ namespace M3D.Spooling.Core.Controllers
     public override void SetExtruderCurrent(ushort current)
     {
       GotoBootloader();
-      SetActionOnRestart(PersistantData.RestartAction.SetExtruderCurrent, (int) current);
+      SetActionOnRestart(PersistantData.RestartAction.SetExtruderCurrent, current);
     }
 
     public void SetOffsetInformation(BedOffsets Off)
@@ -2276,7 +2276,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       if (check)
       {
-        if ((double) Math.Abs(CalibrationDetails.CORNER_HEIGHT_BACK_LEFT_OFFSET - BL) < 1.40129846432482E-45 && (double) Math.Abs(CalibrationDetails.CORNER_HEIGHT_BACK_RIGHT_OFFSET - BR) < 1.40129846432482E-45 && ((double) Math.Abs(CalibrationDetails.CORNER_HEIGHT_FRONT_LEFT_OFFSET - FL) < 1.40129846432482E-45 && (double) Math.Abs(CalibrationDetails.CORNER_HEIGHT_FRONT_RIGHT_OFFSET - FR) < 1.40129846432482E-45) && (double) Math.Abs(CalibrationDetails.ENTIRE_Z_HEIGHT_OFFSET - ZO) < 1.40129846432482E-45)
+        if (Math.Abs(CalibrationDetails.CORNER_HEIGHT_BACK_LEFT_OFFSET - BL) < 1.40129846432482E-45 && Math.Abs(CalibrationDetails.CORNER_HEIGHT_BACK_RIGHT_OFFSET - BR) < 1.40129846432482E-45 && (Math.Abs(CalibrationDetails.CORNER_HEIGHT_FRONT_LEFT_OFFSET - FL) < 1.40129846432482E-45 && Math.Abs(CalibrationDetails.CORNER_HEIGHT_FRONT_RIGHT_OFFSET - FR) < 1.40129846432482E-45) && Math.Abs(CalibrationDetails.ENTIRE_Z_HEIGHT_OFFSET - ZO) < 1.40129846432482E-45)
         {
           return;
         }
@@ -2287,7 +2287,7 @@ namespace M3D.Spooling.Core.Controllers
         CalibrationDetails.CORNER_HEIGHT_FRONT_RIGHT_OFFSET = FR;
         CalibrationDetails.ENTIRE_Z_HEIGHT_OFFSET = ZO;
       }
-      var num = (int)WriteManualCommands(PrinterCompatibleString.Format("M577 X{0} Y{1} Z{2} E{3} F{4}", (object) BL, (object) BR, (object) FR, (object) FL, (object) ZO), "M578");
+      var num = (int)WriteManualCommands(PrinterCompatibleString.Format("M577 X{0} Y{1} Z{2} E{3} F{4}", BL, BR, FR, FL, ZO), "M578");
     }
 
     public void SetOffsetInformationZOnly(float ZO)
@@ -2310,13 +2310,13 @@ namespace M3D.Spooling.Core.Controllers
 
     public void SetBacklashValues(BacklashSettings backlash)
     {
-      var num = (int)WriteManualCommands(PrinterCompatibleString.Format("M571 X{0} Y{1}", (object) backlash.backlash_x, (object) backlash.backlash_y), PrinterCompatibleString.Format("M580 X{0}", (object) backlash.backlash_speed), "M572", "M581");
+      var num = (int)WriteManualCommands(PrinterCompatibleString.Format("M571 X{0} Y{1}", backlash.backlash_x, backlash.backlash_y), PrinterCompatibleString.Format("M580 X{0}", (object) backlash.backlash_speed), "M572", "M581");
     }
 
     public void PrintBacklashPrint(string user)
     {
       FilamentSpool.TypeEnum filamentType = KnownFilament.filament_type;
-      var filamentProfile = FilamentProfile.CreateFilamentProfile(KnownFilament, (PrinterProfile)MyPrinterProfile);
+      var filamentProfile = FilamentProfile.CreateFilamentProfile(KnownFilament, MyPrinterProfile);
       AddJob(new JobParams("backlash_calibration.gcode", "Spooler Inserted Job", "null", filamentType, 0.0f, 0.0f)
       {
         options = {
@@ -2348,14 +2348,14 @@ namespace M3D.Spooling.Core.Controllers
       var filamentLengthPrinted = filament.estimated_filament_length_printed;
       var num2 = filamentType + (int) filament.filament_location * 64;
       var filamentSize = (int) filament.filament_size;
-      var num3 = (int)WriteManualCommands(PrinterCompatibleString.Format("M575 P{0} S{1} E{2} T{3} I{4}", (object) num2, (object) filamentColorCode, (object) filamentLengthPrinted, (object) num1, (object) filamentSize));
+      var num3 = (int)WriteManualCommands(PrinterCompatibleString.Format("M575 P{0} S{1} E{2} T{3} I{4}", num2, filamentColorCode, filamentLengthPrinted, num1, filamentSize));
       SetFilamentUID(filament.filament_uid);
     }
 
     public void PushFilamentUsedToPrinter()
     {
       FilamentSpool currentFilament = GetCurrentFilament();
-      if (!((FilamentSpool) null != currentFilament) || currentFilament.filament_type == FilamentSpool.TypeEnum.NoFilament)
+      if (!(null != currentFilament) || currentFilament.filament_type == FilamentSpool.TypeEnum.NoFilament)
       {
         return;
       }
@@ -2402,7 +2402,7 @@ namespace M3D.Spooling.Core.Controllers
         return CommandResult.Failed_FeatureNotAvailableOnPrinter;
       }
 
-      var num = (int)WriteManualCommands(string.Format("M582 S{0}", (object) iNozzleWidthMicrons));
+      var num = (int)WriteManualCommands(string.Format("M582 S{0}", iNozzleWidthMicrons));
       return CommandResult.Success;
     }
 
@@ -2550,7 +2550,7 @@ namespace M3D.Spooling.Core.Controllers
     {
       CalibrationDetails.Calibration_Valid = true;
       ExtruderDetails.Z_Valid = true;
-      CalibrationDetails.G32_VERSION = (int) byte.MaxValue;
+      CalibrationDetails.G32_VERSION = byte.MaxValue;
     }
 
     public void SetRepetierProtocol(int protocol)

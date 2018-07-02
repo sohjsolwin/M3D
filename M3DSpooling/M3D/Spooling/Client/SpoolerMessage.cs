@@ -62,7 +62,7 @@ namespace M3D.Spooling.Client
         {
           Type = MessageType.ErrorUndefinedMessage;
           SerialNumber = new PrinterSerialNumber("0");
-          Message = (string) null;
+          Message = null;
         }
       }
     }
@@ -74,12 +74,12 @@ namespace M3D.Spooling.Client
         OmitXmlDeclaration = true
       };
       var stringWriter = new StringWriter();
-      var xmlWriter = XmlWriter.Create((TextWriter) stringWriter, settings);
+      var xmlWriter = XmlWriter.Create(stringWriter, settings);
       var namespaces = new XmlSerializerNamespaces();
       namespaces.Add("", "");
       try
       {
-        SpoolerMessage.ClassSerializer.Serialize(xmlWriter, (object) this, namespaces);
+        SpoolerMessage.ClassSerializer.Serialize(xmlWriter, this, namespaces);
       }
       catch (Exception ex)
       {
@@ -100,7 +100,7 @@ namespace M3D.Spooling.Client
         return Convert.FromBase64String(Message);
       }
 
-      return (byte[]) null;
+      return null;
     }
 
     public override string ToString()

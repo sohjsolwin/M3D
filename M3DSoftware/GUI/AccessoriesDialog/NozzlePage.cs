@@ -172,12 +172,12 @@ namespace M3D.GUI.AccessoriesDialog
 
     private void SetNozzleSize(PrinterObject printer, int iNozzleSizeMicrons)
     {
-      if (printer == null || !printer.isConnected())
+      if (printer == null || !printer.IsConnected())
       {
         return;
       }
 
-      var num = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(ProcessCommandsToPrinter), (object) new NozzlePage.SetNozzleParameters(printer, iNozzleSizeMicrons, false));
+      var num = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(ProcessCommandsToPrinter), new NozzlePage.SetNozzleParameters(printer, iNozzleSizeMicrons, false));
     }
 
     private void ProcessCommandsToPrinter(IAsyncCallResult ar)
@@ -187,11 +187,11 @@ namespace M3D.GUI.AccessoriesDialog
       {
         if (asyncState.bReleasePrinterOnly)
         {
-          var num1 = (int) asyncState.printer.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+          var num1 = (int) asyncState.printer.ReleaseLock(null, null);
         }
         else
         {
-          var num2 = (int) asyncState.printer.SetNozzleWidth(new M3D.Spooling.Client.AsyncCallback(ProcessCommandsToPrinter), (object) new NozzlePage.SetNozzleParameters(asyncState.printer, 0, true), asyncState.iNozzleSizeMicrons);
+          var num2 = (int) asyncState.printer.SetNozzleWidth(new M3D.Spooling.Client.AsyncCallback(ProcessCommandsToPrinter), new NozzlePage.SetNozzleParameters(asyncState.printer, 0, true), asyncState.iNozzleSizeMicrons);
         }
       }
       else

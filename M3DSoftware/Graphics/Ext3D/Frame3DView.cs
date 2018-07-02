@@ -24,7 +24,7 @@ namespace M3D.Graphics.Ext3D
     }
 
     public Frame3DView(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -51,14 +51,14 @@ namespace M3D.Graphics.Ext3D
     {
       GL.Viewport(0, 0, Width, Height);
       GL.MatrixMode(MatrixMode.Projection);
-      ProjMatrix = Matrix4.CreatePerspectiveFieldOfView(fov, (float)Width / (float)Height, minZ, maxZ);
+      ProjMatrix = Matrix4.CreatePerspectiveFieldOfView(fov, Width / (float)Height, minZ, maxZ);
       GL.LoadMatrix(ref ProjMatrix);
       GL.MatrixMode(MatrixMode.Modelview);
       GL.Clear(ClearBufferMask.DepthBufferBit);
       if (UseLookAt)
       {
         GL.PushMatrix();
-        ViewMatrix = Matrix4.LookAt(new OpenTK.Vector3(viewPointPos.x, viewPointPos.y, viewPointPos.z), new OpenTK.Vector3(cameraLookAtPos.x, cameraLookAtPos.y, cameraLookAtPos.z), OpenTK.Vector3.UnitY);
+        ViewMatrix = Matrix4.LookAt(new OpenTK.Vector3(viewPointPos.X, viewPointPos.Y, viewPointPos.Z), new OpenTK.Vector3(cameraLookAtPos.X, cameraLookAtPos.Y, cameraLookAtPos.Z), OpenTK.Vector3.UnitY);
         GL.LoadMatrix(ref ViewMatrix);
       }
       origin.Render3D();
@@ -82,7 +82,7 @@ namespace M3D.Graphics.Ext3D
 
     public void SetCameraPerspective(float fov, float minZ, float maxZ)
     {
-      this.fov = (float) ((double) fov * 3.14159274101257 / 180.0);
+      this.fov = (float)(fov * 3.14159274101257 / 180.0);
       this.minZ = minZ;
       this.maxZ = maxZ;
     }
@@ -102,11 +102,11 @@ namespace M3D.Graphics.Ext3D
     {
       var mat = Matrix4.Invert(worldMatrix * ViewMatrix * ProjMatrix);
       Vector4 vec = w;
-      vec.X = (float) (2.0 * (double) vec.X / (double)Width - 1.0);
-      vec.Y = (float) (1.0 - 2.0 * (double) vec.Y / (double)Height);
+      vec.X = (float) (2.0 * vec.X / Width - 1.0);
+      vec.Y = (float) (1.0 - 2.0 * vec.Y / Height);
       vec.W = 1f;
       var vector4 = Vector4.Transform(vec, mat);
-      if ((double) vector4.W == 0.0)
+      if (vector4.W == 0.0)
       {
         return vector4;
       }

@@ -152,7 +152,7 @@ namespace M3D.GUI.Forms
         str = "on_timerTick::views.Process";
         if (TEMPORARY_run_count <= 3)
         {
-          Form1.debugLogger.Add(nameof (on_timerTick), str + (object)TEMPORARY_run_count, DebugLogger.LogType.Primary);
+          Form1.debugLogger.Add(nameof (on_timerTick), str + TEMPORARY_run_count, DebugLogger.LogType.Primary);
         }
 
         str = "on_timerTick::Refresh";
@@ -163,7 +163,7 @@ namespace M3D.GUI.Forms
 
         if (TEMPORARY_run_count <= 3)
         {
-          Form1.debugLogger.Add(nameof (on_timerTick), str + (object)TEMPORARY_run_count, DebugLogger.LogType.Primary);
+          Form1.debugLogger.Add(nameof (on_timerTick), str + TEMPORARY_run_count, DebugLogger.LogType.Primary);
         }
 
         str = "on_timerTick::RefreshViews";
@@ -179,7 +179,7 @@ namespace M3D.GUI.Forms
         }
         if (TEMPORARY_run_count <= 3)
         {
-          Form1.debugLogger.Add(nameof (on_timerTick), str + (object)TEMPORARY_run_count, DebugLogger.LogType.Primary);
+          Form1.debugLogger.Add(nameof (on_timerTick), str + TEMPORARY_run_count, DebugLogger.LogType.Primary);
         }
       }
       catch (Exception ex)
@@ -218,16 +218,16 @@ namespace M3D.GUI.Forms
         frame.RelativeWidth = 1f;
         frame.RelativeHeight = 1f;
         frame.BGColor = new Color4(0.913725f, 0.905882f, 0.9098f, 1f);
-        m_gui_host.AddElement((Element2D) frame);
-        libraryview = new LibraryView(10001, (Element2D) frame, glControl1, m_gui_host, informationbox, model_loading_manager);
+        m_gui_host.AddElement(frame);
+        libraryview = new LibraryView(10001, frame, glControl1, m_gui_host, informationbox, model_loading_manager);
         m_gui_host.SetFocus(1001);
         m_gui_host.Refresh();
         Form1.debugLogger.Add("glControl1_Load()", "LibraryView created.", DebugLogger.LogType.Secondary);
         printerView = new PrinterView(this, m_gui_host, OpenGLConnection, spooler_connection, slicer_connection, model_loading_manager, messagebox, informationbox, settingsManager, libraryview);
         printerView.SetViewPointPos(0.0f, 100f, 400f);
         Form1.debugLogger.Add("glControl1_Load()", "GLPrinterView created.", DebugLogger.LogType.Secondary);
-        frame.AddChildElement((Element2D)printerView);
-        frame.AddChildElement((Element2D)libraryview);
+        frame.AddChildElement(printerView);
+        frame.AddChildElement(libraryview);
         Form1.debugLogger.Add("glControl1_Load()", "Views added to background view.", DebugLogger.LogType.Secondary);
         model_loading_manager.Init(settingsManager, libraryview, printerView, messagebox, informationbox);
         Form1.debugLogger.Add("glControl1_Load()", "Model Loading Manager Initialized.", DebugLogger.LogType.Secondary);
@@ -255,7 +255,7 @@ namespace M3D.GUI.Forms
         {
           var welcomeDialog = new WelcomeDialog(1209, messagebox);
           welcomeDialog.Init(m_gui_host);
-          m_gui_host.GlobalChildDialog += (Element2D) welcomeDialog;
+          m_gui_host.GlobalChildDialog += welcomeDialog;
         }
         else
         {
@@ -369,9 +369,9 @@ namespace M3D.GUI.Forms
 
     private void InitializePlatformSpecificObjects()
     {
-      myFileAssociations = (IFileAssociations) null;
-      myStopShutdown = (IStopShutdown) new WinStopShutdown(Handle);
-      myFileAssociations = (IFileAssociations) new WinFileAssociations();
+      myFileAssociations = null;
+      myStopShutdown = new WinStopShutdown(Handle);
+      myFileAssociations = new WinFileAssociations();
     }
 
     private void glControl1_Paint(object sender, PaintEventArgs e)
@@ -384,24 +384,24 @@ namespace M3D.GUI.Forms
         }
         else
         {
-          elapsed = (double)fps_lock_watch.ElapsedTicks / (double) Stopwatch.Frequency;
+          elapsed = fps_lock_watch.ElapsedTicks / (double)Stopwatch.Frequency;
           if (elapsed + elapsed_frame >= 1.0 / 60.0)
           {
             fps_lock_watch.Reset();
             fps_lock_watch.Start();
             fps_frame_counter.Reset();
             fps_frame_counter.Start();
-            OpenGLConnection.OnPaint((OpenGLConnection.RenderTaskDelegate) (() =>
-            {
-              if (resized)
-              {
-                return;
-              }
+            OpenGLConnection.OnPaint(() =>
+           {
+             if (resized)
+             {
+               return;
+             }
 
-              m_gui_host.Render();
-            }));
+             m_gui_host.Render();
+           });
             fps_frame_counter.Stop();
-            elapsed_frame = (double)fps_frame_counter.ElapsedTicks / (double) Stopwatch.Frequency;
+            elapsed_frame = fps_frame_counter.ElapsedTicks / (double)Stopwatch.Frequency;
           }
           else
           {
@@ -510,7 +510,7 @@ namespace M3D.GUI.Forms
 
       try
       {
-        m_gui_host.OnKeyboardEvent((KeyboardEvent) new InputKeyEvent(e.KeyChar, shift, alt, ctrl));
+        m_gui_host.OnKeyboardEvent(new InputKeyEvent(e.KeyChar, shift, alt, ctrl));
       }
       catch (Exception ex)
       {
@@ -542,7 +542,7 @@ namespace M3D.GUI.Forms
         if (keyData == Keys.Tab)
         {
           tab = true;
-          m_gui_host.OnKeyboardEvent((KeyboardEvent) new InputKeyEvent(' ', shift, alt, ctrl, tab));
+          m_gui_host.OnKeyboardEvent(new InputKeyEvent(' ', shift, alt, ctrl, tab));
         }
       }
       catch (Exception ex)
@@ -575,28 +575,28 @@ namespace M3D.GUI.Forms
             break;
           case Keys.Menu:
             alt = true;
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new CommandKeyEvent(KeyboardCommandKey.Alt, shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new CommandKeyEvent(KeyboardCommandKey.Alt, shift, alt, ctrl));
             break;
           case Keys.End:
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new CommandKeyEvent(KeyboardCommandKey.End, shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new CommandKeyEvent(KeyboardCommandKey.End, shift, alt, ctrl));
             break;
           case Keys.Home:
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new CommandKeyEvent(KeyboardCommandKey.Home, shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new CommandKeyEvent(KeyboardCommandKey.Home, shift, alt, ctrl));
             break;
           case Keys.Left:
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new CommandKeyEvent(KeyboardCommandKey.Left, shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new CommandKeyEvent(KeyboardCommandKey.Left, shift, alt, ctrl));
             break;
           case Keys.Up:
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new CommandKeyEvent(KeyboardCommandKey.Up, shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new CommandKeyEvent(KeyboardCommandKey.Up, shift, alt, ctrl));
             break;
           case Keys.Right:
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new CommandKeyEvent(KeyboardCommandKey.Right, shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new CommandKeyEvent(KeyboardCommandKey.Right, shift, alt, ctrl));
             break;
           case Keys.Down:
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new CommandKeyEvent(KeyboardCommandKey.Down, shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new CommandKeyEvent(KeyboardCommandKey.Down, shift, alt, ctrl));
             break;
           case Keys.Delete:
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new CommandKeyEvent(KeyboardCommandKey.Delete, shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new CommandKeyEvent(KeyboardCommandKey.Delete, shift, alt, ctrl));
             break;
           case Keys.C:
             if (!alt && !ctrl)
@@ -604,7 +604,7 @@ namespace M3D.GUI.Forms
               break;
             }
 
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new InputKeyEvent('C', shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new InputKeyEvent('C', shift, alt, ctrl));
             break;
           case Keys.V:
             if (!alt && !ctrl)
@@ -612,7 +612,7 @@ namespace M3D.GUI.Forms
               break;
             }
 
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new InputKeyEvent('V', shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new InputKeyEvent('V', shift, alt, ctrl));
             break;
           case Keys.X:
             if (!alt && !ctrl)
@@ -620,7 +620,7 @@ namespace M3D.GUI.Forms
               break;
             }
 
-            m_gui_host.OnKeyboardEvent((KeyboardEvent) new InputKeyEvent('X', shift, alt, ctrl));
+            m_gui_host.OnKeyboardEvent(new InputKeyEvent('X', shift, alt, ctrl));
             break;
         }
       }
@@ -796,14 +796,14 @@ namespace M3D.GUI.Forms
 
     private void InitializeComponent()
     {
-      components = (IContainer) new Container();
+      components = new Container();
       var componentResourceManager = new ComponentResourceManager(typeof (Form1));
       glControl1 = new GLControl(new GraphicsMode(new ColorFormat(32), 24, 0, 8), 3, 0, GraphicsContextFlags.ForwardCompatible);
       contextMenuStrip1 = new ContextMenuStrip(components);
       contextMenuStrip1.SuspendLayout();
       SuspendLayout();
       glControl1.BackColor = Color.Black;
-      componentResourceManager.ApplyResources((object)glControl1, "glControl1");
+      componentResourceManager.ApplyResources(glControl1, "glControl1");
       glControl1.Name = "glControl1";
       glControl1.VSync = false;
       glControl1.Load += new EventHandler(glControl1_Load);
@@ -819,9 +819,9 @@ namespace M3D.GUI.Forms
       glControl1.MouseUp += new MouseEventHandler(Form1_MouseUp);
       glControl1.PreviewKeyDown += new PreviewKeyDownEventHandler(OnPreviewKeyDown);
       glControl1.Resize += new EventHandler(glControl1_Resize);
-      componentResourceManager.ApplyResources((object) this, "$this");
+      componentResourceManager.ApplyResources(this, "$this");
       AutoScaleMode = AutoScaleMode.Font;
-      Controls.Add((Control)glControl1);
+      Controls.Add(glControl1);
       Name = nameof (Form1);
       FormClosing += new FormClosingEventHandler(Form1_FormClosing);
       FormClosed += new FormClosedEventHandler(Form1_FormClosed);

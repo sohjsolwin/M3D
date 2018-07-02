@@ -44,7 +44,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         Alignment = QFontAlignment.Centre
       };
       textWidget1.SetPosition(0, 50);
-      AddChildElement((Element2D) textWidget1);
+      AddChildElement(textWidget1);
       var textWidget2 = new TextWidget(12)
       {
         Size = FontSize.Medium,
@@ -57,23 +57,23 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       textWidget2.SetSize(480, 80);
       textWidget2.CenterHorizontallyInParent = true;
       textWidget2.Visible = true;
-      AddChildElement((Element2D) textWidget2);
+      AddChildElement(textWidget2);
       var textWidget3 = new TextWidget(0)
       {
         Size = FontSize.Medium,
         Alignment = QFontAlignment.Centre,
         VAlignment = TextVerticalAlignment.Middle,
         Text = "Continuing in",
-        Color = new Color4((byte)100, (byte)100, (byte)100, byte.MaxValue)
+        Color = new Color4(100, 100, 100, byte.MaxValue)
       };
       textWidget3.SetSize(140, 30);
       textWidget3.SetPosition(327, 193);
-      AddChildElement((Element2D) textWidget3);
+      AddChildElement(textWidget3);
       var spriteAnimationWidget = new SpriteAnimationWidget(1);
       spriteAnimationWidget.Init(Host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
       spriteAnimationWidget.SetSize(128, 108);
       spriteAnimationWidget.SetPosition(488, 150);
-      AddChildElement((Element2D) spriteAnimationWidget);
+      AddChildElement(spriteAnimationWidget);
       clean_nozzle_timer_text = new TextWidget(13)
       {
         Size = FontSize.VeryLarge,
@@ -83,10 +83,10 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       };
       clean_nozzle_timer_text.SetSize(128, 108);
       clean_nozzle_timer_text.SetPosition(488, 150);
-      clean_nozzle_timer_text.Color = new Color4((byte) 100, (byte) 100, (byte) 100, byte.MaxValue);
-      AddChildElement((Element2D)clean_nozzle_timer_text);
+      clean_nozzle_timer_text.Color = new Color4(100, 100, 100, byte.MaxValue);
+      AddChildElement(clean_nozzle_timer_text);
       var buttonWidget = new ButtonWidget(14);
-      buttonWidget.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      buttonWidget.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget.Size = FontSize.Medium;
       buttonWidget.Text = "Continue";
       buttonWidget.SetGrowableWidth(4, 4, 32);
@@ -94,13 +94,13 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       buttonWidget.SetSize(110, 40);
       buttonWidget.SetPosition(550, -50);
       buttonWidget.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget);
+      AddChildElement(buttonWidget);
       var imageWidget = new ImageWidget(0);
       imageWidget.Init(Host, "extendedcontrols2", 696f, 100f, 1020f, 350f, 696f, 100f, 1020f, 350f, 696f, 100f, 1020f, 350f);
       imageWidget.SetSize(320, 256);
       imageWidget.SetPosition(0, 140);
       imageWidget.Visible = true;
-      AddChildElement((Element2D) imageWidget);
+      AddChildElement(imageWidget);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)

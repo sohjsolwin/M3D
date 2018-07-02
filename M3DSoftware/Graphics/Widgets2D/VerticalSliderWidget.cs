@@ -3,12 +3,12 @@
   public class VerticalSliderWidget : SliderWidget
   {
     public VerticalSliderWidget()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public VerticalSliderWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -18,14 +18,14 @@
     }
 
     public VerticalSliderWidget(VerticalSliderWidget source, int ID)
-      : this(source, ID, (Element2D) null)
+      : this(source, ID, null)
     {
     }
 
     public VerticalSliderWidget(VerticalSliderWidget source, int ID, Element2D parent)
       : base(ID, parent)
     {
-      CopySliderProperties((SliderWidget) source);
+      CopySliderProperties(source);
     }
 
     public void InitTrack(GUIHost host, string texture, float normal_u0, float normal_v0, float normal_u1, float normal_v1, int growableborder, int min)
@@ -52,10 +52,10 @@
     public override void Refresh()
     {
       var width = Width;
-      m_track_size = (float)Height;
+      m_track_size = Height;
       if (ShowPushButtons)
       {
-        m_track_size -= (float) (width * 2);
+        m_track_size -= width * 2;
         m_pushButtonPlus.SetSize(width, width);
         m_pushButtonPlus.Y = -width;
         m_pushButtonMinus.SetSize(width, width);
@@ -76,18 +76,18 @@
         m_trackSubControl.SetPosition(0, 0);
         m_trackSubControl.SetSize(width, (int)m_track_size);
       }
-      var num = (m_track_size - (float)m_buttonSubControl.Height) / m_range;
+      var num = (m_track_size - m_buttonSubControl.Height) / m_range;
       m_button_size = 24f;
-      if ((double)m_button_size_percent > 0.0)
+      if (m_button_size_percent > 0.0)
       {
-        m_buttonSubControl.SetSize(width, (int) ((double)m_button_size_percent * (double)m_track_size));
+        m_buttonSubControl.SetSize(width, (int)(m_button_size_percent * (double)m_track_size));
       }
       else
       {
         m_buttonSubControl.SetSize(width, (int)m_button_size);
       }
 
-      m_buttonSubControl.SetPosition(m_trackSubControl.X, (int) ((double)m_trackSubControl.Y + ((double)m_track_position - (double)m_range_start) * (double) num));
+      m_buttonSubControl.SetPosition(m_trackSubControl.X, (int)(m_trackSubControl.Y + (m_track_position - (double)m_range_start) * num));
       m_buttonSubControl.SetDraggable(m_trackSubControl.X, m_trackSubControl.X, m_trackSubControl.Y, m_trackSubControl.Y + m_trackSubControl.Height - m_buttonSubControl.Height);
     }
 
@@ -95,7 +95,7 @@
     {
       if (the_control.GetElementType() == ElementType.ButtonWidget && msg == ControlMsg.MSG_MOVE)
       {
-        base.OnControlMsg(the_control, msg, yparam - (float)m_trackSubControl.Y, (float) (m_trackSubControl.Height - m_buttonSubControl.Height));
+        base.OnControlMsg(the_control, msg, yparam - m_trackSubControl.Y, m_trackSubControl.Height - m_buttonSubControl.Height);
       }
       else
       {

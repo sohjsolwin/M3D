@@ -39,7 +39,7 @@ namespace M3D.GUI.Forms.Splash
       SplashFormFirstRun.DirectoryCopy(Path.Combine(Paths.ResourceFolder, "MyLibrary"), Path.Combine(publicDataFolder, "MyLibrary"), true);
       SplashFormFirstRun.DirectoryCopy(Path.Combine(Paths.ResourceFolder, "Utility"), Path.Combine(publicDataFolder, "Utility"), true);
       SplashFormFirstRun.DirectoryCopy(Path.Combine(Paths.ResourceFolder, "Working"), Path.Combine(publicDataFolder, "Working"), true);
-      var binaryWriter = new BinaryWriter((Stream) new FileStream(Path.Combine(publicDataFolder, "version.info"), FileMode.Create));
+      var binaryWriter = new BinaryWriter(new FileStream(Path.Combine(publicDataFolder, "version.info"), FileMode.Create));
       binaryWriter.Write(M3D.Spooling.Version.Client_Version.major);
       binaryWriter.Write(M3D.Spooling.Version.Client_Version.minor);
       binaryWriter.Write(M3D.Spooling.Version.Client_Version.build);
@@ -119,7 +119,7 @@ namespace M3D.GUI.Forms.Splash
 
     private void InitializeComponent()
     {
-      components = (IContainer) new Container();
+      components = new Container();
       timer1 = new Timer(components);
       SuspendLayout();
       timer1.Interval = 2000;
@@ -128,21 +128,21 @@ namespace M3D.GUI.Forms.Splash
       AutoScaleMode = AutoScaleMode.Font;
       BackColor = Color.White;
       BackgroundImageLayout = ImageLayout.Center;
-      if (Program.isDEBUGBUILD || VersionNumber.Stage.DEBUG == M3D.Spooling.Version.Client_Version.stage)
+      if (Program.IsDEBUGBUILD || VersionNumber.Stage.DEBUG == M3D.Spooling.Version.Client_Version.stage)
       {
-        BackgroundImage = (Image) Resources.splashscreen_debug;
+        BackgroundImage = Resources.splashscreen_debug;
       }
       else if (VersionNumber.Stage.Alpha == M3D.Spooling.Version.Client_Version.stage)
       {
-        BackgroundImage = (Image) Resources.splashscreenFirstRunAlpha;
+        BackgroundImage = Resources.splashscreenFirstRunAlpha;
       }
       else if (VersionNumber.Stage.Beta == M3D.Spooling.Version.Client_Version.stage)
       {
-        BackgroundImage = (Image) Resources.splashscreenFirstRun_beta;
+        BackgroundImage = Resources.splashscreenFirstRun_beta;
       }
       else if (M3D.Spooling.Version.Client_Version.stage == VersionNumber.Stage.Release || VersionNumber.Stage.ReleaseCandidate == M3D.Spooling.Version.Client_Version.stage)
       {
-        BackgroundImage = (Image) Resources.splashscreenFirstRun_real;
+        BackgroundImage = Resources.splashscreenFirstRun_real;
       }
 
       ClientSize = new Size(500, 375);

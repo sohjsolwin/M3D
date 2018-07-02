@@ -42,7 +42,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
             settingsManager.AssociateFilamentToPrinter(selectedPrinter.Info.serial_number, CurrentDetails.current_spool);
             settingsManager.SaveSettings();
           }
-          var num = (int) selectedPrinter.SetFilamentInfo(callback, (object) selectedPrinter, CurrentDetails.current_spool);
+          var num = (int) selectedPrinter.SetFilamentInfo(callback, selectedPrinter, CurrentDetails.current_spool);
           break;
         case 6:
           MainWindow.ActivateFrame(Manage3DInkMainWindow.PageID.Page4_InsertNewFilament, CurrentDetails);
@@ -73,7 +73,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       }
       else if (settingsManager.CurrentFilamentSettings.CleanNozzleAfterInsert)
       {
-        MainWindow.TurnOnHeater(new AsyncCallback(MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(asyncState, Manage3DInkMainWindow.PageID.Page17_CleanNozzle, CurrentDetails), 150, CurrentDetails.current_spool.filament_type);
+        MainWindow.TurnOnHeater(new AsyncCallback(MainWindow.GotoPageAfterOperation), new Manage3DInkMainWindow.PageAfterLockDetails(asyncState, Manage3DInkMainWindow.PageID.Page17_CleanNozzle, CurrentDetails), 150, CurrentDetails.current_spool.filament_type);
       }
       else
       {
@@ -89,7 +89,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         case CommandResult.Success:
         case CommandResult.Success_LockReleased:
         case CommandResult.Success_LockAcquired:
-          var num = (int) asyncState.SendManualGCode(new AsyncCallback(GotoCleanNozzlePageAfterCommand), (object) asyncState, "G91", PrinterCompatibleString.Format("G0 E-{0}", (object) asyncState.MyFilamentProfile.preprocessor.initialPrint.PrimeAmount), "G90");
+          var num = (int) asyncState.SendManualGCode(new AsyncCallback(GotoCleanNozzlePageAfterCommand), asyncState, "G91", PrinterCompatibleString.Format("G0 E-{0}", (object) asyncState.MyFilamentProfile.preprocessor.initialPrint.PrimeAmount), "G90");
           return;
         case CommandResult.Failed_PrinterAlreadyLocked:
           messagebox.AddMessageToQueue("Unable to connect to the printer because it is already in use.");
@@ -109,7 +109,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         case CommandResult.Success:
         case CommandResult.Success_LockReleased:
         case CommandResult.Success_LockAcquired:
-          var num = (int) asyncState.SendManualGCode(new AsyncCallback(MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(asyncState, Manage3DInkMainWindow.PageID.Page15_CloseBedInstructions, CurrentDetails), "G91", PrinterCompatibleString.Format("G0 E-{0}", (object) asyncState.MyFilamentProfile.preprocessor.initialPrint.PrimeAmount), "G90");
+          var num = (int) asyncState.SendManualGCode(new AsyncCallback(MainWindow.GotoPageAfterOperation), new Manage3DInkMainWindow.PageAfterLockDetails(asyncState, Manage3DInkMainWindow.PageID.Page15_CloseBedInstructions, CurrentDetails), "G91", PrinterCompatibleString.Format("G0 E-{0}", (object) asyncState.MyFilamentProfile.preprocessor.initialPrint.PrimeAmount), "G90");
           return;
         case CommandResult.Failed_PrinterAlreadyLocked:
           messagebox.AddMessageToQueue("Unable to connect to the printer because it is already in use.");

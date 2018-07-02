@@ -150,49 +150,49 @@ namespace M3D.GUI.Views.Printer_View
       ViewPointPos = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 10f);
       ModelList = new List<ModelTransformPair>();
       CameraLookAtPos = new M3D.Model.Utils.Vector3(0.0f, -10f, 0.0f);
-      AddChildElement3D((Element3D) new LightNode(0, 0, new Vector4(0.0f, 400f, 1000f, 1f), new Color4(0.2f, 0.2f, 0.2f, 1f), new Color4(1f, 1f, 1f, 1f), new Color4(1f, 1f, 1f, 1f)));
-      AddChildElement3D((Element3D) new LightNode(1, 1, new Vector4(0.0f, 20f, -400f, 1f), new Color4(0.0f, 0.0f, 0.0f, 1f), new Color4(1f, 1f, 1f, 1f), new Color4(0.3f, 0.3f, 0.3f, 1f)));
+      AddChildElement3D(new LightNode(0, 0, new Vector4(0.0f, 400f, 1000f, 1f), new Color4(0.2f, 0.2f, 0.2f, 1f), new Color4(1f, 1f, 1f, 1f), new Color4(1f, 1f, 1f, 1f)));
+      AddChildElement3D(new LightNode(1, 1, new Vector4(0.0f, 20f, -400f, 1f), new Color4(0.0f, 0.0f, 0.0f, 1f), new Color4(1f, 1f, 1f, 1f), new Color4(0.3f, 0.3f, 0.3f, 1f)));
       OpenGLCoordinateSystem = new TransformationNode(0, origin)
       {
         Rotation = new M3D.Model.Utils.Vector3(-90f, 0.0f, 0.0f)
       };
-      AddChildElement3D((Element3D)OpenGLCoordinateSystem);
-      PrinterTiltTransform = new TransformationNode(0, (Element3D)OpenGLCoordinateSystem);
-      OpenGLCoordinateSystem.AddChildElement((Element3D)PrinterTiltTransform);
-      PrinterTransformation = new TransformationNode(0, (Element3D)PrinterTiltTransform);
-      PrinterTypeAdjustments = new TransformationNode(3011, (Element3D)PrinterTransformation);
+      AddChildElement3D(OpenGLCoordinateSystem);
+      PrinterTiltTransform = new TransformationNode(0, OpenGLCoordinateSystem);
+      OpenGLCoordinateSystem.AddChildElement(PrinterTiltTransform);
+      PrinterTransformation = new TransformationNode(0, PrinterTiltTransform);
+      PrinterTypeAdjustments = new TransformationNode(3011, PrinterTransformation);
       var num = 1.1f;
       PrinterTypeAdjustments.Scale = new M3D.Model.Utils.Vector3(num, num, 1f);
-      PrinterTransformation.AddChildElement((Element3D)PrinterTypeAdjustments);
+      PrinterTransformation.AddChildElement(PrinterTypeAdjustments);
       PrinterModel = new PrinterModelNode(initialCaseType);
-      PrinterTypeAdjustments.AddChildElement((Element3D)PrinterModel);
-      ObjectToPrinterSpace = new TransformationNode(3005, (Element3D)PrinterTransformation)
+      PrinterTypeAdjustments.AddChildElement(PrinterModel);
+      ObjectToPrinterSpace = new TransformationNode(3005, PrinterTransformation)
       {
         Translation = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 0.0f)
       };
-      PrinterTransformation.AddChildElement((Element3D)ObjectToPrinterSpace);
-      GridSizeAdjustments = new TransformationNode(3012, (Element3D)ObjectToPrinterSpace);
-      ObjectToPrinterSpace.AddChildElement((Element3D)GridSizeAdjustments);
+      PrinterTransformation.AddChildElement(ObjectToPrinterSpace);
+      GridSizeAdjustments = new TransformationNode(3012, ObjectToPrinterSpace);
+      ObjectToPrinterSpace.AddChildElement(GridSizeAdjustments);
       Grid = new GridObjectNode(3003, 100f, 100f);
       Grid.SetUnits(initialGridUnits);
       Grid.Visible = false;
       Grid.Emission = new Color4(1f, 1f, 1f, 1f);
-      GridSizeAdjustments.AddChildElement((Element3D)Grid);
+      GridSizeAdjustments.AddChildElement(Grid);
       var texturedFloorNode = new TexturedFloorNode(3004);
-      var bitmap = new Bitmap((Image) Resources.shadowtexture);
+      var bitmap = new Bitmap(Resources.shadowtexture);
       var texture = 0;
       Element3D.CreateTexture(ref texture, bitmap);
       bitmap.Dispose();
       texturedFloorNode.Create(new M3D.Model.Utils.Vector3(0.0f, 0.0f, -76f), 450f, 240f, texture);
-      OpenGLCoordinateSystem.AddChildElement((Element3D) texturedFloorNode);
-      PrinterTiltTransform.AddChildElement((Element3D)PrinterTransformation);
+      OpenGLCoordinateSystem.AddChildElement(texturedFloorNode);
+      PrinterTiltTransform.AddChildElement(PrinterTransformation);
     }
 
     private void CreateBoundsGeometry(Element3D parent)
     {
       lock (exceedsBoundsSync)
       {
-        if (PrinterBoundsConst.PrintableRegion == (StackedBoundingBox) null || PrinterBoundsConst.PrintableRegion.bounds_list.Count < 1)
+        if (PrinterBoundsConst.PrintableRegion == null || PrinterBoundsConst.PrintableRegion.bounds_list.Count < 1)
         {
           return;
         }
@@ -204,7 +204,7 @@ namespace M3D.GUI.Views.Printer_View
           {
             for (var index2 = 0; index2 < ExceedsBoundsGeometry.GetLength(1); ++index2)
             {
-              parent.RemoveChildElement((Element3D)ExceedsBoundsGeometry[index1, index2]);
+              parent.RemoveChildElement(ExceedsBoundsGeometry[index1, index2]);
             }
           }
         }
@@ -217,61 +217,61 @@ namespace M3D.GUI.Views.Printer_View
           var vector3_2 = new M3D.Model.Utils.Vector3(boundsList[index].max.x, boundsList[index].max.y, boundsList[index].max.z);
           ExceedsBoundsGeometry[index, 0] = new CustomShape(3006);
           vertex_list.Clear();
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_2.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_2.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_2.y, vector3_1.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_2.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_2.y, vector3_1.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_2.y, vector3_1.z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_2.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_2.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_2.Y, vector3_1.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_2.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_2.Y, vector3_1.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_2.Y, vector3_1.Z)));
           ExceedsBoundsGeometry[index, 0].Create(vertex_list, 0);
           BoundingBoxColoringHelper(ref ExceedsBoundsGeometry[index, 0]);
-          parent.AddChildElement((Element3D)ExceedsBoundsGeometry[index, 0]);
+          parent.AddChildElement(ExceedsBoundsGeometry[index, 0]);
           ExceedsBoundsGeometry[index, 1] = new CustomShape(3007);
           vertex_list.Clear();
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_1.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_1.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_1.y, vector3_1.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_1.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_1.y, vector3_1.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_1.y, vector3_1.z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_1.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_1.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_1.Y, vector3_1.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_1.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_1.Y, vector3_1.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, -1f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_1.Y, vector3_1.Z)));
           ExceedsBoundsGeometry[index, 1].Create(vertex_list, 0);
           BoundingBoxColoringHelper(ref ExceedsBoundsGeometry[index, 1]);
-          parent.AddChildElement((Element3D)ExceedsBoundsGeometry[index, 1]);
+          parent.AddChildElement(ExceedsBoundsGeometry[index, 1]);
           ExceedsBoundsGeometry[index, 2] = new CustomShape(3008);
           vertex_list.Clear();
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_2.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_1.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_1.y, vector3_1.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_2.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_1.y, vector3_1.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_2.y, vector3_1.z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_2.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_1.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_1.Y, vector3_1.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_2.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_1.Y, vector3_1.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_2.Y, vector3_1.Z)));
           ExceedsBoundsGeometry[index, 2].Create(vertex_list, 0);
           BoundingBoxColoringHelper(ref ExceedsBoundsGeometry[index, 2]);
-          parent.AddChildElement((Element3D)ExceedsBoundsGeometry[index, 2]);
+          parent.AddChildElement(ExceedsBoundsGeometry[index, 2]);
           ExceedsBoundsGeometry[index, 3] = new CustomShape(3009);
           vertex_list.Clear();
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_1.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_2.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_2.y, vector3_1.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_1.y, vector3_2.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_2.y, vector3_1.z)));
-          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_1.y, vector3_1.z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_1.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_2.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_2.Y, vector3_1.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_1.Y, vector3_2.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_2.Y, vector3_1.Z)));
+          vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(-1f, 0.0f, 0.0f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_1.Y, vector3_1.Z)));
           ExceedsBoundsGeometry[index, 3].Create(vertex_list, 0);
           BoundingBoxColoringHelper(ref ExceedsBoundsGeometry[index, 3]);
-          parent.AddChildElement((Element3D)ExceedsBoundsGeometry[index, 3]);
+          parent.AddChildElement(ExceedsBoundsGeometry[index, 3]);
           if (index + 1 == boundsList.Count)
           {
             ExceedsBoundsGeometry[index, 4] = new CustomShape(3010);
             vertex_list.Clear();
-            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_1.y, vector3_2.z)));
-            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_1.y, vector3_2.z)));
-            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_2.y, vector3_2.z)));
-            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_2.x, vector3_2.y, vector3_2.z)));
-            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_2.y, vector3_2.z)));
-            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_1.x, vector3_1.y, vector3_2.z)));
+            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_1.Y, vector3_2.Z)));
+            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_1.Y, vector3_2.Z)));
+            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_2.Y, vector3_2.Z)));
+            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_2.X, vector3_2.Y, vector3_2.Z)));
+            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_2.Y, vector3_2.Z)));
+            vertex_list.Add(new VertexTNV(new M3D.Model.Utils.Vector3(0.0f, 0.0f, 1f), new M3D.Model.Utils.Vector3(vector3_1.X, vector3_1.Y, vector3_2.Z)));
             ExceedsBoundsGeometry[index, 4].Create(vertex_list, 0);
             BoundingBoxColoringHelper(ref ExceedsBoundsGeometry[index, 4]);
-            parent.AddChildElement((Element3D)ExceedsBoundsGeometry[index, 4]);
+            parent.AddChildElement(ExceedsBoundsGeometry[index, 4]);
           }
         }
       }
@@ -298,10 +298,10 @@ namespace M3D.GUI.Views.Printer_View
       modtrans_pair.modelNode.Diffuse = modelColor;
       modtrans_pair.modelNode.Specular = new Color4(0.5f, 0.5f, 0.5f, 1f);
       modtrans_pair.modelNode.Shininess = 100f;
-      modtrans_pair.transformNode = new TransformationNode(3100, (Element3D)ObjectToPrinterSpace);
-      modtrans_pair.transformNode.AddChildElement((Element3D) modtrans_pair.modelNode);
+      modtrans_pair.transformNode = new TransformationNode(3100, ObjectToPrinterSpace);
+      modtrans_pair.transformNode.AddChildElement(modtrans_pair.modelNode);
       modtrans_pair.CalculateExtents();
-      ObjectToPrinterSpace.AddChildElement((Element3D) modtrans_pair.transformNode);
+      ObjectToPrinterSpace.AddChildElement(modtrans_pair.transformNode);
       ModelList.Add(modtrans_pair);
       return ModelList.Count - 1;
     }
@@ -324,13 +324,13 @@ namespace M3D.GUI.Views.Printer_View
       var num2 = modelsize.Y * 0.75f;
       for (var index = 0; index < 6; ++index)
       {
-        var num3 = (float) (1.0 + 0.25 * (double) index);
+        var num3 = (float) (1.0 + 0.25 * index);
         var num4 = (float)((PrinterBedWidth * (double)num3 - modelsize.X) / 2.0);
-        var num5 = (float) (((double)PrinterBedLength * (double) num3 - (double) modelsize.Y) / 2.0);
-        var num6 = (float) ((double)PrinterCenter.x + (double) num4 - 2.0);
-        var num7 = (float) ((double)PrinterCenter.y + (double) num5 - 2.0);
-        var num8 = (float) ((double)PrinterCenter.x - (double) num4 + 2.0);
-        var num9 = (float) ((double)PrinterCenter.y - (double) num5 + 2.0);
+        var num5 = (float)((PrinterBedLength * (double)num3 - modelsize.Y) / 2.0);
+        var num6 = (float)(PrinterCenter.X + (double)num4 - 2.0);
+        var num7 = (float)(PrinterCenter.Y + (double)num5 - 2.0);
+        var num8 = (float)(PrinterCenter.X - (double)num4 + 2.0);
+        var num9 = (float)(PrinterCenter.Y - (double)num5 + 2.0);
         var num10 = 0;
 label_24:
         if (num10 < 8)
@@ -377,13 +377,13 @@ label_24:
             num11 = 2;
             num12 = -2;
           }
-          position.x = PrinterCenter.x;
-          position.y = PrinterCenter.y;
+          position.X = PrinterCenter.X;
+          position.Y = PrinterCenter.Y;
           while (!CheckIsPositionFree(position, modelsize))
           {
-            position.x += (float) num11 * num1;
-            position.y += (float) num12 * num2;
-            if ((double) position.x >= (double) num6 || (double) position.y >= (double) num7 || ((double) position.x <= (double) num8 || (double) position.y <= (double) num9))
+            position.X += num11 * num1;
+            position.Y += num12 * num2;
+            if (position.X >= (double)num6 || position.Y >= (double)num7 || (position.X <= (double)num8 || position.Y <= (double)num9))
             {
               ++num10;
               goto label_24;
@@ -397,14 +397,14 @@ label_24:
 
     private bool CheckIsPositionFree(M3D.Model.Utils.Vector3 position, OpenTK.Vector2 modelsize)
     {
-      var boundingBox = new BoundingBox(new Vector3D(position.x - modelsize.X / 2f, position.y - modelsize.Y / 2f, 0.0f), new Vector3D(position.x + modelsize.X / 2f, position.y + modelsize.Y / 2f, 0.0f));
+      var boundingBox = new BoundingBox(new Vector3D(position.X - modelsize.X / 2f, position.Y - modelsize.Y / 2f, 0.0f), new Vector3D(position.X + modelsize.X / 2f, position.Y + modelsize.Y / 2f, 0.0f));
       var flag = true;
       foreach (ModelTransformPair model in ModelList)
       {
-        var x = model.transformNode.Translation.x;
-        var y = model.transformNode.Translation.y;
-        var num1 = model.modelSize.Ext.x / 2f;
-        var num2 = model.modelSize.Ext.y / 2f;
+        var x = model.transformNode.Translation.X;
+        var y = model.transformNode.Translation.Y;
+        var num1 = model.modelSize.Ext.X / 2f;
+        var num2 = model.modelSize.Ext.Y / 2f;
         var other = new BoundingBox(new Vector3D(x - num1 / 2f, y - num2 / 2f, 0.0f), new Vector3D(x + num1 / 2f, y + num2 / 2f, 0.0f));
         if (boundingBox.OverLap(other))
         {
@@ -430,7 +430,7 @@ label_24:
         return;
       }
 
-      ObjectToPrinterSpace.RemoveChildElement((Element3D)ModelList[index].transformNode);
+      ObjectToPrinterSpace.RemoveChildElement(ModelList[index].transformNode);
       ModelList.RemoveAt(index);
     }
 
@@ -454,40 +454,40 @@ label_24:
       }
 
       ModelTransformPair model = ModelList[selected_model_index];
-      var vector3 = new M3D.Model.Utils.Vector3(0.0f, 0.0f, (float) (-(double) model.modelSize.Min.z + 1.0));
-      model.transformNode.Translation.z += vector3.z;
+      var vector3 = new M3D.Model.Utils.Vector3(0.0f, 0.0f, (float) (-model.modelSize.Min.Z + 1.0));
+      model.transformNode.Translation.Z += vector3.Z;
       model.CalculateExtents();
     }
 
     public void ResetPrinterTransformation()
     {
-      PrinterTransformation.Translation.x = 0.0f;
-      PrinterTransformation.Translation.y = 0.0f;
+      PrinterTransformation.Translation.X = 0.0f;
+      PrinterTransformation.Translation.Y = 0.0f;
       PrinterTransformation.Rotation = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 0.0f);
       PrinterTiltTransform.Rotation = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 0.0f);
     }
 
     public void TiltPrinter(float tilt)
     {
-      PrinterTiltTransform.Rotation.x += tilt;
-      if ((double)PrinterTiltTransform.Rotation.x > 90.0)
+      PrinterTiltTransform.Rotation.X += tilt;
+      if (PrinterTiltTransform.Rotation.X > 90.0)
       {
-        PrinterTiltTransform.Rotation.x = 90f;
+        PrinterTiltTransform.Rotation.X = 90f;
       }
       else
       {
-        if ((double)PrinterTiltTransform.Rotation.x >= 0.0)
+        if (PrinterTiltTransform.Rotation.X >= 0.0)
         {
           return;
         }
 
-        PrinterTiltTransform.Rotation.x = 0.0f;
+        PrinterTiltTransform.Rotation.X = 0.0f;
       }
     }
 
     public void RotatePrinter(float rotVelocity)
     {
-      PrinterTransformation.Rotation.z += rotVelocity;
+      PrinterTransformation.Rotation.Z += rotVelocity;
     }
 
     private void ObjectWithinBounds(int selected_model_index)
@@ -508,9 +508,9 @@ label_24:
           var count = printableRegion.bounds_list.Count;
           for (var index = 0; index < count; ++index)
           {
-            if ((double) vector3.z >= (double) printableRegion.bounds_list[index].min.z && (index >= count - 1 || (double) vector3.z <= (double) printableRegion.bounds_list[index].max.z))
+            if (vector3.Z >= (double)printableRegion.bounds_list[index].min.z && (index >= count - 1 || vector3.Z <= (double)printableRegion.bounds_list[index].max.z))
             {
-              var num = printableRegion.bounds_list[index].outOfBoundsCheck(vector3.x, vector3.y, vector3.z);
+              var num = printableRegion.bounds_list[index].OutOfBoundsCheck(vector3.X, vector3.Y, vector3.Z);
               if ((num & 1) != 0)
               {
                 ExceedsBoundsGeometry[index, 1].Visible = true;
@@ -576,15 +576,15 @@ label_24:
     {
       PrinterModelCaseType = sizeProfile.case_type;
       M3D.Model.Utils.Vector3 ext = PrinterModel.ShellModel.Ext;
-      PrinterTypeAdjustments.Scale.x = sizeProfile.shell_size.x / ext.x;
-      PrinterTypeAdjustments.Scale.y = sizeProfile.shell_size.y / ext.y;
-      PrinterTypeAdjustments.Scale.z = sizeProfile.shell_size.z / ext.x;
-      PrinterTransformation.Translation.z = PrinterModel.ZOffset;
-      ObjectToPrinterSpace.Translation.x = sizeProfile.printBedSize.x / -2f;
-      ObjectToPrinterSpace.Translation.y = sizeProfile.printBedSize.y / -2f;
-      ObjectToPrinterSpace.Translation.z = (float) ((double) sizeProfile.shell_size.z / -2.0 + (double) sizeProfile.fluff_height * (double)PrinterTypeAdjustments.Scale.z);
-      GridSizeAdjustments.Scale.x = sizeProfile.printBedSize.x / 100f;
-      GridSizeAdjustments.Scale.y = sizeProfile.printBedSize.y / 100f;
+      PrinterTypeAdjustments.Scale.X = sizeProfile.shell_size.x / ext.X;
+      PrinterTypeAdjustments.Scale.Y = sizeProfile.shell_size.y / ext.Y;
+      PrinterTypeAdjustments.Scale.Z = sizeProfile.shell_size.z / ext.X;
+      PrinterTransformation.Translation.Z = PrinterModel.ZOffset;
+      ObjectToPrinterSpace.Translation.X = sizeProfile.printBedSize.x / -2f;
+      ObjectToPrinterSpace.Translation.Y = sizeProfile.printBedSize.y / -2f;
+      ObjectToPrinterSpace.Translation.Z = (float)(sizeProfile.shell_size.z / -2.0 + sizeProfile.fluff_height * (double)PrinterTypeAdjustments.Scale.Z);
+      GridSizeAdjustments.Scale.X = sizeProfile.printBedSize.x / 100f;
+      GridSizeAdjustments.Scale.Y = sizeProfile.printBedSize.y / 100f;
       PrinterBedWidth = sizeProfile.printBedSize.x;
       PrinterBedLength = sizeProfile.printBedSize.y;
       SetPrintableExts(sizeProfile.printBedSize.x, sizeProfile.printBedSize.y, 110f);
@@ -592,7 +592,7 @@ label_24:
       var num = PrinterModel.GUICaseSize / sizeProfile.shell_size.z;
       PrinterTransformation.Scale = new M3D.Model.Utils.Vector3(num, num, num);
       PrinterBoundsConst = sizeProfile;
-      CreateBoundsGeometry((Element3D)ObjectToPrinterSpace);
+      CreateBoundsGeometry(ObjectToPrinterSpace);
     }
 
     public List<ModelTransformPair.Data> GetModelDataList()
@@ -613,7 +613,7 @@ label_24:
 
     public List<ModelTransformPair> GetAllModels()
     {
-      return new List<ModelTransformPair>((IEnumerable<ModelTransformPair>)ModelList);
+      return new List<ModelTransformPair>(ModelList);
     }
 
     public Matrix4 CreateViewMatrix()

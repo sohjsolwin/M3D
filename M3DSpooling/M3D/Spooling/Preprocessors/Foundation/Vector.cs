@@ -38,7 +38,7 @@ namespace M3D.Spooling.Preprocessors.Foundation
 
     public float GetLength()
     {
-      return (float) Math.Sqrt((double)x * (double)x + (double)y * (double)y + (double)z * (double)z + (double)e * (double)e);
+      return (float) Math.Sqrt(x * (double)x + y * (double)y + z * (double)z + e * (double)e);
     }
 
     public void Normalize()

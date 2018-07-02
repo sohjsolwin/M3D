@@ -36,7 +36,7 @@ namespace M3D.Graphics.Utils
     public static bool GenerateMultiModelPreview(List<ModelTransformPair> model_list, string icon_file, Vector2 icon_size, Color4 bgColor, GLControl glcontrol, M3D.Model.Utils.Vector3 center)
     {
       ImageCapture.SetViewPoint(glcontrol);
-      ImageCapture.SetupForIconRender(new OpenTK.Vector3(center.x, center.y, center.z + 200f), new OpenTK.Vector3(center.x, center.y, center.z), bgColor);
+      ImageCapture.SetupForIconRender(new OpenTK.Vector3(center.X, center.Y, center.Z + 200f), new OpenTK.Vector3(center.X, center.Y, center.Z), bgColor);
       var minMax = new Rectangle(int.MaxValue, int.MaxValue, int.MinValue, int.MinValue);
       foreach (ModelTransformPair model in model_list)
       {
@@ -79,7 +79,7 @@ namespace M3D.Graphics.Utils
     {
       GL.Viewport(0, 0, glcontrol.Width, glcontrol.Height);
       GL.MatrixMode(MatrixMode.Projection);
-      var perspectiveFieldOfView = Matrix4.CreatePerspectiveFieldOfView(0.7853982f, (float) glcontrol.Width / (float) glcontrol.Height, 100f, 1000f);
+      var perspectiveFieldOfView = Matrix4.CreatePerspectiveFieldOfView(0.7853982f, glcontrol.Width / (float)glcontrol.Height, 100f, 1000f);
       GL.LoadMatrix(ref perspectiveFieldOfView);
     }
 
@@ -89,7 +89,7 @@ namespace M3D.Graphics.Utils
       var rotation = new M3D.Model.Utils.Vector3(orientation);
       var translation = new M3D.Model.Utils.Vector3(0.0f, 0.0f, 0.0f);
       M3D.Model.Utils.Vector3 ext = model.CalculateMinMax().Ext;
-      var num = (double) ext.x <= (double) ext.z ? ((double) ext.z <= (double) ext.y ? 100f / ext.y : 100f / ext.z) : ((double) ext.y <= (double) ext.x ? 100f / ext.x : 100f / ext.y);
+      var num = ext.X <= (double)ext.Z ? ext.Z <= (double)ext.Y ? 100f / ext.Y : 100f / ext.Z : ext.Y <= (double)ext.X ? 100f / ext.X : 100f / ext.Y;
       var scale = new M3D.Model.Utils.Vector3(num, num, num);
       ImageCapture.SetupForIconRender(new OpenTK.Vector3(100f, 100f, 250f), new OpenTK.Vector3(0.0f, 0.0f, 0.0f), bgColor);
       ImageCapture.RenderModelGetScreenMinMax(model, rotation, translation, scale, out Rectangle screen_rec);
@@ -112,7 +112,7 @@ namespace M3D.Graphics.Utils
     {
       ImageCapture.AdjustRectangle(ref minMax, glcontrol.Width, glcontrol.Height);
       Bitmap bitmap1 = ImageCapture.GrabScreenshot(minMax, glcontrol);
-      var bitmap2 = new Bitmap((Image) bitmap1, new Size((int) icon_size.X, (int) icon_size.Y));
+      var bitmap2 = new Bitmap(bitmap1, new Size((int) icon_size.X, (int) icon_size.Y));
       bitmap1.Dispose();
       GL.PopMatrix();
       return bitmap2;
@@ -128,9 +128,9 @@ namespace M3D.Graphics.Utils
 
     private static void RenderModelGetScreenMinMax(Model3DNode model, M3D.Model.Utils.Vector3 rotation, M3D.Model.Utils.Vector3 translation, M3D.Model.Utils.Vector3 scale, out Rectangle screen_rec)
     {
-      var scale1 = Matrix4.CreateScale(scale.x, scale.y, scale.z);
-      Matrix4 matrix4_1 = Matrix4.CreateRotationY(rotation.y * ((float) Math.PI / 180f)) * Matrix4.CreateRotationX(rotation.x * ((float) Math.PI / 180f)) * Matrix4.CreateRotationZ(rotation.z * ((float) Math.PI / 180f));
-      var translation1 = Matrix4.CreateTranslation(translation.x, translation.y, translation.z);
+      var scale1 = Matrix4.CreateScale(scale.X, scale.Y, scale.Z);
+      Matrix4 matrix4_1 = Matrix4.CreateRotationY(rotation.Y * ((float) Math.PI / 180f)) * Matrix4.CreateRotationX(rotation.X * ((float) Math.PI / 180f)) * Matrix4.CreateRotationZ(rotation.Z * ((float) Math.PI / 180f));
+      var translation1 = Matrix4.CreateTranslation(translation.X, translation.Y, translation.Z);
       Matrix4 matrix4_2 = matrix4_1;
       Matrix4 mat = scale1 * matrix4_2 * translation1;
       GL.MatrixMode(MatrixMode.Modelview);
@@ -142,7 +142,7 @@ namespace M3D.Graphics.Utils
       var highlight = model.Highlight;
       if (ImageCapture.IconColor == "Standard")
       {
-        model.Diffuse = new Color4((byte) 98, (byte) 181, (byte) 233, byte.MaxValue);
+        model.Diffuse = new Color4(98, 181, 233, byte.MaxValue);
       }
       else if (ImageCapture.IconColor == "Random")
       {
@@ -221,12 +221,12 @@ namespace M3D.Graphics.Utils
       var num3 = 4;
       for (var index1 = 0; index1 < bitmapdata.Height; ++index1)
       {
-        var numPtr = (byte*) ((IntPtr) (void*) bitmapdata.Scan0 + index1 * bitmapdata.Stride);
+        var numPtr = (byte*) ((IntPtr)bitmapdata.Scan0 + index1 * bitmapdata.Stride);
         for (var index2 = 0; index2 < bitmapdata.Width; ++index2)
         {
-          numPtr[index2 * num3] = (byte) 253;
-          numPtr[index2 * num3 + 1] = (byte) 227;
-          numPtr[index2 * num3 + 2] = (byte) 215;
+          numPtr[index2 * num3] = 253;
+          numPtr[index2 * num3 + 1] = 227;
+          numPtr[index2 * num3 + 2] = 215;
           numPtr[index2 * num3 + 3] = byte.MaxValue;
         }
       }
@@ -294,68 +294,68 @@ namespace M3D.Graphics.Utils
       M3D.Model.Utils.Vector3 ext = minMax.Ext;
       var coord1 = new M3D.Model.Utils.Vector3(min);
       ImageCapture.UpdateScreenMinMax(coord1, ref screen_min, ref screen_max, Matrix4.Mult(left, right), numArray);
-      coord1.x = max.x;
+      coord1.X = max.X;
       ImageCapture.UpdateScreenMinMax(coord1, ref screen_min, ref screen_max, Matrix4.Mult(left, right), numArray);
-      coord1.z = max.z;
+      coord1.Z = max.Z;
       ImageCapture.UpdateScreenMinMax(coord1, ref screen_min, ref screen_max, Matrix4.Mult(left, right), numArray);
-      coord1.x = min.x;
+      coord1.X = min.X;
       ImageCapture.UpdateScreenMinMax(coord1, ref screen_min, ref screen_max, Matrix4.Mult(left, right), numArray);
       var coord2 = new M3D.Model.Utils.Vector3(max);
       ImageCapture.UpdateScreenMinMax(coord2, ref screen_min, ref screen_max, Matrix4.Mult(left, right), numArray);
-      coord2.x = min.x;
+      coord2.X = min.X;
       ImageCapture.UpdateScreenMinMax(coord2, ref screen_min, ref screen_max, Matrix4.Mult(left, right), numArray);
-      coord2.z = min.z;
+      coord2.Z = min.Z;
       ImageCapture.UpdateScreenMinMax(coord2, ref screen_min, ref screen_max, Matrix4.Mult(left, right), numArray);
-      coord2.x = max.x;
+      coord2.X = max.X;
       ImageCapture.UpdateScreenMinMax(coord2, ref screen_min, ref screen_max, Matrix4.Mult(left, right), numArray);
-      return new Rectangle((int) screen_min.x, (int) screen_min.y, (int) ((double) screen_max.x - (double) screen_min.x), (int) ((double) screen_max.y - (double) screen_min.y));
+      return new Rectangle((int) screen_min.X, (int) screen_min.Y, (int)(screen_max.X - (double)screen_min.X), (int)(screen_max.Y - (double)screen_min.Y));
     }
 
     private static void UpdateScreenMinMax(M3D.Model.Utils.Vector3 coord, ref M3D.Model.Utils.Vector3 screen_min, ref M3D.Model.Utils.Vector3 screen_max, Matrix4 matWorldViewProjection, int[] viewport)
     {
       OpenTK.Vector3 vector3 = ImageCapture.GluProject(coord, matWorldViewProjection, viewport);
-      if ((double) vector3.X < (double) screen_min.x)
+      if (vector3.X < (double)screen_min.X)
       {
-        screen_min.x = vector3.X;
+        screen_min.X = vector3.X;
       }
 
-      if ((double) vector3.Y < (double) screen_min.y)
+      if (vector3.Y < (double)screen_min.Y)
       {
-        screen_min.y = vector3.Y;
+        screen_min.Y = vector3.Y;
       }
 
-      if ((double) vector3.Z < (double) screen_min.z)
+      if (vector3.Z < (double)screen_min.Z)
       {
-        screen_min.z = vector3.Z;
+        screen_min.Z = vector3.Z;
       }
 
-      if ((double) vector3.X > (double) screen_max.x)
+      if (vector3.X > (double)screen_max.X)
       {
-        screen_max.x = vector3.X;
+        screen_max.X = vector3.X;
       }
 
-      if ((double) vector3.Y > (double) screen_max.y)
+      if (vector3.Y > (double)screen_max.Y)
       {
-        screen_max.y = vector3.Y;
+        screen_max.Y = vector3.Y;
       }
 
-      if ((double) vector3.Z <= (double) screen_max.z)
+      if (vector3.Z <= (double)screen_max.Z)
       {
         return;
       }
 
-      screen_max.z = vector3.Z;
+      screen_max.Z = vector3.Z;
     }
 
     private static OpenTK.Vector3 GluProject(M3D.Model.Utils.Vector3 objPos, Matrix4 matWorldViewProjection, int[] viewport)
     {
       Vector4 vec;
-      vec.X = objPos.x;
-      vec.Y = objPos.y;
-      vec.Z = objPos.z;
+      vec.X = objPos.X;
+      vec.Y = objPos.Y;
+      vec.Z = objPos.Z;
       vec.W = 1f;
       var vector4 = Vector4.Transform(vec, matWorldViewProjection);
-      if ((double) vector4.W <= 0.0)
+      if (vector4.W <= 0.0)
       {
         return OpenTK.Vector3.Zero;
       }
@@ -363,14 +363,14 @@ namespace M3D.Graphics.Utils
       vector4.X /= vector4.W;
       vector4.Y /= vector4.W;
       vector4.Z /= vector4.W;
-      vector4.X = (float) ((double) vector4.X * 0.5 + 0.5);
-      vector4.Y = (float) (-(double) vector4.Y * 0.5 + 0.5);
-      vector4.Z = (float) ((double) vector4.Z * 0.5 + 0.5);
-      vector4.X = vector4.X * (float) viewport[2] + (float) viewport[0];
-      vector4.Y = vector4.Y * (float) viewport[3] + (float) viewport[1];
+      vector4.X = (float)(vector4.X * 0.5 + 0.5);
+      vector4.Y = (float) (-vector4.Y * 0.5 + 0.5);
+      vector4.Z = (float)(vector4.Z * 0.5 + 0.5);
+      vector4.X = vector4.X * viewport[2] + viewport[0];
+      vector4.Y = vector4.Y * viewport[3] + viewport[1];
       OpenTK.Vector3 vector3;
       vector3.X = vector4.X;
-      vector3.Y = (float) viewport[3] - vector4.Y;
+      vector3.Y = viewport[3] - vector4.Y;
       vector3.Z = vector4.Z;
       return vector3;
     }

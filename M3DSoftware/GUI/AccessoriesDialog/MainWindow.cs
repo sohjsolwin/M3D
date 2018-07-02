@@ -43,7 +43,7 @@ namespace M3D.GUI.AccessoriesDialog
       textWidget.Alignment = QFontAlignment.Left;
       textWidget.Size = FontSize.Large;
       textWidget.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      AddChildElement((Element2D) textWidget);
+      AddChildElement(textWidget);
       var buttonWidget = new ButtonWidget(1)
       {
         X = -40,
@@ -58,7 +58,7 @@ namespace M3D.GUI.AccessoriesDialog
       buttonWidget.Init(host, "guicontrols", 704f, 320f, 735f, 351f, 736f, 320f, 767f, 351f, 704f, 352f, 735f, 383f);
       buttonWidget.DontMove = true;
       buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget);
+      AddChildElement(buttonWidget);
       tab_frame = new Frame(2)
       {
         X = 210,
@@ -68,7 +68,7 @@ namespace M3D.GUI.AccessoriesDialog
         RelativeHeight = 1f,
         RelativeHeightAdj = -55
       };
-      AddChildElement((Element2D)tab_frame);
+      AddChildElement(tab_frame);
       m_oTabButtonsVerticalLayout = new ScrollableVerticalLayout();
       m_oTabButtonsVerticalLayout.Init(host);
       m_oTabButtonsVerticalLayout.SetSize(208, 200);
@@ -79,7 +79,7 @@ namespace M3D.GUI.AccessoriesDialog
       m_oTabButtonsVerticalLayout.BorderWidth = 0;
       m_oTabButtonsVerticalLayout.BorderHeight = 0;
       m_oTabButtonsVerticalLayout.layoutMode = Layout.LayoutMode.ResizeLayoutToFitChildren;
-      AddChildElement((Element2D)m_oTabButtonsVerticalLayout);
+      AddChildElement(m_oTabButtonsVerticalLayout);
       Sprite.pixel_perfect = true;
       ButtonWidget tabButton = CreateTabButton(3, "T_AccessoriesTab_Nozzle");
       m_oTabButtonsVerticalLayout.Refresh();
@@ -106,14 +106,14 @@ namespace M3D.GUI.AccessoriesDialog
       buttonWidget.GroupID = 18303;
       buttonWidget.Checked = false;
       buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
-      m_oTabButtonsVerticalLayout.AddChildElement((Element2D) buttonWidget);
+      m_oTabButtonsVerticalLayout.AddChildElement(buttonWidget);
       return buttonWidget;
     }
 
     private void CreateNozzlePage(GUIHost host, SpoolerConnection spooler_connection, PopupMessageBox messagebox)
     {
       m_pageNozzle = new NozzlePage(3, host, spooler_connection, messagebox);
-      tab_frame.AddChildElement((Element2D)m_pageNozzle);
+      tab_frame.AddChildElement(m_pageNozzle);
       m_pageNozzle.Refresh();
     }
 
@@ -131,7 +131,7 @@ namespace M3D.GUI.AccessoriesDialog
           break;
         case 3:
           TurnOffActiveFrame();
-          active_frame = (SettingsPage)m_pageNozzle;
+          active_frame = m_pageNozzle;
           break;
       }
       if (active_frame == null)
@@ -155,7 +155,7 @@ namespace M3D.GUI.AccessoriesDialog
       active_frame.OnClose();
       active_frame.Visible = false;
       active_frame.Enabled = false;
-      active_frame = (SettingsPage) null;
+      active_frame = null;
     }
 
     public override void SetVisible(bool bVisible)
@@ -185,7 +185,7 @@ namespace M3D.GUI.AccessoriesDialog
       Visible = false;
       if (host.HasChildDialog)
       {
-        host.GlobalChildDialog -= (Element2D) this;
+        host.GlobalChildDialog -= (this);
       }
 
       if (active_frame == null)

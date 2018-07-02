@@ -31,14 +31,14 @@ namespace M3D.GUI.Views.Library_View
         return;
       }
 
-      OnStartedPrintListChanged(new List<RecentPrintsHistory.PrintHistory>((IEnumerable<RecentPrintsHistory.PrintHistory>)startedPrintList));
+      OnStartedPrintListChanged(new List<RecentPrintsHistory.PrintHistory>(startedPrintList));
     }
 
     public QueryResults<RecentPrintsHistory.PrintHistory> QuereyRecords(string filter)
     {
       if (startedPrintList.Count < 1)
       {
-        return (QueryResults<RecentPrintsHistory.PrintHistory>) null;
+        return null;
       }
 
       var queryResults = new QueryResults<RecentPrintsHistory.PrintHistory>();
@@ -151,7 +151,7 @@ namespace M3D.GUI.Views.Library_View
       {
         using (var streamReader = new StreamReader(Paths.PrintHistoryPath))
         {
-          using (var xmlReader = XmlReader.Create((TextReader) streamReader))
+          using (var xmlReader = XmlReader.Create(streamReader))
           {
             startedPrintList = (List<RecentPrintsHistory.PrintHistory>) new XmlSerializer(typeof (List<RecentPrintsHistory.PrintHistory>), new XmlRootAttribute(nameof (RecentPrintsHistory))).Deserialize(xmlReader);
           }
@@ -174,7 +174,7 @@ namespace M3D.GUI.Views.Library_View
         StreamWriter streamWriter2 = streamWriter1;
         List<RecentPrintsHistory.PrintHistory> startedPrintList = this.startedPrintList;
         XmlSerializerNamespaces namespaces = serializerNamespaces;
-        xmlSerializer.Serialize((TextWriter) streamWriter2, (object) startedPrintList, namespaces);
+        xmlSerializer.Serialize(streamWriter2, startedPrintList, namespaces);
         streamWriter1.Close();
       }
       catch (Exception ex)
@@ -190,7 +190,7 @@ namespace M3D.GUI.Views.Library_View
     private void CleanupStartedPrints()
     {
       DateTime t2 = DateTime.Now.AddDays(-7.0);
-      foreach (RecentPrintsHistory.PrintHistory record in new List<RecentPrintsHistory.PrintHistory>((IEnumerable<RecentPrintsHistory.PrintHistory>)startedPrintList))
+      foreach (RecentPrintsHistory.PrintHistory record in new List<RecentPrintsHistory.PrintHistory>(startedPrintList))
       {
         if (DateTime.Compare(record.begin, t2) < 0)
         {
@@ -201,7 +201,7 @@ namespace M3D.GUI.Views.Library_View
       var stringList = new List<string>();
       try
       {
-        stringList.AddRange((IEnumerable<string>) Directory.GetDirectories(Path.Combine(Paths.PublicDataFolder, "MyLibrary", "Prints")));
+        stringList.AddRange(Directory.GetDirectories(Path.Combine(Paths.PublicDataFolder, "MyLibrary", "Prints")));
       }
       catch (Exception ex)
       {
@@ -268,7 +268,7 @@ namespace M3D.GUI.Views.Library_View
       }
 
       public PrintHistory(RecentPrintsHistory.PrintHistory other)
-        : base((LibraryRecord) other)
+        : base(other)
       {
         cachefilename = other.cachefilename;
         jobGuid = other.jobGuid;
@@ -287,7 +287,7 @@ namespace M3D.GUI.Views.Library_View
 
       public override string ToString()
       {
-        return Path.GetFileNameWithoutExtension(cachefilename) + begin.ToString(" MM\\/dd\\/yyyy h\\:mm tt", (IFormatProvider) new CultureInfo("en-US"));
+        return Path.GetFileNameWithoutExtension(cachefilename) + begin.ToString(" MM\\/dd\\/yyyy h\\:mm tt", new CultureInfo("en-US"));
       }
     }
   }

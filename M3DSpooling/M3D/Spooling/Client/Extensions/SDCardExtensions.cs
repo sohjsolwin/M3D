@@ -1,5 +1,4 @@
-﻿x
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace M3D.Spooling.Client.Extensions
@@ -28,7 +27,7 @@ namespace M3D.Spooling.Client.Extensions
 
     public SpoolerResult DeleteFileFromSDCard(M3D.Spooling.Client.AsyncCallback callback, object state, string filename)
     {
-      return m_oPrinter.SendManualGCode(callback, state, string.Format("M30 {0}", (object) filename));
+      return m_oPrinter.SendManualGCode(callback, state, string.Format("M30 {0}", filename));
     }
 
     public bool Available
@@ -82,7 +81,7 @@ namespace M3D.Spooling.Client.Extensions
         return;
       }
 
-      OnReceivedFileList((object) this, (EventArgs) null);
+      OnReceivedFileList(this, null);
     }
 
     public string[] GetGCodes()

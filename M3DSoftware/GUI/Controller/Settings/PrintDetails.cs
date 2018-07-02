@@ -24,7 +24,7 @@ namespace M3D.GUI.Controller.Settings
 
       public M3DSettings(JobParams jobParams, PrinterObject printer, string profileName, List<Slicer.General.KeyValuePair<string, string>> curaSettings)
       {
-        printSettings.filament = printer == null ? new PrintDetails.Filament((FilamentProfile) null) : new PrintDetails.Filament(printer.MyFilamentProfile);
+        printSettings.filament = printer == null ? new PrintDetails.Filament(null) : new PrintDetails.Filament(printer.MyFilamentProfile);
         serialNumber = printer == null ? PrinterSerialNumber.Undefined.ToString() : printer.Info.MySerialNumber;
         printSettings.options = jobParams.options;
         printSettings.CuraSettings = curaSettings;
@@ -60,7 +60,7 @@ namespace M3D.GUI.Controller.Settings
 
       public PrintJobObjectViewDetails(List<PrintDetails.ObjectDetails> objectList)
       {
-        this.objectList = new List<PrintDetails.ObjectDetails>((IEnumerable<PrintDetails.ObjectDetails>) objectList);
+        this.objectList = new List<PrintDetails.ObjectDetails>(objectList);
       }
 
       public static XmlSerializer ClassSerializer
@@ -151,7 +151,7 @@ namespace M3D.GUI.Controller.Settings
       }
 
       public ObjectDetails(string filename)
-        : this(filename, (PrintDetails.Transform) null)
+        : this(filename, null)
       {
       }
 
@@ -194,14 +194,14 @@ namespace M3D.GUI.Controller.Settings
 
       public Transform(M3D.Model.Utils.Vector3 translation, M3D.Model.Utils.Vector3 scale, M3D.Model.Utils.Vector3 rotation)
       {
-        this.translation.x = translation.x;
-        this.translation.y = translation.y;
-        this.scale.x = scale.x;
-        this.scale.y = scale.y;
-        this.scale.z = scale.z;
-        this.rotation.x = rotation.x;
-        this.rotation.y = rotation.y;
-        this.rotation.z = rotation.z;
+        this.translation.x = translation.X;
+        this.translation.y = translation.Y;
+        this.scale.x = scale.X;
+        this.scale.y = scale.Y;
+        this.scale.z = scale.Z;
+        this.rotation.x = rotation.X;
+        this.rotation.y = rotation.Y;
+        this.rotation.z = rotation.Z;
       }
 
       public Transform(PrintDetails.Vector2 translation, PrintDetails.Vector3 scale, PrintDetails.Vector3 rotation)

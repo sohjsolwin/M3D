@@ -92,7 +92,7 @@ namespace M3D.Spooling.Preprocessors
       corner_height_front_left = calibration.CORNER_HEIGHT_FRONT_LEFT + calibration.CORNER_HEIGHT_FRONT_LEFT_OFFSET;
       corner_height_front_right = calibration.CORNER_HEIGHT_FRONT_RIGHT + calibration.CORNER_HEIGHT_FRONT_RIGHT_OFFSET;
       g32_version = calibration.G32_VERSION;
-      RectCoordinates rectCoordinates = !bUseSpecialPrintTestPoints || !sizeprofile.G32ProbePoints.ContainsKey((int) byte.MaxValue) ? (!sizeprofile.G32ProbePoints.ContainsKey(g32_version) ? sizeprofile.G32ProbePoints.First<KeyValuePair<int, RectCoordinates>>().Value : sizeprofile.G32ProbePoints[g32_version]) : sizeprofile.G32ProbePoints[(int) byte.MaxValue];
+      RectCoordinates rectCoordinates = !bUseSpecialPrintTestPoints || !sizeprofile.G32ProbePoints.ContainsKey(byte.MaxValue) ? (!sizeprofile.G32ProbePoints.ContainsKey(g32_version) ? sizeprofile.G32ProbePoints.First<KeyValuePair<int, RectCoordinates>>().Value : sizeprofile.G32ProbePoints[g32_version]) : sizeprofile.G32ProbePoints[byte.MaxValue];
       backRight = new Vector(rectCoordinates.right, rectCoordinates.back, corner_height_back_right);
       backLeft = new Vector(rectCoordinates.left, rectCoordinates.back, corner_height_back_left);
       frontLeft = new Vector(rectCoordinates.left, rectCoordinates.front, corner_height_front_left);
@@ -118,22 +118,22 @@ namespace M3D.Spooling.Preprocessors
         GCode nextLine = input_reader.GetNextLine(false);
         if (nextLine != null)
         {
-          if (nextLine.hasG && (nextLine.G == (ushort) 0 || nextLine.G == (ushort) 1) && !flag1)
+          if (nextLine.HasG && (nextLine.G == 0 || nextLine.G == 1) && !flag1)
           {
-            if (nextLine.hasX || nextLine.hasY)
+            if (nextLine.HasX || nextLine.HasY)
             {
               flag4 = true;
             }
 
-            if (nextLine.hasZ)
+            if (nextLine.HasZ)
             {
               nextLine.Z += entire_z_height_offset;
             }
 
-            var num6 = !nextLine.hasX ? 0.0f : nextLine.X - position.relativeX;
-            var num7 = !nextLine.hasY ? 0.0f : nextLine.Y - position.relativeY;
-            var num8 = !nextLine.hasZ ? 0.0f : nextLine.Z - position.relativeZ;
-            var num9 = !nextLine.hasE ? 0.0f : nextLine.E - position.relativeE;
+            var num6 = !nextLine.HasX ? 0.0f : nextLine.X - position.relativeX;
+            var num7 = !nextLine.HasY ? 0.0f : nextLine.Y - position.relativeY;
+            var num8 = !nextLine.HasZ ? 0.0f : nextLine.Z - position.relativeZ;
+            var num9 = !nextLine.HasE ? 0.0f : nextLine.E - position.relativeE;
             position.absoluteX += num6;
             position.absoluteY += num7;
             position.absoluteZ += num8;
@@ -147,7 +147,7 @@ namespace M3D.Spooling.Preprocessors
               position.F = nextLine.F;
             }
 
-            if ((double) num8 > 1.40129846432482E-45 || (double) num8 < -1.40129846432482E-45)
+            if (num8 > 1.40129846432482E-45 || num8 < -1.40129846432482E-45)
             {
               if (!flag3)
               {
@@ -160,11 +160,11 @@ namespace M3D.Spooling.Preprocessors
 
               flag2 = num2 == 0 || num2 == 1;
             }
-            var num10 = (float) Math.Sqrt((double) num6 * (double) num6 + (double) num7 * (double) num7);
+            var num10 = (float) Math.Sqrt(num6 * (double)num6 + num7 * (double)num7);
             var num11 = 1;
-            if ((double) num10 > 2.0)
+            if (num10 > 2.0)
             {
-              num11 = (int) ((double) num10 / 2.0);
+              num11 = (int)(num10 / 2.0);
             }
 
             var num12 = position.absoluteX - num6;
@@ -177,13 +177,13 @@ namespace M3D.Spooling.Preprocessors
             var num19 = num7 / num10;
             var num20 = num8 / num10;
             var num21 = num9 / num10;
-            if ((double) num9 > 0.0)
+            if (num9 > 0.0)
             {
               flag3 = true;
             }
 
             var num22 = flag2 ? 1 : 0;
-            if ((double) num9 > 0.0)
+            if (num9 > 0.0)
             {
               for (var index = 1; index < num11 + 1; ++index)
               {
@@ -204,12 +204,12 @@ namespace M3D.Spooling.Preprocessors
                 }
                 else
                 {
-                  x = num12 + (float) index * 2f * num18;
-                  y = num13 + (float) index * 2f * num19;
-                  num23 = num14 + (float) index * 2f * num18;
-                  num24 = num15 + (float) index * 2f * num19;
-                  num25 = num16 + (float) index * 2f * num20;
-                  num26 = num17 + (float) index * 2f * num21;
+                  x = num12 + index * 2f * num18;
+                  y = num13 + index * 2f * num19;
+                  num23 = num14 + index * 2f * num18;
+                  num24 = num15 + index * 2f * num19;
+                  num25 = num16 + index * 2f * num20;
+                  num26 = num17 + index * 2f * num21;
                 }
                 var adjustmentRequired = GetHeightAdjustmentRequired(x, y);
                 if (index != num11)
@@ -218,14 +218,14 @@ namespace M3D.Spooling.Preprocessors
                   {
                     G = nextLine.G
                   };
-                  if (nextLine.hasX)
+                  if (nextLine.HasX)
                   {
-                    code.X = (float) ((double) position.relativeX - (double) num6 + ((double) num23 - (double) num14));
+                    code.X = (float)(position.relativeX - (double)num6 + (num23 - (double)num14));
                   }
 
-                  if (nextLine.hasY)
+                  if (nextLine.HasY)
                   {
-                    code.Y = (float) ((double) position.relativeY - (double) num7 + ((double) num24 - (double) num15));
+                    code.Y = (float)(position.relativeY - (double)num7 + (num24 - (double)num15));
                   }
 
                   if (nextLine.hasF && index == 1)
@@ -235,21 +235,21 @@ namespace M3D.Spooling.Preprocessors
 
                   if (flag4)
                   {
-                    code.Z = (float) ((double) position.relativeZ - (double) num8 + ((double) num25 - (double) num16)) + adjustmentRequired;
+                    code.Z = (float)(position.relativeZ - (double)num8 + (num25 - (double)num16)) + adjustmentRequired;
                   }
-                  else if (nextLine.hasZ && ((double) num8 > 1.40129846432482E-45 || (double) num8 < -1.40129846432482E-45))
+                  else if (nextLine.HasZ && (num8 > 1.40129846432482E-45 || num8 < -1.40129846432482E-45))
                   {
-                    code.Z = (float) ((double) position.relativeZ - (double) num8 + ((double) num25 - (double) num16));
+                    code.Z = (float)(position.relativeZ - (double)num8 + (num25 - (double)num16));
                   }
 
-                  code.E = (float) ((double) position.relativeE - (double) num9 + ((double) num26 - (double) num17)) + num4;
+                  code.E = (float)(position.relativeE - (double)num9 + (num26 - (double)num17)) + num4;
                   output_writer.Write(code);
                 }
                 else
                 {
                   if (flag4)
                   {
-                    if (nextLine.hasZ)
+                    if (nextLine.HasZ)
                     {
                       nextLine.Z += adjustmentRequired;
                     }
@@ -269,7 +269,7 @@ namespace M3D.Spooling.Preprocessors
               {
                 var num23 = flag2 ? 1 : 0;
                 var adjustmentRequired = GetHeightAdjustmentRequired(position.absoluteX, position.absoluteY);
-                if (nextLine.hasZ)
+                if (nextLine.HasZ)
                 {
                   nextLine.Z += adjustmentRequired;
                 }
@@ -278,7 +278,7 @@ namespace M3D.Spooling.Preprocessors
                   nextLine.Z = position.relativeZ + adjustmentRequired;
                 }
               }
-              if (nextLine.hasE)
+              if (nextLine.HasE)
               {
                 nextLine.E += num4;
               }
@@ -286,31 +286,31 @@ namespace M3D.Spooling.Preprocessors
               num5 = position.relativeE;
             }
           }
-          else if (nextLine.hasG && nextLine.G == (ushort) 92)
+          else if (nextLine.HasG && nextLine.G == 92)
           {
-            if (nextLine.hasE)
+            if (nextLine.HasE)
             {
               position.relativeE = nextLine.E;
             }
 
             if (printerProfile.OptionsConstants.G92WorksOnAllAxes)
             {
-              if (nextLine.hasX)
+              if (nextLine.HasX)
               {
                 position.relativeX = nextLine.X;
               }
 
-              if (nextLine.hasY)
+              if (nextLine.HasY)
               {
                 position.relativeY = nextLine.Y;
               }
 
-              if (nextLine.hasZ)
+              if (nextLine.HasZ)
               {
                 position.relativeZ = nextLine.Z;
               }
             }
-            if (!nextLine.hasE && !nextLine.hasX && (!nextLine.hasY && !nextLine.hasZ))
+            if (!nextLine.HasE && !nextLine.HasX && (!nextLine.HasY && !nextLine.HasZ))
             {
               position.relativeE = 0.0f;
               if (printerProfile.OptionsConstants.G92WorksOnAllAxes)
@@ -321,15 +321,15 @@ namespace M3D.Spooling.Preprocessors
               }
             }
           }
-          else if (nextLine.hasG && nextLine.G == (ushort) 90)
+          else if (nextLine.HasG && nextLine.G == 90)
           {
             flag1 = false;
           }
-          else if (nextLine.hasG && nextLine.G == (ushort) 91)
+          else if (nextLine.HasG && nextLine.G == 91)
           {
             flag1 = true;
           }
-          else if (nextLine.hasG && nextLine.G == (ushort) 28)
+          else if (nextLine.HasG && nextLine.G == 28)
           {
             position.relativeX = position.absoluteX = 54f;
             position.relativeY = position.absoluteY = 50f;
@@ -370,35 +370,35 @@ namespace M3D.Spooling.Preprocessors
         var y1 = frontLeft.y;
         var y2 = backRight.y;
         var vector = new Vector(x, y, 0.0f);
-        if ((double) x <= (double) x1 && (double) y >= (double) y2)
+        if (x <= (double)x1 && y >= (double)y2)
         {
-          vector.z = (float) (((double)GetZFromXYAndPlane(vector, planeEquation1) + (double)GetZFromXYAndPlane(vector, planeEquation2)) / 2.0);
+          vector.z = (float)((GetZFromXYAndPlane(vector, planeEquation1) + (double)GetZFromXYAndPlane(vector, planeEquation2)) / 2.0);
         }
-        else if ((double) x <= (double) x1 && (double) y <= (double) y1)
+        else if (x <= (double)x1 && y <= (double)y1)
         {
-          vector.z = (float) (((double)GetZFromXYAndPlane(vector, planeEquation4) + (double)GetZFromXYAndPlane(vector, planeEquation2)) / 2.0);
+          vector.z = (float)((GetZFromXYAndPlane(vector, planeEquation4) + (double)GetZFromXYAndPlane(vector, planeEquation2)) / 2.0);
         }
-        else if ((double) x >= (double) x2 && (double) y <= (double) y1)
+        else if (x >= (double)x2 && y <= (double)y1)
         {
-          vector.z = (float) (((double)GetZFromXYAndPlane(vector, planeEquation4) + (double)GetZFromXYAndPlane(vector, planeEquation3)) / 2.0);
+          vector.z = (float)((GetZFromXYAndPlane(vector, planeEquation4) + (double)GetZFromXYAndPlane(vector, planeEquation3)) / 2.0);
         }
-        else if ((double) x >= (double) x2 && (double) y >= (double) y2)
+        else if (x >= (double)x2 && y >= (double)y2)
         {
-          vector.z = (float) (((double)GetZFromXYAndPlane(vector, planeEquation1) + (double)GetZFromXYAndPlane(vector, planeEquation3)) / 2.0);
+          vector.z = (float)((GetZFromXYAndPlane(vector, planeEquation1) + (double)GetZFromXYAndPlane(vector, planeEquation3)) / 2.0);
         }
-        else if ((double) x <= (double) x1)
+        else if (x <= (double)x1)
         {
           vector.z = GetZFromXYAndPlane(vector, planeEquation2);
         }
-        else if ((double) x >= (double) x2)
+        else if (x >= (double)x2)
         {
           vector.z = GetZFromXYAndPlane(vector, planeEquation3);
         }
-        else if ((double) y >= (double) y2)
+        else if (y >= (double)y2)
         {
           vector.z = GetZFromXYAndPlane(vector, planeEquation1);
         }
-        else if ((double) y <= (double) y1)
+        else if (y <= (double)y1)
         {
           vector.z = GetZFromXYAndPlane(vector, planeEquation4);
         }
@@ -437,11 +437,11 @@ namespace M3D.Spooling.Preprocessors
         num1 = 109f;
         num2 = 103f;
       }
-      var num3 = ((double)corner_height_back_left - (double)corner_height_front_left) / (double) num1;
+      var num3 = (corner_height_back_left - (double)corner_height_front_left) / num1;
       var num4 = (corner_height_back_right - corner_height_front_right) / num2;
-      var num5 = (double) y - (double)frontLeft.y;
+      var num5 = y - (double)frontLeft.y;
       var num6 = (float) (num3 * num5) + corner_height_front_left;
-      return (float) (((double) num4 * ((double) y - (double)frontLeft.y) + (double)corner_height_front_right - (double) num6) / (double) num1 * ((double) x - (double)frontLeft.x) + (double) num6 + 0.0);
+      return (float)((num4 * (y - (double)frontLeft.y) + corner_height_front_right - num6) / num1 * (x - (double)frontLeft.x) + num6 + 0.0);
     }
 
     public float GetZFromXYAndPlane(Vector point, Vector planeABC)
@@ -451,14 +451,14 @@ namespace M3D.Spooling.Preprocessors
       var num3 = planeABC[2];
       var num4 = planeABC[3];
       var x = (double) point.x;
-      return (float) ((num1 * x + (double) num2 * (double) point.y + (double) num4) / -(double) num3);
+      return (float) ((num1 * x + num2 * (double)point.y + num4) / -num3);
     }
 
     public Vector CalculatePlaneNormalVector(Vector v1, Vector v2, Vector v3)
     {
       Vector vector1 = v2 - v1;
       Vector vector2 = v3 - v1;
-      return new Vector() { [0] = (float) ((double) vector1[1] * (double) vector2[2] - (double) vector2[1] * (double) vector1[2]), [1] = (float) ((double) vector1[2] * (double) vector2[0] - (double) vector2[2] * (double) vector1[0]), [2] = (float) ((double) vector1[0] * (double) vector2[1] - (double) vector2[0] * (double) vector1[1]) };
+      return new Vector() { [0] = (float)(vector1[1] * (double)vector2[2] - vector2[1] * (double)vector1[2]), [1] = (float)(vector1[2] * (double)vector2[0] - vector2[2] * (double)vector1[0]), [2] = (float)(vector1[0] * (double)vector2[1] - vector2[0] * (double)vector1[1]) };
     }
 
     private Vector generatePlaneEquation(Vector v1, Vector v2, Vector v3)
@@ -468,13 +468,13 @@ namespace M3D.Spooling.Preprocessors
       vector[0] = planeNormalVector[0];
       vector[1] = planeNormalVector[1];
       vector[2] = planeNormalVector[2];
-      vector[3] = (float) -((double) vector[0] * (double) v1[0] + (double) vector[1] * (double) v1[1] + (double) vector[2] * (double) v1[2]);
+      vector[3] = (float) -(vector[0] * (double)v1[0] + vector[1] * (double)v1[1] + vector[2] * (double)v1[2]);
       return vector;
     }
 
     private float sign(Vector p1, Vector p2, Vector p3)
     {
-      return (float) (((double) p1.x - (double) p3.x) * ((double) p2.y - (double) p3.y) - ((double) p2.x - (double) p3.x) * ((double) p1.y - (double) p3.y));
+      return (float)((p1.x - (double)p3.x) * (p2.y - (double)p3.y) - (p2.x - (double)p3.x) * (p1.y - (double)p3.y));
     }
 
     private bool IsPointInTriangle(Vector pt, Vector v1, Vector v2, Vector v3)
@@ -489,9 +489,9 @@ namespace M3D.Spooling.Preprocessors
       Vector vector5 = v3 - v1 + (v3 - v2);
       vector5.Normalize();
       Vector vector6 = v3 + vector5 * num1;
-      var num2 = (double)sign(pt, vector2, vector4) < 0.0 ? 1 : 0;
-      var flag1 = (double)sign(pt, vector4, vector6) < 0.0;
-      var flag2 = (double)sign(pt, vector6, vector2) < 0.0;
+      var num2 = sign(pt, vector2, vector4) < 0.0 ? 1 : 0;
+      var flag1 = sign(pt, vector4, vector6) < 0.0;
+      var flag2 = sign(pt, vector6, vector2) < 0.0;
       var num3 = flag1 ? 1 : 0;
       if (num2 == num3)
       {

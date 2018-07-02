@@ -48,7 +48,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public override bool Start(out List<string> start_gcode)
     {
-      start_gcode = (List<string>) null;
+      start_gcode = null;
       return true;
     }
 
@@ -69,7 +69,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public override GCode GetNextCommand()
     {
-      return (GCode) null;
+      return null;
     }
 
     public override bool Aborted

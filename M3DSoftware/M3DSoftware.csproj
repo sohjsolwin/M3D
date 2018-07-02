@@ -64,6 +64,7 @@
     <Compile Include="ConfirmShutdownForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Model\FilIO\IModelExporter.cs" />
     <Compile Include="SendDebugEmail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,7 +116,6 @@
     <Compile Include="Model\ModelTransform.cs" />
     <Compile Include="Model\Utils\ProgressHelper.cs" />
     <Compile Include="Model\Utils\Vector3.cs" />
-    <Compile Include="Model\FilIO\ModelExporter.cs" />
     <Compile Include="Model\FilIO\ModelImporterInterface.cs" />
     <Compile Include="Model\FilIO\ModelM3DExporter.cs" />
     <Compile Include="Model\FilIO\ModelM3DImporter.cs" />

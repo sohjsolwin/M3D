@@ -192,13 +192,13 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
           if (internalSerialStream == null)
           {
             FieldInfo field = typeof (SerialPort).GetField("internalSerialStream", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (field == (FieldInfo) null)
+            if (field == null)
             {
               throw;
             }
             else
             {
-              internalSerialStream = (Stream) field.GetValue((object)_port);
+              internalSerialStream = (Stream) field.GetValue(_port);
             }
           }
           logMessage = logMessage + "\nAn error occurred while constructing the serial port adaptor:" + ex.ToString();
@@ -221,7 +221,7 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
         }
 
         SafeDisconnect(_port, _internalSerialStream);
-        GC.SuppressFinalize((object) this);
+        GC.SuppressFinalize(this);
         _isAlive = false;
       }
     }
@@ -245,12 +245,12 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
 
         if (port != null)
         {
-          GC.SuppressFinalize((object) port);
+          GC.SuppressFinalize(port);
         }
 
         if (internalSerialStream != null)
         {
-          GC.SuppressFinalize((object) internalSerialStream);
+          GC.SuppressFinalize(internalSerialStream);
           ShutdownEventLoopHandler(internalSerialStream);
         }
         try
@@ -280,24 +280,24 @@ public class SafeSerialPort : ISerialPortIo, IDisposable
         try
         {
           FieldInfo field1 = internalSerialStream.GetType().GetField("eventRunner", BindingFlags.Instance | BindingFlags.NonPublic);
-          if (field1 == (FieldInfo) null)
+          if (field1 == null)
           {
             return;
           }
 
-          var obj = field1.GetValue((object) internalSerialStream);
+          var obj = field1.GetValue(internalSerialStream);
           Type type = obj.GetType();
           FieldInfo field2 = type.GetField("endEventLoop", BindingFlags.Instance | BindingFlags.NonPublic);
           FieldInfo field3 = type.GetField("eventLoopEndedSignal", BindingFlags.Instance | BindingFlags.NonPublic);
           FieldInfo field4 = type.GetField("waitCommEventWaitHandle", BindingFlags.Instance | BindingFlags.NonPublic);
-          if (field2 == (FieldInfo) null || field3 == (FieldInfo) null || field4 == (FieldInfo) null)
+          if (field2 == null || field3 == null || field4 == null)
           {
             return;
           }
 
           var waitHandle = (WaitHandle) field3.GetValue(obj);
           var manualResetEvent = (ManualResetEvent) field4.GetValue(obj);
-          field2.SetValue(obj, (object) true);
+          field2.SetValue(obj, true);
           do
           {
             manualResetEvent.Set();

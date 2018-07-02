@@ -17,7 +17,7 @@ namespace M3D.Spooling.Printer_Profiles
     public ProPrinterProfile()
     {
       ProfileName = "Pro";
-      ProductConstants = new ProductProfile(41502U, 1155U, 98304U, (byte) 31, STMChipData.STM32F070CB, new Dictionary<char, FirmwareDetails>()
+      ProductConstants = new ProductProfile(41502U, 1155U, 98304U, 31, STMChipData.STM32F070CB, new Dictionary<char, FirmwareDetails>()
       {
         {
           'S',
@@ -28,20 +28,20 @@ namespace M3D.Spooling.Printer_Profiles
           new FirmwareDetails(2017121802U, 243077141U, "M3D.Spooling.Embedded_Firmware.m3dfirmware-encrypt00M24x.hex")
         }
       });
-      Scripts = (ScriptsProfile) new ProScriptsProfile();
-      PrinterSizeConstants = (PrinterSizeProfile) new ProPrinterSizeProfile();
+      Scripts = new ProScriptsProfile();
+      PrinterSizeConstants = new ProPrinterSizeProfile();
       PreprocessorConstants = new PrinterPreprocessorProfile(new IPreprocessor[4]
       {
-        (IPreprocessor) new GCodeInitializationPreprocessor(),
-        (IPreprocessor) new BondingPreprocessor(),
-        (IPreprocessor) new BedCompensationPreprocessor(),
-        (IPreprocessor) new BackLashPreprocessor()
+         new GCodeInitializationPreprocessor(),
+         new BondingPreprocessor(),
+         new BedCompensationPreprocessor(),
+         new BackLashPreprocessor()
       });
       FirstRunConstants = new FirstRunProfile(new IFirstRunUpdater[0]);
       SpeedLimitConstants = new SpeedLimitProfile(12000f, 120f, 3000f, 12000f, 120f, 3000f, 240f, 30f, 120f, 600f, 60f, 144f, 720f, 60f, 360f, 12000f, 2520f, 7200f);
       TemperatureConstants = new TemperatureProfile(70, 295);
-      EEPROMConstants = (EEPROMProfile) new ProEEPROMConstants();
-      VirtualCodes = (VirtualCodeProfile) new ProVirtualCodes();
+      EEPROMConstants = new ProEEPROMConstants();
+      VirtualCodes = new ProVirtualCodes();
       SupportedFeaturesConstants = new SupportedFeaturesProfile(new Dictionary<string, int>()
       {
         {

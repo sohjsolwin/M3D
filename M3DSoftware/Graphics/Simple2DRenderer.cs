@@ -77,10 +77,10 @@ namespace M3D.Graphics
           return new Simple2DRenderer.Region(0, 0, glwindow_width, glwindow_height);
         }
 
-        var x0 = regions.Max<Simple2DRenderer.Region>((Func<Simple2DRenderer.Region, int>) (a => a.x0));
-        var num1 = regions.Max<Simple2DRenderer.Region>((Func<Simple2DRenderer.Region, int>) (a => a.y0));
-        var num2 = regions.Min<Simple2DRenderer.Region>((Func<Simple2DRenderer.Region, int>) (a => a.x1));
-        var num3 = regions.Min<Simple2DRenderer.Region>((Func<Simple2DRenderer.Region, int>) (a => a.y1));
+        var x0 = regions.Max<Simple2DRenderer.Region>(a => a.x0);
+        var num1 = regions.Max<Simple2DRenderer.Region>(a => a.y0);
+        var num2 = regions.Min<Simple2DRenderer.Region>(a => a.x1);
+        var num3 = regions.Min<Simple2DRenderer.Region>(a => a.y1);
         var y0 = num1;
         var x1 = num2;
         var y1 = num3;
@@ -106,8 +106,8 @@ namespace M3D.Graphics
           return glwindow_width;
         }
 
-        var num1 = regions.Max<Simple2DRenderer.Region>((Func<Simple2DRenderer.Region, int>) (a => a.x0));
-        var num2 = regions.Min<Simple2DRenderer.Region>((Func<Simple2DRenderer.Region, int>) (a => a.x1));
+        var num1 = regions.Max<Simple2DRenderer.Region>(a => a.x0);
+        var num2 = regions.Min<Simple2DRenderer.Region>(a => a.x1);
         if (num1 > num2)
         {
           num1 = 0;
@@ -126,8 +126,8 @@ namespace M3D.Graphics
           return glwindow_height;
         }
 
-        var num1 = regions.Max<Simple2DRenderer.Region>((Func<Simple2DRenderer.Region, int>) (a => a.y0));
-        var num2 = regions.Min<Simple2DRenderer.Region>((Func<Simple2DRenderer.Region, int>) (a => a.y1));
+        var num1 = regions.Max<Simple2DRenderer.Region>(a => a.y0);
+        var num2 = regions.Min<Simple2DRenderer.Region>(a => a.y1);
         if (num1 > num2)
         {
           num1 = 0;
@@ -171,7 +171,7 @@ namespace M3D.Graphics
     public void Begin2D()
     {
       GL.Viewport(0, 0, GLWindowWidth(), GLWindowHeight());
-      SetCameraOrthographic(0.0, (double)GLWindowWidth(), 0.0, (double)GLWindowHeight(), 1.0, 1000.0);
+      SetCameraOrthographic(0.0, GLWindowWidth(), 0.0, GLWindowHeight(), 1.0, 1000.0);
       lighting = GL.IsEnabled(EnableCap.Lighting);
       if (lighting)
       {
@@ -191,7 +191,7 @@ namespace M3D.Graphics
       originalViewportWidth = data[2] - data[1];
       originalViewportHeight = data[3] - data[0];
       GL.Viewport(0, 0, glwindow_width, glwindow_height);
-      SetCameraOrthographic(0.0, (double)glwindow_width, 0.0, (double)glwindow_height, 1.0, 1000.0);
+      SetCameraOrthographic(0.0, glwindow_width, 0.0, glwindow_height, 1.0, 1000.0);
       GL.MatrixMode(MatrixMode.Modelview);
       GL.LoadIdentity();
       GL.Enable(EnableCap.ColorMaterial);
@@ -318,7 +318,7 @@ namespace M3D.Graphics
 
     public void SetLineWidth(float width)
     {
-      if ((double) width > 10.0)
+      if (width > 10.0)
       {
         lineWidth = 10f;
       }
@@ -331,7 +331,7 @@ namespace M3D.Graphics
     public void DrawQuad(Simple2DRenderer.TexturedQuad textured_quad)
     {
       var num = textured_quad.y1 - textured_quad.y0;
-      var y = (float)glwindow_height - textured_quad.y0;
+      var y = glwindow_height - textured_quad.y0;
       GL.BindTexture(TextureTarget.Texture2D, currentTexture);
       GL.Translate(0.0f, 0.0f, 1f);
       GL.Color4(textured_quad.color.R, textured_quad.color.G, textured_quad.color.B, textured_quad.color.A);
@@ -354,7 +354,7 @@ namespace M3D.Graphics
     public void DrawQuad(Simple2DRenderer.Quad quad)
     {
       var num = quad.y1 - quad.y0;
-      var y = (float)glwindow_height - quad.y0;
+      var y = glwindow_height - quad.y0;
       GL.BindTexture(TextureTarget.Texture2D, 0);
       GL.Translate(0.0f, 0.0f, 1f);
       GL.Color4(quad.color.R, quad.color.G, quad.color.B, quad.color.A);
@@ -371,7 +371,7 @@ namespace M3D.Graphics
     public void DrawQuadLine(Simple2DRenderer.Quad quad)
     {
       var num = quad.y1 - quad.y0;
-      var y = (float)glwindow_height - quad.y0;
+      var y = glwindow_height - quad.y0;
       GL.BindTexture(TextureTarget.Texture2D, 0);
       GL.Translate(0.0f, 0.0f, 1f);
       GL.Color4(quad.color.R, quad.color.G, quad.color.B, quad.color.A);

@@ -58,7 +58,7 @@ namespace M3D.Spooling.ConnectionManager
         WinUSBPrinterFinder._deviceInstallDetectedCount.Value = num;
       }
 
-      return new List<string>((IEnumerable<string>)com_ports);
+      return new List<string>(com_ports);
     }
 
     public static int DeviceInstallDetected

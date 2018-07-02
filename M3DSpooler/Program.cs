@@ -62,7 +62,7 @@ namespace M3D.Spooler
         }
       }
       spooler_client.CheckFirmware = true;
-      Application.Run((Form) new TrayAppForm(spooler_client));
+      Application.Run(new TrayAppForm(spooler_client));
     }
 
     private static void UIThreadException(object sender, ThreadExceptionEventArgs t)

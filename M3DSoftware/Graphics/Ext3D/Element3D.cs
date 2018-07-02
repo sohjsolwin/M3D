@@ -13,17 +13,17 @@ namespace M3D.Graphics.Ext3D
     private Element3D parent;
 
     public Element3D()
-      : this(0, (Element3D) null)
+      : this(0, null)
     {
     }
 
     public Element3D(int ID)
-      : this(ID, (Element3D) null)
+      : this(ID, null)
     {
     }
 
     public Element3D(int ID, Element3D parent)
-      : base(ID, (IElement) parent)
+      : base(ID, parent)
     {
       this.parent = parent;
       child_list3D = new List<Element3D>();
@@ -47,7 +47,7 @@ namespace M3D.Graphics.Ext3D
     public virtual void AddChildElement(Element3D child)
     {
       child.parent = this;
-      child.SetBaseParent((IElement) this);
+      child.SetBaseParent(this);
       lock (child_list3D)
       {
         child_list3D.Add(child);
@@ -61,7 +61,7 @@ namespace M3D.Graphics.Ext3D
         return;
       }
 
-      child.parent = (Element3D) null;
+      child.parent = null;
       if (child_list3D == null)
       {
         return;

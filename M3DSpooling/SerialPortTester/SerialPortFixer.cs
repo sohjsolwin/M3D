@@ -29,7 +29,7 @@ namespace SerialPortTester
       }
 
       m_Handle.Close();
-      m_Handle = (SafeFileHandle) null;
+      m_Handle = null;
     }
 
     private SerialPortFixer(string portName)
@@ -61,7 +61,7 @@ namespace SerialPortTester
       catch
       {
         file.Close();
-        m_Handle = (SafeFileHandle) null;
+        m_Handle = null;
         throw;
       }
     }
@@ -95,7 +95,7 @@ namespace SerialPortTester
     private static string GetMessage(int errorCode)
     {
       var lpBuffer = new StringBuilder(512);
-      if (SerialPortFixer.FormatMessage(12800, new HandleRef((object) null, IntPtr.Zero), errorCode, 0, lpBuffer, lpBuffer.Capacity, IntPtr.Zero) != 0)
+      if (SerialPortFixer.FormatMessage(12800, new HandleRef(null, IntPtr.Zero), errorCode, 0, lpBuffer, lpBuffer.Capacity, IntPtr.Zero) != 0)
       {
         return lpBuffer.ToString();
       }

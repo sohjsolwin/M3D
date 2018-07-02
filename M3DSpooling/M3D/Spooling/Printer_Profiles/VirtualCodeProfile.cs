@@ -36,12 +36,12 @@ namespace M3D.Spooling.Printer_Profiles
 
     public bool ProcessVirtualCode(GCode gcode, FirmwareController connection)
     {
-      if (!code_dictionary.ContainsKey((int) gcode.M))
+      if (!code_dictionary.ContainsKey(gcode.M))
       {
         return false;
       }
 
-      code_dictionary[(int) gcode.M](gcode, connection);
+      code_dictionary[gcode.M](gcode, connection);
       return true;
     }
 

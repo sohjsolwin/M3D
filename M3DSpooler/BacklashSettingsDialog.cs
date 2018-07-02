@@ -37,13 +37,13 @@ namespace M3D.Spooler
       textBoxBacklashSpeed.Text = initial_speed.ToString();
     }
 
-    private void buttonOK_Click(object sender, EventArgs e)
+    private void ButtonOK_Click(object sender, EventArgs e)
     {
       if (!float.TryParse(textBoxXBacklash.Text, out X_BACKLASH))
       {
         var num1 = (int) MessageBox.Show("Sorry, but the X backlash is not a number. Please try again.");
       }
-      else if ((double)X_BACKLASH < 0.0)
+      else if (X_BACKLASH < 0.0)
       {
         var num2 = (int) MessageBox.Show("The X backlash must be a positive number. Please try again.");
       }
@@ -51,7 +51,7 @@ namespace M3D.Spooler
       {
         var num3 = (int) MessageBox.Show("Sorry, but the Y backlash is not a number. Please try again.");
       }
-      else if ((double)Y_BACKLASH < 0.0)
+      else if (Y_BACKLASH < 0.0)
       {
         var num4 = (int) MessageBox.Show("The Y backlash must be a positive number. Please try again.");
       }
@@ -61,14 +61,14 @@ namespace M3D.Spooler
       }
       else
       {
-        if ((double)BACKLASH_SPEED > (double)MAX_SPEED)
+        if (BACKLASH_SPEED > (double)MAX_SPEED)
         {
           if (MessageBox.Show("The backlash speed has been set to a value faster than the max speed for this printer and may not be reached. Do you want to continue?", "M3D Spooler", MessageBoxButtons.YesNo) == DialogResult.No)
           {
             return;
           }
         }
-        else if ((double)BACKLASH_SPEED < 100.0)
+        else if (BACKLASH_SPEED < 100.0)
         {
           var num6 = (int) MessageBox.Show("The backlash speed must be a greater than 100. Please try again.");
           return;
@@ -78,16 +78,13 @@ namespace M3D.Spooler
       }
     }
 
-    private void buttonCancel_Click(object sender, EventArgs e)
+    private void ButtonCancel_Click(object sender, EventArgs e)
     {
       ok = false;
       Close();
     }
 
-    private void defaultSpeedbutton_Click(object sender, EventArgs e)
-    {
-      textBoxBacklashSpeed.Text = DEFAULT_SPEED.ToString();
-    }
+    private void DefaultSpeedbutton_Click(object sender, EventArgs e) => textBoxBacklashSpeed.Text = DEFAULT_SPEED.ToString();
 
     private void MaxSpeedbutton_Click(object sender, EventArgs e)
     {
@@ -127,14 +124,14 @@ namespace M3D.Spooler
       buttonCancel.TabIndex = 11;
       buttonCancel.Text = "Cancel";
       buttonCancel.UseVisualStyleBackColor = true;
-      buttonCancel.Click += new EventHandler(buttonCancel_Click);
+      buttonCancel.Click += new EventHandler(ButtonCancel_Click);
       buttonOK.Location = new Point(67, 212);
       buttonOK.Name = "buttonOK";
       buttonOK.Size = new Size(121, 28);
       buttonOK.TabIndex = 10;
       buttonOK.Text = "OK";
       buttonOK.UseVisualStyleBackColor = true;
-      buttonOK.Click += new EventHandler(buttonOK_Click);
+      buttonOK.Click += new EventHandler(ButtonOK_Click);
       label2.AutoSize = true;
       label2.Location = new Point(17, 64);
       label2.Name = "label2";
@@ -155,15 +152,15 @@ namespace M3D.Spooler
       textBoxXBacklash.Name = "textBoxXBacklash";
       textBoxXBacklash.Size = new Size(230, 21);
       textBoxXBacklash.TabIndex = 6;
-      groupBox1.Controls.Add((Control)MaxSpeedbutton);
-      groupBox1.Controls.Add((Control)defaultSpeedbutton);
-      groupBox1.Controls.Add((Control)label4);
-      groupBox1.Controls.Add((Control)textBoxBacklashSpeed);
-      groupBox1.Controls.Add((Control)label3);
-      groupBox1.Controls.Add((Control)textBoxXBacklash);
-      groupBox1.Controls.Add((Control)label1);
-      groupBox1.Controls.Add((Control)textBoxYBacklash);
-      groupBox1.Controls.Add((Control)label2);
+      groupBox1.Controls.Add(MaxSpeedbutton);
+      groupBox1.Controls.Add(defaultSpeedbutton);
+      groupBox1.Controls.Add(label4);
+      groupBox1.Controls.Add(textBoxBacklashSpeed);
+      groupBox1.Controls.Add(label3);
+      groupBox1.Controls.Add(textBoxXBacklash);
+      groupBox1.Controls.Add(label1);
+      groupBox1.Controls.Add(textBoxYBacklash);
+      groupBox1.Controls.Add(label2);
       groupBox1.Location = new Point(14, 11);
       groupBox1.Name = "groupBox1";
       groupBox1.Size = new Size(368, 190);
@@ -176,7 +173,7 @@ namespace M3D.Spooler
       defaultSpeedbutton.TabIndex = 13;
       defaultSpeedbutton.Text = "Default";
       defaultSpeedbutton.UseVisualStyleBackColor = true;
-      defaultSpeedbutton.Click += new EventHandler(defaultSpeedbutton_Click);
+      defaultSpeedbutton.Click += new EventHandler(DefaultSpeedbutton_Click);
       label4.Location = new Point(18, 132);
       label4.Name = "label4";
       label4.Size = new Size(344, 46);
@@ -203,9 +200,9 @@ namespace M3D.Spooler
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(394, 246);
       ControlBox = false;
-      Controls.Add((Control)groupBox1);
-      Controls.Add((Control)buttonCancel);
-      Controls.Add((Control)buttonOK);
+      Controls.Add(groupBox1);
+      Controls.Add(buttonCancel);
+      Controls.Add(buttonOK);
       Icon = (Icon) componentResourceManager.GetObject("$this.Icon");
       Name = "BacklashSettings";
       Text = "Preprocessor Settings";

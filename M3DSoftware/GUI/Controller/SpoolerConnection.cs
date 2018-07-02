@@ -47,7 +47,7 @@ namespace M3D.GUI.Controller
       printerIDList = new List<string>();
       selected_printer = new ThreadSafeVariable<PrinterObject>
       {
-        Value = (PrinterObject)null
+        Value = null
       };
       general_log = new CircularArray<string>(200);
     }
@@ -112,12 +112,12 @@ namespace M3D.GUI.Controller
     public void PrintModel(string sn, JobParams jobParams)
     {
       var printerBySerialNumber = (IPrinter)GetPrinterBySerialNumber(sn);
-      if (printerBySerialNumber == null || !printerBySerialNumber.isConnected())
+      if (printerBySerialNumber == null || !printerBySerialNumber.IsConnected())
       {
         return;
       }
 
-      var num = (int) printerBySerialNumber.PrintModel((M3D.Spooling.Client.AsyncCallback) null, (object) null, jobParams);
+      var num = (int) printerBySerialNumber.PrintModel(null, null, jobParams);
     }
 
     public void SpoolerStartUp(DebugLogger debugLogger)
@@ -248,7 +248,7 @@ namespace M3D.GUI.Controller
     {
       lock (printerIDList)
       {
-        return new List<string>((IEnumerable<string>)printerIDList);
+        return new List<string>(printerIDList);
       }
     }
 
@@ -264,10 +264,10 @@ namespace M3D.GUI.Controller
         foreach (Printer printer in PrintSpoolerClient)
         {
           FilamentSpool currentFilament = printer.GetCurrentFilament();
-          if (currentFilament != (FilamentSpool) null && currentFilament.filament_type != FilamentSpool.TypeEnum.NoFilament && (currentFilament.filament_type == key.type && (FilamentConstants.ColorsEnum) currentFilament.filament_color_code == key.color))
+          if (currentFilament != null && currentFilament.filament_type != FilamentSpool.TypeEnum.NoFilament && (currentFilament.filament_type == key.type && (FilamentConstants.ColorsEnum) currentFilament.filament_color_code == key.color))
           {
             currentFilament.filament_temperature = new_data.temperature;
-            var num = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(OnFilamentUpdateLock), (object) new SpoolerConnection.UpdateFilamentData((IPrinter) printer, currentFilament));
+            var num = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(OnFilamentUpdateLock), new SpoolerConnection.UpdateFilamentData((IPrinter)printer, currentFilament));
           }
         }
       }
@@ -284,7 +284,7 @@ namespace M3D.GUI.Controller
         return;
       }
 
-      var num = (int) asyncState.printer.SetFilamentInfo(new M3D.Spooling.Client.AsyncCallback(OnFilamentUpdateDone), (object) asyncState.printer, asyncState.printer_filament);
+      var num = (int) asyncState.printer.SetFilamentInfo(new M3D.Spooling.Client.AsyncCallback(OnFilamentUpdateDone), asyncState.printer, asyncState.printer_filament);
     }
 
     private void OnFilamentUpdateDone(IAsyncCallResult ar)
@@ -295,7 +295,7 @@ namespace M3D.GUI.Controller
         return;
       }
 
-      var num = (int) asyncState.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+      var num = (int) asyncState.ReleaseLock(null, null);
     }
 
     public bool FilamentSpoolLoaded(FilamentProfile.TypeColorKey key, FilamentProfile.CustomOptions new_data)
@@ -308,7 +308,7 @@ namespace M3D.GUI.Controller
           foreach (Printer printer in PrintSpoolerClient)
           {
             FilamentSpool currentFilament = printer.GetCurrentFilament();
-            if (currentFilament != (FilamentSpool) null && currentFilament.filament_type != FilamentSpool.TypeEnum.NoFilament && (currentFilament.filament_type == key.type && (FilamentConstants.ColorsEnum) currentFilament.filament_color_code == key.color))
+            if (currentFilament != null && currentFilament.filament_type != FilamentSpool.TypeEnum.NoFilament && (currentFilament.filament_type == key.type && (FilamentConstants.ColorsEnum) currentFilament.filament_color_code == key.color))
             {
               flag = true;
               break;
@@ -344,7 +344,7 @@ namespace M3D.GUI.Controller
             messagebox.AddMessageToQueue(new SpoolerMessage(MessageType.UserDefined, "A new job has started. Please do not unplug your 3D printer while it is printing. If you unplug your it while printing, you will have to recalibrate."));
           }
 
-          informationbox.AddMessageToQueue(SpoolerConnection.LocalizedSpoolerMessageString(message) + string.Format(" - {0}", (object) message.Message));
+          informationbox.AddMessageToQueue(SpoolerConnection.LocalizedSpoolerMessageString(message) + string.Format(" - {0}", message.Message));
           break;
         case MessageType.PrinterError:
         case MessageType.FirmwareUpdateFailed:
@@ -408,18 +408,18 @@ namespace M3D.GUI.Controller
     public void OnUserSelection(PopupMessageBox.PopupResult result, MessageType type, PrinterSerialNumber sn, object data)
     {
       PrinterObject printerBySerialNumber = GetPrinterBySerialNumber(sn.ToString());
-      if (printerBySerialNumber == null || type != MessageType.WarningABSPrintLarge || (printerBySerialNumber == null || !printerBySerialNumber.isConnected()))
+      if (printerBySerialNumber == null || type != MessageType.WarningABSPrintLarge || (printerBySerialNumber == null || !printerBySerialNumber.IsConnected()))
       {
         return;
       }
 
       if (result == PopupMessageBox.PopupResult.Button1_YesOK)
       {
-        var num1 = (int) printerBySerialNumber.ClearCurrentWarning((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+        var num1 = (int) printerBySerialNumber.ClearCurrentWarning(null, null);
       }
       else
       {
-        var num2 = (int) printerBySerialNumber.AbortPrint((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+        var num2 = (int) printerBySerialNumber.AbortPrint(null, null);
       }
     }
 
@@ -480,7 +480,7 @@ namespace M3D.GUI.Controller
       var stringList = (List<string>) null;
       lock (general_log)
       {
-        stringList = new List<string>((IEnumerable<string>)general_log);
+        stringList = new List<string>(general_log);
         log_updated = false;
       }
       return stringList;
@@ -492,7 +492,7 @@ namespace M3D.GUI.Controller
       PrinterObject printerObject1 = selected_printer.Value;
       if (printerObject1 != null && printerBySerialNumber != printerObject1 && printerObject1.HasLock)
       {
-        var num = (int) printerObject1.ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+        var num = (int) printerObject1.ReleaseLock(null, null);
       }
       selected_printer.Value = printerBySerialNumber;
       if (OnSelectedPrinterChanged != null)
@@ -511,7 +511,7 @@ namespace M3D.GUI.Controller
       var printerObject = (PrinterObject) null;
       if (string.IsNullOrEmpty(serial_number))
       {
-        return (PrinterObject) null;
+        return null;
       }
 
       var printerSerialNumber = new PrinterSerialNumber(serial_number);
@@ -539,7 +539,7 @@ namespace M3D.GUI.Controller
       {
         foreach (PrinterObject connectedPrinter in connected_printers)
         {
-          if (connectedPrinter.isConnected() && !connectedPrinter.Info.InBootloaderMode)
+          if (connectedPrinter.IsConnected() && !connectedPrinter.Info.InBootloaderMode)
           {
             selected_printer.Value = connectedPrinter;
             if (OnSelectedPrinterChanged != null)
@@ -564,14 +564,11 @@ namespace M3D.GUI.Controller
           return SelectConnectedPrinter();
         }
 
-        if (!printerObject.isConnected())
+        if (!printerObject.IsConnected())
         {
-          selected_printer.Value = (PrinterObject) null;
-          printerObject = (PrinterObject) null;
-          if (OnSelectedPrinterChanged != null)
-          {
-            OnSelectedPrinterChanged(PrinterSerialNumber.Undefined);
-          }
+          selected_printer.Value = null;
+          printerObject = null;
+          OnSelectedPrinterChanged?.Invoke(PrinterSerialNumber.Undefined);
         }
         return printerObject;
       }
@@ -592,7 +589,7 @@ namespace M3D.GUI.Controller
 
     public static string LocalizedSpoolerMessageString(MessageType message)
     {
-      var key = string.Format("T_{0}", (object) message.ToString());
+      var key = string.Format("T_{0}", message.ToString());
       return Locale.GlobalLocale.T(key);
     }
 

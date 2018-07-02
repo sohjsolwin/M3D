@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+using M3D.Slicer.General;
 
 namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 {
@@ -75,7 +76,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemBoolType(value);
+      return new SettingsItemBoolType(value);
     }
   }
 }

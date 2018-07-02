@@ -57,7 +57,7 @@ namespace M3D.Spooling.ConnectionManager
 
     public override string ToString()
     {
-      return string.Format("{0}-{1}", (object)VID, (object)PID);
+      return string.Format("{0}-{1}", VID, PID);
     }
   }
 }

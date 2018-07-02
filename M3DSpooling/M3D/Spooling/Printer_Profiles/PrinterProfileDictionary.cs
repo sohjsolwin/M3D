@@ -9,10 +9,12 @@ namespace M3D.Spooling.Printer_Profiles
 
     public PrinterProfileDictionary()
     {
-      m_profile_list = new List<InternalPrinterProfile>();
-      m_profile_list.Add((InternalPrinterProfile) new Micro1PrinterProfile());
-      m_profile_list.Add((InternalPrinterProfile) new ProPrinterProfile());
-      m_profile_list.Add((InternalPrinterProfile) new MicroPlusPrinterProfile());
+      m_profile_list = new List<InternalPrinterProfile>
+      {
+        new Micro1PrinterProfile(),
+        new ProPrinterProfile(),
+        new MicroPlusPrinterProfile()
+      };
     }
 
     public VID_PID[] GenerateVID_PID_List()
@@ -35,7 +37,7 @@ namespace M3D.Spooling.Printer_Profiles
           return profile;
         }
       }
-      return (InternalPrinterProfile) null;
+      return null;
     }
 
     public List<PrinterProfile> CreateProfileList()
@@ -43,7 +45,7 @@ namespace M3D.Spooling.Printer_Profiles
       var printerProfileList = new List<PrinterProfile>();
       foreach (InternalPrinterProfile profile in m_profile_list)
       {
-        printerProfileList.Add(new PrinterProfile((PrinterProfile) profile));
+        printerProfileList.Add(new PrinterProfile(profile));
       }
 
       return printerProfileList;

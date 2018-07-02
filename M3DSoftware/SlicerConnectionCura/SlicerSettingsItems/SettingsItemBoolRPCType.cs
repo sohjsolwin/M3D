@@ -69,7 +69,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemBoolRPCType(m_sPropertyName, m_oParentObject);
+      return new SettingsItemBoolRPCType(m_sPropertyName, m_oParentObject);
     }
 
     public void SetParentSettings(SmartSlicerSettingsBase parentObject)
@@ -85,7 +85,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
         {
           try
           {
-            var obj = m_oParentObject.GetType().GetProperty(m_sPropertyName).GetValue((object)m_oParentObject);
+            var obj = m_oParentObject.GetType().GetProperty(m_sPropertyName).GetValue(m_oParentObject);
             if (obj is bool)
             {
               return (bool) obj;

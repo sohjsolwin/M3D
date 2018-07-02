@@ -12,7 +12,7 @@ namespace M3D.Graphics.Ext3D
     public float size;
 
     public ModelTransformPair()
-      : this((TransformationNode) null, (Model3DNode) null)
+      : this(null, null)
     {
     }
 
@@ -33,8 +33,8 @@ namespace M3D.Graphics.Ext3D
 
       modelSize = modelNode.CalculateMinMax(transformNode.GetTransformationMatrix());
       OriginalModelSize = modelNode.CalculateMinMax();
-      size = Math.Max(modelSize.Ext.x, modelSize.Ext.y);
-      size = Math.Max(modelSize.Ext.z, size);
+      size = Math.Max(modelSize.Ext.X, modelSize.Ext.Y);
+      size = Math.Max(modelSize.Ext.Z, size);
     }
 
     public ModelSize OriginalModelSize { get; private set; }

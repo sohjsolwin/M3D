@@ -62,7 +62,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       m_oMainFrame_BasicCalibration.SetPosition(0, 0);
       m_oMainFrame_BasicCalibration.RelativeWidth = 1f;
       m_oMainFrame_BasicCalibration.RelativeHeight = 1f;
-      AddChildElement((Element2D)m_oMainFrame_BasicCalibration);
+      AddChildElement(m_oMainFrame_BasicCalibration);
       m_G32SettingsCog_button = (ButtonWidget)m_oMainFrame_BasicCalibration.FindChildElement(6);
       m_oebwBacklashX_edit = (EditBoxWidget)m_oMainFrame_BasicCalibration.FindChildElement(7);
       m_oebwBacklashY_edit = (EditBoxWidget)m_oMainFrame_BasicCalibration.FindChildElement(8);
@@ -79,7 +79,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       m_oMainFrame_G32Calibration.SetPosition(0, 0);
       m_oMainFrame_G32Calibration.RelativeWidth = 1f;
       m_oMainFrame_G32Calibration.RelativeHeight = 1f;
-      AddChildElement((Element2D)m_oMainFrame_G32Calibration);
+      AddChildElement(m_oMainFrame_G32Calibration);
       m_obwCalibrateBedOrientation_button = (ButtonWidget)m_oMainFrame_G32Calibration.FindChildElement(3);
       m_oMainFrame_Busy = new Frame(0);
       m_oMainFrame_Busy.SetPosition(0, 0);
@@ -97,7 +97,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       m_otwStatusText.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
       m_otwStatusText.Visible = false;
       m_otwStatusText.Enabled = false;
-      m_oMainFrame_Busy.AddChildElement((Element2D)m_otwStatusText);
+      m_oMainFrame_Busy.AddChildElement(m_otwStatusText);
       m_osawProgressWidget = new SpriteAnimationWidget(1);
       m_osawProgressWidget.Init(host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
       m_osawProgressWidget.SetSize(128, 108);
@@ -105,8 +105,8 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       m_osawProgressWidget.Visible = false;
       m_osawProgressWidget.CenterHorizontallyInParent = true;
       m_osawProgressWidget.CenterVerticallyInParent = true;
-      m_oMainFrame_Busy.AddChildElement((Element2D)m_osawProgressWidget);
-      AddChildElement((Element2D)m_oMainFrame_Busy);
+      m_oMainFrame_Busy.AddChildElement(m_osawProgressWidget);
+      AddChildElement(m_oMainFrame_Busy);
     }
 
     public override void SetVisible(bool bVisible)
@@ -165,7 +165,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       {
         if (m_bShowingBusy || !m_bShowingG32ExpertSettingsPage)
         {
-          ShowBasicCalibrationPage((PrinterObject) null);
+          ShowBasicCalibrationPage(null);
         }
 
         m_oMainFrame_BasicCalibration.Enabled = false;
@@ -400,21 +400,21 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
             break;
           }
 
-          var num1 = (int) printer.AcquireLock((M3D.Spooling.Client.AsyncCallback) (ar =>
-          {
-            if (ar.CallResult == CommandResult.Failed_PrinterAlreadyLocked)
-            {
-              m_oMessagebox.AddMessageToQueue("Unable to calibrate the printer because it is being used by another process.");
-            }
-            else if (ar.CallResult != CommandResult.Success_LockAcquired)
-            {
-              m_oMessagebox.AddMessageToQueue("There was a problem sending data to the printer. Please try again");
-            }
-            else
-            {
-              printer.CalibrateBed(new M3D.Spooling.Client.AsyncCallback(ReleaseAfterOperation), (object) printer, PrinterObject.CalibrationType.CalibrateQuick_G30);
-            }
-          }), (object) printer);
+          var num1 = (int) printer.AcquireLock(ar =>
+         {
+           if (ar.CallResult == CommandResult.Failed_PrinterAlreadyLocked)
+           {
+             m_oMessagebox.AddMessageToQueue("Unable to calibrate the printer because it is being used by another process.");
+           }
+           else if (ar.CallResult != CommandResult.Success_LockAcquired)
+           {
+             m_oMessagebox.AddMessageToQueue("There was a problem sending data to the printer. Please try again");
+           }
+           else
+           {
+             printer.CalibrateBed(new M3D.Spooling.Client.AsyncCallback(ReleaseAfterOperation), (object)printer, PrinterObject.CalibrationType.CalibrateQuick_G30);
+           }
+         }, printer);
           break;
         case 3:
           if (printer == null || printer.Info.InBootloaderMode)
@@ -422,28 +422,28 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
             break;
           }
 
-          var num2 = (int) printer.AcquireLock((M3D.Spooling.Client.AsyncCallback) (ar =>
-          {
-            if (ar.CallResult == CommandResult.Failed_PrinterAlreadyLocked)
-            {
-              m_oMessagebox.AddMessageToQueue("Unable to calibrate the printer because it is being used by another process.");
-            }
-            else if (ar.CallResult != CommandResult.Success_LockAcquired)
-            {
-              m_oMessagebox.AddMessageToQueue("There was a problem sending data to the printer. Please try again");
-            }
-            else
-            {
-              printer.CalibrateBed(new M3D.Spooling.Client.AsyncCallback(ReleaseAfterOperation), (object) printer, PrinterObject.CalibrationType.CalibrateFull_G32);
-            }
-          }), (object) printer);
+          var num2 = (int) printer.AcquireLock(ar =>
+         {
+           if (ar.CallResult == CommandResult.Failed_PrinterAlreadyLocked)
+           {
+             m_oMessagebox.AddMessageToQueue("Unable to calibrate the printer because it is being used by another process.");
+           }
+           else if (ar.CallResult != CommandResult.Success_LockAcquired)
+           {
+             m_oMessagebox.AddMessageToQueue("There was a problem sending data to the printer. Please try again");
+           }
+           else
+           {
+             printer.CalibrateBed(new M3D.Spooling.Client.AsyncCallback(ReleaseAfterOperation), (object)printer, PrinterObject.CalibrationType.CalibrateFull_G32);
+           }
+         }, printer);
           break;
         case 4:
           var fileName = Paths.DebugLogPath(DateTime.Now.Ticks / 10000L);
           Form1.debugLogger.Print(fileName);
           break;
         case 5:
-          if (printer.GetCurrentFilament() == (FilamentSpool) null)
+          if (printer.GetCurrentFilament() == null)
           {
             m_oMessagebox.AddMessageToQueue("Please insert filament into your printer.");
             break;
@@ -454,7 +454,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           }
 
           ShowBusyIfPrinterIsWorking(true);
-          var num3 = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoTestBorderPrintOnLock), (object) printer);
+          var num3 = (int) printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoTestBorderPrintOnLock), printer);
           break;
         case 6:
           ShowGantryCalibrationG32Page();
@@ -495,7 +495,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
         return;
       }
 
-      var num = (int) asyncState.ReleaseLock(new M3D.Spooling.Client.AsyncCallback(OnRelease), (object) null);
+      var num = (int) asyncState.ReleaseLock(new M3D.Spooling.Client.AsyncCallback(OnRelease), null);
     }
 
     private void OnRelease(IAsyncCallResult ar)
@@ -514,7 +514,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
 
     private void ReleaseAfterOperation(IAsyncCallResult ar)
     {
-      var num = (int) (ar.AsyncState as PrinterObject).ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+      var num = (int) (ar.AsyncState as PrinterObject).ReleaseLock(null, null);
     }
 
     private void DoTestBorderPrintOnLock(IAsyncCallResult ar)
@@ -527,7 +527,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
 
       if (ar.CallResult == CommandResult.Success_LockAcquired)
       {
-        var num = (int) asyncState.PrintTestBorder(new M3D.Spooling.Client.AsyncCallback(asyncState.ShowLockError), (object) asyncState);
+        var num = (int) asyncState.PrintTestBorder(new M3D.Spooling.Client.AsyncCallback(asyncState.ShowLockError), asyncState);
       }
       else
       {
@@ -552,29 +552,29 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
         {
           m_oMessagebox.AddMessageToQueue("Sorry, but the X backlash is not a number. Please try again.");
         }
-        else if ((double) result1 < 0.0 || (double) result1 > 3.0)
+        else if (result1 < 0.0 || result1 > 3.0)
         {
-          m_oMessagebox.AddMessageToQueue("Sorry. Backlash X values must be between 0 mm and " + (object) 3f + " mm");
+          m_oMessagebox.AddMessageToQueue("Sorry. Backlash X values must be between 0 mm and " + 3f + " mm");
         }
         else if (!float.TryParse(m_oebwBacklashY_edit.Text, out result2))
         {
           m_oMessagebox.AddMessageToQueue("Sorry, but the Y backlash is not a number. Please try again.");
         }
-        else if ((double) result2 < 0.0 || (double) result2 > 3.0)
+        else if (result2 < 0.0 || result2 > 3.0)
         {
-          m_oMessagebox.AddMessageToQueue("Sorry. Backlash Y values must be between 0 mm and " + (object) 3f + " mm");
+          m_oMessagebox.AddMessageToQueue("Sorry. Backlash Y values must be between 0 mm and " + 3f + " mm");
         }
         else if (!float.TryParse(m_oebwBacklashSpeed_edit.Text, out result3))
         {
           m_oMessagebox.AddMessageToQueue("Sorry, but the backlash speed is not a number. Please try again.");
         }
-        else if ((double) result3 < 500.0 || (double) result3 > (double) fastestPossible)
+        else if (result3 < 500.0 || result3 > (double)fastestPossible)
         {
-          m_oMessagebox.AddMessageToQueue(string.Format("Sorry. Backlash speed must be between {0} and {1} mm/min.", (object) 500f, (object) fastestPossible));
+          m_oMessagebox.AddMessageToQueue(string.Format("Sorry. Backlash speed must be between {0} and {1} mm/min.", 500f, fastestPossible));
         }
         else
         {
-          var num = (int) selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(SetBacklashAfterLock), (object) new AdvancedCalibrationTab.BacklashDetails(selectedPrinter, result1, result2, result3));
+          var num = (int) selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(SetBacklashAfterLock), new AdvancedCalibrationTab.BacklashDetails(selectedPrinter, result1, result2, result3));
         }
       }
     }
@@ -588,7 +588,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       }
       else if (ar.CallResult == CommandResult.Success_LockAcquired)
       {
-        var num = (int) asyncState.printer.SetBacklash(new M3D.Spooling.Client.AsyncCallback(ReleasePrinterAfterCommand), (object) asyncState.printer, new BacklashSettings(asyncState.backlash_x, asyncState.backlash_y, asyncState.backlash_speed));
+        var num = (int) asyncState.printer.SetBacklash(new M3D.Spooling.Client.AsyncCallback(ReleasePrinterAfterCommand), asyncState.printer, new BacklashSettings(asyncState.backlash_x, asyncState.backlash_y, asyncState.backlash_speed));
       }
       else
       {
@@ -611,13 +611,13 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
         {
           m_oMessagebox.AddMessageToQueue("Sorry, but the 'Calibration Offset' is not a number. Please try again.");
         }
-        else if ((double)num2 > (double)result || (double)num1 < (double)result)
+        else if (num2 > (double)result || num1 < (double)result)
         {
-          m_oMessagebox.AddMessageToQueue(string.Format("Sorry. The 'Calibration Offset' must be between {0} and {1} mm.", (object)num2, (object)num1));
+          m_oMessagebox.AddMessageToQueue(string.Format("Sorry. The 'Calibration Offset' must be between {0} and {1} mm.", num2, num1));
         }
         else
         {
-          var num3 = (int)selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(SetCalibrationOffsetAfterLock), (object)new AdvancedCalibrationTab.CalibrationDetails(selectedPrinter, result));
+          var num3 = (int)selectedPrinter.AcquireLock(new M3D.Spooling.Client.AsyncCallback(SetCalibrationOffsetAfterLock), new AdvancedCalibrationTab.CalibrationDetails(selectedPrinter, result));
         }
       }
     }
@@ -631,7 +631,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       }
       else if (ar.CallResult == CommandResult.Success_LockAcquired)
       {
-        var num = (int) asyncState.printer.SetCalibrationOffset(new M3D.Spooling.Client.AsyncCallback(ReleasePrinterAfterCommand), (object) asyncState.printer, asyncState.calibration_offset);
+        var num = (int) asyncState.printer.SetCalibrationOffset(new M3D.Spooling.Client.AsyncCallback(ReleasePrinterAfterCommand), asyncState.printer, asyncState.calibration_offset);
       }
       else
       {

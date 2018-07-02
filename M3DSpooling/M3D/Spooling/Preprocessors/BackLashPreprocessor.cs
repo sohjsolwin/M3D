@@ -29,19 +29,19 @@ namespace M3D.Spooling.Preprocessors
       var num3 = 0.0f;
       for (GCode nextLine = input_reader.GetNextLine(false); nextLine != null; nextLine = input_reader.GetNextLine(false))
       {
-        if (nextLine.hasG && (nextLine.G == (ushort) 0 || nextLine.G == (ushort) 1) && !flag)
+        if (nextLine.HasG && (nextLine.G == 0 || nextLine.G == 1) && !flag)
         {
           if (nextLine.hasF)
           {
             num1 = nextLine.F;
           }
 
-          var num4 = !nextLine.hasX ? 0.0f : nextLine.X - position.relativeX;
-          var num5 = !nextLine.hasY ? 0.0f : nextLine.Y - position.relativeY;
-          var num6 = !nextLine.hasZ ? 0.0f : nextLine.Z - position.relativeZ;
-          var num7 = !nextLine.hasE ? 0.0f : nextLine.E - position.relativeE;
-          BackLashPreprocessor.Direction direction3 = (double) num4 <= 1.40129846432482E-45 ? ((double) num4 >= -1.40129846432482E-45 ? direction1 : BackLashPreprocessor.Direction.Negative) : BackLashPreprocessor.Direction.Positive;
-          BackLashPreprocessor.Direction direction4 = (double) num5 <= 1.40129846432482E-45 ? ((double) num5 >= -1.40129846432482E-45 ? direction2 : BackLashPreprocessor.Direction.Negative) : BackLashPreprocessor.Direction.Positive;
+          var num4 = !nextLine.HasX ? 0.0f : nextLine.X - position.relativeX;
+          var num5 = !nextLine.HasY ? 0.0f : nextLine.Y - position.relativeY;
+          var num6 = !nextLine.HasZ ? 0.0f : nextLine.Z - position.relativeZ;
+          var num7 = !nextLine.HasE ? 0.0f : nextLine.E - position.relativeE;
+          BackLashPreprocessor.Direction direction3 = num4 <= 1.40129846432482E-45 ? num4 >= -1.40129846432482E-45 ? direction1 : BackLashPreprocessor.Direction.Negative : BackLashPreprocessor.Direction.Positive;
+          BackLashPreprocessor.Direction direction4 = num5 <= 1.40129846432482E-45 ? num5 >= -1.40129846432482E-45 ? direction2 : BackLashPreprocessor.Direction.Negative : BackLashPreprocessor.Direction.Positive;
           var code = new GCode
           {
             G = nextLine.G
@@ -66,12 +66,12 @@ namespace M3D.Spooling.Preprocessors
             output_writer.Write(code);
             nextLine.F = num1;
           }
-          if (nextLine.hasX)
+          if (nextLine.HasX)
           {
             nextLine.X += num2;
           }
 
-          if (nextLine.hasY)
+          if (nextLine.HasY)
           {
             nextLine.Y += num3;
           }
@@ -92,31 +92,31 @@ namespace M3D.Spooling.Preprocessors
           direction1 = direction3;
           direction2 = direction4;
         }
-        else if (nextLine.hasG && nextLine.G == (ushort) 92)
+        else if (nextLine.HasG && nextLine.G == 92)
         {
-          if (nextLine.hasE)
+          if (nextLine.HasE)
           {
             position.relativeE = nextLine.E;
           }
 
           if (printerProfile.OptionsConstants.G92WorksOnAllAxes)
           {
-            if (nextLine.hasX)
+            if (nextLine.HasX)
             {
               position.relativeX = nextLine.X;
             }
 
-            if (nextLine.hasY)
+            if (nextLine.HasY)
             {
               position.relativeY = nextLine.Y;
             }
 
-            if (nextLine.hasZ)
+            if (nextLine.HasZ)
             {
               position.relativeZ = nextLine.Z;
             }
           }
-          if (!nextLine.hasE && !nextLine.hasX && (!nextLine.hasY && !nextLine.hasZ))
+          if (!nextLine.HasE && !nextLine.HasX && (!nextLine.HasY && !nextLine.HasZ))
           {
             position.relativeE = 0.0f;
             if (printerProfile.OptionsConstants.G92WorksOnAllAxes)
@@ -127,15 +127,15 @@ namespace M3D.Spooling.Preprocessors
             }
           }
         }
-        else if (nextLine.hasG && nextLine.G == (ushort) 90)
+        else if (nextLine.HasG && nextLine.G == 90)
         {
           flag = false;
         }
-        else if (nextLine.hasG && nextLine.G == (ushort) 91)
+        else if (nextLine.HasG && nextLine.G == 91)
         {
           flag = true;
         }
-        else if (nextLine.hasG && nextLine.G == (ushort) 28)
+        else if (nextLine.HasG && nextLine.G == 28)
         {
           position.relativeX = position.absoluteX = 54f;
           position.relativeY = position.absoluteY = 50f;

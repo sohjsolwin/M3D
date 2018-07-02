@@ -50,13 +50,13 @@ namespace M3D
       try
       {
         registryKey1 = Registry.CurrentUser.CreateSubKey("Software\\Classes\\" + Extension);
-        registryKey1.SetValue("", (object) KeyName);
-        registryKey1.SetValue("DefaultIcon", (object) fileIcon, RegistryValueKind.String);
+        registryKey1.SetValue("", KeyName);
+        registryKey1.SetValue("DefaultIcon", fileIcon, RegistryValueKind.String);
         registryKey2 = Registry.CurrentUser.CreateSubKey("Software\\Classes\\" + KeyName);
-        registryKey2.SetValue("", (object) FileDescription);
-        registryKey2.CreateSubKey("DefaultIcon").SetValue("", (object) ("\"" + fileIcon + "\",0"));
+        registryKey2.SetValue("", FileDescription);
+        registryKey2.CreateSubKey("DefaultIcon").SetValue("", "\"" + fileIcon + "\",0");
         registryKey3 = registryKey2.CreateSubKey("Shell");
-        registryKey3.CreateSubKey("open").CreateSubKey("command").SetValue("", (object) ("\"" + OpenWith + "\" \"%1\""));
+        registryKey3.CreateSubKey("open").CreateSubKey("command").SetValue("", "\"" + OpenWith + "\" \"%1\"");
         registryKey4 = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\" + Extension, true);
         registryKey4?.DeleteSubKey("UserChoice", false);
         WinFileAssociations.SHChangeNotify(134217728U, 0U, IntPtr.Zero, IntPtr.Zero);

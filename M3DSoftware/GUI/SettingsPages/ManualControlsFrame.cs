@@ -44,29 +44,29 @@ namespace M3D.GUI.SettingsPages
       Enabled = false;
       RelativeWidth = 1f;
       RelativeHeight = 1f;
-      basicControlsFrame = (XMLFrame) new BasicControlsFrame(1001, host, messagebox, spooler_connection);
-      AddChildElement((Element2D)basicControlsFrame);
+      basicControlsFrame = new BasicControlsFrame(1001, host, messagebox, spooler_connection);
+      AddChildElement(basicControlsFrame);
       basicControlsFrame.Refresh();
-      diagnosticsFrame = (XMLFrame) new DiagnosticsFrame(1002, host, spooler_connection);
-      AddChildElement((Element2D)diagnosticsFrame);
+      diagnosticsFrame = new DiagnosticsFrame(1002, host, spooler_connection);
+      AddChildElement(diagnosticsFrame);
       diagnosticsFrame.Refresh();
-      advancedHeatedBedFrame = (XMLFrame) new AdvancedFrame(1004, host, messagebox, spooler_connection);
-      AddChildElement((Element2D)advancedHeatedBedFrame);
+      advancedHeatedBedFrame = new AdvancedFrame(1004, host, messagebox, spooler_connection);
+      AddChildElement(advancedHeatedBedFrame);
       advancedHeatedBedFrame.Refresh();
-      sdCardFrame = (XMLFrame) new SDCardFrame(1004, host, messagebox, spooler_connection, settingsManager);
-      AddChildElement((Element2D)sdCardFrame);
+      sdCardFrame = new SDCardFrame(1004, host, messagebox, spooler_connection, settingsManager);
+      AddChildElement(sdCardFrame);
       sdCardFrame.Refresh();
-      gCodesFrame = (XMLFrame) new GCodeFrame(1003, host, messagebox, spooler_connection);
-      AddChildElement((Element2D)gCodesFrame);
+      gCodesFrame = new GCodeFrame(1003, host, messagebox, spooler_connection);
+      AddChildElement(gCodesFrame);
       gCodesFrame.Refresh();
-      active_frame = (Frame)basicControlsFrame;
+      active_frame = basicControlsFrame;
     }
 
     public override void SetVisible(bool bVisible)
     {
       if (!bVisible)
       {
-        host.SetFocus((Element2D) null);
+        host.SetFocus(null);
       }
 
       base.SetVisible(bVisible);
@@ -76,7 +76,7 @@ namespace M3D.GUI.SettingsPages
     {
       base.OnUpdate();
       PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
-      if (selectedPrinter != null && selectedPrinter.isConnected())
+      if (selectedPrinter != null && selectedPrinter.IsConnected())
       {
         if (selectedPrinter.isBusy && controls_enabled)
         {
@@ -107,27 +107,27 @@ namespace M3D.GUI.SettingsPages
         EnableGroup(10002);
         if (!selectedPrinter.HasHeatedBed)
         {
-          if (TabFrame.ChildList.Contains((Element2D)advancedHeatedBedButton))
+          if (TabFrame.ChildList.Contains(advancedHeatedBedButton))
           {
             if (advancedHeatedBedButton.Checked)
             {
               basicButton.Checked = true;
             }
 
-            TabFrame.RemoveChildElement((Element2D)advancedHeatedBedButton);
+            TabFrame.RemoveChildElement(advancedHeatedBedButton);
             advancedHeatedBedButton.Enabled = false;
           }
         }
-        else if (selectedPrinter.HasHeatedBed && !TabFrame.ChildList.Contains((Element2D)advancedHeatedBedButton))
+        else if (selectedPrinter.HasHeatedBed && !TabFrame.ChildList.Contains(advancedHeatedBedButton))
         {
-          TabFrame.AddChildElement((Element2D)advancedHeatedBedButton);
+          TabFrame.AddChildElement(advancedHeatedBedButton);
           advancedHeatedBedButton.Enabled = true;
-          TabFrame.RemoveChildElement((Element2D)gCodeButton);
-          TabFrame.AddChildElement((Element2D)gCodeButton);
+          TabFrame.RemoveChildElement(gCodeButton);
+          TabFrame.AddChildElement(gCodeButton);
         }
         if (!selectedPrinter.SDCardExtension.Available)
         {
-          if (!TabFrame.ChildList.Contains((Element2D)sdCardButton))
+          if (!TabFrame.ChildList.Contains(sdCardButton))
           {
             return;
           }
@@ -137,20 +137,20 @@ namespace M3D.GUI.SettingsPages
             basicButton.Checked = true;
           }
 
-          TabFrame.RemoveChildElement((Element2D)sdCardButton);
+          TabFrame.RemoveChildElement(sdCardButton);
           sdCardButton.Enabled = false;
         }
         else
         {
-          if (!selectedPrinter.SDCardExtension.Available || TabFrame.ChildList.Contains((Element2D)sdCardButton))
+          if (!selectedPrinter.SDCardExtension.Available || TabFrame.ChildList.Contains(sdCardButton))
           {
             return;
           }
 
-          TabFrame.AddChildElement((Element2D)sdCardButton);
+          TabFrame.AddChildElement(sdCardButton);
           sdCardButton.Enabled = true;
-          TabFrame.RemoveChildElement((Element2D)gCodeButton);
-          TabFrame.AddChildElement((Element2D)gCodeButton);
+          TabFrame.RemoveChildElement(gCodeButton);
+          TabFrame.AddChildElement(gCodeButton);
         }
       }
       else
@@ -171,7 +171,7 @@ namespace M3D.GUI.SettingsPages
 
       active_frame.Visible = false;
       active_frame.Enabled = false;
-      active_frame = (Frame) null;
+      active_frame = null;
     }
 
     public void tabsFrameButtonCallback(ButtonWidget button)
@@ -180,30 +180,30 @@ namespace M3D.GUI.SettingsPages
       {
         case 1:
           TurnOffActiveFrame();
-          active_frame = (Frame)basicControlsFrame;
+          active_frame = basicControlsFrame;
           break;
         case 2:
           TurnOffActiveFrame();
-          active_frame = (Frame)diagnosticsFrame;
+          active_frame = diagnosticsFrame;
           break;
         case 3:
           TurnOffActiveFrame();
-          active_frame = (Frame)gCodesFrame;
+          active_frame = gCodesFrame;
           break;
         case 4:
           TurnOffActiveFrame();
-          active_frame = (Frame)advancedHeatedBedFrame;
+          active_frame = advancedHeatedBedFrame;
           break;
         case 5:
           TurnOffActiveFrame();
-          active_frame = (Frame)sdCardFrame;
+          active_frame = sdCardFrame;
           break;
       }
       if (active_frame != null)
       {
         active_frame.Enabled = true;
         active_frame.Visible = true;
-        host.SetFocus((Element2D)active_frame);
+        host.SetFocus(active_frame);
       }
       Refresh();
     }

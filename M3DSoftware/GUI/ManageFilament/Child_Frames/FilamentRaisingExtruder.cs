@@ -42,12 +42,12 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         return;
       }
 
-      if (CurrentDetails.current_spool == (FilamentSpool) null)
+      if (CurrentDetails.current_spool == null)
       {
         MainWindow.ResetToStartup();
       }
 
-      var num = (int) selectedPrinter.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(CheckPrinterAndHeater), (object) selectedPrinter, "M117", "M114");
+      var num = (int) selectedPrinter.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(CheckPrinterAndHeater), selectedPrinter, "M117", "M114");
     }
 
     private void CheckPrinterAndHeater(IAsyncCallResult ar)
@@ -71,11 +71,11 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       else if (CurrentDetails.current_spool.filament_location == FilamentSpool.Location.External)
       {
         var colors = (FilamentConstants.ColorsEnum) Enum.ToObject(typeof (FilamentConstants.ColorsEnum), CurrentDetails.current_spool.filament_color_code);
-        MainWindow.TurnOnHeater(new M3D.Spooling.Client.AsyncCallback(RaiseExtruder), (object) asyncState, settingsManager.GetFilamentTemperature(CurrentDetails.current_spool.filament_type, colors), CurrentDetails.current_spool.filament_type);
+        MainWindow.TurnOnHeater(new M3D.Spooling.Client.AsyncCallback(RaiseExtruder), asyncState, settingsManager.GetFilamentTemperature(CurrentDetails.current_spool.filament_type, colors), CurrentDetails.current_spool.filament_type);
       }
       else
       {
-        MainWindow.TurnOffHeater(new M3D.Spooling.Client.AsyncCallback(RaiseExtruder), (object) asyncState);
+        MainWindow.TurnOffHeater(new M3D.Spooling.Client.AsyncCallback(RaiseExtruder), asyncState);
       }
     }
 
@@ -106,10 +106,10 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         var stringList = new List<string>();
         if (num1 == 0)
         {
-          if ((double) num2 > (double) printerSizeConstants.BoxTopLimitZ)
+          if (num2 > (double)printerSizeConstants.BoxTopLimitZ)
           {
             stringList.Add("G90");
-            stringList.Add(PrinterCompatibleString.Format("G0 Z{0} F{1}", (object) printerSizeConstants.BoxTopLimitZ, (object) fastestPossible));
+            stringList.Add(PrinterCompatibleString.Format("G0 Z{0} F{1}", printerSizeConstants.BoxTopLimitZ, fastestPossible));
             num2 = printerSizeConstants.BoxTopLimitZ;
           }
           stringList.Add("G28");
@@ -120,17 +120,17 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         {
           var boxTopLimitZ = printerSizeConstants.BoxTopLimitZ;
           stringList.Add("G90");
-          stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2} Z{3}", (object) printerSizeConstants.BackCornerPosition.x, (object) printerSizeConstants.BackCornerPosition.y, (object) fastestPossible, (object) boxTopLimitZ));
+          stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2} Z{3}", printerSizeConstants.BackCornerPosition.x, printerSizeConstants.BackCornerPosition.y, fastestPossible, boxTopLimitZ));
           nextPage = CurrentDetails.mode != Manage3DInkMainWindow.Mode.RemoveFilament ? Manage3DInkMainWindow.PageID.Page14_InternalSpoolInstructions : Manage3DInkMainWindow.PageID.Page16_RemoveInternalSpoolInstructions;
         }
         else
         {
-          var num3 = (double) num2 > 15.0 ? num2 : 15f;
+          var num3 = num2 > 15.0 ? num2 : 15f;
           float x;
           float y;
           if (asyncState.IsPausedorPausing)
           {
-            if ((double) num3 > (double) printerSizeConstants.BoxTopLimitZ)
+            if (num3 > (double)printerSizeConstants.BoxTopLimitZ)
             {
               x = printerSizeConstants.BackCornerPositionBoxTop.x;
               y = printerSizeConstants.BackCornerPositionBoxTop.y;
@@ -147,10 +147,10 @@ namespace M3D.GUI.ManageFilament.Child_Frames
             y = printerSizeConstants.HomeLocation.y;
           }
           stringList.Add("G90");
-          stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2} Z{3}", (object) x, (object) y, (object) fastestPossible, (object) num3));
+          stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2} Z{3}", x, y, fastestPossible, num3));
           nextPage = Manage3DInkMainWindow.PageID.Page1_HeatingNozzle;
         }
-        var num4 = (int) asyncState.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(MainWindow.GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(asyncState, nextPage, CurrentDetails), stringList.ToArray());
+        var num4 = (int) asyncState.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(MainWindow.GotoPageAfterOperation), new Manage3DInkMainWindow.PageAfterLockDetails(asyncState, nextPage, CurrentDetails), stringList.ToArray());
       }
     }
   }

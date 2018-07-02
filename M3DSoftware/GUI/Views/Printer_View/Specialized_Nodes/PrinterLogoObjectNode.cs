@@ -12,12 +12,12 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
     private FrontFacingPlaneNode logo;
 
     public PrinterLogoObjectNode(string texture_name, Vector3 position, Vector3 size)
-      : this(texture_name, 0, (Element3D) null, position, size)
+      : this(texture_name, 0, null, position, size)
     {
     }
 
     public PrinterLogoObjectNode(string texture_name, int ID, Vector3 position, Vector3 size)
-      : this(texture_name, ID, (Element3D) null, position, size)
+      : this(texture_name, ID, null, position, size)
     {
     }
 
@@ -28,11 +28,11 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
       var bitmap = new Bitmap(texture_name);
       Element3D.CreateTexture(ref texture, bitmap);
       bitmap.Dispose();
-      plate = new FrontFacingPlaneNode(ID, (Element3D) this);
-      logo = new FrontFacingPlaneNode(ID, (Element3D) this);
-      plate.Create(position, size.x, size.z, 0);
+      plate = new FrontFacingPlaneNode(ID, this);
+      logo = new FrontFacingPlaneNode(ID, this);
+      plate.Create(position, size.X, size.Z, 0);
       plate.Emission = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
-      logo.Create(position, size.x - 1f, size.z - 1f, texture);
+      logo.Create(position, size.X - 1f, size.Z - 1f, texture);
       logo.Emission = new Color4(1f, 1f, 1f, 1f);
     }
 

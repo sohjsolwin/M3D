@@ -16,20 +16,20 @@ namespace M3D.Graphics.Frames_and_Layouts
     private Frame m_frameDrawableRegion;
 
     public GenericScrollFrame()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public GenericScrollFrame(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
     public GenericScrollFrame(int ID, Element2D parent)
       : base(ID, parent)
     {
-      verticalSlider = new VerticalSliderWidget(0, (Element2D) this);
-      horizonalSlider = new HorizontalSliderWidget(1, (Element2D) this);
+      verticalSlider = new VerticalSliderWidget(0, this);
+      horizonalSlider = new HorizontalSliderWidget(1, this);
       m_frameDrawableRegion = new Frame
       {
         Clipping = true
@@ -37,9 +37,9 @@ namespace M3D.Graphics.Frames_and_Layouts
       m_frameDrawableRegion.SetPosition(2, 2);
       ScollableChildframe = Activator.CreateInstance<T>();
       ScollableChildframe.ID = 2;
-      ScollableChildframe.Parent = (Element2D) this;
+      ScollableChildframe.Parent = (this);
       ScollableChildframe.always_contains_point = true;
-      m_frameDrawableRegion.AddChildElement((Element2D)ScollableChildframe);
+      m_frameDrawableRegion.AddChildElement(ScollableChildframe);
     }
 
     public override ElementType GetElementType()
@@ -88,7 +88,7 @@ namespace M3D.Graphics.Frames_and_Layouts
         return base.OnMouseCommand(mouseevent);
       }
 
-      verticalSlider.MoveSlider((float) -((double) mouseevent.delta / 120.0) * verticalSlider.PushButtonStep);
+      verticalSlider.MoveSlider((float) -(mouseevent.delta / 120.0) * verticalSlider.PushButtonStep);
       return true;
     }
 
@@ -112,9 +112,9 @@ namespace M3D.Graphics.Frames_and_Layouts
       horizonalSlider.InitPlus(host, "guicontrols", 928f, 24f, 951f, 47f, 952f, 24f, 975f, 47f, 976f, 24f, 999f, 47f);
       horizonalSlider.SetButtonSize(24f);
       horizonalSlider.ShowPushButtons = true;
-      base.AddChildElement((Element2D)verticalSlider);
-      base.AddChildElement((Element2D)horizonalSlider);
-      base.AddChildElement((Element2D)m_frameDrawableRegion);
+      base.AddChildElement(verticalSlider);
+      base.AddChildElement(horizonalSlider);
+      base.AddChildElement(m_frameDrawableRegion);
       scrollbar_width = 24;
       Refresh();
     }
@@ -144,13 +144,13 @@ namespace M3D.Graphics.Frames_and_Layouts
       Parent = parent;
       lock (ChildList)
       {
-        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+        foreach (Element2D child in ChildList)
         {
           ScollableChildframe.AddChildElement(child);
         }
 
         ChildList.Clear();
-        ScollableChildframe.InitChildren((Element2D) this, host, MyButtonCallback);
+        ScollableChildframe.InitChildren(this, host, MyButtonCallback);
       }
       Init(host);
       ScollableChildframe.Refresh();
@@ -190,8 +190,8 @@ namespace M3D.Graphics.Frames_and_Layouts
 
         verticalSlider.Visible = true;
         verticalSlider.Enabled = true;
-        verticalSlider.SetRange(0.0f, (float) (ScollableChildframe.Height - Height));
-        verticalSlider.PushButtonStep = (float) (int) Math.Ceiling((double) num / 10.0);
+        verticalSlider.SetRange(0.0f, ScollableChildframe.Height - Height);
+        verticalSlider.PushButtonStep = (int)Math.Ceiling((double)num / 10.0);
       }
       else
       {
@@ -216,9 +216,9 @@ namespace M3D.Graphics.Frames_and_Layouts
 
         horizonalSlider.Visible = true;
         horizonalSlider.Enabled = true;
-        horizonalSlider.SetRange(0.0f, (float) (ScollableChildframe.Width - Width));
+        horizonalSlider.SetRange(0.0f, ScollableChildframe.Width - Width);
         horizonalSlider.PushButtonStep = 1f;
-        horizonalSlider.PushButtonStep = (float) (int) Math.Ceiling((double) num / 10.0);
+        horizonalSlider.PushButtonStep = (int)Math.Ceiling((double)num / 10.0);
       }
       else
       {
@@ -259,7 +259,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     {
       get
       {
-        return (Element2D)ScollableChildframe;
+        return ScollableChildframe;
       }
     }
 

@@ -21,7 +21,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     }
 
     public TreeNodeWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -54,8 +54,8 @@ namespace M3D.Graphics.Frames_and_Layouts
       if (button.Checked)
       {
         labelButton.TextDownColor = new Color4(1f, 1f, 1f, 1f);
-        BGColor = new Color4((byte) 97, (byte) 97, (byte) 97, byte.MaxValue);
-        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+        BGColor = new Color4(97, 97, 97, byte.MaxValue);
+        foreach (Element2D child in ChildList)
         {
           if (child != labelButton)
           {
@@ -65,7 +65,7 @@ namespace M3D.Graphics.Frames_and_Layouts
         }
         if (Parent != null)
         {
-          Parent.TurnOffGroup(GroupID, (Element2D) this);
+          Parent.TurnOffGroup(GroupID, this);
         }
       }
       else
@@ -76,7 +76,7 @@ namespace M3D.Graphics.Frames_and_Layouts
           labelButton.TextDownColor = new Color4(0.25f, 0.25f, 0.25f, 1f);
           BGColor = new Color4(1f, 1f, 1f, 1f);
         }
-        foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+        foreach (Element2D child in ChildList)
         {
           if (child != labelButton)
           {
@@ -100,7 +100,7 @@ namespace M3D.Graphics.Frames_and_Layouts
 
     private void CreateLabel(GUIHost host)
     {
-      labelButton = new ButtonWidget(2001, (Element2D) this);
+      labelButton = new ButtonWidget(2001, this);
       labelButton.Init(host, ButtonTemplate.TextOnly);
       labelButton.SetCallback(new ButtonCallback(OnButtonClicked));
       labelButton.Height = label_height;
@@ -111,7 +111,7 @@ namespace M3D.Graphics.Frames_and_Layouts
       labelButton.ClickType = ButtonType.Checkable;
       labelButton.CanClickOff = true;
       labelButton.Text = LabelButtonText;
-      AddFirstChild((Element2D)labelButton);
+      AddFirstChild(labelButton);
       Refresh();
     }
 
@@ -202,7 +202,7 @@ namespace M3D.Graphics.Frames_and_Layouts
         {
           labelButton.TextColor = new Color4(1f, 1f, 1f, 1f);
           labelButton.TextDownColor = new Color4(1f, 1f, 1f, 1f);
-          BGColor = new Color4((byte) 97, (byte) 97, (byte) 97, byte.MaxValue);
+          BGColor = new Color4(97, 97, 97, byte.MaxValue);
         }
       }
     }

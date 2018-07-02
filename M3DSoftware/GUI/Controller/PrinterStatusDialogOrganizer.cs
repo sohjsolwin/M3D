@@ -36,7 +36,7 @@ namespace M3D.GUI.Controller
       this.spooler_connection.OnGotNewPrinter += new SpoolerClient.OnGotNewPrinterDel(OnGotNewPrinter);
       this.spooler_connection.OnPrinterDisconnected += new SpoolerClient.OnPrinterDisconnectedDel(OnPrinterDisconnected);
       connected_printers = new List<PrinterStatusDialog>();
-      InitGUIElement(gui_host, (Element2D) printerView.GetEditFrame());
+      InitGUIElement(gui_host, printerView.GetEditFrame());
     }
 
     private void InitGUIElement(GUIHost gui_host, Element2D parent)
@@ -54,9 +54,9 @@ namespace M3D.GUI.Controller
       layout = new VerticalLayout(12345);
       layout.SetSize(400, 10);
       layout.layoutMode = Layout.LayoutMode.ResizeLayoutToFitChildren;
-      scroll_frame.AddChildElement((Element2D)layout);
+      scroll_frame.AddChildElement(layout);
       scroll_frame.Visible = false;
-      parent.ChildList += (Element2D)scroll_frame;
+      parent.ChildList += scroll_frame;
     }
 
     private void OnControlMsg(Element2D the_control, ControlMsg msg, float xparam, float yparam)
@@ -67,7 +67,7 @@ namespace M3D.GUI.Controller
       }
 
       scroll_frame.Pane_Height = layout.Height;
-      var num = (int) ((double)scroll_frame.Parent.Height * 0.649999976158142);
+      var num = (int)(scroll_frame.Parent.Height * 0.649999976158142);
       if (scroll_frame.Pane_Height > 100)
       {
         scroll_frame.Visible = true;
@@ -92,7 +92,7 @@ namespace M3D.GUI.Controller
     {
       lock (connected_printers)
       {
-        connected_printers.Add(new PrinterStatusDialog(new_printer, gui_host, (Element2D)layout, messagebox, mainform, settingsManager));
+        connected_printers.Add(new PrinterStatusDialog(new_printer, gui_host, layout, messagebox, mainform, settingsManager));
         if (new_printer.Info.current_job == null || printerView.IsModelLoaded() || (modelLoadingManager.LoadingNewModel || modelLoadingManager.OptimizingModel))
         {
           return;

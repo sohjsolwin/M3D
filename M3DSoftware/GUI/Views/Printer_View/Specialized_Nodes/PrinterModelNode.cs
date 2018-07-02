@@ -16,8 +16,8 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
       ProCase = new ProCaseNode();
       Micro1Case.Visible = false;
       ProCase.Visible = false;
-      AddChildElement((Element3D)Micro1Case);
-      AddChildElement((Element3D)ProCase);
+      AddChildElement(Micro1Case);
+      AddChildElement(ProCase);
       SetCase(casetype);
     }
 
@@ -36,10 +36,10 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
       switch (casetype)
       {
         case PrinterSizeProfile.CaseType.Micro1Case:
-          current = (PrinterCaseNode)Micro1Case;
+          current = Micro1Case;
           break;
         case PrinterSizeProfile.CaseType.ProCase:
-          current = (PrinterCaseNode)ProCase;
+          current = ProCase;
           break;
       }
       current.Visible = true;

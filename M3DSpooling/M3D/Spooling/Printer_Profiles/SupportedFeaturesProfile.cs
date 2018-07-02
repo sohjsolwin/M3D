@@ -12,12 +12,12 @@ namespace M3D.Spooling.Printer_Profiles
     public SupportedFeaturesProfile(Dictionary<string, int> mapping)
       : this()
     {
-      m_supportedFeatureMapping.Value = new Dictionary<string, int>((IDictionary<string, int>) mapping);
+      m_supportedFeatureMapping.Value = new Dictionary<string, int>(mapping);
     }
 
     public SupportedFeaturesProfile()
     {
-      m_supportedFeatureMapping = new WriteOnce<Dictionary<string, int>>((Dictionary<string, int>) null);
+      m_supportedFeatureMapping = new WriteOnce<Dictionary<string, int>>(null);
     }
 
     public SupportedFeaturesProfile(SupportedFeaturesProfile other)
@@ -28,7 +28,7 @@ namespace M3D.Spooling.Printer_Profiles
         return;
       }
 
-      m_supportedFeatureMapping.Value = new Dictionary<string, int>((IDictionary<string, int>) other.m_supportedFeatureMapping.Value);
+      m_supportedFeatureMapping.Value = new Dictionary<string, int>(other.m_supportedFeatureMapping.Value);
     }
 
     public int GetFeatureSlot(string featureName)
@@ -43,7 +43,7 @@ namespace M3D.Spooling.Printer_Profiles
 
     public IEnumerable<KeyValuePair<string, int>> EnumerateList()
     {
-      return (IEnumerable<KeyValuePair<string, int>>)SupportedFeatureMapping;
+      return SupportedFeatureMapping;
     }
 
     [XmlIgnore]
@@ -69,17 +69,17 @@ namespace M3D.Spooling.Printer_Profiles
           return new SerializableDictionary<string, int>(m_supportedFeatureMapping.Value);
         }
 
-        return (SerializableDictionary<string, int>) null;
+        return null;
       }
       set
       {
         try
         {
-          m_supportedFeatureMapping.Value = (Dictionary<string, int>) value;
+          m_supportedFeatureMapping.Value = value;
         }
         catch (InvalidOperationException ex)
         {
-          throw new InvalidOperationException("SupportedFeatureMapping can not be modified after creation.", (Exception) ex);
+          throw new InvalidOperationException("SupportedFeatureMapping can not be modified after creation.", ex);
         }
       }
     }

@@ -78,7 +78,7 @@ namespace M3D.Spooling.Client
 
     void ProcessSpoolerMessage(SpoolerMessage message);
 
-    bool isConnected();
+    bool IsConnected();
 
     void AddCommandToRunOnFinish(AsyncCallback callback);
 

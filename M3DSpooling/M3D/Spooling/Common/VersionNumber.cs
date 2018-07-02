@@ -126,7 +126,7 @@ namespace M3D.Spooling.Common
       }
 
       var other = obj as VersionNumber;
-      if (other == (VersionNumber) null)
+      if (other == null)
       {
         throw new ArgumentException("A Version object is required for comparison.", nameof (obj));
       }
@@ -170,7 +170,7 @@ namespace M3D.Spooling.Common
 
     public static int Compare(VersionNumber left, VersionNumber right)
     {
-      if ((object) left == (object) right)
+      if (left == (object)right)
       {
         return 0;
       }
@@ -196,7 +196,7 @@ namespace M3D.Spooling.Common
         return false;
       }
 
-      return Equals((object) version);
+      return Equals(version);
     }
 
     public bool Equals(VersionNumber other)
@@ -216,7 +216,7 @@ namespace M3D.Spooling.Common
 
     public static bool operator ==(VersionNumber a, VersionNumber b)
     {
-      if ((object) a == (object) b)
+      if (a == (object)b)
       {
         return true;
       }

@@ -32,7 +32,7 @@ namespace M3D.Spooling.Common
 
     public bool OverLap(BoundingBox other)
     {
-      return (double) other.max.x >= (double)min.x && (double) other.min.x <= (double)max.x && ((double) other.max.y >= (double)min.y && (double) other.min.y <= (double)max.y) && ((double) other.max.z >= (double)max.z && (double) other.min.z <= (double)max.z);
+      return other.max.x >= (double)min.x && other.min.x <= (double)max.x && (other.max.y >= (double)min.y && other.min.y <= (double)max.y) && (other.max.z >= (double)max.z && other.min.z <= (double)max.z);
     }
 
     public bool LineIntercepts(out Vector3D intercept, Vector3D p1, Vector3D p2)
@@ -48,23 +48,23 @@ namespace M3D.Spooling.Common
 
     private bool LineInterceptsMinSide(out Vector3D intercept, float dist1, float dist2, Vector3D p1, Vector3D p2)
     {
-      if ((double) dist2 > 0.0)
+      if (dist2 > 0.0)
       {
         intercept = p2;
         return false;
       }
       var num = dist1 / dist2;
-      if ((double) num > -0.01 && (double) num < 0.0)
+      if (num > -0.01 && num < 0.0)
       {
         intercept = p1;
         return true;
       }
-      if ((double) num > 0.0 && (double) num <= 1.0)
+      if (num > 0.0 && num <= 1.0)
       {
         intercept = new Vector3D((p2.x - p1.x) * num + p1.x, (p2.y - p1.y) * num + p1.y, (p2.z - p1.z) * num + p1.z);
         return true;
       }
-      if ((double) num >= 0.0 && (double) num < 1.40129846432482E-45 && (double) dist2 < 0.0)
+      if (num >= 0.0 && num < 1.40129846432482E-45 && dist2 < 0.0)
       {
         intercept = p1;
         return true;
@@ -75,23 +75,23 @@ namespace M3D.Spooling.Common
 
     private bool LineInterceptsMaxSide(out Vector3D intercept, float dist1, float dist2, Vector3D p1, Vector3D p2)
     {
-      if ((double) dist2 < 0.0)
+      if (dist2 < 0.0)
       {
         intercept = p2;
         return false;
       }
       var num = dist1 / dist2;
-      if ((double) num > -0.01 && (double) num < 0.0)
+      if (num > -0.01 && num < 0.0)
       {
         intercept = p1;
         return true;
       }
-      if ((double) num > 0.0 && (double) num <= 1.0)
+      if (num > 0.0 && num <= 1.0)
       {
         intercept = new Vector3D((p2.x - p1.x) * num + p1.x, (p2.y - p1.y) * num + p1.y, (p2.z - p1.z) * num + p1.z);
         return true;
       }
-      if ((double) num >= 0.0 && (double) num < 1.40129846432482E-45 && (double) dist2 > 0.0)
+      if (num >= 0.0 && num < 1.40129846432482E-45 && dist2 > 0.0)
       {
         intercept = p1;
         return true;
@@ -117,9 +117,9 @@ namespace M3D.Spooling.Common
 
     private bool ELessThan(float rhs, float lhs)
     {
-      if ((double) rhs >= (double) lhs + 0.00999999977648258)
+      if (rhs >= lhs + 0.00999999977648258)
       {
-        return (double) rhs < (double) lhs - 0.00999999977648258;
+        return rhs < lhs - 0.00999999977648258;
       }
 
       return true;
@@ -127,9 +127,9 @@ namespace M3D.Spooling.Common
 
     private bool EGreaterThan(float rhs, float lhs)
     {
-      if ((double) rhs <= (double) lhs + 0.00999999977648258)
+      if (rhs <= lhs + 0.00999999977648258)
       {
-        return (double) rhs > (double) lhs - 0.00999999977648258;
+        return rhs > lhs - 0.00999999977648258;
       }
 
       return true;
@@ -137,40 +137,40 @@ namespace M3D.Spooling.Common
 
     public bool InRegion(Vector3D p)
     {
-      return (double) p.x >= (double)min.x && (double) p.x <= (double)max.x && ((double) p.y >= (double)min.y && (double) p.y <= (double)max.y) && ((double) p.z >= (double)min.z && (double) p.z <= (double)max.z);
+      return p.x >= (double)min.x && p.x <= (double)max.x && (p.y >= (double)min.y && p.y <= (double)max.y) && (p.z >= (double)min.z && p.z <= (double)max.z);
     }
 
     public bool InRegionNaN(Vector3D p)
     {
-      return (float.IsNaN(p.x) || (double) p.x >= (double)min.x && (double) p.x <= (double)max.x) && (float.IsNaN(p.y) || (double) p.y >= (double)min.y && (double) p.y <= (double)max.y) && (float.IsNaN(p.z) || (double) p.z >= (double)min.z && (double) p.z <= (double)max.z);
+      return (float.IsNaN(p.x) || p.x >= (double)min.x && p.x <= (double)max.x) && (float.IsNaN(p.y) || p.y >= (double)min.y && p.y <= (double)max.y) && (float.IsNaN(p.z) || p.z >= (double)min.z && p.z <= (double)max.z);
     }
 
-    public int outOfBoundsCheck(float X, float Y, float Z)
+    public int OutOfBoundsCheck(float X, float Y, float Z)
     {
       var num = 0;
-      if ((double) X < (double)min.x)
+      if (X < (double)min.x)
       {
         num |= 4;
       }
-      else if ((double) X > (double)max.x)
+      else if (X > (double)max.x)
       {
         num |= 8;
       }
 
-      if ((double) Y < (double)min.y)
+      if (Y < (double)min.y)
       {
         num |= 1;
       }
-      else if ((double) Y > (double)max.y)
+      else if (Y > (double)max.y)
       {
         num |= 2;
       }
 
-      if ((double) Z < (double)min.z)
+      if (Z < (double)min.z)
       {
         num |= 16;
       }
-      else if ((double) Z > (double)max.z)
+      else if (Z > (double)max.z)
       {
         num |= 32;
       }
@@ -197,7 +197,7 @@ namespace M3D.Spooling.Common
 
     public bool Equals(BoundingBox other)
     {
-      return (double)min.x == (double) other.min.x && (double)min.y == (double) other.min.y && ((double)min.z == (double) other.min.z && (double)max.x == (double) other.max.x) && ((double)max.y == (double) other.max.y && (double)max.z == (double) other.max.z);
+      return min.x == (double)other.min.x && min.y == (double)other.min.y && (min.z == (double)other.min.z && max.x == (double)other.max.x) && (max.y == (double)other.max.y && max.z == (double)other.max.z);
     }
 
     public override int GetHashCode()

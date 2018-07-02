@@ -26,7 +26,7 @@ namespace M3D.GUI.AccessoriesDialog
     {
       var nozzleSizeDialog = Resources.customNozzleSizeDialog;
       Init(guiHost, nozzleSizeDialog, new ButtonCallback(ButtonCallback));
-      SetSize(540, (int) byte.MaxValue);
+      SetSize(540, byte.MaxValue);
       CenterHorizontallyInParent = true;
       CenterVerticallyInParent = true;
       m_OnDialogClose = OnDialogClose;
@@ -40,14 +40,14 @@ namespace M3D.GUI.AccessoriesDialog
         return;
       }
 
-      var num = (float)m_oPrinter.Info.extruder.iNozzleSizeMicrons / 1000f;
+      var num = m_oPrinter.Info.extruder.iNozzleSizeMicrons / 1000f;
       childElement.Text = num.ToString();
     }
 
     public static void Show(GUIHost guiHost, PopupMessageBox messagebox, EventHandler<CustomNozzleSizeDialog.CustomNozzleSizeResult> OnDialogClose, int iMinNozzleSize, int iMaxNozzleSize, PrinterObject printer)
     {
       var nozzleSizeDialog = new CustomNozzleSizeDialog(guiHost, messagebox, OnDialogClose, iMinNozzleSize, iMaxNozzleSize, printer);
-      guiHost.GlobalChildDialog += (Element2D) nozzleSizeDialog;
+      guiHost.GlobalChildDialog += nozzleSizeDialog;
     }
 
     private void ButtonCallback(ButtonWidget button)
@@ -63,10 +63,10 @@ namespace M3D.GUI.AccessoriesDialog
         {
           if (float.TryParse(childElement.Text, out var result))
           {
-            var iNozzleSizeMicrons = (int)((double)result * 1000.0);
+            var iNozzleSizeMicrons = (int)(result * 1000.0);
             if (iNozzleSizeMicrons < m_iMinNozzleSize || iNozzleSizeMicrons > m_iMaxNozzleSize)
             {
-              m_oMessagebox.AddMessageToQueue(string.Format("Sorry, but the nozzle size must be between {0} and {1} mm.", (object)(float)((double)m_iMinNozzleSize / 1000.0), (object)(float)((double)m_iMaxNozzleSize / 1000.0)));
+              m_oMessagebox.AddMessageToQueue(string.Format("Sorry, but the nozzle size must be between {0} and {1} mm.", (float)((double)m_iMinNozzleSize / 1000.0), (float)((double)m_iMaxNozzleSize / 1000.0)));
             }
             else
             {
@@ -92,12 +92,9 @@ namespace M3D.GUI.AccessoriesDialog
 
     private void Close(int iNozzleSizeMicrons, bool bCanceled)
     {
-      if (m_OnDialogClose != null)
-      {
-        m_OnDialogClose((object) this, new CustomNozzleSizeDialog.CustomNozzleSizeResult(iNozzleSizeMicrons, bCanceled, m_oPrinter));
-      }
+      m_OnDialogClose?.Invoke(this, new CustomNozzleSizeDialog.CustomNozzleSizeResult(iNozzleSizeMicrons, bCanceled, m_oPrinter));
 
-      Host.GlobalChildDialog -= (Element2D) this;
+      Host.GlobalChildDialog -= (this);
     }
 
     public override void Close()

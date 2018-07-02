@@ -22,7 +22,7 @@ namespace M3D.Spooling.Common.Utils
     public void Print(TextWriter tw)
     {
       var str = new DateTime(timeStamp).ToString("dd/MM/yyyy HH:mm:ss.ffff tt");
-      tw.WriteLine(string.Format("{0}: {1} Current Memory Used: {2} bytes.  Date: {3}", (object)functionName, (object)description, (object)memoryUsed, (object) str));
+      tw.WriteLine(string.Format("{0}: {1} Current Memory Used: {2} bytes.  Date: {3}", functionName, description, memoryUsed, str));
     }
   }
 }

@@ -71,25 +71,29 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         RelativeWidth = 1f,
         RelativeHeight = 1f
       };
-      AddChildElement((Element2D) xmlFrame);
+      AddChildElement(xmlFrame);
       xmlFrame.Init(host, printdialog, new ButtonCallback(MyButtonCallback));
-      mPrintQualityButtons = new Dictionary<PrintQuality, ButtonWidget>();
-      mPrintQualityButtons.Add(PrintQuality.Expert, (ButtonWidget)FindChildElement(111));
-      mPrintQualityButtons.Add(PrintQuality.VeryHighQuality, (ButtonWidget)FindChildElement(116));
-      mPrintQualityButtons.Add(PrintQuality.HighQuality, (ButtonWidget)FindChildElement(112));
-      mPrintQualityButtons.Add(PrintQuality.MediumQuality, (ButtonWidget)FindChildElement(113));
-      mPrintQualityButtons.Add(PrintQuality.FastPrint, (ButtonWidget)FindChildElement(114));
-      mPrintQualityButtons.Add(PrintQuality.VeryFastPrint, (ButtonWidget)FindChildElement(115));
-      mPrintQualityButtons.Add(PrintQuality.Custom, (ButtonWidget)FindChildElement(118));
-      mFillDensityButtons = new Dictionary<FillQuality, ButtonWidget>();
-      mFillDensityButtons.Add(FillQuality.ExtraHigh, (ButtonWidget)FindChildElement(220));
-      mFillDensityButtons.Add(FillQuality.High, (ButtonWidget)FindChildElement(221));
-      mFillDensityButtons.Add(FillQuality.Medium, (ButtonWidget)FindChildElement(222));
-      mFillDensityButtons.Add(FillQuality.Low, (ButtonWidget)FindChildElement(223));
-      mFillDensityButtons.Add(FillQuality.HollowThickWalls, (ButtonWidget)FindChildElement(224));
-      mFillDensityButtons.Add(FillQuality.HollowThinWalls, (ButtonWidget)FindChildElement(225));
-      mFillDensityButtons.Add(FillQuality.Solid, (ButtonWidget)FindChildElement(227));
-      mFillDensityButtons.Add(FillQuality.Custom, (ButtonWidget)FindChildElement(228));
+      mPrintQualityButtons = new Dictionary<PrintQuality, ButtonWidget>
+      {
+        { PrintQuality.Expert, (ButtonWidget)FindChildElement(111) },
+        { PrintQuality.VeryHighQuality, (ButtonWidget)FindChildElement(116) },
+        { PrintQuality.HighQuality, (ButtonWidget)FindChildElement(112) },
+        { PrintQuality.MediumQuality, (ButtonWidget)FindChildElement(113) },
+        { PrintQuality.FastPrint, (ButtonWidget)FindChildElement(114) },
+        { PrintQuality.VeryFastPrint, (ButtonWidget)FindChildElement(115) },
+        { PrintQuality.Custom, (ButtonWidget)FindChildElement(118) }
+      };
+      mFillDensityButtons = new Dictionary<FillQuality, ButtonWidget>
+      {
+        { FillQuality.ExtraHigh, (ButtonWidget)FindChildElement(220) },
+        { FillQuality.High, (ButtonWidget)FindChildElement(221) },
+        { FillQuality.Medium, (ButtonWidget)FindChildElement(222) },
+        { FillQuality.Low, (ButtonWidget)FindChildElement(223) },
+        { FillQuality.HollowThickWalls, (ButtonWidget)FindChildElement(224) },
+        { FillQuality.HollowThinWalls, (ButtonWidget)FindChildElement(225) },
+        { FillQuality.Solid, (ButtonWidget)FindChildElement(227) },
+        { FillQuality.Custom, (ButtonWidget)FindChildElement(228) }
+      };
       print_button = (ButtonWidget)FindChildElement(401);
       quality_scroll_list = (HorizontalLayoutScrollList)FindChildElement(110);
       density_scroll_list = (HorizontalLayoutScrollList)FindChildElement(219);
@@ -171,9 +175,9 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       mPrintQualityButtons[index].SetChecked(true);
       goto label_9;
 label_6:
-      if (!quality_scroll_list.ChildList.Contains((Element2D)mPrintQualityButtons[PrintQuality.Custom]))
+      if (!quality_scroll_list.ChildList.Contains(mPrintQualityButtons[PrintQuality.Custom]))
       {
-        quality_scroll_list.AddChildElement((Element2D)mPrintQualityButtons[PrintQuality.Custom]);
+        quality_scroll_list.AddChildElement(mPrintQualityButtons[PrintQuality.Custom]);
       }
 
       mPrintQualityButtons[PrintQuality.Custom].SetChecked(true);
@@ -191,9 +195,9 @@ label_9:
           mFillDensityButtons[currentFillQuality].SetChecked(true);
           break;
         default:
-          if (!density_scroll_list.ChildList.Contains((Element2D)mFillDensityButtons[FillQuality.Custom]))
+          if (!density_scroll_list.ChildList.Contains(mFillDensityButtons[FillQuality.Custom]))
           {
-            density_scroll_list.AddChildElement((Element2D)mFillDensityButtons[FillQuality.Custom]);
+            density_scroll_list.AddChildElement(mFillDensityButtons[FillQuality.Custom]);
           }
 
           mFillDensityButtons[FillQuality.Custom].SetChecked(true);
@@ -217,29 +221,31 @@ label_9:
       SyncFromSlicerSettings();
       foreach (System.Collections.Generic.KeyValuePair<PrintQuality, ButtonWidget> printQualityButton in mPrintQualityButtons)
       {
-        if (quality_scroll_list.ChildList.Contains((Element2D) printQualityButton.Value))
+        if (quality_scroll_list.ChildList.Contains(printQualityButton.Value))
         {
-          quality_scroll_list.RemoveChildElement((Element2D) printQualityButton.Value);
+          quality_scroll_list.RemoveChildElement(printQualityButton.Value);
           printQualityButton.Value.Visible = false;
         }
       }
       foreach (System.Collections.Generic.KeyValuePair<FillQuality, ButtonWidget> fillDensityButton in mFillDensityButtons)
       {
-        if (density_scroll_list.ChildList.Contains((Element2D) fillDensityButton.Value))
+        if (density_scroll_list.ChildList.Contains(fillDensityButton.Value))
         {
-          density_scroll_list.RemoveChildElement((Element2D) fillDensityButton.Value);
+          density_scroll_list.RemoveChildElement(fillDensityButton.Value);
           fillDensityButton.Value.Visible = false;
         }
       }
       quality_scroll_list.OnUpdate();
       density_scroll_list.OnUpdate();
-      var printQualityList = new List<PrintQuality>();
-      printQualityList.Add(PrintQuality.VeryFastPrint);
-      printQualityList.Add(PrintQuality.FastPrint);
-      printQualityList.Add(PrintQuality.MediumQuality);
-      printQualityList.Add(PrintQuality.HighQuality);
-      printQualityList.Add(PrintQuality.VeryHighQuality);
-      printQualityList.Add(PrintQuality.Expert);
+      var printQualityList = new List<PrintQuality>
+      {
+        PrintQuality.VeryFastPrint,
+        PrintQuality.FastPrint,
+        PrintQuality.MediumQuality,
+        PrintQuality.HighQuality,
+        PrintQuality.VeryHighQuality,
+        PrintQuality.Expert
+      };
       var fillQualityList = new List<FillQuality>()
       {
         FillQuality.HollowThinWalls,
@@ -252,17 +258,17 @@ label_9:
       };
       foreach (PrintQuality index in printQualityList)
       {
-        if (SlicerSettings.SupportedPrintQualities.Contains(index) && index != PrintQuality.Custom && (index != PrintQuality.Expert && !quality_scroll_list.ChildList.Contains((Element2D)mPrintQualityButtons[index])))
+        if (SlicerSettings.SupportedPrintQualities.Contains(index) && index != PrintQuality.Custom && (index != PrintQuality.Expert && !quality_scroll_list.ChildList.Contains(mPrintQualityButtons[index])))
         {
-          quality_scroll_list.AddChildElement((Element2D)mPrintQualityButtons[index]);
+          quality_scroll_list.AddChildElement(mPrintQualityButtons[index]);
           mPrintQualityButtons[index].Visible = true;
         }
       }
       foreach (FillQuality index in fillQualityList)
       {
-        if (SlicerSettings.SupportedFillQualities.Contains(index) && index != FillQuality.Custom && (index != FillQuality.Solid && !density_scroll_list.ChildList.Contains((Element2D)mFillDensityButtons[index])))
+        if (SlicerSettings.SupportedFillQualities.Contains(index) && index != FillQuality.Custom && (index != FillQuality.Solid && !density_scroll_list.ChildList.Contains(mFillDensityButtons[index])))
         {
-          density_scroll_list.AddChildElement((Element2D)mFillDensityButtons[index]);
+          density_scroll_list.AddChildElement(mFillDensityButtons[index]);
           mFillDensityButtons[index].Visible = true;
         }
       }
@@ -282,38 +288,38 @@ label_9:
       if (SlicerSettings.SupportedPrintQualities.Contains(PrintQuality.Expert) && selectedPrinter.Info.filament_info.filament_type != FilamentSpool.TypeEnum.ABS && selectedPrinter.Info.filament_info.filament_type != FilamentSpool.TypeEnum.ABS_R)
       {
         mPrintQualityButtons[PrintQuality.Expert].Visible = true;
-        if (!quality_scroll_list.ChildList.Contains((Element2D)mPrintQualityButtons[PrintQuality.Expert]))
+        if (!quality_scroll_list.ChildList.Contains(mPrintQualityButtons[PrintQuality.Expert]))
         {
-          quality_scroll_list.AddChildElement((Element2D)mPrintQualityButtons[PrintQuality.Expert]);
+          quality_scroll_list.AddChildElement(mPrintQualityButtons[PrintQuality.Expert]);
         }
       }
       else
       {
         mPrintQualityButtons[PrintQuality.Expert].Visible = false;
-        if (quality_scroll_list.ChildList.Contains((Element2D)mPrintQualityButtons[PrintQuality.Expert]))
+        if (quality_scroll_list.ChildList.Contains(mPrintQualityButtons[PrintQuality.Expert]))
         {
           if (mPrintQualityButtons[PrintQuality.Expert].Checked)
           {
             mPrintQualityButtons[SlicerSettings.SupportedPrintQualities.Last<PrintQuality>()].SetChecked(true);
           }
 
-          quality_scroll_list.RemoveChildElement((Element2D)mPrintQualityButtons[PrintQuality.Expert]);
+          quality_scroll_list.RemoveChildElement(mPrintQualityButtons[PrintQuality.Expert]);
         }
       }
       if (mPrintQualityButtons[PrintQuality.Custom].Checked)
       {
         mPrintQualityButtons[PrintQuality.Custom].Visible = true;
-        if (!quality_scroll_list.ChildList.Contains((Element2D)mPrintQualityButtons[PrintQuality.Custom]))
+        if (!quality_scroll_list.ChildList.Contains(mPrintQualityButtons[PrintQuality.Custom]))
         {
-          quality_scroll_list.AddChildElement((Element2D)mPrintQualityButtons[PrintQuality.Custom]);
+          quality_scroll_list.AddChildElement(mPrintQualityButtons[PrintQuality.Custom]);
         }
       }
       else
       {
         mPrintQualityButtons[PrintQuality.Custom].Visible = false;
-        if (quality_scroll_list.ChildList.Contains((Element2D)mPrintQualityButtons[PrintQuality.Custom]))
+        if (quality_scroll_list.ChildList.Contains(mPrintQualityButtons[PrintQuality.Custom]))
         {
-          quality_scroll_list.RemoveChildElement((Element2D)mPrintQualityButtons[PrintQuality.Custom]);
+          quality_scroll_list.RemoveChildElement(mPrintQualityButtons[PrintQuality.Custom]);
         }
       }
       quality_scroll_list.OnParentResize();
@@ -330,38 +336,38 @@ label_9:
       if (SlicerSettings.SupportedFillQualities.Contains(FillQuality.Solid) && (selectedPrinter.Info.filament_info.filament_type == FilamentSpool.TypeEnum.FLX || selectedPrinter.Info.filament_info.filament_type == FilamentSpool.TypeEnum.TGH))
       {
         mFillDensityButtons[FillQuality.Solid].Visible = true;
-        if (!density_scroll_list.ChildList.Contains((Element2D)mFillDensityButtons[FillQuality.Solid]))
+        if (!density_scroll_list.ChildList.Contains(mFillDensityButtons[FillQuality.Solid]))
         {
-          density_scroll_list.AddChildElement((Element2D)mFillDensityButtons[FillQuality.Solid]);
+          density_scroll_list.AddChildElement(mFillDensityButtons[FillQuality.Solid]);
         }
       }
       else
       {
         mFillDensityButtons[FillQuality.Solid].Visible = false;
-        if (density_scroll_list.ChildList.Contains((Element2D)mFillDensityButtons[FillQuality.Solid]))
+        if (density_scroll_list.ChildList.Contains(mFillDensityButtons[FillQuality.Solid]))
         {
           if (mFillDensityButtons[FillQuality.Solid].Checked)
           {
             mFillDensityButtons[SlicerSettings.SupportedFillQualities.Last<FillQuality>()].SetChecked(true);
           }
 
-          density_scroll_list.RemoveChildElement((Element2D)mFillDensityButtons[FillQuality.Solid]);
+          density_scroll_list.RemoveChildElement(mFillDensityButtons[FillQuality.Solid]);
         }
       }
       if (mFillDensityButtons[FillQuality.Custom].Checked)
       {
         mFillDensityButtons[FillQuality.Custom].Visible = true;
-        if (!density_scroll_list.ChildList.Contains((Element2D)mFillDensityButtons[FillQuality.Custom]))
+        if (!density_scroll_list.ChildList.Contains(mFillDensityButtons[FillQuality.Custom]))
         {
-          density_scroll_list.AddChildElement((Element2D)mFillDensityButtons[FillQuality.Custom]);
+          density_scroll_list.AddChildElement(mFillDensityButtons[FillQuality.Custom]);
         }
       }
       else
       {
         mFillDensityButtons[FillQuality.Custom].Visible = false;
-        if (density_scroll_list.ChildList.Contains((Element2D)mFillDensityButtons[FillQuality.Custom]))
+        if (density_scroll_list.ChildList.Contains(mFillDensityButtons[FillQuality.Custom]))
         {
-          density_scroll_list.RemoveChildElement((Element2D)mFillDensityButtons[FillQuality.Custom]);
+          density_scroll_list.RemoveChildElement(mFillDensityButtons[FillQuality.Custom]);
         }
       }
       density_scroll_list.OnParentResize();
@@ -542,7 +548,7 @@ label_9:
 
     private void ReleasePrinterLock(PrinterObject printer)
     {
-      var num = (int) printer.ReleaseLock((AsyncCallback) null, (object) null);
+      var num = (int) printer.ReleaseLock(null, null);
     }
 
     private PrintQuality GetPrintQuality()

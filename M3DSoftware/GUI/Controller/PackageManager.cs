@@ -24,7 +24,7 @@ namespace M3D.GUI.Controller
       }
       catch (Exception ex)
       {
-        packageManager = (PackageManager) null;
+        packageManager = null;
         if (ex is ThreadAbortException)
         {
           throw ex;

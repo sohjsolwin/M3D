@@ -25,7 +25,7 @@ namespace M3D.Spooling.Common.Utils
 
     public static string Format(string format, params object[] args)
     {
-      return string.Format((IFormatProvider) PrinterCompatibleString.PRINTER_CULTURE, format, args);
+      return string.Format(PrinterCompatibleString.PRINTER_CULTURE, format, args);
     }
 
     public static bool VerifyNumber(string number_string)
@@ -45,8 +45,8 @@ namespace M3D.Spooling.Common.Utils
 
     public static string RemoveIllegalCharacters(string text)
     {
-      var allowedCharacters = new HashSet<char>((IEnumerable<char>) "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-_");
-      return new string(((IEnumerable<char>) text.ToCharArray()).Where<char>((Func<char, bool>) (c => allowedCharacters.Contains(c))).ToArray<char>());
+      var allowedCharacters = new HashSet<char>("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-_");
+      return new string(((IEnumerable<char>) text.ToCharArray()).Where<char>(c => allowedCharacters.Contains(c)).ToArray<char>());
     }
   }
 }

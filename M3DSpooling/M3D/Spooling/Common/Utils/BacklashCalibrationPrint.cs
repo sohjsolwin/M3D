@@ -29,13 +29,13 @@ namespace M3D.Spooling.Common.Utils
       BacklashCalibrationPrint.Direction dirYPrev = BacklashCalibrationPrint.Direction.Neither;
       using (var fileStream = new FileStream(filename, FileMode.Create, FileAccess.Write))
       {
-        using (var streamWriter = new StreamWriter((Stream) fileStream))
+        using (var streamWriter = new StreamWriter(fileStream))
         {
           streamWriter.WriteLine("G90");
-          streamWriter.WriteLine("M104 S" + (object) num1);
+          streamWriter.WriteLine("M104 S" + num1);
           streamWriter.WriteLine("G28");
           streamWriter.WriteLine("G0 Z2 F60");
-          streamWriter.WriteLine("M109 S" + (object) num1);
+          streamWriter.WriteLine("M109 S" + num1);
           switch (filament_type)
           {
             case FilamentSpool.TypeEnum.ABS:
@@ -58,7 +58,7 @@ namespace M3D.Spooling.Common.Utils
             relativeY = YStart,
             relativeZ = 0.4f
           };
-          streamWriter.WriteLine(PrinterCompatibleString.Format("G0 X{0:0.0000} Y{1:0.0000} F500", (object) XStart, (object) YStart));
+          streamWriter.WriteLine(PrinterCompatibleString.Format("G0 X{0:0.0000} Y{1:0.0000} F500", XStart, YStart));
           var isFirstMove = false;
           for (var index1 = 0; index1 < 5; ++index1)
           {
@@ -79,7 +79,7 @@ namespace M3D.Spooling.Common.Utils
                   EXTRUSION_PER_MM_XY = 0.044f;
                   break;
               }
-              var polynomialGcode = BacklashCalibrationPrint.GetPolynomialGCode(ref backlashCompensationX, ref backlashCompensationY, ref dirXPrev, ref dirYPrev, XStart, YStart, pos, points1, num2 - (float) index2, 0.25f, 1.06f, 0.0f, EXTRUSION_PER_MM_XY, isFirstMove);
+              var polynomialGcode = BacklashCalibrationPrint.GetPolynomialGCode(ref backlashCompensationX, ref backlashCompensationY, ref dirXPrev, ref dirYPrev, XStart, YStart, pos, points1, num2 - index2, 0.25f, 1.06f, 0.0f, EXTRUSION_PER_MM_XY, isFirstMove);
               isFirstMove = false;
               streamWriter.WriteLine(polynomialGcode);
             }
@@ -87,15 +87,15 @@ namespace M3D.Spooling.Common.Utils
           streamWriter.WriteLine("M106 s255");
           var points2 = 96;
           var radius = 5f;
-          var num3 = (int) (Math.Ceiling(30.0 / (double) layerHeight) + 0.100000001490116);
+          var num3 = (int) (Math.Ceiling(30.0 / layerHeight) + 0.100000001490116);
           var num4 = 1f;
           var num5 = 2f;
-          var num6 = num4 / (float) num3;
-          var num7 = num5 / (float) num3;
+          var num6 = num4 / num3;
+          var num7 = num5 / num3;
           var X_BACKLASH = 0.0f;
           var Y_BACKLASH = 0.0f;
           var num8 = 0;
-          while ((double) X_BACKLASH < (double) num4 && (double) Y_BACKLASH < (double) num5)
+          while (X_BACKLASH < (double)num4 && Y_BACKLASH < (double)num5)
           {
             streamWriter.WriteLine(PrinterCompatibleString.Format("G0 Z{0:0.000}", (object) pos.relativeZ));
             var polynomialGcode = BacklashCalibrationPrint.GetPolynomialGCode(ref backlashCompensationX, ref backlashCompensationY, ref dirXPrev, ref dirYPrev, XStart, YStart, pos, points2, radius, X_BACKLASH, Y_BACKLASH, layerHeight, 0.0369f, false);
@@ -118,16 +118,16 @@ namespace M3D.Spooling.Common.Utils
     private static string GetPolynomialGCode(ref float backlashCompensationX, ref float backlashCompensationY, ref BacklashCalibrationPrint.Direction dirXPrev, ref BacklashCalibrationPrint.Direction dirYPrev, float XStart, float YStart, Position pos, int points, float radius, float X_BACKLASH, float Y_BACKLASH, float layerHeight, float EXTRUSION_PER_MM_XY, bool isFirstMove)
     {
       var stringBuilder = new StringBuilder();
-      var num1 = (float) (360.0 / (double) points * (Math.PI / 180.0));
-      var num2 = layerHeight / (float) points;
+      var num1 = (float) (360.0 / points * (Math.PI / 180.0));
+      var num2 = layerHeight / points;
       for (var index = 0; index < points; ++index)
       {
-        var num3 = (float) (45.0 + (double) index * (double) num1);
-        var num4 = (double) XStart + (double) radius * Math.Cos((double) num3);
-        var num5 = (double) YStart + (double) radius * Math.Sin((double) num3);
+        var num3 = (float) (45.0 + index * (double)num1);
+        var num4 = XStart + radius * Math.Cos(num3);
+        var num5 = YStart + radius * Math.Sin(num3);
         var num6 = (float) num4 - pos.relativeX;
         var num7 = (float) num5 - pos.relativeY;
-        var num8 = (float) Math.Sqrt((double) num6 * (double) num6 + (double) num7 * (double) num7) * EXTRUSION_PER_MM_XY;
+        var num8 = (float) Math.Sqrt(num6 * (double)num6 + num7 * (double)num7) * EXTRUSION_PER_MM_XY;
         if (isFirstMove)
         {
           isFirstMove = false;
@@ -136,8 +136,8 @@ namespace M3D.Spooling.Common.Utils
         pos.relativeE += num8;
         pos.absoluteE += num8;
         pos.relativeZ += num2;
-        BacklashCalibrationPrint.Direction direction1 = (double) num6 <= 1.40129846432482E-45 ? ((double) num6 >= -1.40129846432482E-45 ? dirXPrev : BacklashCalibrationPrint.Direction.Negative) : BacklashCalibrationPrint.Direction.Positive;
-        BacklashCalibrationPrint.Direction direction2 = (double) num7 <= 1.40129846432482E-45 ? ((double) num7 >= -1.40129846432482E-45 ? dirYPrev : BacklashCalibrationPrint.Direction.Negative) : BacklashCalibrationPrint.Direction.Positive;
+        BacklashCalibrationPrint.Direction direction1 = num6 <= 1.40129846432482E-45 ? num6 >= -1.40129846432482E-45 ? dirXPrev : BacklashCalibrationPrint.Direction.Negative : BacklashCalibrationPrint.Direction.Positive;
+        BacklashCalibrationPrint.Direction direction2 = num7 <= 1.40129846432482E-45 ? num7 >= -1.40129846432482E-45 ? dirYPrev : BacklashCalibrationPrint.Direction.Negative : BacklashCalibrationPrint.Direction.Positive;
         if (direction1 != dirXPrev && dirXPrev != BacklashCalibrationPrint.Direction.Neither || direction2 != dirYPrev && dirYPrev != BacklashCalibrationPrint.Direction.Neither)
         {
           if (direction1 != dirXPrev && dirXPrev != BacklashCalibrationPrint.Direction.Neither)
@@ -152,11 +152,11 @@ namespace M3D.Spooling.Common.Utils
 
           var num9 = pos.relativeX + backlashCompensationX;
           var num10 = pos.relativeY + backlashCompensationY;
-          stringBuilder.AppendLine(PrinterCompatibleString.Format("G0 X{0:0.0000} Y{1:0.0000} F{2} ;X_BACKLASH:{3:0.000} ;Y_BACKLASH:{4:0.000}", (object) num9, (object) num10, (object) 500, (object) X_BACKLASH, (object) Y_BACKLASH));
+          stringBuilder.AppendLine(PrinterCompatibleString.Format("G0 X{0:0.0000} Y{1:0.0000} F{2} ;X_BACKLASH:{3:0.000} ;Y_BACKLASH:{4:0.000}", num9, num10, 500, X_BACKLASH, Y_BACKLASH));
         }
         var num11 = (float) num4 + backlashCompensationX;
         var num12 = (float) num5 + backlashCompensationY;
-        stringBuilder.AppendLine(PrinterCompatibleString.Format("G0 X{0:0.0000} Y{1:0.0000} Z{2:0.0000} E{3:0.0000} F{4}", (object) num11, (object) num12, (object) pos.relativeZ, (object) pos.relativeE, (object) 500));
+        stringBuilder.AppendLine(PrinterCompatibleString.Format("G0 X{0:0.0000} Y{1:0.0000} Z{2:0.0000} E{3:0.0000} F{4}", num11, num12, pos.relativeZ, pos.relativeE, 500));
         pos.relativeX += num6;
         pos.relativeY += num7;
         pos.absoluteX += num6;

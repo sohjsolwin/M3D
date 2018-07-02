@@ -33,9 +33,9 @@ namespace M3D.Spooler
     public ManualPrintOptions()
     {
       InitializeComponent();
-      comboBoxJobMode.Items.Add((object) "Print without SD Save");
-      comboBoxJobMode.Items.Add((object) "Save to printer only.");
-      comboBoxJobMode.Items.Add((object) "Save to printer then print.");
+      comboBoxJobMode.Items.Add("Print without SD Save");
+      comboBoxJobMode.Items.Add("Save to printer only.");
+      comboBoxJobMode.Items.Add("Save to printer then print.");
       comboBoxJobMode.SelectedIndex = 0;
       options.jobMode = JobParams.Mode.DirectPrinting;
     }
@@ -45,7 +45,7 @@ namespace M3D.Spooler
       var flag = false;
       var num1 = float.Parse(textBoxFilamentTemp.Text);
       FilamentConstants.Temperature.MaxMin maxMin = FilamentConstants.Temperature.MaxMinForFilamentType(options.type);
-      if ((double) num1 >= (double) maxMin.Min && (double) num1 <= (double) maxMin.Max)
+      if (num1 >= (double)maxMin.Min && num1 <= (double)maxMin.Max)
       {
         flag = true;
       }
@@ -60,7 +60,7 @@ namespace M3D.Spooler
       }
       else
       {
-        var num2 = (int) MessageBox.Show("Please enter a temperature from " + (object) maxMin.Min + " to " + (object) maxMin.Max, "Temperature Invalid");
+        var num2 = (int) MessageBox.Show("Please enter a temperature from " + maxMin.Min + " to " + maxMin.Max, "Temperature Invalid");
         ok = false;
       }
       switch (comboBoxJobMode.SelectedIndex)
@@ -138,7 +138,7 @@ namespace M3D.Spooler
     {
       var manualPrintOptions = new ManualPrintOptions();
       manualPrintOptions.SetUntetheredOptions(allow_untethered, defaultmode);
-      if (info != (FilamentSpool) null)
+      if (info != null)
       {
         manualPrintOptions.SelectFilament(info.filament_type);
         manualPrintOptions.textBoxFilamentTemp.Text = info.filament_temperature.ToString();
@@ -227,7 +227,7 @@ namespace M3D.Spooler
       SelectFilament(FilamentSpool.TypeEnum.CAM);
     }
 
-    private void radioButtonABSR_CheckedChanged(object sender, EventArgs e)
+    private void RadioButtonABSR_CheckedChanged(object sender, EventArgs e)
     {
       if (!radioButtonABSR.Checked)
       {
@@ -326,19 +326,19 @@ namespace M3D.Spooler
       buttonCancel.Text = "Cancel";
       buttonCancel.UseVisualStyleBackColor = true;
       buttonCancel.Click += new EventHandler(buttonCancel_Click);
-      groupBox1.Controls.Add((Control)groupBox4);
+      groupBox1.Controls.Add(groupBox4);
       groupBox1.Location = new Point(12, 19);
       groupBox1.Name = "groupBox1";
       groupBox1.Size = new Size(245, 191);
       groupBox1.TabIndex = 5;
       groupBox1.TabStop = false;
       groupBox1.Text = "Filament Options";
-      groupBox4.Controls.Add((Control)radioButtonTGH);
-      groupBox4.Controls.Add((Control)radioButtonPLA);
-      groupBox4.Controls.Add((Control)radioButtonABSR);
-      groupBox4.Controls.Add((Control)radioButtonABS);
-      groupBox4.Controls.Add((Control)radioButtonCAM);
-      groupBox4.Controls.Add((Control)radioButtonHIPS);
+      groupBox4.Controls.Add(radioButtonTGH);
+      groupBox4.Controls.Add(radioButtonPLA);
+      groupBox4.Controls.Add(radioButtonABSR);
+      groupBox4.Controls.Add(radioButtonABS);
+      groupBox4.Controls.Add(radioButtonCAM);
+      groupBox4.Controls.Add(radioButtonHIPS);
       groupBox4.Location = new Point(17, 18);
       groupBox4.Name = "groupBox4";
       groupBox4.Size = new Size(213, 84);
@@ -360,7 +360,7 @@ namespace M3D.Spooler
       radioButtonABSR.TabIndex = 3;
       radioButtonABSR.Text = "ABS-R";
       radioButtonABSR.UseVisualStyleBackColor = true;
-      radioButtonABSR.CheckedChanged += new EventHandler(radioButtonABSR_CheckedChanged);
+      radioButtonABSR.CheckedChanged += new EventHandler(RadioButtonABSR_CheckedChanged);
       radioButtonCAM.Location = new Point(118, 36);
       radioButtonCAM.Name = "radioButtonCAM";
       radioButtonCAM.Size = new Size(121, 22);
@@ -372,7 +372,7 @@ namespace M3D.Spooler
       textBoxFilamentTemp.Name = "textBoxFilamentTemp";
       textBoxFilamentTemp.Size = new Size(82, 21);
       textBoxFilamentTemp.TabIndex = 10;
-      groupBox3.Controls.Add((Control)textBoxFilamentTemp);
+      groupBox3.Controls.Add(textBoxFilamentTemp);
       groupBox3.Location = new Point(27, 126);
       groupBox3.Name = "groupBox3";
       groupBox3.Size = new Size(213, 41);
@@ -386,8 +386,8 @@ namespace M3D.Spooler
       buttonUnlock.Text = "Edit";
       buttonUnlock.UseVisualStyleBackColor = true;
       buttonUnlock.Click += new EventHandler(buttonEdit_Click);
-      groupBox2.Controls.Add((Control)checkBoxCalibrate);
-      groupBox2.Controls.Add((Control)checkBoxUsePreprocessors);
+      groupBox2.Controls.Add(checkBoxCalibrate);
+      groupBox2.Controls.Add(checkBoxUsePreprocessors);
       groupBox2.Location = new Point(271, 19);
       groupBox2.Name = "groupBox2";
       groupBox2.Size = new Size(245, 74);
@@ -410,7 +410,7 @@ namespace M3D.Spooler
       checkBoxUsePreprocessors.TabIndex = 0;
       checkBoxUsePreprocessors.Text = "Use M3D Preprocessors";
       checkBoxUsePreprocessors.UseVisualStyleBackColor = true;
-      groupBoxSDCard.Controls.Add((Control)comboBoxJobMode);
+      groupBoxSDCard.Controls.Add(comboBoxJobMode);
       groupBoxSDCard.Location = new Point(275, 104);
       groupBoxSDCard.Name = "groupBoxSDCard";
       groupBoxSDCard.Size = new Size(240, 105);
@@ -427,13 +427,13 @@ namespace M3D.Spooler
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(530, 258);
       ControlBox = false;
-      Controls.Add((Control)groupBoxSDCard);
-      Controls.Add((Control)groupBox3);
-      Controls.Add((Control)buttonUnlock);
-      Controls.Add((Control)groupBox2);
-      Controls.Add((Control)groupBox1);
-      Controls.Add((Control)buttonCancel);
-      Controls.Add((Control)buttonOK);
+      Controls.Add(groupBoxSDCard);
+      Controls.Add(groupBox3);
+      Controls.Add(buttonUnlock);
+      Controls.Add(groupBox2);
+      Controls.Add(groupBox1);
+      Controls.Add(buttonCancel);
+      Controls.Add(buttonOK);
       Name = nameof (ManualPrintOptions);
       Text = "Print Options";
       groupBox1.ResumeLayout(false);

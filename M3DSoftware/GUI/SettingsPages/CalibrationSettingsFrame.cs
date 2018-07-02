@@ -45,7 +45,7 @@ namespace M3D.GUI.SettingsPages
       Y = 0;
       RelativeWidth = 1f;
       RelativeHeight = 1f;
-      calibration_settings = new ButtonWidget(0, (Element2D)null)
+      calibration_settings = new ButtonWidget(0, null)
       {
         Text = "Calibration",
         TextColor = new Color4(0.71f, 0.71f, 0.71f, 1f),
@@ -54,14 +54,14 @@ namespace M3D.GUI.SettingsPages
         Size = FontSize.Medium
       };
       calibration_settings.SetCallback(new ButtonCallback(MyButtonCallback));
-      calibration_settings.Init(host, "guicontrols", 513f, 64f, 575f, (float) sbyte.MaxValue, 513f, 128f, 575f, 191f, 513f, 192f, 575f, (float) byte.MaxValue);
+      calibration_settings.Init(host, "guicontrols", 513f, 64f, 575f, sbyte.MaxValue, 513f, 128f, 575f, 191f, 513f, 192f, 575f, byte.MaxValue);
       calibration_settings.SetGrowableWidth(16, 16, 48);
       calibration_settings.DontMove = true;
       calibration_settings.SetPosition(10, 10);
       calibration_settings.SetSize(200, 32);
       calibration_settings.ClickType = ButtonType.Checkable;
       calibration_settings.GroupID = 1234;
-      advancedcalibration_button = new ButtonWidget(1, (Element2D)null)
+      advancedcalibration_button = new ButtonWidget(1, null)
       {
         Text = "Advanced Calibration",
         TextColor = new Color4(0.71f, 0.71f, 0.71f, 1f),
@@ -70,15 +70,15 @@ namespace M3D.GUI.SettingsPages
         Size = FontSize.Medium
       };
       advancedcalibration_button.SetCallback(new ButtonCallback(MyButtonCallback));
-      advancedcalibration_button.Init(host, "guicontrols", 576f, 64f, 639f, (float) sbyte.MaxValue, 576f, 128f, 639f, 191f, 576f, 192f, 639f, (float) byte.MaxValue);
+      advancedcalibration_button.Init(host, "guicontrols", 576f, 64f, 639f, sbyte.MaxValue, 576f, 128f, 639f, 191f, 576f, 192f, 639f, byte.MaxValue);
       advancedcalibration_button.SetGrowableWidth(16, 16, 48);
       advancedcalibration_button.DontMove = true;
       advancedcalibration_button.ClickType = ButtonType.Checkable;
       advancedcalibration_button.GroupID = 1234;
       advancedcalibration_button.SetPosition(210, 10);
       advancedcalibration_button.SetSize(200, 32);
-      AddChildElement((Element2D)calibration_settings);
-      AddChildElement((Element2D)advancedcalibration_button);
+      AddChildElement(calibration_settings);
+      AddChildElement(advancedcalibration_button);
       var frame = new Frame(3)
       {
         X = 0,
@@ -94,21 +94,21 @@ namespace M3D.GUI.SettingsPages
       advanced_calibration_tab.Enabled = false;
       advanced_calibration_tab.RelativeWidth = 1f;
       advanced_calibration_tab.RelativeHeight = 1f;
-      advanced_calibration_tab.BGColor = new Color4((byte) 246, (byte) 246, (byte) 246, byte.MaxValue);
-      advanced_calibration_tab.BorderColor = new Color4((byte) 220, (byte) 220, (byte) 220, byte.MaxValue);
-      frame.AddChildElement((Element2D)advanced_calibration_tab);
+      advanced_calibration_tab.BGColor = new Color4(246, 246, 246, byte.MaxValue);
+      advanced_calibration_tab.BorderColor = new Color4(220, 220, 220, byte.MaxValue);
+      frame.AddChildElement(advanced_calibration_tab);
       calibration_tab = new CatScreenTab(1002, main_controller, spooler_connection, messagebox);
       calibration_tab.Init(host);
       calibration_tab.Visible = true;
       calibration_tab.Enabled = true;
       calibration_tab.RelativeWidth = 1f;
       calibration_tab.RelativeHeight = 1f;
-      frame.AddChildElement((Element2D)calibration_tab);
-      calibration_tab.BGColor = new Color4((byte) 246, (byte) 246, (byte) 246, byte.MaxValue);
-      calibration_tab.BorderColor = new Color4((byte) 220, (byte) 220, (byte) 220, byte.MaxValue);
-      AddChildElement((Element2D) frame);
+      frame.AddChildElement(calibration_tab);
+      calibration_tab.BGColor = new Color4(246, 246, 246, byte.MaxValue);
+      calibration_tab.BorderColor = new Color4(220, 220, 220, byte.MaxValue);
+      AddChildElement(frame);
       calibration_settings.SetChecked(true);
-      active_frame = (SettingsPage)calibration_tab;
+      active_frame = calibration_tab;
     }
 
     public void MyButtonCallback(ButtonWidget button)
@@ -117,12 +117,12 @@ namespace M3D.GUI.SettingsPages
       {
         case 0:
           DeactivateFrame();
-          active_frame = (SettingsPage)calibration_tab;
+          active_frame = calibration_tab;
           ActivateFrame();
           break;
         case 1:
           DeactivateFrame();
-          active_frame = (SettingsPage)advanced_calibration_tab;
+          active_frame = advanced_calibration_tab;
           ActivateFrame();
           break;
       }
@@ -148,7 +148,7 @@ namespace M3D.GUI.SettingsPages
       active_frame.OnClose();
       active_frame.Enabled = false;
       active_frame.Visible = false;
-      active_frame = (SettingsPage) null;
+      active_frame = null;
     }
 
     private void ActivateFrame()
@@ -168,7 +168,7 @@ namespace M3D.GUI.SettingsPages
       if (active_frame != advanced_calibration_tab)
       {
         DeactivateFrame();
-        active_frame = (SettingsPage)advanced_calibration_tab;
+        active_frame = advanced_calibration_tab;
         ActivateFrame();
       }
       advancedcalibration_button.Checked = true;

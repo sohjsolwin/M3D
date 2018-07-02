@@ -106,7 +106,7 @@ namespace M3D.Spooling.Core
     }
 
     public Logger(ThreadSafeVariable<bool> shared_shutdown)
-      : this(shared_shutdown, (string) null)
+      : this(shared_shutdown, null)
     {
     }
 
@@ -139,7 +139,7 @@ namespace M3D.Spooling.Core
       };
       _writeThread.IsBackground = true;
       _fileLock = new object();
-      _file = (StreamWriter) null;
+      _file = null;
       _writeThread.Priority = ThreadPriority.Lowest;
       _writeThread.IsBackground = true;
       _writeThread.Start();
@@ -148,7 +148,7 @@ namespace M3D.Spooling.Core
     public void Shutdown()
     {
       threadAborted.Value = true;
-      _writeThread = (Thread) null;
+      _writeThread = null;
     }
 
     public void ResetWithSerialNumber(string printer_serial)
@@ -211,7 +211,7 @@ namespace M3D.Spooling.Core
     {
       ErrorLogger.LogErrorMsg(_printerSerial.ToString() + ": Unable to create log file. File logging disabled: " + e.Message, "File Logging Error");
       threadAborted.Value = true;
-      _writeThread = (Thread) null;
+      _writeThread = null;
     }
 
     private void WriteThread()
@@ -219,7 +219,7 @@ namespace M3D.Spooling.Core
       do
       {
         Thread.Sleep(3000);
-        writebufferToFile();
+        WritebufferToFile();
       }
       while (!threadAborted.Value && (shared_shutdown != null ? (!shared_shutdown.Value ? 1 : 0) : 1) != 0);
       try
@@ -236,12 +236,12 @@ namespace M3D.Spooling.Core
       }
     }
 
-    private void writebufferToFile()
+    private void WritebufferToFile()
     {
       List<string> stringList;
       lock (_buffer)
       {
-        stringList = new List<string>((IEnumerable<string>)_buffer);
+        stringList = new List<string>(_buffer);
         _buffer.Clear();
       }
       if (stringList.Count == 0)

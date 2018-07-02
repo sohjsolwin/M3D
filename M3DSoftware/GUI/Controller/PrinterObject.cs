@@ -49,7 +49,7 @@ namespace M3D.GUI.Controller
     private bool heater_time_vested;
 
     public PrinterObject(Printer base_printer, PopupMessageBox messagebox, MessagePopUp infobox, SpoolerConnection spooler_connection, SettingsManager settings_manager)
-      : base((IPrinter) base_printer)
+      : base(base_printer)
     {
       this.infobox = infobox;
       this.messagebox = messagebox;
@@ -80,8 +80,8 @@ namespace M3D.GUI.Controller
       was_calibrating = false;
       printer_shutdown = new ThreadSafeVariable<bool>(false);
       printer_cyclepower = new ThreadSafeVariable<bool>(false);
-      SDCardExtension = new SDCardExtensions((IPrinter) this);
-      RegisterPlugin(SDCardExtensions.ID, (IPrinterPlugin)SDCardExtension);
+      SDCardExtension = new SDCardExtensions(this);
+      RegisterPlugin(SDCardExtensions.ID, SDCardExtension);
     }
 
     public void ProcessState()
@@ -150,11 +150,11 @@ namespace M3D.GUI.Controller
               calibration_message_sent = true;
               if (!Info.calibration.Calibration_Valid)
               {
-                RequestCalibrationFromUser(new M3D.Spooling.Client.AsyncCallback(ReleaseLockAfterCommand), (object) null, PrinterObject.CalibrationType.CalibrateFull_G32);
+                RequestCalibrationFromUser(new M3D.Spooling.Client.AsyncCallback(ReleaseLockAfterCommand), null, PrinterObject.CalibrationType.CalibrateFull_G32);
               }
               else
               {
-                RequestCalibrationFromUser(new M3D.Spooling.Client.AsyncCallback(ReleaseLockAfterCommand), (object) null, PrinterObject.CalibrationType.CalibrateQuick_G30);
+                RequestCalibrationFromUser(new M3D.Spooling.Client.AsyncCallback(ReleaseLockAfterCommand), null, PrinterObject.CalibrationType.CalibrateQuick_G30);
               }
             }
           }
@@ -163,7 +163,7 @@ namespace M3D.GUI.Controller
             if (!calibration_message_sent && !isBusy)
             {
               calibration_message_sent = true;
-              SendCalibrationOutofDateMessage(new M3D.Spooling.Client.AsyncCallback(ReleaseLockAfterCommand), (object) null);
+              SendCalibrationOutofDateMessage(new M3D.Spooling.Client.AsyncCallback(ReleaseLockAfterCommand), null);
             }
           }
           else if (was_calibrating)
@@ -190,7 +190,7 @@ namespace M3D.GUI.Controller
               heater_counter.Stop();
             }
           }
-          else if ((double)Info.extruder.Temperature < -100.0)
+          else if (Info.extruder.Temperature < -100.0)
           {
             heater_on = false;
             heater_time_vested = false;
@@ -198,7 +198,7 @@ namespace M3D.GUI.Controller
             heater_counter.Reset();
           }
         }
-        else if ((double)Info.extruder.Temperature > 150.0)
+        else if (Info.extruder.Temperature > 150.0)
         {
           heater_on = true;
         }
@@ -265,12 +265,12 @@ namespace M3D.GUI.Controller
         return;
       }
 
-      var num = (int)ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+      var num = (int)ReleaseLock(null, null);
     }
 
     private PrinterObject.State GetStateFromPrinter()
     {
-      if (isConnected())
+      if (IsConnected())
       {
         if (Info.Status == PrinterStatus.Firmware_Calibrating)
         {
@@ -341,7 +341,7 @@ namespace M3D.GUI.Controller
       update_firmware_timer.Reset();
       printerState.Value = PrinterObject.State.IsUpdatingFirmware;
       SendFirmwareUpdate();
-      return AcquireLock(new M3D.Spooling.Client.AsyncCallback(UpdateFirmwareAfterLock), (object) this);
+      return AcquireLock(new M3D.Spooling.Client.AsyncCallback(UpdateFirmwareAfterLock), this);
     }
 
     public void TurnOnHeater(M3D.Spooling.Client.AsyncCallback callback, object state, int temperature)
@@ -384,13 +384,13 @@ namespace M3D.GUI.Controller
       Vector frontRight = compensationPreprocessor.FrontRight;
       Vector backLeft = compensationPreprocessor.BackLeft;
       Vector backRight = compensationPreprocessor.BackRight;
-      foreach (var str2 in GCodeGeneration.CreatePrintTestBorder(frontLeft.x, frontLeft.y, frontRight.x, backRight.y, 1f, (float)MyFilamentProfile.Temperature, 1.75f))
+      foreach (var str2 in GCodeGeneration.CreatePrintTestBorder(frontLeft.x, frontLeft.y, frontRight.x, backRight.y, 1f, MyFilamentProfile.Temperature, 1.75f))
       {
         text.WriteLine(str2);
       }
 
       text.Close();
-      return PrintModel(callback, state, new JobParams(str1, nameof (PrintTestBorder), (string) null, MyFilamentProfile.Type, 0.0f, 0.0f) { preprocessor = MyFilamentProfile.preprocessor, filament_temperature = MyFilamentProfile.Temperature, options = { bounds_check_xy = false, autostart_ignorewarnings = true } });
+      return PrintModel(callback, state, new JobParams(str1, nameof (PrintTestBorder), null, MyFilamentProfile.Type, 0.0f, 0.0f) { preprocessor = MyFilamentProfile.preprocessor, filament_temperature = MyFilamentProfile.Temperature, options = { bounds_check_xy = false, autostart_ignorewarnings = true } });
     }
 
     public void ShowLockError(IAsyncCallResult ar)
@@ -408,7 +408,7 @@ namespace M3D.GUI.Controller
     {
       if (ar.CallResult == CommandResult.Success_LockAcquired || ar.CallResult == CommandResult.Success_LockReleased || (ar.CallResult == CommandResult.Success || ar.CallResult == CommandResult.SuccessfullyReceived))
       {
-        return (string) null;
+        return null;
       }
 
       string str;
@@ -475,7 +475,7 @@ namespace M3D.GUI.Controller
           return;
         }
 
-        asyncState.callback((IAsyncCallResult) new SimpleAsyncCallResult(asyncState.state, ar.CallResult));
+        asyncState.callback(new SimpleAsyncCallResult(asyncState.state, ar.CallResult));
       }
       else
       {
@@ -503,7 +503,7 @@ namespace M3D.GUI.Controller
           return;
         }
 
-        asyncState.callback((IAsyncCallResult) new SimpleAsyncCallResult(asyncState.state, ar.CallResult));
+        asyncState.callback(new SimpleAsyncCallResult(asyncState.state, ar.CallResult));
       }
       else
       {
@@ -516,7 +516,7 @@ namespace M3D.GUI.Controller
       var stringList = new List<string>();
       if (state.homeFirst && Info.extruder.ishomed != Trilean.True)
       {
-        if ((double)Info.extruder.position.pos.z < 2.0)
+        if (Info.extruder.position.pos.z < 2.0)
         {
           stringList.Add("G91");
           stringList.Add("G0 Z2");
@@ -524,8 +524,8 @@ namespace M3D.GUI.Controller
         stringList.Add("G28");
         stringList.Add("M114");
       }
-      stringList.AddRange((IEnumerable<string>) state.gcode);
-      var num = (int) state.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(onAutoCommand), (object) state, stringList.ToArray());
+      stringList.AddRange(state.gcode);
+      var num = (int) state.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(onAutoCommand), state, stringList.ToArray());
     }
 
     public void SendCommandAutoLockReleaseHome(M3D.Spooling.Client.AsyncCallback callback, object state, params string[] gcode)
@@ -540,14 +540,14 @@ namespace M3D.GUI.Controller
 
     public void SendCommandAutoLock(bool keeplock, bool homeIfNeeded, M3D.Spooling.Client.AsyncCallback callback, object state, params string[] gcode)
     {
-      var state1 = new PrinterObject.AutoReleaseState(callback, state, (IPrinter) this, gcode, homeIfNeeded, !keeplock);
+      var state1 = new PrinterObject.AutoReleaseState(callback, state, this, gcode, homeIfNeeded, !keeplock);
       if (HasLock)
       {
         SendGCodeAutoHome(state1);
       }
       else
       {
-        var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(onAutoLock), (object) new PrinterObject.AutoReleaseState(callback, state, (IPrinter) this, gcode, true, true));
+        var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(onAutoLock), new PrinterObject.AutoReleaseState(callback, state, (IPrinter)this, gcode, true, true));
       }
     }
 
@@ -663,28 +663,28 @@ namespace M3D.GUI.Controller
     {
       if (!true)
       {
-        messagebox.AddMessageToQueue("Your printer will begin calibrating. Are you using a clear flexible plastic print bed or a hard one?", Locale.GlobalLocale.T("T_Flexible"), Locale.GlobalLocale.T("T_Hard"), Locale.GlobalLocale.T("T_Cancel"), (PopupMessageBox.OnUserSelectionDel) ((result, type, sn, user_data) =>
-        {
-          var calibrationData = (PrinterObject.CalibrationData) user_data;
-          if (!Connected)
-          {
-            return;
-          }
+        messagebox.AddMessageToQueue("Your printer will begin calibrating. Are you using a clear flexible plastic print bed or a hard one?", Locale.GlobalLocale.T("T_Flexible"), Locale.GlobalLocale.T("T_Hard"), Locale.GlobalLocale.T("T_Cancel"), (result, type, sn, user_data) =>
+       {
+         var calibrationData = (PrinterObject.CalibrationData)user_data;
+         if (!Connected)
+         {
+           return;
+         }
 
-          if (result == PopupMessageBox.PopupResult.Button1_YesOK)
-          {
-            CalibrationWorker(callback, state, calibrationData.mode, 0.4f);
-          }
-          else
-          {
-            if (result != PopupMessageBox.PopupResult.Button2_NoCancel)
-            {
-              return;
-            }
+         if (result == PopupMessageBox.PopupResult.Button1_YesOK)
+         {
+           CalibrationWorker(callback, state, calibrationData.mode, 0.4f);
+         }
+         else
+         {
+           if (result != PopupMessageBox.PopupResult.Button2_NoCancel)
+           {
+             return;
+           }
 
-            CalibrationWorker(callback, state, calibrationData.mode, 0.0f);
-          }
-        }), (object) new PrinterObject.CalibrationData(mode));
+           CalibrationWorker(callback, state, calibrationData.mode, 0.0f);
+         }
+       }, new PrinterObject.CalibrationData(mode));
       }
       else
       {
@@ -694,26 +694,28 @@ namespace M3D.GUI.Controller
 
     public void RequestCalibrationFromUser(M3D.Spooling.Client.AsyncCallback callback, object state, PrinterObject.CalibrationType mode)
     {
-      messagebox.AddMessageToQueue(new SpoolerMessage(mode != PrinterObject.CalibrationType.CalibrateFull_G32 ? MessageType.BedLocationMustBeCalibrated : MessageType.BedOrientationMustBeCalibrated, Info.serial_number, (string) null), PopupMessageBox.MessageBoxButtons.YESNO, (PopupMessageBox.OnUserSelectionDel) ((result, type, sn, user_data) =>
-      {
-        if (result != PopupMessageBox.PopupResult.Button1_YesOK || !(sn == Info.serial_number) || !Connected)
-        {
-          return;
-        }
+      messagebox.AddMessageToQueue(new SpoolerMessage(mode != PrinterObject.CalibrationType.CalibrateFull_G32 ? MessageType.BedLocationMustBeCalibrated : MessageType.BedOrientationMustBeCalibrated, Info.serial_number, null), PopupMessageBox.MessageBoxButtons.YESNO, (result, type, sn, user_data) =>
+     {
+       if (result != PopupMessageBox.PopupResult.Button1_YesOK || !(sn == Info.serial_number) || !Connected)
+       {
+         return;
+       }
 
-        var num = (int)AcquireLock((M3D.Spooling.Client.AsyncCallback) (ar =>
-        {
-          var asyncState = ar.AsyncState as PrinterObject.CalibrationDataCallback;
-          CalibrateBed(asyncState.callback, asyncState.state, asyncState.mode);
-        }), (object) new PrinterObject.CalibrationDataCallback(callback, state, mode));
-      }), (object) new PrinterObject.CalibrationData(mode));
+       var num = (int)AcquireLock((M3D.Spooling.Client.AsyncCallback)(ar =>
+       {
+         var asyncState = ar.AsyncState as PrinterObject.CalibrationDataCallback;
+         CalibrateBed(asyncState.callback, asyncState.state, asyncState.mode);
+       }), (object)new PrinterObject.CalibrationDataCallback(callback, state, mode));
+     }, new PrinterObject.CalibrationData(mode));
     }
 
     private void CalibrationWorker(M3D.Spooling.Client.AsyncCallback callback, object state, PrinterObject.CalibrationType mode, float z_offset)
     {
-      var stringList = new List<string>();
-      stringList.Add("G91");
-      stringList.Add("M104 S150");
+      var stringList = new List<string>
+      {
+        "G91",
+        "M104 S150"
+      };
       if (PrinterObject.IsProfileMemberOfFamily(MyPrinterProfile.ProfileName, "Pro"))
       {
         stringList.Add("G0 Z8 F300");
@@ -737,11 +739,11 @@ namespace M3D.GUI.Controller
 
       if (mode == PrinterObject.CalibrationType.CalibrateFull_G32)
       {
-        stringList.Add("G32 Z" + (object) z_offset);
+        stringList.Add("G32 Z" + z_offset);
       }
       else
       {
-        stringList.Add("G30 Z" + (object) z_offset);
+        stringList.Add("G30 Z" + z_offset);
       }
 
       stringList.Add("M104 S0");
@@ -755,7 +757,7 @@ namespace M3D.GUI.Controller
       var message = new SpoolerMessage(MessageType.UserDefined, Info.serial_number, "");
       var imageWidget = CreateImageWidget(Info.serial_number.ToString());
       var xmlsource = "<?xml version=\"1.0\" encoding=\"utf-16\"?><XMLFrame id=\"1000\" width=\"550\" height=\"300\" center-vertically=\"1\" center-horizontally=\"1\">    <ImageWidget id=\"1001\" x=\"0\" y=\"0\" relative-width=\"1.0\" relative-height=\"1.0\" src=\"guicontrols\" texture-u0=\"640\" texture-v0=\"320\" texture-u1=\"704\" texture-v1=\"383\" center-vertically=\"1\" center-horizontally=\"1\" leftbordersize-pixels=\"41\" rightbordersize-pixels=\"8\" minimumwidth=\"64\" topbordersize-pixels=\"35\" bottombordersize-pixels=\"8\" minimumheight=\"64\" />    <TextWidget id=\"1002\" x=\"50\" y=\"2\" width=\"298\" height=\"35\" font-size=\"Large\" font-color=\"#FF808080\" alignment=\"Left\">Firmware Update</TextWidget>    <XMLFrame id=\"1004\" x=\"190\" y=\"20\" width=\"330\" height=\"260\">        <TextWidget id=\"1003\" x=\"0\" y=\"32\" relative-width=\"1.0\" height=\"110\" font-size=\"Medium\" font-color=\"#FF404040\" alignment=\"Centre\">" + Locale.GlobalLocale.T("T_FIRMWARE_UPDATE_REQUIRED") + "</TextWidget>        <ButtonWidget id=\"2000\" x=\"20\" y=\"132\" width=\"200\" height=\"48\" font-size=\"Large\" alignment=\"Centre\" has_focus=\"1\" center-horizontally=\"1\">Update Now</ButtonWidget>    </XMLFrame>" + imageWidget + "</XMLFrame>";
-      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(message, xmlsource, new PopupMessageBox.XMLButtonCallback(OnFirmwareUpdateButton), (object) null, new ElementStandardDelegate(OnFirmwareOnUpdateCallback)));
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(message, xmlsource, new PopupMessageBox.XMLButtonCallback(OnFirmwareUpdateButton), null, new ElementStandardDelegate(OnFirmwareOnUpdateCallback)));
     }
 
     private void SendFirmwareUpdate()
@@ -763,7 +765,7 @@ namespace M3D.GUI.Controller
       var message = new SpoolerMessage(MessageType.UserDefined, Info.serial_number, "");
       ok_sent = false;
       update_firmware_timer.Start();
-      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(message, GenerateFirmwareUpdateXML(Info.serial_number.ToString()), (PopupMessageBox.XMLButtonCallback) null, (object) null, new ElementStandardDelegate(OnFirmwareOnUpdateCallback)));
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(message, GenerateFirmwareUpdateXML(Info.serial_number.ToString()), null, null, new ElementStandardDelegate(OnFirmwareOnUpdateCallback)));
     }
 
     private void OnFirmwareUpdateButton(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)
@@ -775,12 +777,12 @@ namespace M3D.GUI.Controller
 
       if (childFrame.Host != null)
       {
-        childFrame.Host.SetFocus((Element2D) null);
+        childFrame.Host.SetFocus(null);
       }
 
-      childFrame.Init(childFrame.Host, GenerateFirmwareUpdateXML(Info.serial_number.ToString()), (ButtonCallback) null);
+      childFrame.Init(childFrame.Host, GenerateFirmwareUpdateXML(Info.serial_number.ToString()), null);
       childFrame.DoOnUpdate = new ElementStandardDelegate(OnFirmwareOnUpdateCallback);
-      var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(UpdateFirmwareAfterLock), (object) this);
+      var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(UpdateFirmwareAfterLock), this);
       ok_sent = false;
       update_firmware_timer.Start();
     }
@@ -793,7 +795,7 @@ namespace M3D.GUI.Controller
       }
       else
       {
-        var num = (int)DoFirmwareUpdate(new M3D.Spooling.Client.AsyncCallback(VerifyPrinterResults), (object) this);
+        var num = (int)DoFirmwareUpdate(new M3D.Spooling.Client.AsyncCallback(VerifyPrinterResults), this);
       }
     }
 
@@ -862,12 +864,12 @@ namespace M3D.GUI.Controller
     private string CreateImageWidget(string sn)
     {
       ImageResourceMapping.PixelCoordinate pixelCoordinate = ImageResourceMapping.PrinterColorPosition(sn);
-      return "<ImageWidget id=\"1001\" text-area-height=\"20\" image-area-width=\"130\" x=\"30\" y=\"80\" width=\"150\" height=\"150\" src=\"extendedcontrols\" " + string.Format("texture-u0=\"{0}\" texture-v0=\"{1}\" texture-u1=\"{2}\" texture-v1=\"{3}\" vertical-alignment=\"Bottom\" font-size=\"Small\">", (object) pixelCoordinate.u0, (object) pixelCoordinate.v0, (object) pixelCoordinate.u1, (object) pixelCoordinate.v1) + Info.serial_number.ToString() + "</ImageWidget>";
+      return "<ImageWidget id=\"1001\" text-area-height=\"20\" image-area-width=\"130\" x=\"30\" y=\"80\" width=\"150\" height=\"150\" src=\"extendedcontrols\" " + string.Format("texture-u0=\"{0}\" texture-v0=\"{1}\" texture-u1=\"{2}\" texture-v1=\"{3}\" vertical-alignment=\"Bottom\" font-size=\"Small\">", pixelCoordinate.u0, pixelCoordinate.v0, pixelCoordinate.u1, pixelCoordinate.v1) + Info.serial_number.ToString() + "</ImageWidget>";
     }
 
     public void SendGantryClipMessage()
     {
-      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(MessageType.CheckGantryClips, Info.serial_number, ""), "<?xml version=\"1.0\" encoding=\"utf-16\"?>  <XMLFrame id=\"1000\" width=\"700\" height=\"420\" center-vertically=\"1\" center-horizontally=\"1\">    <ImageWidget id=\"1000\" x=\"0\" y=\"0\" relative-width=\"1.0\" relative-height=\"1.0\" src=\"guicontrols\" texture-u0=\"768\" texture-v0=\"384\" texture-u1=\"895\" texture-v1=\"511\" leftbordersize-pixels=\"12\" rightbordersize-pixels=\"12\" minimumwidth=\"128\" topbordersize-pixels=\"12\" bottombordersize-pixels=\"12\" minimumheight=\"128\" />    <ImageWidget id=\"1001\" x=\"10\" y=\"10\" width=\"397\" height=\"397\" src=\"extendedcontrols\" texture-u0=\"450\" texture-v0=\"194\" texture-u1=\"847\" texture-v1=\"591\" center-vertically=\"1\" />    <ImageWidget id=\"1002\" x=\"-160\" y=\"-40\" width=\"129\" height=\"31\" src=\"guicontrols\" texture-u0=\"0\" texture-v0=\"737\" texture-u1=\"128\" texture-v1=\"767\" />    <TextWidget id=\"1003\" x=\"418\" y=\"20\" width=\"272\" height=\"64\" font-size=\"Large\" font-color=\"#FFff6600\" alignment=\"Centre\">A new 3D printer has been connected.</TextWidget>    <XMLFrame id=\"1004\" x=\"418\" y=\"84\" width=\"272\" height=\"336\" center-vertically=\"0\">        <TextWidget id=\"1005\" x=\"0\" y=\"0\" relative-width=\"1.0\" height=\"150\" font-size=\"Medium\" font-color=\"#FF646464\" alignment=\"Centre\" center-horizontally=\"1\">Before continuing, the printer needs to verify that it's gantry clips have been removed. Please make sure the gantry clips have been removed and that the print area is clear.        </TextWidget>        <ButtonWidget id=\"1006\" x=\"20\" y=\"-164\" width=\"100\" height=\"48\" font-size=\"Large\" alignment=\"Centre\" has_focus=\"1\">Verify</ButtonWidget>        <ButtonWidget id=\"1007\" x=\"-120\" y=\"-164\" width=\"100\" height=\"48\" font-size=\"Large\" alignment=\"Centre\">Cancel</ButtonWidget>    </XMLFrame></XMLFrame>", new PopupMessageBox.XMLButtonCallback(OnGantryClipButton), (object) null, new ElementStandardDelegate(CloseIfNotConnected)));
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(MessageType.CheckGantryClips, Info.serial_number, ""), "<?xml version=\"1.0\" encoding=\"utf-16\"?>  <XMLFrame id=\"1000\" width=\"700\" height=\"420\" center-vertically=\"1\" center-horizontally=\"1\">    <ImageWidget id=\"1000\" x=\"0\" y=\"0\" relative-width=\"1.0\" relative-height=\"1.0\" src=\"guicontrols\" texture-u0=\"768\" texture-v0=\"384\" texture-u1=\"895\" texture-v1=\"511\" leftbordersize-pixels=\"12\" rightbordersize-pixels=\"12\" minimumwidth=\"128\" topbordersize-pixels=\"12\" bottombordersize-pixels=\"12\" minimumheight=\"128\" />    <ImageWidget id=\"1001\" x=\"10\" y=\"10\" width=\"397\" height=\"397\" src=\"extendedcontrols\" texture-u0=\"450\" texture-v0=\"194\" texture-u1=\"847\" texture-v1=\"591\" center-vertically=\"1\" />    <ImageWidget id=\"1002\" x=\"-160\" y=\"-40\" width=\"129\" height=\"31\" src=\"guicontrols\" texture-u0=\"0\" texture-v0=\"737\" texture-u1=\"128\" texture-v1=\"767\" />    <TextWidget id=\"1003\" x=\"418\" y=\"20\" width=\"272\" height=\"64\" font-size=\"Large\" font-color=\"#FFff6600\" alignment=\"Centre\">A new 3D printer has been connected.</TextWidget>    <XMLFrame id=\"1004\" x=\"418\" y=\"84\" width=\"272\" height=\"336\" center-vertically=\"0\">        <TextWidget id=\"1005\" x=\"0\" y=\"0\" relative-width=\"1.0\" height=\"150\" font-size=\"Medium\" font-color=\"#FF646464\" alignment=\"Centre\" center-horizontally=\"1\">Before continuing, the printer needs to verify that it's gantry clips have been removed. Please make sure the gantry clips have been removed and that the print area is clear.        </TextWidget>        <ButtonWidget id=\"1006\" x=\"20\" y=\"-164\" width=\"100\" height=\"48\" font-size=\"Large\" alignment=\"Centre\" has_focus=\"1\">Verify</ButtonWidget>        <ButtonWidget id=\"1007\" x=\"-120\" y=\"-164\" width=\"100\" height=\"48\" font-size=\"Large\" alignment=\"Centre\">Cancel</ButtonWidget>    </XMLFrame></XMLFrame>", new PopupMessageBox.XMLButtonCallback(OnGantryClipButton), null, new ElementStandardDelegate(CloseIfNotConnected)));
     }
 
     private void OnGantryClipButton(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)
@@ -887,11 +889,11 @@ namespace M3D.GUI.Controller
         var xmlScript = "<?xml version=\"1.0\" encoding=\"utf-16\"?>  <XMLFrame id=\"1000\" width=\"700\" height=\"420\" center-vertically=\"1\" center-horizontally=\"1\">    <ImageWidget id=\"1000\" x=\"0\" y=\"0\" relative-width=\"1.0\" relative-height=\"1.0\" src=\"guicontrols\" texture-u0=\"768\" texture-v0=\"384\" texture-u1=\"895\" texture-v1=\"511\" leftbordersize-pixels=\"12\" rightbordersize-pixels=\"12\" minimumwidth=\"128\" topbordersize-pixels=\"12\" bottombordersize-pixels=\"12\" minimumheight=\"128\" />    <ImageWidget id=\"1001\" x=\"10\" y=\"10\" width=\"397\" height=\"397\" src=\"extendedcontrols\" texture-u0=\"450\" texture-v0=\"194\" texture-u1=\"847\" texture-v1=\"591\" center-vertically=\"1\"></ImageWidget>    <ImageWidget id=\"1002\" x=\"-160\" y=\"-40\" width=\"129\" height=\"31\" src=\"guicontrols\" texture-u0=\"0\" texture-v0=\"737\" texture-u1=\"128\" texture-v1=\"767\"></ImageWidget>    <TextWidget id=\"1003\" x=\"418\" y=\"20\" width=\"272\" height=\"64\" font-size=\"Large\" font-color=\"#FFff6600\" alignment=\"Centre\">Please wait. Your printer is being tested.</TextWidget>    <XMLFrame id=\"1004\" x=\"418\" y=\"42\" width=\"272\" height=\"336\" center-vertically=\"0\">        <SpriteAnimationWidget id=\"1001\" x=\"0\" y=\"0\" width=\"128\" height=\"108\" src=\"guicontrols\" texture-u0=\"0\" texture-v0=\"768\" texture-u1=\"767\" texture-v1=\"1023\" center-vertically=\"1\" center-horizontally=\"1\" columns=\"6\" rows=\"2\" frames=\"12\" frame-time=\"200\" />    </XMLFrame></XMLFrame>";
         if (childFrame.Host != null)
         {
-          childFrame.Host.SetFocus((Element2D) null);
+          childFrame.Host.SetFocus(null);
         }
 
-        childFrame.Init(childFrame.Host, xmlScript, (ButtonCallback) null);
-        var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(GantryClipCallBack), (object) PrinterObject.GantryClipStep.Step1_Lock);
+        childFrame.Init(childFrame.Host, xmlScript, null);
+        var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(GantryClipCallBack), PrinterObject.GantryClipStep.Step1_Lock);
       }
     }
 
@@ -900,11 +902,11 @@ namespace M3D.GUI.Controller
       var asyncState = (PrinterObject.GantryClipStep) ar.AsyncState;
       if (asyncState == PrinterObject.GantryClipStep.Step1_Lock && ar.CallResult == CommandResult.Success_LockAcquired)
       {
-        var num1 = (int)SendManualGCode(new M3D.Spooling.Client.AsyncCallback(GantryClipCallBack), (object) PrinterObject.GantryClipStep.Step2_SendM583, "M583");
+        var num1 = (int)SendManualGCode(new M3D.Spooling.Client.AsyncCallback(GantryClipCallBack), PrinterObject.GantryClipStep.Step2_SendM583, "M583");
       }
       else if (asyncState == PrinterObject.GantryClipStep.Step2_SendM583 && ar.CallResult == CommandResult.Success)
       {
-        var num2 = (int)ReleaseLock(new M3D.Spooling.Client.AsyncCallback(GantryClipCallBack), (object) PrinterObject.GantryClipStep.Step3_CheckStateAndRelease);
+        var num2 = (int)ReleaseLock(new M3D.Spooling.Client.AsyncCallback(GantryClipCallBack), PrinterObject.GantryClipStep.Step3_CheckStateAndRelease);
       }
       else if (asyncState == PrinterObject.GantryClipStep.Step3_CheckStateAndRelease && ar.CallResult == CommandResult.Success_LockReleased)
       {
@@ -946,7 +948,7 @@ namespace M3D.GUI.Controller
 
     public void SendCalibrationOutofDateMessage(M3D.Spooling.Client.AsyncCallback callback, object state)
     {
-      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(MessageType.CheckGantryClips, Info.serial_number, ""), "<?xml version=\"1.0\" encoding=\"utf-16\"?>  <XMLFrame id=\"1000\" width=\"700\" height=\"420\" center-vertically=\"1\" center-horizontally=\"1\">    <ImageWidget id=\"1000\" x=\"0\" y=\"0\" relative-width=\"1.0\" relative-height=\"1.0\" src=\"guicontrols\" texture-u0=\"768\" texture-v0=\"384\" texture-u1=\"895\" texture-v1=\"511\" leftbordersize-pixels=\"12\" rightbordersize-pixels=\"12\" minimumwidth=\"128\" topbordersize-pixels=\"12\" bottombordersize-pixels=\"12\" minimumheight=\"128\" />    <ImageWidget id=\"1001\" x=\"10\" y=\"10\" width=\"367\" height=\"282\" src=\"extendedcontrols\" texture-u0=\"448\" texture-v0=\"592\" texture-u1=\"814\" texture-v1=\"873\" center-vertically=\"1\" />    <ImageWidget id=\"1002\" x=\"-160\" y=\"-40\" width=\"129\" height=\"31\" src=\"guicontrols\" texture-u0=\"0\" texture-v0=\"737\" texture-u1=\"128\" texture-v1=\"767\" />    <TextWidget id=\"1003\" x=\"400\" y=\"60\" width=\"272\" height=\"64\" font-size=\"Large\" font-color=\"#FFff6600\" alignment=\"Centre\">Calibration Update Available</TextWidget>    <XMLFrame id=\"1004\" x=\"400\" y=\"124\" width=\"272\" height=\"336\" center-vertically=\"0\">        <TextWidget id=\"1005\" x=\"0\" y=\"0\" relative-width=\"1.0\" height=\"150\" font-size=\"Medium\" font-color=\"#FF646464\" alignment=\"Centre\" center-horizontally=\"1\">Print calibration has been updated. Before continuing, it is highly recommended that the printer be recalibrated.\n\nThis may take up to 30 minutes.        </TextWidget>        <ButtonWidget id=\"1006\" x=\"20\" y=\"-164\" width=\"100\" height=\"48\" font-size=\"Large\" alignment=\"Centre\">Calibrate</ButtonWidget>        <ButtonWidget id=\"1007\" x=\"-120\" y=\"-164\" width=\"100\" height=\"48\" font-size=\"Large\" alignment=\"Centre\">Ignore</ButtonWidget>    </XMLFrame></XMLFrame>", new PopupMessageBox.XMLButtonCallback(OnCalibrationOutOfDateButton), (object) new PrinterObject.CalibrationDataCallback(callback, state, PrinterObject.CalibrationType.CalibrateFull_G32)));
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(new SpoolerMessage(MessageType.CheckGantryClips, Info.serial_number, ""), "<?xml version=\"1.0\" encoding=\"utf-16\"?>  <XMLFrame id=\"1000\" width=\"700\" height=\"420\" center-vertically=\"1\" center-horizontally=\"1\">    <ImageWidget id=\"1000\" x=\"0\" y=\"0\" relative-width=\"1.0\" relative-height=\"1.0\" src=\"guicontrols\" texture-u0=\"768\" texture-v0=\"384\" texture-u1=\"895\" texture-v1=\"511\" leftbordersize-pixels=\"12\" rightbordersize-pixels=\"12\" minimumwidth=\"128\" topbordersize-pixels=\"12\" bottombordersize-pixels=\"12\" minimumheight=\"128\" />    <ImageWidget id=\"1001\" x=\"10\" y=\"10\" width=\"367\" height=\"282\" src=\"extendedcontrols\" texture-u0=\"448\" texture-v0=\"592\" texture-u1=\"814\" texture-v1=\"873\" center-vertically=\"1\" />    <ImageWidget id=\"1002\" x=\"-160\" y=\"-40\" width=\"129\" height=\"31\" src=\"guicontrols\" texture-u0=\"0\" texture-v0=\"737\" texture-u1=\"128\" texture-v1=\"767\" />    <TextWidget id=\"1003\" x=\"400\" y=\"60\" width=\"272\" height=\"64\" font-size=\"Large\" font-color=\"#FFff6600\" alignment=\"Centre\">Calibration Update Available</TextWidget>    <XMLFrame id=\"1004\" x=\"400\" y=\"124\" width=\"272\" height=\"336\" center-vertically=\"0\">        <TextWidget id=\"1005\" x=\"0\" y=\"0\" relative-width=\"1.0\" height=\"150\" font-size=\"Medium\" font-color=\"#FF646464\" alignment=\"Centre\" center-horizontally=\"1\">Print calibration has been updated. Before continuing, it is highly recommended that the printer be recalibrated.\n\nThis may take up to 30 minutes.        </TextWidget>        <ButtonWidget id=\"1006\" x=\"20\" y=\"-164\" width=\"100\" height=\"48\" font-size=\"Large\" alignment=\"Centre\">Calibrate</ButtonWidget>        <ButtonWidget id=\"1007\" x=\"-120\" y=\"-164\" width=\"100\" height=\"48\" font-size=\"Large\" alignment=\"Centre\">Ignore</ButtonWidget>    </XMLFrame></XMLFrame>", new PopupMessageBox.XMLButtonCallback(OnCalibrationOutOfDateButton), new PrinterObject.CalibrationDataCallback(callback, state, PrinterObject.CalibrationType.CalibrateFull_G32)));
     }
 
     private void OnCalibrationOutOfDateButton(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)
@@ -975,7 +977,7 @@ namespace M3D.GUI.Controller
 
     public override SpoolerResult SetFilamentInfo(M3D.Spooling.Client.AsyncCallback callback, object state, FilamentSpool info)
     {
-      if (info == (FilamentSpool) null)
+      if (info == null)
       {
         return SetFilamentToNone(callback, state);
       }
@@ -986,7 +988,7 @@ namespace M3D.GUI.Controller
 
     public override SpoolerResult SetFilamentToNone(M3D.Spooling.Client.AsyncCallback callback, object state)
     {
-      filament_profile = (FilamentProfile) null;
+      filament_profile = null;
       return base.SetFilamentToNone(callback, state);
     }
 
@@ -1020,7 +1022,7 @@ namespace M3D.GUI.Controller
     {
       if (result == PopupMessageBox.PopupResult.Button1_YesOK)
       {
-        messagebox.AddMessageToQueue(new PopupMessageBox.MessageDataStandard(new SpoolerMessage(MessageType.UserDefined, "Was the extruder head moved manually after power failure? If so, we must re-home the extruder and accuracy of the continued print may be somewhat degraded."), PopupMessageBox.MessageBoxButtons.CUSTOM, new PopupMessageBox.OnUserSelectionDel(OnPowerOutageConfirmG28MessageBox), (object) null)
+        messagebox.AddMessageToQueue(new PopupMessageBox.MessageDataStandard(new SpoolerMessage(MessageType.UserDefined, "Was the extruder head moved manually after power failure? If so, we must re-home the extruder and accuracy of the continued print may be somewhat degraded."), PopupMessageBox.MessageBoxButtons.CUSTOM, new PopupMessageBox.OnUserSelectionDel(OnPowerOutageConfirmG28MessageBox), null)
         {
           custom_button1_text = "Yes\nHead was moved",
           custom_button2_text = "No\nHead was not moved",
@@ -1030,7 +1032,7 @@ namespace M3D.GUI.Controller
       }
       else
       {
-        var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), (object) PrinterObject.PowerOutageAction.ClearFault);
+        var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), PrinterObject.PowerOutageAction.ClearFault);
       }
     }
 
@@ -1038,7 +1040,7 @@ namespace M3D.GUI.Controller
     {
       if (result == PopupMessageBox.PopupResult.Button1_YesOK)
       {
-        var num1 = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), (object) PrinterObject.PowerOutageAction.RecoverG28);
+        var num1 = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), PrinterObject.PowerOutageAction.RecoverG28);
       }
       else
       {
@@ -1047,7 +1049,7 @@ namespace M3D.GUI.Controller
           return;
         }
 
-        var num2 = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), (object) PrinterObject.PowerOutageAction.Recover);
+        var num2 = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), PrinterObject.PowerOutageAction.Recover);
       }
     }
 
@@ -1063,14 +1065,14 @@ namespace M3D.GUI.Controller
         switch (asyncState)
         {
           case PrinterObject.PowerOutageAction.ClearFault:
-            var num1 = (int)ClearPowerRecoveryFault(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), (object) PrinterObject.PowerOutageAction.Release);
+            var num1 = (int)ClearPowerRecoveryFault(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), PrinterObject.PowerOutageAction.Release);
             break;
           case PrinterObject.PowerOutageAction.Recover:
           case PrinterObject.PowerOutageAction.RecoverG28:
-            var num2 = (int)RecoveryPrintFromPowerFailure(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), (object) PrinterObject.PowerOutageAction.Release, PrinterObject.PowerOutageAction.RecoverG28 == asyncState);
+            var num2 = (int)RecoveryPrintFromPowerFailure(new M3D.Spooling.Client.AsyncCallback(PowerRecoveryAfterLock), PrinterObject.PowerOutageAction.Release, PrinterObject.PowerOutageAction.RecoverG28 == asyncState);
             break;
           default:
-            var num3 = (int)ReleaseLock((M3D.Spooling.Client.AsyncCallback) null, (object) null);
+            var num3 = (int)ReleaseLock(null, null);
             break;
         }
       }
@@ -1080,7 +1082,7 @@ namespace M3D.GUI.Controller
 
     public void AutoLockAndPrint(JobParams UserJob)
     {
-      var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(OnLockForPrintGCode), (object) UserJob);
+      var num = (int)AcquireLock(new M3D.Spooling.Client.AsyncCallback(OnLockForPrintGCode), UserJob);
     }
 
     private void OnLockForPrintGCode(IAsyncCallResult ar)
@@ -1088,7 +1090,7 @@ namespace M3D.GUI.Controller
       var asyncState = (JobParams) ar.AsyncState;
       if (ar.CallResult == CommandResult.Success_LockAcquired)
       {
-        var num = (int)PrintModel((M3D.Spooling.Client.AsyncCallback) null, (object) null, asyncState);
+        var num = (int)PrintModel(null, null, asyncState);
       }
       else
       {

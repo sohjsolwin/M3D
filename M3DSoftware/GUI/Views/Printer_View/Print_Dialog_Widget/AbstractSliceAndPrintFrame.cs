@@ -29,20 +29,20 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       var messageFromQueue = SlicerConnection.GetMessageFromQueue();
       if (messageFromQueue == "Slicer Started")
       {
-        bHasSlicerStarted = true;
+        BHasSlicerStarted = true;
       }
       else if (messageFromQueue == "Slicer Finished")
       {
-        bHasSlicerStarted = false;
-        bHasSlicingCompleted = true;
+        BHasSlicerStarted = false;
+        BHasSlicingCompleted = true;
       }
       return messageFromQueue;
     }
 
     public void ResetSlicerState()
     {
-      bHasSlicerStarted = false;
-      bHasSlicingCompleted = false;
+      BHasSlicerStarted = false;
+      BHasSlicingCompleted = false;
     }
 
     public void StartSlicer(M3D.Slicer.General.PrintSettings printsettings)
@@ -64,7 +64,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         filepath = objectDetails.filename;
       }
       var splitFileName = new SplitFileName(filepath);
-      var jobParams = new JobParams(gcodefile, splitFileName.name + "." + splitFileName.ext, currentJobDetails.preview_image, FilamentSpool.TypeEnum.OtherOrUnknown, (float)(int)currentJobDetails.Estimated_Print_Time, currentJobDetails.Estimated_Filament)
+      var jobParams = new JobParams(gcodefile, splitFileName.name + "." + splitFileName.ext, currentJobDetails.preview_image, FilamentSpool.TypeEnum.OtherOrUnknown, (int)currentJobDetails.Estimated_Print_Time, currentJobDetails.Estimated_Filament)
       {
         options = currentJobDetails.jobOptions,
         preprocessor = currentJobDetails.printer.MyFilamentProfile.preprocessor,
@@ -85,12 +85,12 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         jobParams.jobMode = !currentJobDetails.sdSaveOnly_print ? JobParams.Mode.SavingToSDCardAutoStartPrint : JobParams.Mode.SavingToSDCard;
       }
 
-      var num = (int) currentJobDetails.printer.PrintModel(OnPrintJobStarted, (object) currentJobDetails.printer, jobParams);
+      var num = (int) currentJobDetails.printer.PrintModel(OnPrintJobStarted, currentJobDetails.printer, jobParams);
     }
 
-    protected bool bHasSlicingCompleted { get; private set; }
+    protected bool BHasSlicingCompleted { get; private set; }
 
-    protected bool bHasSlicerStarted
+    protected bool BHasSlicerStarted
     {
       get
       {

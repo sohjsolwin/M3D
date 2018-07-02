@@ -45,8 +45,8 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       var frame = new Frame(1);
       var color4_1 = new Color4(0.35f, 0.35f, 0.35f, 1f);
       var color4_2 = new Color4(1f, 1f, 1f, 1f);
-      var color4_3 = new Color4((byte) 246, (byte) 246, (byte) 246, byte.MaxValue);
-      var color4_4 = new Color4((byte) 220, (byte) 220, (byte) 220, byte.MaxValue);
+      var color4_3 = new Color4(246, 246, 246, byte.MaxValue);
+      var color4_4 = new Color4(220, 220, 220, byte.MaxValue);
       var textWidget1 = new TextWidget(0)
       {
         Color = color4_1,
@@ -56,7 +56,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
         Alignment = QFontAlignment.Centre
       };
       textWidget1.SetPosition(0, 40);
-      AddChildElement((Element2D) textWidget1);
+      AddChildElement(textWidget1);
       var imageWidget = new ImageWidget(0);
       imageWidget.Init(Host, "extendedcontrols", 0.0f, 256f, 290f, 381f, 0.0f, 256f, 448f, 511f, 0.0f, 256f, 448f, 511f);
       imageWidget.Width = 290;
@@ -64,7 +64,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       imageWidget.X = 100;
       imageWidget.Y = 40;
       imageWidget.CenterHorizontallyInParent = true;
-      frame.AddChildElement((Element2D) imageWidget);
+      frame.AddChildElement(imageWidget);
       var textWidget2 = new TextWidget(1)
       {
         Text = "Enter cheat code or filament type:"
@@ -72,16 +72,16 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       textWidget2.SetSize(150, 100);
       textWidget2.SetPositionRelative(0.25f, 0.6f);
       textWidget2.Color = color4_1;
-      frame.AddChildElement((Element2D) textWidget2);
-      CheatEdit = new MultiBoxEditBoxWidget(13, (Element2D) null);
+      frame.AddChildElement(textWidget2);
+      CheatEdit = new MultiBoxEditBoxWidget(13, null);
       CheatEdit.Init(Host, 3, 1);
       CheatEdit.SetSize(150, 32);
       CheatEdit.SetPositionRelative(0.55f, 0.75f);
       CheatEdit.Color = color4_1;
       CheatEdit.SetCallbackEnterKey(new MultiBoxEditBoxWidget.EditBoxCallback(CheatCodeEnterCallBack));
-      frame.AddChildElement((Element2D)CheatEdit);
+      frame.AddChildElement(CheatEdit);
       var buttonWidget1 = new ButtonWidget(11);
-      buttonWidget1.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      buttonWidget1.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget1.Size = FontSize.Medium;
       buttonWidget1.Text = "Cancel";
       buttonWidget1.SetGrowableWidth(4, 4, 32);
@@ -90,9 +90,9 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       buttonWidget1.SetPosition(20, -50);
       buttonWidget1.SetPositionRelative(0.025f, -1000f);
       buttonWidget1.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget1);
+      AddChildElement(buttonWidget1);
       var buttonWidget2 = new ButtonWidget(12);
-      buttonWidget2.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      buttonWidget2.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget2.Size = FontSize.Medium;
       buttonWidget2.Text = "Next";
       buttonWidget2.SetGrowableWidth(4, 4, 32);
@@ -101,7 +101,7 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       buttonWidget2.SetPosition(400, -50);
       buttonWidget2.SetPositionRelative(0.8f, -1000f);
       buttonWidget2.SetCallback(new ButtonCallback(((Manage3DInkChildWindow) this).MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget2);
+      AddChildElement(buttonWidget2);
       frame.BGColor = color4_3;
       frame.BorderColor = color4_4;
       frame.SetSizeRelative(1f, 0.6f);
@@ -109,14 +109,14 @@ namespace M3D.GUI.ManageFilament.Child_Frames
       BGColor = color4_2;
       SetSizeRelative(1f, 0.9f);
       SetPositionRelative(0.0f, 0.05f);
-      AddChildElement((Element2D) frame);
+      AddChildElement(frame);
     }
 
     public override void OnActivate(Mangage3DInkStageDetails details)
     {
       base.OnActivate(details);
       CheatEdit.Text = "";
-      Host.SetFocus((Element2D)CheatEdit);
+      Host.SetFocus(CheatEdit);
     }
 
     public void CheatCodeEnterCallBack(MultiBoxEditBoxWidget edit)

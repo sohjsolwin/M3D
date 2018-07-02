@@ -14,7 +14,7 @@ namespace M3D.GUI.Views.Printer_View
     private PrinterView printerview;
 
     public EditViewControlBar(int ID, PrinterView printerview)
-      : this(ID, printerview, (Element2D) null)
+      : this(ID, printerview, null)
     {
     }
 
@@ -27,7 +27,7 @@ namespace M3D.GUI.Views.Printer_View
     public void Init(GUIHost host)
     {
       resetview_button = new ButtonWidget(8002);
-      resetview_button.Init(host, "guicontrols", (float) sbyte.MaxValue, 257f, 275f, 340f, (float) sbyte.MaxValue, 342f, 275f, 425f, (float) sbyte.MaxValue, 427f, 275f, 510f, (float) sbyte.MaxValue, 512f, 275f, 595f);
+      resetview_button.Init(host, "guicontrols", sbyte.MaxValue, 257f, 275f, 340f, sbyte.MaxValue, 342f, 275f, 425f, sbyte.MaxValue, 427f, 275f, 510f, sbyte.MaxValue, 512f, 275f, 595f);
       resetview_button.Text = "";
       resetview_button.Size = FontSize.Medium;
       resetview_button.TextColor = new Color4(0.0f, 0.0f, 0.0f, 1f);
@@ -72,9 +72,9 @@ namespace M3D.GUI.Views.Printer_View
         Width = resetview_button.Width + print_button.Width + centermodel_button.Width,
         Height = print_button.Height
       };
-      frame.AddChildElement((Element2D)resetview_button);
-      frame.AddChildElement((Element2D)print_button);
-      frame.AddChildElement((Element2D)centermodel_button);
+      frame.AddChildElement(resetview_button);
+      frame.AddChildElement(print_button);
+      frame.AddChildElement(centermodel_button);
       frame.Y = 0;
       frame.CenterHorizontallyInParent = true;
       backtolibrary_button = new ButtonWidget(8005);
@@ -91,8 +91,8 @@ namespace M3D.GUI.Views.Printer_View
       backtolibrary_button.SetCallback(new ButtonCallback(MyButtonCallback));
       backtolibrary_button.ToolTipMessage = host.Locale.T("T_TOOLTIP_BACKTOLIBRARY");
       Sprite.pixel_perfect = false;
-      AddChildElement((Element2D) frame);
-      AddChildElement((Element2D)backtolibrary_button);
+      AddChildElement(frame);
+      AddChildElement(backtolibrary_button);
       X = 0;
       Y = -121;
       Height = frame.Height;

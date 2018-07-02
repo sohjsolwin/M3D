@@ -38,7 +38,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     {
       base.OnUpdate();
       PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
-      if (selectedPrinter == null || !selectedPrinter.isConnected())
+      if (selectedPrinter == null || !selectedPrinter.IsConnected())
       {
         if (heater_text == null)
         {
@@ -47,11 +47,11 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
 
         heater_text.Text = "OFF";
       }
-      else if ((double) selectedPrinter.Info.extruder.Temperature == -1.0)
+      else if (selectedPrinter.Info.extruder.Temperature == -1.0)
       {
         heater_text.Text = "ON";
       }
-      else if ((double) selectedPrinter.Info.extruder.Temperature < 1.0)
+      else if (selectedPrinter.Info.extruder.Temperature < 1.0)
       {
         heater_text.Text = "OFF";
       }
@@ -64,7 +64,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
     public void basicControlsFrameButtonCallback(ButtonWidget button)
     {
       PrinterObject selectedPrinter = spooler_connection.SelectedPrinter;
-      if (selectedPrinter == null || !selectedPrinter.isConnected())
+      if (selectedPrinter == null || !selectedPrinter.IsConnected())
       {
         return;
       }
@@ -72,7 +72,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
       switch (button.ID)
       {
         case 1000:
-          var num = (int) selectedPrinter.SendEmergencyStop((AsyncCallback) null, (object) null);
+          var num = (int) selectedPrinter.SendEmergencyStop(null, null);
           break;
         case 1001:
           MovePrinterAxis(selectedPrinter, (EditBoxWidget)FindChildElement(1016), "Z-", "The Z Value is not a number. Please correct and try again.", 90f);
@@ -99,29 +99,29 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
           MovePrinterAxis(selectedPrinter, (EditBoxWidget)FindChildElement(1019), "E", "The E Value is not a number. Please correct and try again.", 345f);
           break;
         case 1010:
-          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, "M17");
+          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, "M17");
           break;
         case 1011:
-          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, "M18");
+          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, "M18");
           break;
         case 1012:
-          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, "M106 S255");
+          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, "M106 S255");
           break;
         case 1013:
-          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, "M106 S0");
+          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, "M106 S0");
           break;
         case 1014:
           FilamentSpool currentFilament = selectedPrinter.GetCurrentFilament();
-          if (currentFilament == (FilamentSpool) null)
+          if (currentFilament == null)
           {
             messagebox.AddMessageToQueue("Sorry, but you must insert filament first.");
             break;
           }
           var filamentTemperature = currentFilament.filament_temperature;
-          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, PrinterCompatibleString.Format("M109 S{0}", (object) filamentTemperature));
+          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, PrinterCompatibleString.Format("M109 S{0}", (object) filamentTemperature));
           break;
         case 1015:
-          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), (object) selectedPrinter, "M104 S0");
+          selectedPrinter.SendCommandAutoLockRelease(new AsyncCallback(selectedPrinter.ShowLockError), selectedPrinter, "M104 S0");
           break;
       }
     }
@@ -136,7 +136,7 @@ namespace M3D.GUI.SettingsPages.Manual_Controls_Tabs
       else
       {
         var floatCurrentCulture = PrinterCompatibleString.ToFloatCurrentCulture(text);
-        selected_printer.SendCommandAutoLockRelease(new AsyncCallback(selected_printer.ShowLockError), (object) selected_printer, "G91", PrinterCompatibleString.Format("G0 {0}{1} F{2}", (object) axis, (object) floatCurrentCulture, (object) speed));
+        selected_printer.SendCommandAutoLockRelease(new AsyncCallback(selected_printer.ShowLockError), selected_printer, "G91", PrinterCompatibleString.Format("G0 {0}{1} F{2}", axis, floatCurrentCulture, speed));
       }
     }
 

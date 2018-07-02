@@ -3,13 +3,13 @@ using System.IO;
 
 namespace M3D.Model.FilIO
 {
-  public class ModelM3DExporter : ModelExporter
+  public class ModelM3DExporter : IModelExporter
   {
     public void Save(ModelData modelData, string filename)
     {
       using (var fileStream = new FileStream(filename, FileMode.Create))
       {
-        using (var binaryWriter = new BinaryWriter((Stream) fileStream))
+        using (var binaryWriter = new BinaryWriter(fileStream))
         {
           var vertexCount = modelData.GetVertexCount();
           binaryWriter.Write(vertexCount);

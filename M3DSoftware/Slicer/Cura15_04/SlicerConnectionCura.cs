@@ -18,14 +18,14 @@ namespace M3D.Slicer.Cura15_04
     private Stopwatch slicer_timer;
 
     public SlicerConnectionCura(string WorkingFolder, string ExeResourceFolder)
-      : base(WorkingFolder, ExeResourceFolder, (SmartSlicerSettingsBase) new SmartSlicerSettingsCura15_04())
+      : base(WorkingFolder, ExeResourceFolder, new SmartSlicerSettingsCura15_04())
     {
       InitSlicerCommunication();
     }
 
     private void InitSlicerCommunication()
     {
-      slicerThread = (Thread) null;
+      slicerThread = null;
       slicer_status_block = new object();
       slicer_timer = new Stopwatch();
       m_slicer_information.status.is_done = true;
@@ -41,17 +41,17 @@ namespace M3D.Slicer.Cura15_04
         return SlicerResult.Result_AlreadyStarted;
       }
 
-      var str1 = " -m " + printsettings.transformation.m[0, 0].ToString((IFormatProvider) cultureInfo) + "," + printsettings.transformation.m[0, 1].ToString((IFormatProvider) cultureInfo) + "," + printsettings.transformation.m[0, 2].ToString((IFormatProvider) cultureInfo) + "," + printsettings.transformation.m[1, 0].ToString((IFormatProvider) cultureInfo) + "," + printsettings.transformation.m[1, 1].ToString((IFormatProvider) cultureInfo) + "," + printsettings.transformation.m[1, 2].ToString((IFormatProvider) cultureInfo) + "," + printsettings.transformation.m[2, 0].ToString((IFormatProvider) cultureInfo) + "," + printsettings.transformation.m[2, 1].ToString((IFormatProvider) cultureInfo) + "," + printsettings.transformation.m[2, 2].ToString((IFormatProvider) cultureInfo);
-      var num1 = (int) ((double) printsettings.transformation.m[3, 0] * 1000.0);
-      var num2 = (int) ((double) printsettings.transformation.m[3, 1] * 1000.0);
-      var str2 = " -s posx=" + num1.ToString((IFormatProvider) cultureInfo) + " -s posy=" + num2.ToString((IFormatProvider) cultureInfo);
+      var str1 = " -m " + printsettings.transformation.m[0, 0].ToString(cultureInfo) + "," + printsettings.transformation.m[0, 1].ToString(cultureInfo) + "," + printsettings.transformation.m[0, 2].ToString(cultureInfo) + "," + printsettings.transformation.m[1, 0].ToString(cultureInfo) + "," + printsettings.transformation.m[1, 1].ToString(cultureInfo) + "," + printsettings.transformation.m[1, 2].ToString(cultureInfo) + "," + printsettings.transformation.m[2, 0].ToString(cultureInfo) + "," + printsettings.transformation.m[2, 1].ToString(cultureInfo) + "," + printsettings.transformation.m[2, 2].ToString(cultureInfo);
+      var num1 = (int)(printsettings.transformation.m[3, 0] * 1000.0);
+      var num2 = (int)(printsettings.transformation.m[3, 1] * 1000.0);
+      var str2 = " -s posx=" + num1.ToString(cultureInfo) + " -s posy=" + num2.ToString(cultureInfo);
       using (var writer = new StreamWriter(Paths.SlicerSettingsPath(SlicerSettings.ConfigurationFileName)))
       {
         SlicerSettings.SerializeToSlicer(writer);
       }
 
       FileUtils.GrantAccess(Paths.SlicerSettingsPath(SlicerSettings.ConfigurationFileName));
-      slicer_process_arg = string.Format("-p -v {0} {1} {2} -s autoCenter=1 {3} {4}", (object) string.Format("-o \"{0}\"", (object) Path.Combine(Paths.WorkingFolder, outputgcode)), (object) string.Format("-c \"{0}\"", (object) Path.Combine(Paths.WorkingFolder, SlicerSettings.ConfigurationFileName)), (object) string.Format("\"{0}\"", (object) modelfilename), (object) str2, (object) str1);
+      slicer_process_arg = string.Format("-p -v {0} {1} {2} -s autoCenter=1 {3} {4}", string.Format("-o \"{0}\"", (object)Path.Combine(Paths.WorkingFolder, outputgcode)), string.Format("-c \"{0}\"", (object)Path.Combine(Paths.WorkingFolder, SlicerSettings.ConfigurationFileName)), string.Format("\"{0}\"", (object)modelfilename), str2, str1);
       StartSlicerThread();
       return SlicerResult.Result_OK;
     }
@@ -89,7 +89,7 @@ namespace M3D.Slicer.Cura15_04
     {
       get
       {
-        return (float)GetSlicerStatus().results.filament;
+        return GetSlicerStatus().results.filament;
       }
     }
 
@@ -237,20 +237,20 @@ namespace M3D.Slicer.Cura15_04
       var num5 = (float) (1 + m_slicer_information.num_layers * 3);
       if (m_slicer_information.cur_progress_mode == SlicerConnectionCura.SlicerProgressMode.Progress_inset)
       {
-        num4 = (float) (1 + num1);
+        num4 = 1 + num1;
       }
       else if (m_slicer_information.cur_progress_mode == SlicerConnectionCura.SlicerProgressMode.Progress_skin)
       {
-        num4 = (float) (1 + m_slicer_information.num_layers + num1);
+        num4 = 1 + m_slicer_information.num_layers + num1;
       }
       else if (m_slicer_information.cur_progress_mode == SlicerConnectionCura.SlicerProgressMode.Progress_export)
       {
-        num4 = (float) (1 + m_slicer_information.num_layers * 2 + num1);
+        num4 = 1 + m_slicer_information.num_layers * 2 + num1;
       }
 
-      var num6 = (float) (3.0 + (1.0 - (double) num4 / (double) num5));
-      var num7 = (float) ((double)m_slicer_information.total_elasped_time / (double) num4 * (double)m_slicer_information.num_layers * (double) num6 / 1000.0);
-      var num8 = (float)m_slicer_information.total_elasped_time / 1000f;
+      var num6 = (float) (3.0 + (1.0 - num4 / (double)num5));
+      var num7 = (float)(m_slicer_information.total_elasped_time / (double)num4 * m_slicer_information.num_layers * num6 / 1000.0);
+      var num8 = m_slicer_information.total_elasped_time / 1000f;
       lock (slicer_status_block)
       {
         m_slicer_information.status.estimatedpercentcomplete = num8 / num7;

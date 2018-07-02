@@ -75,7 +75,7 @@ namespace USBClassLibrary
 
           handled = true;
           // ISSUE: reference to a compiler-generated field
-          USBDeviceAttached((object) this, new USBClass.USBDeviceEventArgs());
+          USBDeviceAttached(this, new USBClass.USBDeviceEventArgs());
           break;
         case 32769:
           if (Marshal.ReadInt32(LParam, 4) != 5)
@@ -85,7 +85,7 @@ namespace USBClassLibrary
 
           handled = true;
           // ISSUE: reference to a compiler-generated field
-          USBDeviceQueryRemove((object) this, new USBClass.USBDeviceEventArgs());
+          USBDeviceQueryRemove(this, new USBClass.USBDeviceEventArgs());
           break;
         case 32772:
           handled = true;
@@ -94,7 +94,7 @@ namespace USBClassLibrary
             break;
           }
           // ISSUE: reference to a compiler-generated field
-          USBDeviceRemoved((object) this, new USBClass.USBDeviceEventArgs());
+          USBDeviceRemoved(this, new USBClass.USBDeviceEventArgs());
           break;
       }
     }
@@ -194,7 +194,7 @@ namespace USBClassLibrary
                       IntPtr hKey = Win32Wrapper.SetupDiOpenDevRegKey(num2, ref DeviceInfoData, 1U, 0U, 1U, 131097U);
                       if (hKey.ToInt32() == -1)
                       {
-                        deviceProperties.COMPort = (string) null;
+                        deviceProperties.COMPort = null;
                       }
                       else
                       {

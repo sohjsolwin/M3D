@@ -41,7 +41,7 @@ namespace M3D.Graphics.Widgets2D
 
     private void Initialize(int num)
     {
-      var num1 = 1.0 - ((double) num - 1.0) * 0.100000001490116;
+      var num1 = 1.0 - (num - 1.0) * 0.100000001490116;
       var num2 = 0.1f;
       var num3 = (double) num;
       var num4 = (float) (num1 / num3);
@@ -49,7 +49,7 @@ namespace M3D.Graphics.Widgets2D
       editboxes = new EditBoxWidget[num];
       for (var index = 0; index < num; ++index)
       {
-        var editBoxWidget = new EditBoxWidget(index + 1000, (Element2D) this);
+        var editBoxWidget = new EditBoxWidget(index + 1000, this);
         editBoxWidget.Init(host, "guicontrols", 640f, 448f, 672f, 480f);
         editBoxWidget.SetGrowableWidth(4, 4, 32);
         editBoxWidget.Text = "";
@@ -70,7 +70,7 @@ namespace M3D.Graphics.Widgets2D
         editBoxWidget.SetCallbackOnBackspace(new EditBoxWidget.EditBoxCallback(EditBoxCallbackOnBackSpace));
         editBoxWidget.MAX_CHARS = MaxCharacterPerBox;
         num5 += num2 + num4;
-        AddChildElement((Element2D) editBoxWidget);
+        AddChildElement(editBoxWidget);
         editboxes[index] = editBoxWidget;
       }
       initialized = true;
@@ -83,7 +83,7 @@ namespace M3D.Graphics.Widgets2D
         return;
       }
 
-      host.SetFocus((Element2D)editboxes[0]);
+      host.SetFocus(editboxes[0]);
     }
 
     public Color4 Color
@@ -211,7 +211,7 @@ namespace M3D.Graphics.Widgets2D
         return;
       }
 
-      host.SetFocus((Element2D)editboxes[index]);
+      host.SetFocus(editboxes[index]);
     }
 
     private void EditBoxCallbackEnterKey(EditBoxWidget edit)
@@ -244,7 +244,7 @@ namespace M3D.Graphics.Widgets2D
         var num = edit.ID - 1000;
         if (num < editboxes.Length - 1)
         {
-          host.SetFocus((Element2D)editboxes[num + 1]);
+          host.SetFocus(editboxes[num + 1]);
         }
       }
       MultiBoxEditBoxWidget.EditBoxCallback onnewtext = this.onnewtext;

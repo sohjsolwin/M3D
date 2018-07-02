@@ -58,7 +58,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         RelativeWidth = 1f,
         RelativeHeight = 1f
       };
-      AddChildElement((Element2D) xmlFrame);
+      AddChildElement(xmlFrame);
       xmlFrame.Init(host, printToFileDialog, new ButtonCallback(MyButtonCallback));
       status_text = (TextWidget) xmlFrame.FindChildElement("statustext");
       var childElement = (Frame) xmlFrame.FindChildElement(1005);
@@ -68,7 +68,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
       this.progressbar.SetSize(280, 24);
       this.progressbar.PercentComplete = 0.0f;
       ProgressBarWidget progressbar = this.progressbar;
-      childElement.AddChildElement((Element2D) progressbar);
+      childElement.AddChildElement(progressbar);
       SetSize(480, 200);
     }
 
@@ -84,7 +84,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
         return;
       }
 
-      var num = (int) asyncState.ReleaseLock((AsyncCallback) null, (object) null);
+      var num = (int) asyncState.ReleaseLock(null, null);
     }
 
     private void FailedReleaseCallback(IAsyncCallResult ar)
@@ -103,7 +103,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
       if (ar.CallResult != CommandResult.Success && ar.CallResult != CommandResult.SuccessfullyReceived)
       {
-        var num = (int) asyncState.ReleaseLock(new AsyncCallback(FailedReleaseCallback), (object) asyncState);
+        var num = (int) asyncState.ReleaseLock(new AsyncCallback(FailedReleaseCallback), asyncState);
       }
       else
       {
@@ -151,13 +151,13 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
           progressbar.PercentComplete = 1f;
         }
       }
-      if (bHasSlicingCompleted)
+      if (BHasSlicingCompleted)
       {
-        if ((double)CurrentJobDetails.Estimated_Print_Time < 0.0)
+        if (CurrentJobDetails.Estimated_Print_Time < 0.0)
         {
-          CurrentJobDetails.Estimated_Print_Time = (float)SlicerConnection.EstimatedPrintTimeSeconds;
+          CurrentJobDetails.Estimated_Print_Time = SlicerConnection.EstimatedPrintTimeSeconds;
         }
-        else if ((double)CurrentJobDetails.Estimated_Filament < 0.0)
+        else if (CurrentJobDetails.Estimated_Filament < 0.0)
         {
           CurrentJobDetails.Estimated_Filament = SlicerConnection.EstimatedFilament;
         }
@@ -167,7 +167,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
           StartPrintingToFile();
         }
       }
-      if (!bHasSlicerStarted)
+      if (!BHasSlicerStarted)
       {
         return;
       }
@@ -200,7 +200,7 @@ namespace M3D.GUI.Views.Printer_View.Print_Dialog_Widget
 
     private void StartPrintingToFile()
     {
-      PrintSlicedModel(CurrentJobDetails, (RecentPrintsTab) null, new AsyncCallback(OnPrintJobStarted));
+      PrintSlicedModel(CurrentJobDetails, null, new AsyncCallback(OnPrintJobStarted));
     }
 
     private enum PrintDialogControlID

@@ -101,17 +101,17 @@ namespace M3D.Graphics.Widgets2D
     protected bool bUpdateWhenNotVisible;
 
     public Element2D()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public Element2D(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
     public Element2D(int ID, Element2D parent)
-      : base(ID, (IElement) parent)
+      : base(ID, parent)
     {
       ChildList = new Element2DList(this);
       CenterHorizontallyInParent = false;
@@ -133,7 +133,7 @@ namespace M3D.Graphics.Widgets2D
       IgnoreMouse = false;
       hasfocus = false;
       relativeposition = false;
-      dropdownelement = (Element2D) null;
+      dropdownelement = null;
     }
 
     public virtual void OnControlMsg(Element2D the_control, ControlMsg msg, float xparam, float yparam)
@@ -160,7 +160,7 @@ namespace M3D.Graphics.Widgets2D
         return;
       }
 
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         if (child.GroupID == group && child != except)
         {
@@ -181,7 +181,7 @@ namespace M3D.Graphics.Widgets2D
         return;
       }
 
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         child.DisableGroup(groupID);
       }
@@ -199,7 +199,7 @@ namespace M3D.Graphics.Widgets2D
         return;
       }
 
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         child.EnableGroup(groupID);
       }
@@ -266,7 +266,7 @@ namespace M3D.Graphics.Widgets2D
         return Parent.FindParentFrame();
       }
 
-      return (Frame) null;
+      return null;
     }
 
     public ComboBoxWidget GetComboBoxElement()
@@ -283,7 +283,7 @@ namespace M3D.Graphics.Widgets2D
           return (ComboBoxWidget) parent;
         }
       }
-      return (ComboBoxWidget) null;
+      return null;
     }
 
     public ListBoxWidget GetListBoxElement()
@@ -300,7 +300,7 @@ namespace M3D.Graphics.Widgets2D
           return (ListBoxWidget) parent;
         }
       }
-      return (ListBoxWidget) null;
+      return null;
     }
 
     public bool IsScrollFrame()
@@ -334,12 +334,12 @@ namespace M3D.Graphics.Widgets2D
           return (Frame) parent;
         }
       }
-      return (Frame) null;
+      return null;
     }
 
     public Element2D FindChildElement(int ID)
     {
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         if (child.ID == ID)
         {
@@ -352,12 +352,12 @@ namespace M3D.Graphics.Widgets2D
           return childElement;
         }
       }
-      return (Element2D) null;
+      return null;
     }
 
     public Element2D FindChildElement(string tag)
     {
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         if (child.tag == tag)
         {
@@ -370,7 +370,7 @@ namespace M3D.Graphics.Widgets2D
           return childElement;
         }
       }
-      return (Element2D) null;
+      return null;
     }
 
     public virtual void SetOff()
@@ -389,7 +389,7 @@ namespace M3D.Graphics.Widgets2D
 
     private int CalculateXFromRelative()
     {
-      var num = (int) ((double)Parent.Width * (double)relative_x) + relative_x_adj;
+      var num = (int)(Parent.Width * (double)relative_x) + relative_x_adj;
       if (num < 0)
       {
         num = 0;
@@ -400,7 +400,7 @@ namespace M3D.Graphics.Widgets2D
 
     private int CalculateYFromRelative()
     {
-      var num = (int) ((double)Parent.Height * (double)relative_y) + relative_y_adj;
+      var num = (int)(Parent.Height * (double)relative_y) + relative_y_adj;
       if (num < 0)
       {
         num = 0;
@@ -411,12 +411,12 @@ namespace M3D.Graphics.Widgets2D
 
     private int CalculateWidthFromRelative()
     {
-      return (int) ((double)Parent.Width * (double)relative_width) + relative_width_adj;
+      return (int)(Parent.Width * (double)relative_width) + relative_width_adj;
     }
 
     private int CalculateHeightFromRelative()
     {
-      return (int) ((double)Parent.Height * (double)relative_height) + relative_height_adj;
+      return (int)(Parent.Height * (double)relative_height) + relative_height_adj;
     }
 
     public virtual void OnParentResize()
@@ -426,16 +426,16 @@ namespace M3D.Graphics.Widgets2D
         return;
       }
 
-      if ((double)relative_width > 0.0 || (double)relative_height > 0.0)
+      if (relative_width > 0.0 || relative_height > 0.0)
       {
         var width = Width;
         var height = Height;
-        if ((double)relative_width > 0.0)
+        if (relative_width > 0.0)
         {
           width = CalculateWidthFromRelative();
         }
 
-        if ((double)relative_height > 0.0)
+        if (relative_height > 0.0)
         {
           height = CalculateHeightFromRelative();
         }
@@ -465,23 +465,20 @@ namespace M3D.Graphics.Widgets2D
       }
       if (UseRelativePositions)
       {
-        if ((double)relative_y > 0.0)
+        if (relative_y > 0.0)
         {
           y = CalculateYFromRelative();
         }
 
-        if ((double)relative_x > 0.0)
+        if (relative_x > 0.0)
         {
           x = CalculateXFromRelative();
         }
       }
       SetPosition(x, y);
-      if (DoOnParentResize != null)
-      {
-        DoOnParentResize();
-      }
+      DoOnParentResize?.Invoke();
 
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         child.OnParentResize();
       }
@@ -493,7 +490,7 @@ namespace M3D.Graphics.Widgets2D
 
     public virtual bool OnKeyboardEvent(KeyboardEvent keyboardevent)
     {
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         if (child.OnKeyboardEvent(keyboardevent))
         {
@@ -505,7 +502,7 @@ namespace M3D.Graphics.Widgets2D
 
     public virtual void OnMouseLeave()
     {
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         child.OnMouseLeave();
       }
@@ -523,7 +520,7 @@ namespace M3D.Graphics.Widgets2D
 
     public virtual void OnMouseMove(int x, int y)
     {
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         if (child.Enabled || IElement.HasEnabledOnlyItem && child.HasChildren)
         {
@@ -551,7 +548,7 @@ namespace M3D.Graphics.Widgets2D
     {
       if (ContainsPoint(x, y) && Visible && (Enabled || ChildList.Count > 0))
       {
-        foreach (Element2D element2D in (IEnumerable<Element2D>)ChildList.Reverse())
+        foreach (Element2D element2D in ChildList.Reverse())
         {
           Element2D dependantAtPoint = element2D.GetSelfOrDependantAtPoint(x, y);
           if (dependantAtPoint != null && dependantAtPoint.Enabled && !dependantAtPoint.IgnoreMouse)
@@ -564,7 +561,7 @@ namespace M3D.Graphics.Widgets2D
           return this;
         }
       }
-      return (Element2D) null;
+      return null;
     }
 
     public void GetNextTabIndexElement(ref List<Element2D> tabIndexElements)
@@ -574,7 +571,7 @@ namespace M3D.Graphics.Widgets2D
         return;
       }
 
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         if (child.Visible && child.Enabled)
         {
@@ -603,7 +600,7 @@ namespace M3D.Graphics.Widgets2D
     public virtual void OnRender(GUIHost host)
     {
       OnRender();
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         if (child.Visible && dropdownelement != child && (!child.HasFocus || !child.FocusedAlwaysOnTop))
         {
@@ -620,7 +617,7 @@ namespace M3D.Graphics.Widgets2D
 
     public override void OnUpdate()
     {
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         if ((child.Visible || child.bUpdateWhenNotVisible) && (child.Enabled || IElement.HasEnabledOnlyItem && child.HasChildren))
         {
@@ -665,7 +662,7 @@ namespace M3D.Graphics.Widgets2D
         absolutelocation.x += Parent.X_Abs;
         absolutelocation.y += Parent.Y_Abs;
       }
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         child.OnParentMove();
       }
@@ -701,7 +698,7 @@ namespace M3D.Graphics.Widgets2D
 
       size.width = width;
       size.height = height;
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         child.OnParentResize();
       }
@@ -731,7 +728,7 @@ namespace M3D.Graphics.Widgets2D
         SetAsFocused(host);
       }
 
-      foreach (Element2D child in (IEnumerable<Element2D>)ChildList)
+      foreach (Element2D child in ChildList)
       {
         child.SetParent(this);
         child.InitChildren(this, host, MyButtonCallback);
@@ -742,29 +739,29 @@ namespace M3D.Graphics.Widgets2D
     public void SetParent(Element2D parent)
     {
       this.parent = parent;
-      IParent = (IElement) parent;
-      SetBaseParent((IElement) parent);
+      IParent = parent;
+      SetBaseParent(parent);
       if (parent == null)
       {
         return;
       }
 
-      if ((double)relative_x > 0.0)
+      if (relative_x > 0.0)
       {
         RelativeX = RelativeX;
       }
 
-      if ((double)relative_y > 0.0)
+      if (relative_y > 0.0)
       {
         RelativeY = RelativeY;
       }
 
-      if ((double)relative_width > 0.0)
+      if (relative_width > 0.0)
       {
         RelativeWidth = RelativeWidth;
       }
 
-      if ((double)relative_height <= 0.0)
+      if (relative_height <= 0.0)
       {
         return;
       }
@@ -1002,7 +999,7 @@ namespace M3D.Graphics.Widgets2D
       set
       {
         relative_width = value;
-        if (Parent == null || (double)relative_width == -1.0)
+        if (Parent == null || relative_width == -1.0)
         {
           return;
         }
@@ -1021,7 +1018,7 @@ namespace M3D.Graphics.Widgets2D
       set
       {
         relative_height = value;
-        if (Parent == null || (double)relative_height == -1.0)
+        if (Parent == null || relative_height == -1.0)
         {
           return;
         }
@@ -1040,7 +1037,7 @@ namespace M3D.Graphics.Widgets2D
       set
       {
         relative_width_adj = value;
-        if (Parent == null || (double)relative_width == -1.0)
+        if (Parent == null || relative_width == -1.0)
         {
           return;
         }
@@ -1059,7 +1056,7 @@ namespace M3D.Graphics.Widgets2D
       set
       {
         relative_height_adj = value;
-        if (Parent == null || (double)relative_height == -1.0)
+        if (Parent == null || relative_height == -1.0)
         {
           return;
         }

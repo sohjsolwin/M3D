@@ -20,12 +20,12 @@ namespace M3D.Spooling.FirstRunUpdates
             goto label_7;
           }
         }
-        if (BitConverter.ToUInt16(eeprom, eepromAddr) != (ushort) 500)
+        if (BitConverter.ToUInt16(eeprom, eepromAddr) != 500)
         {
           ushort num = 500;
           bootloader_conn.WriteToEEPROM((ushort) eepromAddr, BitConverter.GetBytes(num));
           eeprom = bootloader_conn.ReadAllReadableEEPROM();
-          return BitConverter.ToUInt16(eeprom, eepromAddr) == (ushort) 500;
+          return BitConverter.ToUInt16(eeprom, eepromAddr) == 500;
         }
       }
       catch (Exception ex)

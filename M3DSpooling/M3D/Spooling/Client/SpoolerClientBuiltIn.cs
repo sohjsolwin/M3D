@@ -112,7 +112,7 @@ namespace M3D.Spooling.Client
       {
         var spoolerConnection = new InternalSpoolerConnection
         {
-          XMLProcessor = new OnReceiveXMLFromSpooler(((SpoolerClient)this).ProcessXMLFromServer)
+          XMLProcessor = new OnReceiveXMLFromSpooler((this).ProcessXMLFromServer)
         };
         if (!spoolerConnection.StartServer(42345))
         {
@@ -122,15 +122,15 @@ namespace M3D.Spooling.Client
         spoolerConnection.OnReceivedSpoolerShutdownMessage = new EventHandler<EventArgs>(ReceivedSpoolerShutdownMessage);
         spoolerConnection.OnReceivedSpoolerShowMessage = new EventHandler<EventArgs>(ReceivedSpoolerShowMessage);
         spoolerConnection.OnReceivedSpoolerHideMessage = new EventHandler<EventArgs>(ReceivedSpoolerHideMessage);
-        spooler_connection = (ISpoolerConnection) spoolerConnection;
+        spooler_connection = spoolerConnection;
         spoolerResult = InitialConnect();
-        Trace.WriteLine(string.Format("SpoolerClient2.StartSession Completed {0}", (object) spoolerResult));
+        Trace.WriteLine(string.Format("SpoolerClient2.StartSession Completed {0}", spoolerResult));
         MyDebugLogger.Add("SpoolerClientInternal::StartSession", "Connected to Spooler", DebugLogger.LogType.Secondary);
       }
       catch (Exception ex)
       {
         ErrorLogger.LogException("Exception in SpoolerClient2.StartSession " + ex.Message, ex);
-        spooler_connection = (ISpoolerConnection) null;
+        spooler_connection = null;
         CloseSession();
       }
       if (spooler_connection != null)
@@ -146,10 +146,10 @@ namespace M3D.Spooling.Client
     {
       if (spooler_connection == null || !(spooler_connection is InternalSpoolerConnection))
       {
-        return (PublicPrinterConnection) null;
+        return null;
       }
 
-      return (PublicPrinterConnection) ((InternalSpoolerConnection)spooler_connection).SpoolerServer.GetPrinterConnection(serialnumber);
+      return ((InternalSpoolerConnection)spooler_connection).SpoolerServer.GetPrinterConnection(serialnumber);
     }
 
     public bool ConnectInternalSpoolerToWindow(IntPtr hwnd)

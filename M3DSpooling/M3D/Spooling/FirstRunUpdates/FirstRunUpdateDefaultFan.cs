@@ -12,7 +12,7 @@ namespace M3D.Spooling.FirstRunUpdates
       try
       {
         var serialDate = GetSerialDate(serial_number);
-        switch (eeprom[(int) printerProfile.EEPROMConstants.GetEepromInfo("FANTYPE").EepromAddr])
+        switch (eeprom[printerProfile.EEPROMConstants.GetEepromInfo("FANTYPE").EepromAddr])
         {
           case 0:
           case byte.MaxValue:
@@ -26,7 +26,7 @@ namespace M3D.Spooling.FirstRunUpdates
             var num = (byte) index;
             var offset = fanConstant.Offset;
             var scale = fanConstant.Scale;
-            bootloader_conn.WriteToEEPROM(printerProfile.EEPROMConstants.GetEepromInfo("FANTYPE").EepromAddr, BitConverter.GetBytes((short) num));
+            bootloader_conn.WriteToEEPROM(printerProfile.EEPROMConstants.GetEepromInfo("FANTYPE").EepromAddr, BitConverter.GetBytes(num));
             bootloader_conn.WriteToEEPROM(printerProfile.EEPROMConstants.GetEepromInfo("FANOFFSET").EepromAddr, BitConverter.GetBytes(offset));
             bootloader_conn.WriteToEEPROM(printerProfile.EEPROMConstants.GetEepromInfo("FANSCALE").EepromAddr, BitConverter.GetBytes(scale));
             break;

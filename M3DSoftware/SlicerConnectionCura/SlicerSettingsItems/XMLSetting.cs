@@ -46,7 +46,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       try
       {
-        return XMLSetting.Load((TextReader) File.OpenText(filePath));
+        return XMLSetting.Load(File.OpenText(filePath));
       }
       catch (Exception ex)
       {
@@ -55,7 +55,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
           throw ex;
         }
 
-        return (XMLSetting) null;
+        return null;
       }
     }
 
@@ -76,7 +76,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
           throw ex;
         }
 
-        return (XMLSetting) null;
+        return null;
       }
       var stringSet = new HashSet<string>();
       var crossCheckName = new HashSet<string>();
@@ -91,7 +91,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
         if (stringSet.Contains(header))
         {
-          throw new Exception(string.Format("Tabs must have unique text! \"{0}\" has duplicates", (object) header));
+          throw new Exception(string.Format("Tabs must have unique text! \"{0}\" has duplicates", header));
         }
 
         stringSet.Add(header);
@@ -118,7 +118,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
         if (crossCheckName.Contains(name))
         {
-          throw new Exception(string.Format("Setting names must be unique! \"{0}\" has duplicates", (object) name));
+          throw new Exception(string.Format("Setting names must be unique! \"{0}\" has duplicates", name));
         }
 
         crossCheckName.Add(name);
@@ -136,17 +136,17 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
       var xmlSettingsItemList = new List<XMLSettingsItem>(count);
       for (var index = 0; index < VisibleSettings.Count; ++index)
       {
-        xmlSettingsItemList.AddRange((IEnumerable<XMLSettingsItem>)VisibleSettings[index].Items);
+        xmlSettingsItemList.AddRange(VisibleSettings[index].Items);
       }
 
-      xmlSettingsItemList.AddRange((IEnumerable<XMLSettingsItem>)InvisibleSettings);
+      xmlSettingsItemList.AddRange(InvisibleSettings);
       return xmlSettingsItemList;
     }
 
     public List<XMLSettingsItem> GetAllNonGUISettings()
     {
       List<XMLSettingsItem> allSettings = GetAllSettings();
-      allSettings.RemoveAll((Predicate<XMLSettingsItem>) (item => item.Name.StartsWith(XMLSetting.MagicInternalString, StringComparison.InvariantCultureIgnoreCase)));
+      allSettings.RemoveAll(item => item.Name.StartsWith(XMLSetting.MagicInternalString, StringComparison.InvariantCultureIgnoreCase));
       return allSettings;
     }
 

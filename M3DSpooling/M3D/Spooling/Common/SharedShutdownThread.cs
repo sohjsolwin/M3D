@@ -15,7 +15,7 @@ namespace M3D.Spooling.Common
     private CultureInfo m_oThreadCulture;
 
     public SharedShutdownThread(SharedShutdownThreadStart oThreadLoopBody, ThreadSafeVariable<bool> oShutdown)
-      : this(oThreadLoopBody, oShutdown, (CultureInfo) null)
+      : this(oThreadLoopBody, oShutdown, null)
     {
     }
 
@@ -25,7 +25,7 @@ namespace M3D.Spooling.Common
       ThreadLoopBody = oThreadLoopBody;
       m_oSharedShutdownFlag = oShutdown;
       m_oThreadCulture = oThreadCulture;
-      m_oInternalThread = new Thread(new ThreadStart(vInternalThreadLoop));
+      m_oInternalThread = new Thread(new ThreadStart(VInternalThreadLoop));
     }
 
     public string Name
@@ -81,7 +81,7 @@ namespace M3D.Spooling.Common
       m_oInternalThread.Start();
     }
 
-    private void vInternalThreadLoop()
+    private void VInternalThreadLoop()
     {
       try
       {
@@ -107,10 +107,7 @@ namespace M3D.Spooling.Common
       }
       finally
       {
-        if (OnThreadAborted != null)
-        {
-          OnThreadAborted((object) this, m_oSharedShutdownFlag);
-        }
+        OnThreadAborted?.Invoke(this, m_oSharedShutdownFlag);
       }
     }
   }

@@ -28,7 +28,7 @@ namespace M3D.GUI.SettingsPages
     private SettingsPage active_frame;
 
     public SettingsDialogWidget(int ID, GUIHost host, SettingsManager main_controller, PopupMessageBox messagebox, SpoolerConnection spooler_connection, Updater softwareUpdater)
-      : base(ID, (Element2D) null)
+      : base(ID, null)
     {
       settingsManager = main_controller;
       this.messagebox = messagebox;
@@ -47,7 +47,7 @@ namespace M3D.GUI.SettingsPages
       textWidget.Alignment = QFontAlignment.Left;
       textWidget.Size = FontSize.Large;
       textWidget.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      AddChildElement((Element2D) textWidget);
+      AddChildElement(textWidget);
       var yposition1 = 35;
       Sprite.pixel_perfect = true;
       CreateTabButton(2, "T_SettingsTab_UserInterfaceOptions", yposition1);
@@ -74,13 +74,13 @@ namespace M3D.GUI.SettingsPages
       buttonWidget.Init(host, "guicontrols", 704f, 320f, 735f, 351f, 736f, 320f, 767f, 351f, 704f, 352f, 735f, 383f);
       buttonWidget.DontMove = true;
       buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget);
+      AddChildElement(buttonWidget);
       tab_frame = new Frame(9)
       {
         X = 191,
         Y = 35
       };
-      AddChildElement((Element2D)tab_frame);
+      AddChildElement(tab_frame);
       CreateAppearanceFrame(host, softwareUpdater, messagebox);
       CreateManualControlsFrame(host, spooler_connection, settingsManager);
       CreateFilamentProfilesFrame(host, spooler_connection);
@@ -89,7 +89,7 @@ namespace M3D.GUI.SettingsPages
       CreateAboutFrame(host);
       about_frame.Visible = true;
       about_frame.Enabled = true;
-      active_frame = (SettingsPage)about_frame;
+      active_frame = about_frame;
       Sprite.pixel_perfect = false;
       Visible = false;
     }
@@ -110,7 +110,7 @@ namespace M3D.GUI.SettingsPages
       buttonWidget.GroupID = 18302;
       buttonWidget.Checked = false;
       buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget);
+      AddChildElement(buttonWidget);
       return buttonWidget;
     }
 
@@ -190,7 +190,7 @@ namespace M3D.GUI.SettingsPages
       {
         case 2:
           TurnOffActiveFrame();
-          active_frame = (SettingsPage)appearanceFrame;
+          active_frame = appearanceFrame;
           break;
         case 3:
           if (settingsManager.ShowAllWarnings)
@@ -199,7 +199,7 @@ namespace M3D.GUI.SettingsPages
           }
 
           TurnOffActiveFrame();
-          active_frame = (SettingsPage)manualControlsFrame;
+          active_frame = manualControlsFrame;
           break;
         case 4:
           if (settingsManager.ShowAllWarnings)
@@ -208,19 +208,19 @@ namespace M3D.GUI.SettingsPages
           }
 
           TurnOffActiveFrame();
-          active_frame = (SettingsPage)filamentprofiles_page;
+          active_frame = filamentprofiles_page;
           break;
         case 5:
           TurnOffActiveFrame();
-          active_frame = (SettingsPage)calibrationsettings_page;
+          active_frame = calibrationsettings_page;
           break;
         case 6:
           TurnOffActiveFrame();
-          active_frame = (SettingsPage)proFeaturePanelFrame;
+          active_frame = proFeaturePanelFrame;
           break;
         case 7:
           TurnOffActiveFrame();
-          active_frame = (SettingsPage)about_frame;
+          active_frame = about_frame;
           break;
         case 8:
           Close();
@@ -240,28 +240,28 @@ namespace M3D.GUI.SettingsPages
     private void CreateAppearanceFrame(GUIHost host, Updater softwareUpdater, PopupMessageBox messagebox)
     {
       appearanceFrame = new AppearancePage(2, host, settingsManager, softwareUpdater, messagebox);
-      tab_frame.AddChildElement((Element2D)appearanceFrame);
+      tab_frame.AddChildElement(appearanceFrame);
       appearanceFrame.Refresh();
     }
 
     private void CreateManualControlsFrame(GUIHost host, SpoolerConnection spooler_connection, SettingsManager settingsManager)
     {
       manualControlsFrame = new ManualControlsFrame(host, spooler_connection, messagebox, settingsManager);
-      tab_frame.AddChildElement((Element2D)manualControlsFrame);
+      tab_frame.AddChildElement(manualControlsFrame);
       manualControlsFrame.Refresh();
     }
 
     private void CreateFilamentProfilesFrame(GUIHost host, SpoolerConnection spooler_connection)
     {
       filamentprofiles_page = new FilamentProfilePage(4, settingsManager, host, spooler_connection, messagebox);
-      tab_frame.AddChildElement((Element2D)filamentprofiles_page);
+      tab_frame.AddChildElement(filamentprofiles_page);
       filamentprofiles_page.Refresh();
     }
 
     private void CreateProFeaturesFrame(GUIHost host, SpoolerConnection spooler_connection)
     {
       proFeaturePanelFrame = new FeaturePanel(6, host, spooler_connection);
-      tab_frame.AddChildElement((Element2D)proFeaturePanelFrame);
+      tab_frame.AddChildElement(proFeaturePanelFrame);
       proFeaturePanelFrame.Refresh();
     }
 
@@ -277,7 +277,7 @@ namespace M3D.GUI.SettingsPages
         Enabled = false
       };
       calibrationsettings_page.Init(host);
-      tab_frame.AddChildElement((Element2D)calibrationsettings_page);
+      tab_frame.AddChildElement(calibrationsettings_page);
     }
 
     private void CreateAboutFrame(GUIHost host)
@@ -292,7 +292,7 @@ namespace M3D.GUI.SettingsPages
         Enabled = false
       };
       about_frame.Init(host);
-      tab_frame.AddChildElement((Element2D)about_frame);
+      tab_frame.AddChildElement(about_frame);
     }
 
     private void TurnOffActiveFrame()
@@ -305,7 +305,7 @@ namespace M3D.GUI.SettingsPages
       active_frame.OnClose();
       active_frame.Visible = false;
       active_frame.Enabled = false;
-      active_frame = (SettingsPage) null;
+      active_frame = null;
     }
 
     public void UpdateSettings()
@@ -348,7 +348,7 @@ namespace M3D.GUI.SettingsPages
       Visible = false;
       if (host.HasChildDialog)
       {
-        host.GlobalChildDialog -= (Element2D) this;
+        host.GlobalChildDialog -= (this);
       }
 
       if (active_frame != null)

@@ -95,7 +95,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (double)OKsBeforeRSSampleData.SampleMean;
+        return OKsBeforeRSSampleData.SampleMean;
       }
     }
 
@@ -103,7 +103,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (double)TimeBeforeRSSampleData.SampleMean;
+        return TimeBeforeRSSampleData.SampleMean;
       }
     }
 
@@ -111,7 +111,7 @@ namespace M3D.Spooling.Common.Utils
     {
       get
       {
-        return (double)TimeBeforeRSSampleData.SampleStdDev;
+        return TimeBeforeRSSampleData.SampleStdDev;
       }
     }
 
@@ -124,8 +124,8 @@ namespace M3D.Spooling.Common.Utils
     public void RSReceived()
     {
       oktimer.Stop();
-      var num = (double)oktimer.ElapsedMilliseconds / 1000.0;
-      OKsBeforeRSSampleData.Add((double)numOKsBeforeRS);
+      var num = oktimer.ElapsedMilliseconds / 1000.0;
+      OKsBeforeRSSampleData.Add(numOKsBeforeRS);
       TimeBeforeRSSampleData.Add(num);
       RestartTimers();
       numOKsBeforeRS = 0;
@@ -206,12 +206,12 @@ namespace M3D.Spooling.Common.Utils
     {
       var num1 = 0;
       var num2 = 0.0;
-      foreach (var num3 in (IEnumerable<double>) sampleData)
+      foreach (var num3 in sampleData)
       {
         num2 += num3;
         ++num1;
       }
-      var num4 = num2 / (double) num1;
+      var num4 = num2 / num1;
       rollingAvgs.Add(num4);
     }
 

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace M3D.Model.FilIO
 {
-  public class ModelSTLExporter : ModelExporter
+  public class ModelSTLExporter : IModelExporter
   {
     public void Save(ModelData modelData, string filename)
     {
@@ -12,7 +12,7 @@ namespace M3D.Model.FilIO
       short num = 0;
       using (var fileStream = new FileStream(filename, FileMode.Create))
       {
-        using (var binaryWriter = new BinaryWriter((Stream) fileStream))
+        using (var binaryWriter = new BinaryWriter(fileStream))
         {
           binaryWriter.Write(buffer, 0, 80);
           var faceCount = modelData.GetFaceCount();
@@ -23,18 +23,18 @@ namespace M3D.Model.FilIO
             Vector3 _b = modelData[modelData.GetFace(index).Index2];
             Vector3 _c = modelData[modelData.GetFace(index).Index3];
             Vector3 vector3 = ModelData.CalcNormal(_a, _b, _c);
-            binaryWriter.Write(vector3.x);
-            binaryWriter.Write(vector3.y);
-            binaryWriter.Write(vector3.z);
-            binaryWriter.Write(_a.x);
-            binaryWriter.Write(_a.y);
-            binaryWriter.Write(_a.z);
-            binaryWriter.Write(_b.x);
-            binaryWriter.Write(_b.y);
-            binaryWriter.Write(_b.z);
-            binaryWriter.Write(_c.x);
-            binaryWriter.Write(_c.y);
-            binaryWriter.Write(_c.z);
+            binaryWriter.Write(vector3.X);
+            binaryWriter.Write(vector3.Y);
+            binaryWriter.Write(vector3.Z);
+            binaryWriter.Write(_a.X);
+            binaryWriter.Write(_a.Y);
+            binaryWriter.Write(_a.Z);
+            binaryWriter.Write(_b.X);
+            binaryWriter.Write(_b.Y);
+            binaryWriter.Write(_b.Z);
+            binaryWriter.Write(_c.X);
+            binaryWriter.Write(_c.Y);
+            binaryWriter.Write(_c.Z);
             binaryWriter.Write(num);
           }
           binaryWriter.Close();

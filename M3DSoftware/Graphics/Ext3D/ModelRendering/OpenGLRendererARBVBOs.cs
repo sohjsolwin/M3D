@@ -28,9 +28,9 @@ namespace M3D.Graphics.Ext3D.ModelRendering
     {
       var length = graphicsModelData.dataTNV.Length;
       GL.Arb.GenBuffers(1, out VboId);
-      if (GL.GetError() != ErrorCode.NoError && Enum.GetName(typeof (ErrorCode), (object) GL.GetError()) != "NoError")
+      if (GL.GetError() != ErrorCode.NoError && Enum.GetName(typeof (ErrorCode), GL.GetError()) != "NoError")
       {
-        throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), (object) GL.GetError()));
+        throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), GL.GetError()));
       }
 
       GL.Arb.BindBuffer(BufferTargetArb.ArrayBuffer, VboId);
@@ -38,7 +38,7 @@ namespace M3D.Graphics.Ext3D.ModelRendering
       GL.Arb.GetBufferParameter(BufferTargetArb.ArrayBuffer, BufferParameterNameArb.BufferSize, out var @params);
       if (GL.GetError() != ErrorCode.NoError)
       {
-        throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), (object) GL.GetError()));
+        throw new ApplicationException("Error while creating VERTICES Buffer Object.\n\nERROR: " + Enum.GetName(typeof (ErrorCode), GL.GetError()));
       }
 
       if (length * (Vector2.SizeInBytes + Vector3.SizeInBytes + Vector3.SizeInBytes) != @params)

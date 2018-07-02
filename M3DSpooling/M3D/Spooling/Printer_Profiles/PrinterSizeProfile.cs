@@ -62,7 +62,7 @@ namespace M3D.Spooling.Printer_Profiles
       BackCornerPosition = other.BackCornerPosition;
       BackCornerPositionBoxTop = other.BackCornerPositionBoxTop;
       BoxTopLimitZ = other.BoxTopLimitZ;
-      G32ProbePoints = new SerializableDictionary<int, RectCoordinates>((Dictionary<int, RectCoordinates>) other.G32ProbePoints);
+      G32ProbePoints = new SerializableDictionary<int, RectCoordinates>(other.G32ProbePoints);
     }
 
     public PrinterSizeProfile(PrinterSizeProfile.CaseType case_type, Vector3D shell_size, Vector2D printBedSize, float fluff_height, StackedBoundingBox WarningRegion, StackedBoundingBox PrintableRegion, Range UnhomedSafeZRange, Vector3D HomeLocation, Vector2D BackCornerPosition, Vector2D BackCornerPositionBoxTop, float BoxTopLimitZ, float ABSWarningDim, float ZAfterProbing, float ZAfterG33, SerializableDictionary<int, RectCoordinates> G32ProbePoints)

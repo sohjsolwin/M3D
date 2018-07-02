@@ -22,7 +22,7 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return (object)Text;
+        return Text;
       }
       set
       {

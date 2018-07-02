@@ -25,25 +25,25 @@ namespace M3D.Graphics.Widgets2D
     }
 
     public SliderWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
     public SliderWidget(int ID, Element2D parent)
       : base(ID, parent)
     {
-      m_trackSubControl = new ImageWidget(0, (Element2D) this);
-      m_buttonSubControl = new ButtonWidget(0, (Element2D) this);
-      m_pushButtonPlus = new ButtonWidget(1, (Element2D) this);
-      m_pushButtonMinus = new ButtonWidget(2, (Element2D) this);
+      m_trackSubControl = new ImageWidget(0, this);
+      m_buttonSubControl = new ButtonWidget(0, this);
+      m_pushButtonPlus = new ButtonWidget(1, this);
+      m_pushButtonMinus = new ButtonWidget(2, this);
       m_buttonSubControl.DontMove = true;
       m_pushButtonPlus.DontMove = true;
       m_pushButtonMinus.DontMove = true;
       m_trackSubControl.IgnoreMouse = true;
-      ChildList = ChildList + (Element2D)m_trackSubControl;
-      ChildList = ChildList + (Element2D)m_buttonSubControl;
-      ChildList = ChildList + (Element2D)m_pushButtonPlus;
-      ChildList = ChildList + (Element2D)m_pushButtonMinus;
+      ChildList = ChildList + m_trackSubControl;
+      ChildList = ChildList + m_buttonSubControl;
+      ChildList = ChildList + m_pushButtonPlus;
+      ChildList = ChildList + m_pushButtonMinus;
       m_track_size = 0.0f;
       m_track_position = 0.0f;
       m_button_size = 0.0f;
@@ -61,7 +61,7 @@ namespace M3D.Graphics.Widgets2D
     public override void SetSize(int width, int height)
     {
       base.SetSize(width, height);
-      OnSetTrackSize((float) width, (float) height);
+      OnSetTrackSize(width, height);
     }
 
     public override void SetPosition(int x, int y)
@@ -96,7 +96,7 @@ namespace M3D.Graphics.Widgets2D
         var fPosition = xparam / yparam * m_range + m_range_start;
         if (rounding_place >= 0)
         {
-          fPosition = (float) Math.Round((double) fPosition, rounding_place, MidpointRounding.AwayFromZero);
+          fPosition = (float) Math.Round(fPosition, rounding_place, MidpointRounding.AwayFromZero);
         }
 
         SetTrackPosition(fPosition);
@@ -161,7 +161,7 @@ namespace M3D.Graphics.Widgets2D
 
     public void SetRange(float start, float end, float position)
     {
-      if ((double)m_range_start == (double) start && (double)m_range == (double) end - (double) start)
+      if (m_range_start == (double)start && m_range == end - (double)start)
       {
         return;
       }
@@ -169,7 +169,7 @@ namespace M3D.Graphics.Widgets2D
       m_range_start = start;
       m_range = end - start;
       SetTrackPosition(position);
-      if ((double)m_pushbuttonstep != 0.0)
+      if (m_pushbuttonstep != 0.0)
       {
         return;
       }
@@ -180,33 +180,33 @@ namespace M3D.Graphics.Widgets2D
     public void MoveSlider(float fAmount)
     {
       m_track_position += fAmount;
-      if ((double)m_track_position < (double)m_range_start)
+      if (m_track_position < (double)m_range_start)
       {
         m_track_position = m_range_start;
       }
-      else if ((double)m_track_position > (double)m_range_start + (double)m_range)
+      else if (m_track_position > m_range_start + (double)m_range)
       {
         m_track_position = m_range_start + m_range;
       }
 
       Refresh();
-      base.OnControlMsg((Element2D) this, ControlMsg.SCROLL_MOVE, m_track_position, 0.0f);
+      base.OnControlMsg(this, ControlMsg.SCROLL_MOVE, m_track_position, 0.0f);
     }
 
     public void SetTrackPosition(float fPosition)
     {
       SetTrackPositionNoCallBack(fPosition);
-      base.OnControlMsg((Element2D) this, ControlMsg.SCROLL_MOVE, m_track_position, 0.0f);
+      base.OnControlMsg(this, ControlMsg.SCROLL_MOVE, m_track_position, 0.0f);
     }
 
     public void SetTrackPositionNoCallBack(float fPosition)
     {
       m_track_position = fPosition;
-      if ((double)m_track_position < (double)m_range_start)
+      if (m_track_position < (double)m_range_start)
       {
         m_track_position = m_range_start;
       }
-      else if ((double)m_track_position > (double)m_range_start + (double)m_range)
+      else if (m_track_position > m_range_start + (double)m_range)
       {
         m_track_position = m_range_start + m_range;
       }
@@ -233,7 +233,7 @@ namespace M3D.Graphics.Widgets2D
           return;
         }
 
-        m_track_position = (float) Math.Round((double)m_track_position, rounding_place, MidpointRounding.AwayFromZero);
+        m_track_position = (float) Math.Round(m_track_position, rounding_place, MidpointRounding.AwayFromZero);
       }
     }
 
@@ -280,9 +280,9 @@ namespace M3D.Graphics.Widgets2D
     protected void CopySliderProperties(SliderWidget other)
     {
       m_trackSubControl.CopyImageData(other.m_trackSubControl);
-      m_buttonSubControl.CopyImageData((ImageWidget) other.m_buttonSubControl);
-      m_pushButtonPlus.CopyImageData((ImageWidget) other.m_pushButtonPlus);
-      m_pushButtonMinus.CopyImageData((ImageWidget) other.m_pushButtonMinus);
+      m_buttonSubControl.CopyImageData(other.m_buttonSubControl);
+      m_pushButtonPlus.CopyImageData(other.m_pushButtonPlus);
+      m_pushButtonMinus.CopyImageData(other.m_pushButtonMinus);
       m_track_size = other.m_track_size;
       m_track_position = other.m_track_position;
       m_button_size = other.m_button_size;

@@ -12,7 +12,7 @@ namespace M3D.Spooling.Common
   public class SpoolerInfo
   {
     private static XmlWriterSettings settings = new XmlWriterSettings();
-    private static XmlSerializer __class_serializer = (XmlSerializer) null;
+    private static XmlSerializer __class_serializer = null;
     private XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
     [XmlElement("VersionNumber")]
     public VersionNumber Version;
@@ -58,11 +58,11 @@ namespace M3D.Spooling.Common
     {
       SpoolerInfo.settings.OmitXmlDeclaration = true;
       var stringWriter = new StringWriter();
-      var xmlWriter = XmlWriter.Create((TextWriter) stringWriter, SpoolerInfo.settings);
+      var xmlWriter = XmlWriter.Create(stringWriter, SpoolerInfo.settings);
       ns.Add("", "");
       try
       {
-        SpoolerInfo.ClassSerializer.Serialize(xmlWriter, (object) this, ns);
+        SpoolerInfo.ClassSerializer.Serialize(xmlWriter, this, ns);
       }
       catch (Exception ex)
       {
@@ -79,13 +79,13 @@ namespace M3D.Spooling.Common
     public void CopyFrom(SpoolerInfo other)
     {
       Version = other.Version;
-      SupportPrinterProfiles = new List<EmbeddedFirmwareSummary>((IEnumerable<EmbeddedFirmwareSummary>) other.SupportPrinterProfiles);
-      PrinterProfileList = new List<PrinterProfile>((IEnumerable<PrinterProfile>) other.PrinterProfileList);
+      SupportPrinterProfiles = new List<EmbeddedFirmwareSummary>(other.SupportPrinterProfiles);
+      PrinterProfileList = new List<PrinterProfile>(other.PrinterProfileList);
     }
 
     public EmbeddedFirmwareSummary GetProfileByName(string name)
     {
-      return SupportPrinterProfiles.Find((Predicate<EmbeddedFirmwareSummary>) (x => x.Name == name));
+      return SupportPrinterProfiles.Find(x => x.Name == name);
     }
 
     private static XmlSerializer ClassSerializer

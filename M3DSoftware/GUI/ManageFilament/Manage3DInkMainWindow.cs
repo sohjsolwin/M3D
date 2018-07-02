@@ -26,7 +26,7 @@ namespace M3D.GUI.ManageFilament
     private SpoolerConnection spooler_connection;
 
     public Manage3DInkMainWindow(int ID, GUIHost host, SettingsManager main_controller, PopupMessageBox messagebox, MessagePopUp infobox, SpoolerConnection spooler_connection)
-      : base(ID, (Element2D) null)
+      : base(ID, null)
     {
       this.spooler_connection = spooler_connection;
       spooler_connection.OnPrinterMessage += new SpoolerConnection.PrinterMessageCallback(PrinterMessageCallback);
@@ -45,7 +45,7 @@ namespace M3D.GUI.ManageFilament
       textWidget.Alignment = QFontAlignment.Left;
       textWidget.Size = FontSize.Large;
       textWidget.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      AddChildElement((Element2D) textWidget);
+      AddChildElement(textWidget);
       var buttonWidget = new ButtonWidget(4)
       {
         X = -40,
@@ -60,7 +60,7 @@ namespace M3D.GUI.ManageFilament
       buttonWidget.Init(host, "guicontrols", 704f, 320f, 735f, 351f, 736f, 320f, 767f, 351f, 704f, 352f, 735f, 383f);
       buttonWidget.DontMove = true;
       buttonWidget.SetCallback(new ButtonCallback(StartupPageButtonCallback));
-      AddChildElement((Element2D) buttonWidget);
+      AddChildElement(buttonWidget);
       var frame1 = new Frame(0)
       {
         CenterHorizontallyInParent = true,
@@ -68,32 +68,32 @@ namespace M3D.GUI.ManageFilament
         RelativeHeight = 0.9f,
         RelativeWidth = 0.9f
       };
-      AddChildElement((Element2D) frame1);
-      frames.Add((Manage3DInkChildWindow) new FilamentStartupPage(0, host, this, settingsManager, messagebox));
-      frames.Add((Manage3DInkChildWindow) new FilamentHeatingNozzle(1, host, this, settingsManager, messagebox));
-      frames.Add((Manage3DInkChildWindow) new FilamentRetractingFilament(2, host, this));
-      frames.Add((Manage3DInkChildWindow) new FilamentHasRetractedFilament(3, host, this, settingsManager));
-      frames.Add((Manage3DInkChildWindow) new FilamentInsertNewFilament(4, host, this));
-      frames.Add((Manage3DInkChildWindow) new FilamentHasFilamentExited(5, host, this, settingsManager, messagebox));
-      frames.Add((Manage3DInkChildWindow) new FilamentIsThereFilament(6, host, this, settingsManager));
-      frames.Add((Manage3DInkChildWindow) new FilamentFilamentColor(7, host, this, settingsManager));
-      frames.Add((Manage3DInkChildWindow) new FilamentWaitingPage(8, host, this, messagebox));
-      frames.Add((Manage3DInkChildWindow) new FilamentChangeFilamentDetails(9, host, this, settingsManager, messagebox));
-      frames.Add((Manage3DInkChildWindow) new FilamentPrimingNozzle(10, host, this));
-      frames.Add((Manage3DInkChildWindow) new FilamentCheatCodePage(11, host, this, settingsManager, messagebox));
-      frames.Add((Manage3DInkChildWindow) new FilamentRaisingExtruder(12, host, this, settingsManager, messagebox));
-      frames.Add((Manage3DInkChildWindow) new FilamentFilamentLocation(13, host, this, settingsManager, messagebox));
-      frames.Add((Manage3DInkChildWindow) new FilamentInternalSpoolInstructions(14, host, this));
-      frames.Add((Manage3DInkChildWindow) new FilamentCloseBedInstructions(15, host, this));
-      frames.Add((Manage3DInkChildWindow) new FilamentRemoveInternalSpoolInstructions(16, host, this));
-      frames.Add((Manage3DInkChildWindow) new FilamentCleanNozzle(17, host, this));
-      frames.Add((Manage3DInkChildWindow) new FilamentFilamentSpoolSize(18, host, this, settingsManager, messagebox));
-      frames.Add((Manage3DInkChildWindow) new FilamentIsNewSpoolPage(19, host, this, settingsManager, infobox));
+      AddChildElement(frame1);
+      frames.Add(new FilamentStartupPage(0, host, this, settingsManager, messagebox));
+      frames.Add(new FilamentHeatingNozzle(1, host, this, settingsManager, messagebox));
+      frames.Add(new FilamentRetractingFilament(2, host, this));
+      frames.Add(new FilamentHasRetractedFilament(3, host, this, settingsManager));
+      frames.Add(new FilamentInsertNewFilament(4, host, this));
+      frames.Add(new FilamentHasFilamentExited(5, host, this, settingsManager, messagebox));
+      frames.Add(new FilamentIsThereFilament(6, host, this, settingsManager));
+      frames.Add(new FilamentFilamentColor(7, host, this, settingsManager));
+      frames.Add(new FilamentWaitingPage(8, host, this, messagebox));
+      frames.Add(new FilamentChangeFilamentDetails(9, host, this, settingsManager, messagebox));
+      frames.Add(new FilamentPrimingNozzle(10, host, this));
+      frames.Add(new FilamentCheatCodePage(11, host, this, settingsManager, messagebox));
+      frames.Add(new FilamentRaisingExtruder(12, host, this, settingsManager, messagebox));
+      frames.Add(new FilamentFilamentLocation(13, host, this, settingsManager, messagebox));
+      frames.Add(new FilamentInternalSpoolInstructions(14, host, this));
+      frames.Add(new FilamentCloseBedInstructions(15, host, this));
+      frames.Add(new FilamentRemoveInternalSpoolInstructions(16, host, this));
+      frames.Add(new FilamentCleanNozzle(17, host, this));
+      frames.Add(new FilamentFilamentSpoolSize(18, host, this, settingsManager, messagebox));
+      frames.Add(new FilamentIsNewSpoolPage(19, host, this, settingsManager, infobox));
       foreach (Manage3DInkChildWindow frame2 in frames)
       {
         frame2.Init();
         frame2.Visible = false;
-        frame1.AddChildElement((Element2D) frame2);
+        frame1.AddChildElement(frame2);
       }
     }
 
@@ -162,7 +162,7 @@ namespace M3D.GUI.ManageFilament
       }
       else if (Visible && !bVisible && (selectedPrinter != null && selectedPrinter.HasLock) && !selectedPrinter.isBusy)
       {
-        var num = (int) selectedPrinter.ReleaseLock(new AsyncCallback(AfterRelease), (object) selectedPrinter);
+        var num = (int) selectedPrinter.ReleaseLock(new AsyncCallback(AfterRelease), selectedPrinter);
       }
       base.SetVisible(bVisible);
     }
@@ -192,12 +192,12 @@ namespace M3D.GUI.ManageFilament
         return;
       }
 
-      host.GlobalChildDialog -= (Element2D) this;
+      host.GlobalChildDialog -= (this);
     }
 
     public void LockPrinterAndGotoPage(PrinterObject printer, Manage3DInkMainWindow.PageID page, Mangage3DInkStageDetails details)
     {
-      var num = (int) printer.AcquireLock(new AsyncCallback(GotoPageAfterOperation), (object) new Manage3DInkMainWindow.PageAfterLockDetails(printer, page, details));
+      var num = (int) printer.AcquireLock(new AsyncCallback(GotoPageAfterOperation), new Manage3DInkMainWindow.PageAfterLockDetails(printer, page, details));
     }
 
     public void ResetToStartup()
@@ -205,7 +205,7 @@ namespace M3D.GUI.ManageFilament
       PrinterObject selectedPrinter = GetSelectedPrinter();
       if (selectedPrinter != null && selectedPrinter.Info.Status != PrinterStatus.Firmware_Printing && (selectedPrinter.Info.Status != PrinterStatus.Firmware_PrintingPaused && selectedPrinter.Info.Status != PrinterStatus.Firmware_PrintingPausedProcessing))
       {
-        var num = (int) selectedPrinter.SendEmergencyStop((AsyncCallback) null, (object) null);
+        var num = (int) selectedPrinter.SendEmergencyStop(null, null);
       }
       FilamentWaitingPage.CurrentWaitingText = "Please Wait";
       ActivateFrame(Manage3DInkMainWindow.PageID.Page8_WaitingPage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.None, Manage3DInkMainWindow.PageID.Page0_StartupPage));
@@ -216,7 +216,7 @@ namespace M3D.GUI.ManageFilament
       if (current_frame != null)
       {
         current_frame.Visible = false;
-        current_frame = (Manage3DInkChildWindow) null;
+        current_frame = null;
       }
       current_frame = frames[(int) frame];
       current_frame.Visible = true;
@@ -231,7 +231,7 @@ namespace M3D.GUI.ManageFilament
       {
         if (last_selected_printer != null && last_selected_printer.LockStatus == PrinterLockStatus.WeOwnLocked)
         {
-          var num = (int)last_selected_printer.ReleaseLock((AsyncCallback) null, (object) null);
+          var num = (int)last_selected_printer.ReleaseLock(null, null);
         }
         last_selected_printer = selectedPrinter;
         flag = true;
@@ -243,14 +243,14 @@ namespace M3D.GUI.ManageFilament
           ActivateFrame(Manage3DInkMainWindow.PageID.Page0_StartupPage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.None));
         }
       }
-      else if (((!selectedPrinter.isConnected() || selectedPrinter.PrinterState == PrinterObject.State.IsUpdatingFirmware ? 1 : (selectedPrinter.Info.InBootloaderMode ? 1 : 0)) | (flag ? 1 : 0)) != 0 && (current_frame == null || current_frame.ID != 8))
+      else if (((!selectedPrinter.IsConnected() || selectedPrinter.PrinterState == PrinterObject.State.IsUpdatingFirmware ? 1 : (selectedPrinter.Info.InBootloaderMode ? 1 : 0)) | (flag ? 1 : 0)) != 0 && (current_frame == null || current_frame.ID != 8))
       {
         ActivateFrame(Manage3DInkMainWindow.PageID.Page8_WaitingPage, new Mangage3DInkStageDetails(Manage3DInkMainWindow.Mode.None, Manage3DInkMainWindow.PageID.Page0_StartupPage));
       }
 
       if (flag)
       {
-        return (PrinterObject) null;
+        return null;
       }
 
       return selectedPrinter;
@@ -258,8 +258,7 @@ namespace M3D.GUI.ManageFilament
 
     public void GotoPageAfterOperation(IAsyncCallResult ar)
     {
-      var asyncState = ar.AsyncState as Manage3DInkMainWindow.PageAfterLockDetails;
-      if (asyncState != null && asyncState.printer.CheckForLockError(ar))
+      if (ar.AsyncState is Manage3DInkMainWindow.PageAfterLockDetails asyncState && asyncState.printer.CheckForLockError(ar))
       {
         ActivateFrame(asyncState.nextPage, asyncState.details);
       }
@@ -277,7 +276,7 @@ namespace M3D.GUI.ManageFilament
         return;
       }
 
-      selectedPrinter.TurnOffHeater(new AsyncCallback(AfterHeaterTurnedOff), (object) new Manage3DInkMainWindow.heaterData(callback, state, selectedPrinter, 0));
+      selectedPrinter.TurnOffHeater(new AsyncCallback(AfterHeaterTurnedOff), new Manage3DInkMainWindow.heaterData(callback, state, selectedPrinter, 0));
     }
 
     private void CallInternalHeaterMethod(IAsyncCallResult ar)
@@ -302,7 +301,7 @@ namespace M3D.GUI.ManageFilament
       var asyncState = ar.AsyncState as Manage3DInkMainWindow.heaterData;
       if (ar.CallResult != CommandResult.Success)
       {
-        asyncState.callback((IAsyncCallResult) new SimpleAsyncCallResult(asyncState.state, ar.CallResult));
+        asyncState.callback(new SimpleAsyncCallResult(asyncState.state, ar.CallResult));
       }
       else
       {
@@ -348,7 +347,7 @@ namespace M3D.GUI.ManageFilament
 
       if (stringList.Count > 0)
       {
-        var num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(CallInternalHeaterMethod), (object) new Manage3DInkMainWindow.heaterData(callback, state, selectedPrinter, target_temp), stringList.ToArray());
+        var num = (int) selectedPrinter.SendManualGCode(new AsyncCallback(CallInternalHeaterMethod), new Manage3DInkMainWindow.heaterData(callback, state, selectedPrinter, target_temp), stringList.ToArray());
       }
       else
       {

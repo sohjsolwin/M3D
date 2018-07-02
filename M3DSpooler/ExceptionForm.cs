@@ -76,7 +76,7 @@ namespace M3D.Spooler
 
     public static void ShowExceptionForm(Exception e)
     {
-      ExceptionForm.ShowExceptionForm(e, (string) null);
+      ExceptionForm.ShowExceptionForm(e, null);
     }
 
     public static void ShowExceptionForm(Exception e, string extra_info)
@@ -139,7 +139,7 @@ namespace M3D.Spooler
       buttonClose.Text = "Close Application";
       buttonClose.UseVisualStyleBackColor = true;
       buttonClose.Click += new EventHandler(buttonClose_Click);
-      label1.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      label1.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Regular, GraphicsUnit.Point, 0);
       label1.Location = new Point(7, 5);
       label1.Name = "label1";
       label1.Size = new Size(499, 51);
@@ -174,12 +174,12 @@ namespace M3D.Spooler
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(519, 279);
       ControlBox = false;
-      Controls.Add((Control)button1);
-      Controls.Add((Control)labelVersion);
-      Controls.Add((Control)pictureBox1);
-      Controls.Add((Control)textBox1);
-      Controls.Add((Control)label1);
-      Controls.Add((Control)buttonClose);
+      Controls.Add(button1);
+      Controls.Add(labelVersion);
+      Controls.Add(pictureBox1);
+      Controls.Add(textBox1);
+      Controls.Add(label1);
+      Controls.Add(buttonClose);
       FormBorderStyle = FormBorderStyle.Fixed3D;
       Name = nameof (ExceptionForm);
       Text = "M3D GUI";

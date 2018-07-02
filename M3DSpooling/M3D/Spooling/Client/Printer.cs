@@ -14,7 +14,7 @@ namespace M3D.Spooling.Client
     private Dictionary<string, IPrinterPlugin> m_odPluginDictionary = new Dictionary<string, IPrinterPlugin>();
     private ThreadSafeVariable<bool> can_check_idle = new ThreadSafeVariable<bool>(false);
     private object timeout_lock_sync = new object();
-    private WriteOnce<PrinterProfile> m_printer_profile = new WriteOnce<PrinterProfile>((PrinterProfile) null);
+    private WriteOnce<PrinterProfile> m_printer_profile = new WriteOnce<PrinterProfile>(null);
     private bool inRequestedMode = true;
     public const int InactiveLockTimeOutLimitSeconds = 30;
     private bool m_bPluginsRegistered;
@@ -70,7 +70,7 @@ namespace M3D.Spooling.Client
       thread_sync = new object();
       spool_lock = new object();
       spool_up_to_date = false;
-      incoming_data = (byte[]) null;
+      incoming_data = null;
       Found = new ThreadSafeVariable<bool>
       {
         Value = false
@@ -82,7 +82,7 @@ namespace M3D.Spooling.Client
       log = new CircularArray<string>(200);
       LogWaits = true;
       LogFeedback = true;
-      waiting_object = (AsyncCallObject) null;
+      waiting_object = null;
       waiting_object_lock = new object();
       lockstatus = new ThreadSafeVariable<PrinterLockStatus>(PrinterLockStatus.Unlocked);
       lockstepmode = new ThreadSafeVariable<bool>(true);
@@ -95,7 +95,7 @@ namespace M3D.Spooling.Client
 
     public SpoolerResult PrintModel(AsyncCallback callback, object state, JobParams jobParams)
     {
-      var spooler = (int)SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, "AddPrintJob", (object) Environment.UserName, (object) jobParams);
+      var spooler = (int)SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, false, "AddPrintJob", Environment.UserName, jobParams);
       if (spooler != 0)
       {
         return (SpoolerResult) spooler;
@@ -108,7 +108,7 @@ namespace M3D.Spooling.Client
 
     public SpoolerResult SendManualGCode(AsyncCallback callback, object state, params string[] gcode)
     {
-      return SendRPCToSpooler(callback, state, "WriteManualCommands", (object) "", (object) gcode);
+      return SendRPCToSpooler(callback, state, "WriteManualCommands", "", gcode);
     }
 
     public SpoolerResult PausePrint(AsyncCallback callback, object state)
@@ -208,7 +208,7 @@ namespace M3D.Spooling.Client
         m_ChangedKeyValuePairs.TryAdd(key, value);
       }
 
-      return SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (AddUpdateKeyValuePair), (object) key, (object) value);
+      return SendRPCToSpooler(callback, state, CallBackType.SuccessfullyReceived, true, nameof (AddUpdateKeyValuePair), key, value);
     }
 
     public string GetValidatedValueFromPrinter(string key)
@@ -223,7 +223,7 @@ namespace M3D.Spooling.Client
         return Info.persistantData.SavedData[key];
       }
 
-      return (string) null;
+      return null;
     }
 
     public SpoolerResult SendEmergencyStop(AsyncCallback callback, object state)
@@ -233,7 +233,7 @@ namespace M3D.Spooling.Client
 
     public SpoolerResult SetFilamentInfo(AsyncCallback callback, object state, FilamentSpool info)
     {
-      if (info == (FilamentSpool) null)
+      if (info == null)
       {
         return SetFilamentToNone(callback, state);
       }
@@ -269,10 +269,10 @@ namespace M3D.Spooling.Client
 
     public byte[] SendSerialDataWaitForResponse(byte[] data, int bytesToReceive)
     {
-      incoming_data = (byte[]) null;
-      if (SendRPCToSpooler((AsyncCallback) null, (object) null, "WriteSerialdata", (object) Convert.ToBase64String(data), (object) bytesToReceive) != SpoolerResult.OK)
+      incoming_data = null;
+      if (SendRPCToSpooler(null, null, "WriteSerialdata", Convert.ToBase64String(data), bytesToReceive) != SpoolerResult.OK)
       {
-        return (byte[]) null;
+        return null;
       }
 
       var numArray = (byte[]) null;
@@ -320,13 +320,10 @@ namespace M3D.Spooling.Client
       AsyncCallObject newWaitingObject = CreateNewWaitingObject(callback, state, LockStepMode && !always_send);
       if (newWaitingObject == null)
       {
-        if (callback != null)
+        callback?.Invoke(new AsyncCallObject(callback, state, (IPrinter)this)
         {
-          callback((IAsyncCallResult) new AsyncCallObject(callback, state, (IPrinter) this)
-          {
-            callresult = CommandResult.Failed_PreviousCommandNotCompleted
-          });
-        }
+          callresult = CommandResult.Failed_PreviousCommandNotCompleted
+        });
 
         return SpoolerResult.Fail_PreviousCommandNotComplete;
       }
@@ -346,7 +343,7 @@ namespace M3D.Spooling.Client
         m_odPluginDictionary.Add(ID, plugin);
         if (Info.InFirmwareMode)
         {
-          var num = (int)client.SendSpoolerMessageRPC(new RPCInvoker.RPC(Info.serial_number, Guid.Empty, 0U, "RegisterExternalPluginGCodes", new object[2]{ (object) ID, (object) plugin.GetGCodes() }));
+          var num = (int)client.SendSpoolerMessageRPC(new RPCInvoker.RPC(Info.serial_number, Guid.Empty, 0U, "RegisterExternalPluginGCodes", new object[2]{ ID, plugin.GetGCodes() }));
           m_bPluginsRegistered = true;
           return true;
         }
@@ -361,7 +358,7 @@ namespace M3D.Spooling.Client
         return m_odPluginDictionary[ID];
       }
 
-      return (IPrinterPlugin) null;
+      return null;
     }
 
     private void DoPluginRegistration()
@@ -370,7 +367,7 @@ namespace M3D.Spooling.Client
       {
         var key = odPlugin.Key;
         IPrinterPlugin printerPlugin = odPlugin.Value;
-        var num = (int)client.SendSpoolerMessageRPC(new RPCInvoker.RPC(Info.serial_number, Guid.Empty, 0U, "RegisterExternalPluginGCodes", new object[2]{ (object) key, (object) printerPlugin.GetGCodes() }));
+        var num = (int)client.SendSpoolerMessageRPC(new RPCInvoker.RPC(Info.serial_number, Guid.Empty, 0U, "RegisterExternalPluginGCodes", new object[2]{ key, printerPlugin.GetGCodes() }));
       }
       m_bPluginsRegistered = true;
     }
@@ -406,12 +403,12 @@ namespace M3D.Spooling.Client
         {
           AsyncCallObject waitingObject = waiting_object;
           waitingObject.callresult = CommandResult.OverridedByNonLockStepCall;
-          ThreadPool.QueueUserWorkItem(new WaitCallback(DoAsyncCallBack), (object) waitingObject);
-          waiting_object = (AsyncCallObject) null;
+          ThreadPool.QueueUserWorkItem(new WaitCallback(DoAsyncCallBack), waitingObject);
+          waiting_object = null;
         }
         if (waiting_object == null)
         {
-          waiting_object = new AsyncCallObject(callback, state, (IPrinter) this);
+          waiting_object = new AsyncCallObject(callback, state, this);
           can_check_idle.Value = false;
           asyncCallObject = waiting_object;
         }
@@ -426,14 +423,14 @@ namespace M3D.Spooling.Client
 
     public SpoolerResult AcquireLock(AsyncCallback callback, object state)
     {
-      return AcquireLock(callback, state, (EventLockTimeOutCallBack) null, 0);
+      return AcquireLock(callback, state, null, 0);
     }
 
     public SpoolerResult AcquireLock(AsyncCallback callback, object state, EventLockTimeOutCallBack LockTimeOutCallBack, int locktimeoutseconds)
     {
       if (HasLock && callback != null)
       {
-        callback((IAsyncCallResult) new AsyncCallObject(callback, state, (IPrinter) this)
+        callback(new AsyncCallObject(callback, state, (IPrinter)this)
         {
           callresult = CommandResult.Success_LockAcquired
         });
@@ -481,7 +478,7 @@ namespace M3D.Spooling.Client
     {
       lock (waiting_object_lock)
       {
-        waiting_object = (AsyncCallObject) null;
+        waiting_object = null;
       }
     }
 
@@ -493,7 +490,7 @@ namespace M3D.Spooling.Client
         return;
       }
 
-      asyncCallObject.callback((IAsyncCallResult) asyncCallObject);
+      asyncCallObject.callback(asyncCallObject);
     }
 
     private void DoTimeoutCallBack(object o)
@@ -562,20 +559,20 @@ namespace M3D.Spooling.Client
       var filamentSpool = (FilamentSpool) null;
       lock (spool_lock)
       {
-        if (current_spool != (FilamentSpool) null)
+        if (current_spool != null)
         {
           filamentSpool = new FilamentSpool(current_spool);
         }
       }
-      if (filamentSpool != (FilamentSpool) null && filamentSpool.filament_type == FilamentSpool.TypeEnum.NoFilament)
+      if (filamentSpool != null && filamentSpool.filament_type == FilamentSpool.TypeEnum.NoFilament)
       {
-        return (FilamentSpool) null;
+        return null;
       }
 
       return filamentSpool;
     }
 
-    public bool isConnected()
+    public bool IsConnected()
     {
       return Connected;
     }
@@ -607,7 +604,7 @@ namespace M3D.Spooling.Client
     public void UpdateData(PrinterInfo info)
     {
       printer_info.CopyFrom(info);
-      current_job = printer_info.current_job == null ? (JobInfo) null : new JobInfo(printer_info.current_job);
+      current_job = printer_info.current_job == null ? null : new JobInfo(printer_info.current_job);
       var other = new FilamentSpool(printer_info.filament_info);
       if (spool_up_to_date)
       {
@@ -648,7 +645,7 @@ namespace M3D.Spooling.Client
           if (flag1 | flag2)
           {
             asyncCallObject = waiting_object;
-            waiting_object = (AsyncCallObject) null;
+            waiting_object = null;
           }
         }
       }
@@ -656,13 +653,10 @@ namespace M3D.Spooling.Client
       {
         asyncCallObject.callresult = CommandResult.Success;
         asyncCallObject.idle_callback = flag1;
-        ThreadPool.QueueUserWorkItem(new WaitCallback(DoAsyncCallBack), (object) asyncCallObject);
+        ThreadPool.QueueUserWorkItem(new WaitCallback(DoAsyncCallBack), asyncCallObject);
         lock (finished_lock)
         {
-          if (AllCommandsFinished != null)
-          {
-            AllCommandsFinished((IAsyncCallResult) new SimpleAsyncCallResult((object) this, CommandResult.Success));
-          }
+          AllCommandsFinished?.Invoke(new SimpleAsyncCallResult((object)this, CommandResult.Success));
         }
       }
       if (HasLock && Info.IsIdle)
@@ -678,7 +672,7 @@ namespace M3D.Spooling.Client
           keeplockalive_limit_clock.Restart();
         }
 
-        if (keeplockalive_clock.Elapsed.TotalSeconds > 15.0 && (num <= 0 || keeplockalive_limit_clock.Elapsed.TotalSeconds < (double) num))
+        if (keeplockalive_clock.Elapsed.TotalSeconds > 15.0 && (num <= 0 || keeplockalive_limit_clock.Elapsed.TotalSeconds < num))
         {
           var spooler = (int)SendRPCToSpooler("KeepLockAlive", 0U);
           keeplockalive_clock.Restart();
@@ -708,7 +702,7 @@ namespace M3D.Spooling.Client
 
     private void CheckForUpdatedValues()
     {
-      foreach (KeyValuePair<string, string> keyValuePair in (Dictionary<string, string>)Info.persistantData.SavedData)
+      foreach (KeyValuePair<string, string> keyValuePair in Info.persistantData.SavedData)
       {
         if (m_ChangedKeyValuePairs.ContainsKey(keyValuePair.Key) && keyValuePair.Value == m_ChangedKeyValuePairs[keyValuePair.Key])
         {
@@ -763,7 +757,7 @@ namespace M3D.Spooling.Client
           if (waiting_object != null)
           {
             asyncCallObject = waiting_object;
-            waiting_object = (AsyncCallObject) null;
+            waiting_object = null;
             asyncCallObject.callresult = CommandResult.Failed_GantryClipsOrInvalidZ;
           }
         }
@@ -771,7 +765,7 @@ namespace M3D.Spooling.Client
       else if ((message.Type == MessageType.LockConfirmed || message.Type == MessageType.LockResult) && message.SerialNumber == Info.serial_number)
       {
         uint num = 0;
-        EventLockTimeOutCallBack callback = (EventLockTimeOutCallBack) null;
+        EventLockTimeOutCallBack callback = null;
         CommandResult commandResult;
         if (message.Type == MessageType.LockResult)
         {
@@ -805,7 +799,7 @@ namespace M3D.Spooling.Client
             lock (timeout_lock_sync)
             {
               callback = __LockTimeOutCallBack;
-              __LockTimeOutCallBack = (EventLockTimeOutCallBack) null;
+              __LockTimeOutCallBack = null;
             }
           }
           if (commandResult != CommandResult.CommandInterruptedByM0)
@@ -831,7 +825,7 @@ namespace M3D.Spooling.Client
               }
             }
             asyncCallObject = waiting_object;
-            waiting_object = (AsyncCallObject) null;
+            waiting_object = null;
           }
         }
 label_59:
@@ -851,12 +845,12 @@ label_59:
         }
         if (callback != null)
         {
-          ThreadPool.QueueUserWorkItem(new WaitCallback(DoTimeoutCallBack), (object) new Printer.TimeoutProperties(callback, (IPrinter) this));
+          ThreadPool.QueueUserWorkItem(new WaitCallback(DoTimeoutCallBack), new Printer.TimeoutProperties(callback, (IPrinter)this));
         }
       }
       if (asyncCallObject != null)
       {
-        ThreadPool.QueueUserWorkItem(new WaitCallback(DoAsyncCallBack), (object) asyncCallObject);
+        ThreadPool.QueueUserWorkItem(new WaitCallback(DoAsyncCallBack), asyncCallObject);
       }
 
       if (OnProcessSpoolerMessage == null)
@@ -883,7 +877,7 @@ label_59:
       var stringList = (List<string>) null;
       lock (log)
       {
-        stringList = new List<string>((IEnumerable<string>)log);
+        stringList = new List<string>(log);
         log_updated = false;
       }
       return stringList;
@@ -894,7 +888,7 @@ label_59:
       var stringList = (List<string>) null;
       lock (log)
       {
-        stringList = new List<string>((IEnumerable<string>)log);
+        stringList = new List<string>(log);
         log.Clear();
         log_updated = false;
       }

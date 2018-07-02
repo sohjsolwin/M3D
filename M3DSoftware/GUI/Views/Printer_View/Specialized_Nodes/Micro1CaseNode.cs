@@ -25,9 +25,9 @@ namespace M3D.GUI.Views.Printer_View.Specialized_Nodes
       PrinterBed.Diffuse = PrinterColor;
       PrinterBed.Specular = new Color4(0.4f, 0.4f, 0.4f, 1f);
       PrinterLogo = new PrinterLogoObjectNode(Path.Combine(Paths.GUIImagesFolder, "m3d.png"), 3002, new Vector3(0.0f, -75f, -60f), new Vector3(40f, 0.0f, 11f));
-      AddChildElement((Element3D)PrinterLogo);
-      AddChildElement((Element3D)PrinterModel);
-      AddChildElement((Element3D)PrinterBed);
+      AddChildElement(PrinterLogo);
+      AddChildElement(PrinterModel);
+      AddChildElement(PrinterBed);
     }
 
     public override PrinterSizeProfile.CaseType CaseType

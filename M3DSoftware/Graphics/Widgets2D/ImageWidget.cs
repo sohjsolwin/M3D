@@ -53,7 +53,7 @@ namespace M3D.Graphics.Widgets2D
     }
 
     public ImageWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -168,10 +168,10 @@ namespace M3D.Graphics.Widgets2D
       if (sand_boxing)
       {
         Simple2DRenderer.Quad quad;
-        quad.x0 = (float) x;
-        quad.y0 = (float) y;
-        quad.x1 = (float) (x + Width);
-        quad.y1 = (float) (y + Height);
+        quad.x0 = x;
+        quad.y0 = y;
+        quad.x1 = x + Width;
+        quad.y1 = y + Height;
         quad.color = sandboxcolor;
         host.GetSimpleRenderer().DrawQuad(quad);
       }
@@ -264,7 +264,7 @@ namespace M3D.Graphics.Widgets2D
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
       base.InitChildren(parent, host, MyButtonCallback);
-      if ((double)u0 != 0.0 || (double)v0 != 0.0 || ((double)u1 != 0.0 || (double)v1 != 0.0))
+      if (u0 != 0.0 || v0 != 0.0 || (u1 != 0.0 || v1 != 0.0))
       {
         Init(host, ImageSrc, u0, v0, u1, v1, over_u0, over_v0, over_u1, over_v1, down_u0, down_v0, down_u1, down_v1, disabled_u0, disabled_v0, disabled_u1, disabled_v1);
         SetGrowableWidth(leftbordersize_pixels, rightbordersize_pixels, minimum_width_pixels);
@@ -277,7 +277,7 @@ namespace M3D.Graphics.Widgets2D
           u0 = 896f;
           v0 = 192f;
           u1 = 959f;
-          v1 = (float) byte.MaxValue;
+          v1 = byte.MaxValue;
           over_u0 = 896f;
           over_v0 = 256f;
           over_u1 = 959f;

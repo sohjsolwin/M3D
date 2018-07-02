@@ -34,7 +34,7 @@ namespace M3D.Model.FilIO
               if (str[0] == 'v' && str[1] == ' ')
               {
                 string[] strArray = str.Split(ModelSMFImporter.mVecSeparator, StringSplitOptions.RemoveEmptyEntries);
-                verticies.AddLast(new Vector3((float) Convert.ToDouble(strArray[1], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE), (float) Convert.ToDouble(strArray[2], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE), (float) Convert.ToDouble(strArray[3], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE)));
+                verticies.AddLast(new Vector3((float) Convert.ToDouble(strArray[1], M3DGlobalization.SYSTEM_CULTURE), (float) Convert.ToDouble(strArray[2], M3DGlobalization.SYSTEM_CULTURE), (float) Convert.ToDouble(strArray[3], M3DGlobalization.SYSTEM_CULTURE)));
               }
               if (str[0] == 'f' && str[1] == ' ')
               {
@@ -42,9 +42,9 @@ namespace M3D.Model.FilIO
                 switch (strArray.Length)
                 {
                   case 4:
-                    var num1 = Convert.ToInt32(strArray[1], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE) - 1;
-                    var num2 = Convert.ToInt32(strArray[2], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE) - 1;
-                    var num3 = Convert.ToInt32(strArray[3], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE) - 1;
+                    var num1 = Convert.ToInt32(strArray[1], M3DGlobalization.SYSTEM_CULTURE) - 1;
+                    var num2 = Convert.ToInt32(strArray[2], M3DGlobalization.SYSTEM_CULTURE) - 1;
+                    var num3 = Convert.ToInt32(strArray[3], M3DGlobalization.SYSTEM_CULTURE) - 1;
                     triangleIndecies.AddLast(new int[3]
                     {
                       num1,
@@ -54,9 +54,9 @@ namespace M3D.Model.FilIO
                     continue;
                   case 7:
                   case 8:
-                    var num4 = Convert.ToInt32(strArray[1], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE) - 1;
-                    var num5 = Convert.ToInt32(strArray[3], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE) - 1;
-                    var num6 = Convert.ToInt32(strArray[5], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE) - 1;
+                    var num4 = Convert.ToInt32(strArray[1], M3DGlobalization.SYSTEM_CULTURE) - 1;
+                    var num5 = Convert.ToInt32(strArray[3], M3DGlobalization.SYSTEM_CULTURE) - 1;
+                    var num6 = Convert.ToInt32(strArray[5], M3DGlobalization.SYSTEM_CULTURE) - 1;
                     triangleIndecies.AddLast(new int[3]
                     {
                       num4,
@@ -66,9 +66,9 @@ namespace M3D.Model.FilIO
                     continue;
                   case 10:
                   case 11:
-                    var num7 = Convert.ToInt32(strArray[1], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE) - 1;
-                    var num8 = Convert.ToInt32(strArray[4], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE) - 1;
-                    var num9 = Convert.ToInt32(strArray[7], (IFormatProvider) M3DGlobalization.SYSTEM_CULTURE) - 1;
+                    var num7 = Convert.ToInt32(strArray[1], M3DGlobalization.SYSTEM_CULTURE) - 1;
+                    var num8 = Convert.ToInt32(strArray[4], M3DGlobalization.SYSTEM_CULTURE) - 1;
+                    var num9 = Convert.ToInt32(strArray[7], M3DGlobalization.SYSTEM_CULTURE) - 1;
                     triangleIndecies.AddLast(new int[3]
                     {
                       num7,
@@ -84,12 +84,12 @@ namespace M3D.Model.FilIO
           }
           streamReader.Close();
         }
-        return ModelData.Create(verticies, triangleIndecies, (ProgressHelper.PercentageDelagate) null);
+        return ModelData.Create(verticies, triangleIndecies, null);
       }
       catch (Exception ex)
       {
       }
-      return (ModelData) null;
+      return null;
     }
   }
 }

@@ -27,12 +27,12 @@ namespace M3D.Graphics.Utils
 
     public bool OverLap(BoundingBox other)
     {
-      return (double) other.max.x >= (double)min.x && (double) other.min.x <= (double)max.x && ((double) other.max.y >= (double)min.y && (double) other.min.y <= (double)max.y) && ((double) other.max.z >= (double)max.z && (double) other.min.z <= (double)max.z);
+      return other.max.X >= (double)min.X && other.min.X <= (double)max.X && (other.max.Y >= (double)min.Y && other.min.Y <= (double)max.Y) && (other.max.Z >= (double)max.Z && other.min.Z <= (double)max.Z);
     }
 
     public bool LineIntercepts(out Vector3 intercept, Vector3 p1, Vector3 p2)
     {
-      if (LineIntercepts(out intercept, min.x - p1.x, p2.x - p1.x, p1, p2) && InBox(intercept, 0) || LineIntercepts(out intercept, max.x - p1.x, p2.x - p1.x, p1, p2) && InBox(intercept, 0) || (LineIntercepts(out intercept, min.y - p1.y, p2.y - p1.y, p1, p2) && InBox(intercept, 1) || LineIntercepts(out intercept, max.y - p1.y, p2.y - p1.y, p1, p2) && InBox(intercept, 1)) || (LineIntercepts(out intercept, min.z - p1.z, p2.z - p1.z, p1, p2) && InBox(intercept, 2) || LineIntercepts(out intercept, max.z - p1.z, p2.z - p1.z, p1, p2) && InBox(intercept, 2)))
+      if (LineIntercepts(out intercept, min.X - p1.X, p2.X - p1.X, p1, p2) && InBox(intercept, 0) || LineIntercepts(out intercept, max.X - p1.X, p2.X - p1.X, p1, p2) && InBox(intercept, 0) || (LineIntercepts(out intercept, min.Y - p1.Y, p2.Y - p1.Y, p1, p2) && InBox(intercept, 1) || LineIntercepts(out intercept, max.Y - p1.Y, p2.Y - p1.Y, p1, p2) && InBox(intercept, 1)) || (LineIntercepts(out intercept, min.Z - p1.Z, p2.Z - p1.Z, p1, p2) && InBox(intercept, 2) || LineIntercepts(out intercept, max.Z - p1.Z, p2.Z - p1.Z, p1, p2) && InBox(intercept, 2)))
       {
         return true;
       }
@@ -44,14 +44,14 @@ namespace M3D.Graphics.Utils
     private bool LineIntercepts(out Vector3 intercept, float dist1, float dist2, Vector3 p1, Vector3 p2)
     {
       var num = dist1 / dist2;
-      if ((double) num > -0.01 && (double) num < 0.0)
+      if (num > -0.01 && num < 0.0)
       {
         intercept = p1;
         return true;
       }
-      if ((double) num >= 0.0 && (double) num <= 1.0)
+      if (num >= 0.0 && num <= 1.0)
       {
-        intercept = new Vector3((p2.x - p1.x) * num + p1.x, (p2.y - p1.y) * num + p1.y, (p2.z - p1.z) * num + p1.z);
+        intercept = new Vector3((p2.X - p1.X) * num + p1.X, (p2.Y - p1.Y) * num + p1.Y, (p2.Z - p1.Z) * num + p1.Z);
         return true;
       }
       intercept = p2;
@@ -60,14 +60,14 @@ namespace M3D.Graphics.Utils
 
     private bool InBox(Vector3 p, int axis)
     {
-      return axis == 0 && ELessThan(p.y, max.y) && (EGreaterThan(p.y, min.y) && ELessThan(p.z, max.z)) && EGreaterThan(p.z, min.z) || axis == 1 && ELessThan(p.x, max.x) && (EGreaterThan(p.x, min.x) && ELessThan(p.z, max.z)) && EGreaterThan(p.z, min.z) || axis == 2 && ELessThan(p.y, max.y) && (EGreaterThan(p.y, min.y) && ELessThan(p.x, max.x)) && EGreaterThan(p.x, min.x);
+      return axis == 0 && ELessThan(p.Y, max.Y) && (EGreaterThan(p.Y, min.Y) && ELessThan(p.Z, max.Z)) && EGreaterThan(p.Z, min.Z) || axis == 1 && ELessThan(p.X, max.X) && (EGreaterThan(p.X, min.X) && ELessThan(p.Z, max.Z)) && EGreaterThan(p.Z, min.Z) || axis == 2 && ELessThan(p.Y, max.Y) && (EGreaterThan(p.Y, min.Y) && ELessThan(p.X, max.X)) && EGreaterThan(p.X, min.X);
     }
 
     private bool ELessThan(float rhs, float lhs)
     {
-      if ((double) rhs >= (double) lhs + 0.00999999977648258)
+      if (rhs >= lhs + 0.00999999977648258)
       {
-        return (double) rhs < (double) lhs - 0.00999999977648258;
+        return rhs < lhs - 0.00999999977648258;
       }
 
       return true;
@@ -75,9 +75,9 @@ namespace M3D.Graphics.Utils
 
     private bool EGreaterThan(float rhs, float lhs)
     {
-      if ((double) rhs <= (double) lhs + 0.00999999977648258)
+      if (rhs <= lhs + 0.00999999977648258)
       {
-        return (double) rhs > (double) lhs - 0.00999999977648258;
+        return rhs > lhs - 0.00999999977648258;
       }
 
       return true;
@@ -85,12 +85,12 @@ namespace M3D.Graphics.Utils
 
     public bool InRegion(Vector3 p)
     {
-      return (double) p.x >= (double)min.x && (double) p.x <= (double)max.x && ((double) p.y >= (double)min.y && (double) p.y <= (double)max.y) && ((double) p.z >= (double)min.z && (double) p.z <= (double)max.z);
+      return p.X >= (double)min.X && p.X <= (double)max.X && (p.Y >= (double)min.Y && p.Y <= (double)max.Y) && (p.Z >= (double)min.Z && p.Z <= (double)max.Z);
     }
 
     public bool InRegionNaN(Vector3 p)
     {
-      return (float.IsNaN(p.x) || (double) p.x >= (double)min.x && (double) p.x <= (double)max.x) && (float.IsNaN(p.y) || (double) p.y >= (double)min.y && (double) p.y <= (double)max.y) && (float.IsNaN(p.z) || (double) p.z >= (double)min.z && (double) p.z <= (double)max.z);
+      return (float.IsNaN(p.X) || p.X >= (double)min.X && p.X <= (double)max.X) && (float.IsNaN(p.Y) || p.Y >= (double)min.Y && p.Y <= (double)max.Y) && (float.IsNaN(p.Z) || p.Z >= (double)min.Z && p.Z <= (double)max.Z);
     }
   }
 }

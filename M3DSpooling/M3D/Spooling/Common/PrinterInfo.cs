@@ -10,7 +10,7 @@ namespace M3D.Spooling.Common
   public class PrinterInfo
   {
     private static XmlWriterSettings settings = new XmlWriterSettings();
-    private static XmlSerializer __class_serializer = (XmlSerializer) null;
+    private static XmlSerializer __class_serializer = null;
     private XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
     [XmlElement("FilamentInfo")]
     public FilamentSpool filament_info;
@@ -114,7 +114,7 @@ namespace M3D.Spooling.Common
 
     public PrinterInfo()
     {
-      current_job = (JobInfo) null;
+      current_job = null;
       serial_number = new PrinterSerialNumber("0");
       filament_info = new FilamentSpool();
       extruder = new Extruder();
@@ -148,11 +148,11 @@ namespace M3D.Spooling.Common
     {
       PrinterInfo.settings.OmitXmlDeclaration = true;
       var stringWriter = new StringWriter();
-      var xmlWriter = XmlWriter.Create((TextWriter) stringWriter, PrinterInfo.settings);
+      var xmlWriter = XmlWriter.Create(stringWriter, PrinterInfo.settings);
       ns.Add("", "");
       try
       {
-        PrinterInfo.ClassSerializer.Serialize(xmlWriter, (object) this, ns);
+        PrinterInfo.ClassSerializer.Serialize(xmlWriter, this, ns);
       }
       catch (Exception ex)
       {
@@ -171,7 +171,7 @@ namespace M3D.Spooling.Common
       serial_number = new PrinterSerialNumber(other.serial_number.ToString());
       Status = other.Status;
       filament_info = new FilamentSpool(other.filament_info);
-      current_job = other.current_job == null ? (JobInfo) null : new JobInfo(other.current_job);
+      current_job = other.current_job == null ? null : new JobInfo(other.current_job);
       extruder = new Extruder(other.extruder);
       hardware = new Hardware(other.hardware);
       calibration = new Calibration(other.calibration);

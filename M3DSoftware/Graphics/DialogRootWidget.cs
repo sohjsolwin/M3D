@@ -20,8 +20,7 @@ namespace M3D.Graphics
     public override void AddChildElement(Element2D child)
     {
       base.AddChildElement(child);
-      var frame = child as Frame;
-      if (frame != null)
+      if (child is Frame frame)
       {
         frame.DarkenBackground = true;
       }
@@ -72,7 +71,7 @@ namespace M3D.Graphics
 
       if (element2D2 == null)
       {
-        element2D2 = (Element2D) this;
+        element2D2 = (this);
       }
 
       return element2D2;

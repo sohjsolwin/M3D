@@ -18,12 +18,12 @@ namespace M3D.Graphics.Widgets2D
     private TextVerticalAlignment vertical_alignment;
 
     public TextWidget()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public TextWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -54,8 +54,8 @@ namespace M3D.Graphics.Widgets2D
         currentFont.Options.LockToPixel = true;
         var width = (float)Width;
         var height = currentFont.Measure(text, width, alignment).Height;
-        var num1 = VAlignment != TextVerticalAlignment.Top ? (VAlignment != TextVerticalAlignment.Bottom ? (float) ((double)Height * 0.5 - (double) height * 0.5) + (float)Y_Abs : (float)Y_Abs + ((float)Height - height)) : (float)Y_Abs;
-        var num2 = alignment != QFontAlignment.Centre ? (float)X_Abs : (float)Width * 0.5f + (float)X_Abs;
+        var num1 = VAlignment != TextVerticalAlignment.Top ? (VAlignment != TextVerticalAlignment.Bottom ? (float)(Height * 0.5 - height * 0.5) + Y_Abs : Y_Abs + (Height - height)) : Y_Abs;
+        var num2 = alignment != QFontAlignment.Centre ? X_Abs : Width * 0.5f + X_Abs;
         Color4 color = Color;
         if (!Enabled && FadeWhenDisabled)
         {
@@ -64,7 +64,7 @@ namespace M3D.Graphics.Widgets2D
 
         QFont.Begin();
         currentFont.Options.Colour = Color;
-        currentFont.Print(text, width, alignment, new Vector2(num2 + (float)off_x, num1 + (float)off_y));
+        currentFont.Print(text, width, alignment, new Vector2(num2 + off_x, num1 + off_y));
         QFont.End();
       }
       base.OnRender(host);
@@ -176,7 +176,7 @@ namespace M3D.Graphics.Widgets2D
       }
       get
       {
-        return (object)Text;
+        return Text;
       }
     }
   }

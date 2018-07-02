@@ -42,12 +42,12 @@ namespace M3D.Graphics.Widgets2D
     public static ButtonCallback ButtonListenerHook;
 
     public ButtonWidget()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public ButtonWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -63,7 +63,7 @@ namespace M3D.Graphics.Widgets2D
       Color = textcolor;
       down = false;
       state = State.Normal;
-      buttoncallback = (ButtonCallback) null;
+      buttoncallback = null;
       ClickType = ButtonType.Clickable;
       _can_click_off = false;
       draggable_fully = false;
@@ -127,7 +127,7 @@ namespace M3D.Graphics.Widgets2D
           state = State.Down;
           if (Parent != null)
           {
-            Parent.TurnOffGroup(GroupID, (Element2D) this);
+            Parent.TurnOffGroup(GroupID, this);
           }
 
           DoButtonCallback(true);
@@ -154,7 +154,7 @@ namespace M3D.Graphics.Widgets2D
     {
       get
       {
-        return (object)Checked;
+        return Checked;
       }
       set
       {
@@ -215,13 +215,13 @@ namespace M3D.Graphics.Widgets2D
         dragged_fully = false;
         down = false;
         state = State.Normal;
-        OnControlMsg((Element2D) this, ControlMsg.MSG_DRAGSTOP, xparam, yparam);
+        OnControlMsg(this, ControlMsg.MSG_DRAGSTOP, xparam, yparam);
       }
       else if (ClickType == ButtonType.Draggable && down)
       {
         down = false;
         state = State.Normal;
-        OnControlMsg((Element2D) this, ControlMsg.MSG_DRAGSTOP, 0.0f, 0.0f);
+        OnControlMsg(this, ControlMsg.MSG_DRAGSTOP, 0.0f, 0.0f);
       }
       if (ClickType != ButtonType.Checkable)
       {
@@ -247,7 +247,7 @@ namespace M3D.Graphics.Widgets2D
         {
           dragged_x_fully += num1;
           dragged_y_fully += num2;
-          OnControlMsg((Element2D) this, ControlMsg.MSG_MOVE, (float)dragged_x_fully, (float)dragged_y_fully);
+          OnControlMsg(this, ControlMsg.MSG_MOVE, dragged_x_fully, dragged_y_fully);
           lastx = x;
           lasty = y;
           dragged_fully = true;
@@ -281,7 +281,7 @@ namespace M3D.Graphics.Widgets2D
           y1 = draggable_ymax;
         }
 
-        OnControlMsg((Element2D) this, ControlMsg.MSG_MOVE, (float) x1, (float) y1);
+        OnControlMsg(this, ControlMsg.MSG_MOVE, x1, y1);
         SetPosition(x1, y1);
       }
       else if (!ContainsPoint(x, y) && !down)
@@ -332,7 +332,7 @@ namespace M3D.Graphics.Widgets2D
         if (mouseevent.button == MouseButton.Left && down && (ContainsPoint(mouseevent.pos.x, mouseevent.pos.y) && ClickType == ButtonType.Clickable) && !dragged_fully)
         {
           DoButtonCallback(false);
-          OnControlMsg((Element2D) this, ControlMsg.MSG_HIT, 0.0f, 0.0f);
+          OnControlMsg(this, ControlMsg.MSG_HIT, 0.0f, 0.0f);
           Color = textcolor;
           return true;
         }
@@ -376,7 +376,7 @@ namespace M3D.Graphics.Widgets2D
         }
 
         DoButtonCallback(false);
-        OnControlMsg((Element2D) this, ControlMsg.MSG_HIT, 0.0f, 0.0f);
+        OnControlMsg(this, ControlMsg.MSG_HIT, 0.0f, 0.0f);
         Color = textcolor;
       }
       return true;
@@ -493,7 +493,7 @@ namespace M3D.Graphics.Widgets2D
           v1 = 975f;
           down_u0 = 64f;
           down_v0 = 928f;
-          down_u1 = (float) sbyte.MaxValue;
+          down_u1 = sbyte.MaxValue;
           down_v1 = 975f;
           over_u0 = 128f;
           over_v0 = 928f;
@@ -518,7 +518,7 @@ namespace M3D.Graphics.Widgets2D
           v1 = 1023f;
           down_u0 = 64f;
           down_v0 = 976f;
-          down_u1 = (float) sbyte.MaxValue;
+          down_u1 = sbyte.MaxValue;
           down_v1 = 1023f;
           over_u0 = 128f;
           over_v0 = 976f;
@@ -568,15 +568,15 @@ namespace M3D.Graphics.Widgets2D
           u0 = 961f;
           v0 = 65f;
           u1 = 1022f;
-          v1 = (float) sbyte.MaxValue;
+          v1 = sbyte.MaxValue;
           down_u0 = 897f;
           down_v0 = 65f;
           down_u1 = 959f;
-          down_v1 = (float) sbyte.MaxValue;
+          down_v1 = sbyte.MaxValue;
           over_u0 = 897f;
           over_v0 = 65f;
           over_u1 = 959f;
-          over_v1 = (float) sbyte.MaxValue;
+          over_v1 = sbyte.MaxValue;
           disabled_u0 = 672f;
           disabled_v0 = 480f;
           disabled_u1 = 703f;
@@ -635,7 +635,7 @@ namespace M3D.Graphics.Widgets2D
           v1 = 975f;
           down_u0 = 64f;
           down_v0 = 928f;
-          down_u1 = (float) sbyte.MaxValue;
+          down_u1 = sbyte.MaxValue;
           down_v1 = 975f;
           over_u0 = 128f;
           over_v0 = 928f;
@@ -665,7 +665,7 @@ namespace M3D.Graphics.Widgets2D
 
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
-      if (!parent.IsComboBoxElement() && !parent.IsListBoxElement() && ((double)u0 == 0.0 && (double)v0 == 0.0) && ((double)u1 == 0.0 && (double)v1 == 0.0))
+      if (!parent.IsComboBoxElement() && !parent.IsListBoxElement() && (u0 == 0.0 && v0 == 0.0) && (u1 == 0.0 && v1 == 0.0))
       {
         SetToDefaultOptions(type_template);
       }
@@ -681,10 +681,7 @@ namespace M3D.Graphics.Widgets2D
 
     private void DoButtonCallback(bool wasChecked)
     {
-      if (buttoncallback != null)
-      {
-        buttoncallback(this);
-      }
+      buttoncallback?.Invoke(this);
 
       if (ButtonWidget.ButtonListenerHook == null)
       {

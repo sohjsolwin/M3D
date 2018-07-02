@@ -25,7 +25,7 @@ namespace M3D.Spooler
         Visible = true
       };
       TopLevel = true;
-      trayIcon.Click += new EventHandler(notifyIcon1_Click);
+      trayIcon.Click += new EventHandler(NotifyIcon1_Click);
     }
 
     protected override void OnLoad(EventArgs e)
@@ -54,7 +54,7 @@ namespace M3D.Spooler
       base.Dispose(bIsDisposing);
     }
 
-    private void notifyIcon1_Click(object sender, EventArgs e)
+    private void NotifyIcon1_Click(object sender, EventArgs e)
     {
       ShowSpooler();
     }

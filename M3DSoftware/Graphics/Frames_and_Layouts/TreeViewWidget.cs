@@ -6,12 +6,12 @@ namespace M3D.Graphics.Frames_and_Layouts
   public class TreeViewWidget : ScrollableVerticalLayout
   {
     public TreeViewWidget()
-      : this(0, (Element2D) null)
+      : this(0, null)
     {
     }
 
     public TreeViewWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -23,7 +23,7 @@ namespace M3D.Graphics.Frames_and_Layouts
     public override void InitChildren(Element2D parent, GUIHost host, ButtonCallback MyButtonCallback)
     {
       base.InitChildren(parent, host, MyButtonCallback);
-      foreach (Element2D child in (IEnumerable<Element2D>)ScollableChildframe.ChildList)
+      foreach (Element2D child in ScollableChildframe.ChildList)
       {
         if (child is TreeNodeWidget)
         {

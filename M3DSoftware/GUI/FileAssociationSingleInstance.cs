@@ -34,7 +34,7 @@ namespace M3D.GUI
       }
 
       FileAssociationSingleInstance._myServer.Shutdown();
-      FileAssociationSingleInstance._myServer = (FileAssociationSingleInstance.SingleInstanceSocket) null;
+      FileAssociationSingleInstance._myServer = null;
     }
 
     public static bool SendParametersToSingleInstance(string[] args)
@@ -115,10 +115,7 @@ namespace M3D.GUI
           }
           try
           {
-            if (callback != null)
-            {
-              callback(strArray);
-            }
+            callback?.Invoke(strArray);
           }
           catch (Exception ex)
           {

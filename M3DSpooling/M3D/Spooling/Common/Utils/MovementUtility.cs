@@ -5,23 +5,23 @@ namespace M3D.Spooling.Common.Utils
 {
   internal sealed class MovementUtility
   {
-    public static void vGetEffectiveMovementGCode(Trilean bExtruderIsHomed, bool bExtruderZValid, Trilean bExtruderInRelativeMode, Vector3D op3dDestination, Vector3D op3dInitial, ref GCode ogcGCodeEffectiveMove)
+    public static void VGetEffectiveMovementGCode(Trilean bExtruderIsHomed, bool bExtruderZValid, Trilean bExtruderInRelativeMode, Vector3D op3dDestination, Vector3D op3dInitial, ref GCode ogcGCodeEffectiveMove)
     {
       if (bExtruderInRelativeMode == Trilean.True)
       {
         if (bExtruderIsHomed == Trilean.True)
         {
-          if (ogcGCodeEffectiveMove.hasX)
+          if (ogcGCodeEffectiveMove.HasX)
           {
             ogcGCodeEffectiveMove.X = op3dDestination.x - op3dInitial.x;
           }
 
-          if (ogcGCodeEffectiveMove.hasY)
+          if (ogcGCodeEffectiveMove.HasY)
           {
             ogcGCodeEffectiveMove.Y = op3dDestination.y - op3dInitial.y;
           }
         }
-        if (!bExtruderZValid || !ogcGCodeEffectiveMove.hasZ)
+        if (!bExtruderZValid || !ogcGCodeEffectiveMove.HasZ)
         {
           return;
         }
@@ -37,17 +37,17 @@ namespace M3D.Spooling.Common.Utils
 
         if (bExtruderIsHomed == Trilean.True)
         {
-          if (ogcGCodeEffectiveMove.hasX)
+          if (ogcGCodeEffectiveMove.HasX)
           {
             ogcGCodeEffectiveMove.X = op3dDestination.x;
           }
 
-          if (ogcGCodeEffectiveMove.hasY)
+          if (ogcGCodeEffectiveMove.HasY)
           {
             ogcGCodeEffectiveMove.Y = op3dDestination.y;
           }
         }
-        if (!bExtruderZValid || !ogcGCodeEffectiveMove.hasZ)
+        if (!bExtruderZValid || !ogcGCodeEffectiveMove.HasZ)
         {
           return;
         }
@@ -56,45 +56,45 @@ namespace M3D.Spooling.Common.Utils
       }
     }
 
-    public static Vector3D op3dCalculateDestination(Trilean bExtruderIsHomed, bool bExtruderZValid, Trilean bExtruderInRelativeMode, GCode ogcGCodeRequest, Vector3D op3dInitial)
+    public static Vector3D Op3dCalculateDestination(Trilean bExtruderIsHomed, bool bExtruderZValid, Trilean bExtruderInRelativeMode, GCode ogcGCodeRequest, Vector3D op3dInitial)
     {
       var op3dInitial1 = new Vector3D(op3dInitial);
       if (bExtruderIsHomed == Trilean.True)
       {
-        op3dInitial1 = MovementUtility.op3dCalculateDestinationXYOnly(bExtruderInRelativeMode, ogcGCodeRequest, op3dInitial1);
+        op3dInitial1 = MovementUtility.Op3dCalculateDestinationXYOnly(bExtruderInRelativeMode, ogcGCodeRequest, op3dInitial1);
       }
 
       if (bExtruderZValid)
       {
-        op3dInitial1 = MovementUtility.op3dCalculateDestinationZOnly(bExtruderInRelativeMode, ogcGCodeRequest, op3dInitial1);
+        op3dInitial1 = MovementUtility.Op3dCalculateDestinationZOnly(bExtruderInRelativeMode, ogcGCodeRequest, op3dInitial1);
       }
 
       return op3dInitial1;
     }
 
-    public static Vector3D op3dCalculateDestinationXYOnly(Trilean bExtruderInRelativeMode, GCode ogcGCodeRequest, Vector3D op3dInitial)
+    public static Vector3D Op3dCalculateDestinationXYOnly(Trilean bExtruderInRelativeMode, GCode ogcGCodeRequest, Vector3D op3dInitial)
     {
       var vector3D = new Vector3D(op3dInitial);
       if (bExtruderInRelativeMode == Trilean.True)
       {
-        if (ogcGCodeRequest.hasX)
+        if (ogcGCodeRequest.HasX)
         {
           vector3D.x += ogcGCodeRequest.X;
         }
 
-        if (ogcGCodeRequest.hasY)
+        if (ogcGCodeRequest.HasY)
         {
           vector3D.y += ogcGCodeRequest.Y;
         }
       }
       else
       {
-        if (ogcGCodeRequest.hasX)
+        if (ogcGCodeRequest.HasX)
         {
           vector3D.x = ogcGCodeRequest.X;
         }
 
-        if (ogcGCodeRequest.hasY)
+        if (ogcGCodeRequest.HasY)
         {
           vector3D.y = ogcGCodeRequest.Y;
         }
@@ -102,10 +102,10 @@ namespace M3D.Spooling.Common.Utils
       return vector3D;
     }
 
-    public static Vector3D op3dCalculateDestinationZOnly(Trilean bExtruderInRelativeMode, GCode ogcGCodeRequest, Vector3D op3dInitial)
+    public static Vector3D Op3dCalculateDestinationZOnly(Trilean bExtruderInRelativeMode, GCode ogcGCodeRequest, Vector3D op3dInitial)
     {
       var vector3D = new Vector3D(op3dInitial);
-      if (ogcGCodeRequest.hasZ)
+      if (ogcGCodeRequest.HasZ)
       {
         if (bExtruderInRelativeMode == Trilean.True)
         {
@@ -119,7 +119,7 @@ namespace M3D.Spooling.Common.Utils
       return vector3D;
     }
 
-    public static Vector3D op3dCalculateDestinationWithClipping(Trilean bExtruderIsHomed, bool bExtruderZValid, ref bool bDestinationHasBeenClipped, Vector3D op3dDestination, Vector3D op3dInitial, PrinterProfile printerProfile)
+    public static Vector3D Op3dCalculateDestinationWithClipping(Trilean bExtruderIsHomed, bool bExtruderZValid, ref bool bDestinationHasBeenClipped, Vector3D op3dDestination, Vector3D op3dInitial, PrinterProfile printerProfile)
     {
       var intercept = new Vector3D();
       bDestinationHasBeenClipped = false;

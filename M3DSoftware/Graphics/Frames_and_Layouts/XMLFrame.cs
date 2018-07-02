@@ -12,12 +12,12 @@ namespace M3D.Graphics.Frames_and_Layouts
     protected XMLFrame childFrame;
 
     public XMLFrame()
-      : base(0, (Element2D) null)
+      : base(0, null)
     {
     }
 
     public XMLFrame(int ID)
-      : base(ID, (Element2D) null)
+      : base(ID, null)
     {
     }
 
@@ -41,20 +41,20 @@ namespace M3D.Graphics.Frames_and_Layouts
       }
       Sprite.pixel_perfect = false;
       RemoveAllChildElements();
-      AddChildElement((Element2D)childFrame);
+      AddChildElement(childFrame);
       childFrame.Refresh();
     }
 
     public void Init(GUIHost host, ButtonCallback MyButtonCallback)
     {
       this.host = host;
-      DoOnUpdate = (ElementStandardDelegate) null;
+      DoOnUpdate = null;
       Sprite.texture_height_pixels = 1024;
       Sprite.texture_width_pixels = 1024;
       Sprite.pixel_perfect = true;
       Visible = true;
       Enabled = true;
-      InitChildren((Element2D) null, host, MyButtonCallback);
+      InitChildren(null, host, MyButtonCallback);
       Sprite.pixel_perfect = false;
     }
 

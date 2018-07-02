@@ -21,7 +21,7 @@ namespace M3D.Spooling.Common.Utils
       try
       {
         readstream = new FileStream(gcodefilename, FileMode.Open, FileAccess.Read);
-        if (new BinaryReader((Stream) readstream).PeekChar() > (int) sbyte.MaxValue)
+        if (new BinaryReader(readstream).PeekChar() > sbyte.MaxValue)
         {
           isbinary = true;
         }
@@ -99,7 +99,7 @@ namespace M3D.Spooling.Common.Utils
     {
       if (endreached)
       {
-        return (GCode) null;
+        return null;
       }
 
       GCode gcode = isbinary ? ReadGCodeLineBinary(readBinary) : ReadGCodeLineAscii(readascii, excludeComments);
@@ -135,11 +135,11 @@ namespace M3D.Spooling.Common.Utils
         readstream = new FileStream(gcodefilename, FileMode.Open, FileAccess.Read);
         if (isbinary)
         {
-          readBinary = new BinaryReader((Stream)readstream);
+          readBinary = new BinaryReader(readstream);
         }
         else
         {
-          readascii = new StreamReader((Stream)readstream);
+          readascii = new StreamReader(readstream);
         }
       }
       catch (Exception ex)
@@ -151,26 +151,26 @@ namespace M3D.Spooling.Common.Utils
 
     private long GetLineCountBinary(FileStream readstream)
     {
-      var readBinary = new BinaryReader((Stream) readstream);
+      var readBinary = new BinaryReader(readstream);
       var num = 0;
       while (ReadGCodeLineBinary(readBinary) != null)
       {
         ++num;
       }
 
-      return (long) num;
+      return num;
     }
 
     private long GetLineCountAscii(FileStream readstream, bool excludeComments)
     {
-      var readascii = new StreamReader((Stream) readstream);
+      var readascii = new StreamReader(readstream);
       var num = 0;
       while (ReadGCodeLineAscii(readascii, excludeComments) != null)
       {
         ++num;
       }
 
-      return (long) num;
+      return num;
     }
 
     private GCode ReadGCodeLineAscii(StreamReader readascii, bool excludeComments)
@@ -186,11 +186,11 @@ namespace M3D.Spooling.Common.Utils
         catch (Exception ex)
         {
           ErrorLogger.LogErrorMsg("Exception in GCodeReader.StartReading 1 " + ex.Message, "Exception");
-          return (GCode) null;
+          return null;
         }
         if (line == null)
         {
-          return (GCode) null;
+          return null;
         }
 
         gcode.Parse(line);
@@ -215,22 +215,22 @@ namespace M3D.Spooling.Common.Utils
           num2 = readBinary.ReadUInt16();
           if (flag2)
           {
-            num3 = (int) readBinary.ReadByte();
+            num3 = readBinary.ReadByte();
           }
         }
         if ((num1 & 1) != 0)
         {
-          gcode.N = (int) readBinary.ReadUInt16();
+          gcode.N = readBinary.ReadUInt16();
         }
 
         if ((num1 & 2) != 0)
         {
-          gcode.M = flag1 ? readBinary.ReadUInt16() : (ushort) readBinary.ReadByte();
+          gcode.M = flag1 ? readBinary.ReadUInt16() : readBinary.ReadByte();
         }
 
         if ((num1 & 4) != 0)
         {
-          gcode.G = flag1 ? readBinary.ReadUInt16() : (ushort) readBinary.ReadByte();
+          gcode.G = flag1 ? readBinary.ReadUInt16() : readBinary.ReadByte();
         }
 
         if ((num1 & 8) != 0)
@@ -273,17 +273,17 @@ namespace M3D.Spooling.Common.Utils
           gcode.P = readBinary.ReadInt32();
         }
 
-        if (flag1 && ((int) num2 & 1) != 0)
+        if (flag1 && (num2 & 1) != 0)
         {
           gcode.I = readBinary.ReadSingle();
         }
 
-        if (flag1 && ((int) num2 & 2) != 0)
+        if (flag1 && (num2 & 2) != 0)
         {
           gcode.J = readBinary.ReadSingle();
         }
 
-        if (flag1 && ((int) num2 & 4) != 0)
+        if (flag1 && (num2 & 4) != 0)
         {
           gcode.R = readBinary.ReadSingle();
         }
@@ -302,7 +302,7 @@ namespace M3D.Spooling.Common.Utils
       }
       catch (EndOfStreamException ex)
       {
-        return (GCode) null;
+        return null;
       }
       catch (Exception ex)
       {

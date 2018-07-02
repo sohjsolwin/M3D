@@ -18,7 +18,7 @@ namespace M3D.Spooler.Forms
       InitializeComponent();
     }
 
-    private void buttonOK_Click(object sender, EventArgs e)
+    private void ButtonOK_Click(object sender, EventArgs e)
     {
       DoNotShowAgain = checkBoxDoNotShowAgain.Checked;
       Close();
@@ -47,7 +47,7 @@ namespace M3D.Spooler.Forms
       buttonOK.TabIndex = 0;
       buttonOK.Text = "OK";
       buttonOK.UseVisualStyleBackColor = true;
-      buttonOK.Click += new EventHandler(buttonOK_Click);
+      buttonOK.Click += new EventHandler(ButtonOK_Click);
       checkBoxDoNotShowAgain.AutoSize = true;
       checkBoxDoNotShowAgain.Location = new Point(10, 121);
       checkBoxDoNotShowAgain.Name = "checkBoxDoNotShowAgain";
@@ -55,7 +55,7 @@ namespace M3D.Spooler.Forms
       checkBoxDoNotShowAgain.TabIndex = 1;
       checkBoxDoNotShowAgain.Text = "Do not show this warning again.";
       checkBoxDoNotShowAgain.UseVisualStyleBackColor = true;
-      label1.Font = new Font("Arial Narrow", 12f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      label1.Font = new Font("Arial Narrow", 12f, FontStyle.Regular, GraphicsUnit.Point, 0);
       label1.Location = new Point(9, 10);
       label1.Name = "label1";
       label1.Size = new Size(339, 91);
@@ -64,9 +64,9 @@ namespace M3D.Spooler.Forms
       AutoScaleDimensions = new SizeF(6f, 13f);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(365, 163);
-      Controls.Add((Control)label1);
-      Controls.Add((Control)checkBoxDoNotShowAgain);
-      Controls.Add((Control)buttonOK);
+      Controls.Add(label1);
+      Controls.Add(checkBoxDoNotShowAgain);
+      Controls.Add(buttonOK);
       FormBorderStyle = FormBorderStyle.FixedToolWindow;
       Name = nameof (PrinterLockWarning);
       Text = "M3D Printer Warning";

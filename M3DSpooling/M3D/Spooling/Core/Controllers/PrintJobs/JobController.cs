@@ -12,7 +12,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 {
   internal class JobController
   {
-    private ThreadSafeVariable<AbstractJob> m_oJobImplementation = new ThreadSafeVariable<AbstractJob>((AbstractJob) null);
+    private ThreadSafeVariable<AbstractJob> m_oJobImplementation = new ThreadSafeVariable<AbstractJob>(null);
     private ThreadSafeVariable<JobParams.Mode> m_JobMode = new ThreadSafeVariable<JobParams.Mode>();
     private ThreadSafeVariable<bool> m_bProcessed = new ThreadSafeVariable<bool>(false);
     private ThreadSafeVariable<bool> m_bSavingToSD = new ThreadSafeVariable<bool>(false);
@@ -43,12 +43,12 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     public void ConnectToRunningSDPrint(string user)
     {
       PrinterInfo currentPrinterInfo = m_oParentFirmwareController.CurrentPrinterInfo;
-      JobParams jobParams = currentPrinterInfo.persistantData.SavedJobInformation == null ? new JobParams((string) null, "Print From SD", (string) null, FilamentSpool.TypeEnum.OtherOrUnknown, 0.0f, 0.0f) : currentPrinterInfo.persistantData.SavedJobInformation.Params;
+      JobParams jobParams = currentPrinterInfo.persistantData.SavedJobInformation == null ? new JobParams(null, "Print From SD", null, FilamentSpool.TypeEnum.OtherOrUnknown, 0.0f, 0.0f) : currentPrinterInfo.persistantData.SavedJobInformation.Params;
       ClearAllWarnings();
       m_sGcodeFile = "";
       Mode = JobParams.Mode.FirmwarePrintingFromSDCard;
       var firmwareSdPrintJob = new FirmwareSDPrintJob(jobParams, user, m_oParentFirmwareController.MyPrinterProfile);
-      m_oJobImplementation.Value = (AbstractJob) firmwareSdPrintJob;
+      m_oJobImplementation.Value = firmwareSdPrintJob;
       firmwareSdPrintJob.ConnectToRunningSDPrint();
       Processed = true;
       Printing = true;
@@ -72,7 +72,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       AbstractJob abstractJob;
       if (Mode == JobParams.Mode.SaveToBinaryGCodeFile)
       {
-        abstractJob = (AbstractJob) new SaveGCodeToFileJob(jobParams, user, m_oParentFirmwareController.MyPrinterProfile);
+        abstractJob = new SaveGCodeToFileJob(jobParams, user, m_oParentFirmwareController.MyPrinterProfile);
       }
       else if (Mode != JobParams.Mode.FirmwarePrintingFromSDCard)
       {
@@ -83,7 +83,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
         IsSimultaneousPrint = false;
         IsSavingToSD = Mode != JobParams.Mode.DirectPrinting;
-        abstractJob = (AbstractJob) new SpoolerHostedJob(jobParams, user, m_oParentFirmwareController.MyPrinterProfile, IsSavingToSD && !IsSimultaneousPrint, ulFastForward);
+        abstractJob = new SpoolerHostedJob(jobParams, user, m_oParentFirmwareController.MyPrinterProfile, IsSavingToSD && !IsSimultaneousPrint, ulFastForward);
       }
       else
       {
@@ -92,7 +92,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
           throw new NotImplementedException("Software does not support printing from the SD card.");
         }
 
-        abstractJob = (AbstractJob) new FirmwareSDPrintJob(jobParams, user, m_oParentFirmwareController.MyPrinterProfile);
+        abstractJob = new FirmwareSDPrintJob(jobParams, user, m_oParentFirmwareController.MyPrinterProfile);
       }
       m_oJobImplementation.Value = abstractJob;
       JobCreateResult jobCreateResult = abstractJob.Create(currentPrinterInfo);
@@ -102,7 +102,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
         Processed = true;
         return JobController.Result.Success;
       }
-      m_oJobImplementation.Value = (AbstractJob) null;
+      m_oJobImplementation.Value = null;
       if (jobCreateResult.Result == ProcessReturn.FAILURE_OUT_OF_BOUNDS)
       {
         return JobController.Result.FAILED_OutOfBounds;
@@ -113,7 +113,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public JobController.Result Start(out List<string> start_gcode)
     {
-      start_gcode = (List<string>) null;
+      start_gcode = null;
       if (MyJobImplementation == null)
       {
         return JobController.Result.FAILED_Create;
@@ -140,7 +140,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
         start_gcode = new List<string>()
         {
-          string.Format("M28 {0}", (object) m_sGcodeFile)
+          string.Format("M28 {0}",  m_sGcodeFile)
         };
       }
       else if (MyJobImplementation.Details.jobParams.jobMode != JobParams.Mode.SaveToBinaryGCodeFile && MyJobImplementation.Details.jobParams.options.calibrate_before_print)
@@ -154,7 +154,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       }
       else if (start_gcode1 != null)
       {
-        start_gcode.AddRange((IEnumerable<string>) start_gcode1);
+        start_gcode.AddRange(start_gcode1);
       }
 
       Printing = true;
@@ -173,7 +173,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       SaveJobState();
       MyJobImplementation.Stop();
       job_timer.Stop();
-      m_oJobImplementation.Value = (AbstractJob) null;
+      m_oJobImplementation.Value = null;
       Printing = false;
       return JobController.Result.Success;
     }
@@ -181,7 +181,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     public JobController.Result StopJob(out List<string> end_gcode)
     {
       AbstractJob jobImplementation = MyJobImplementation;
-      end_gcode = (List<string>) null;
+      end_gcode = null;
       if (MyJobImplementation == null)
       {
         return JobController.Result.FAILED_JobNotStarted;
@@ -195,25 +195,27 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public void FinalizeEndOfJob(out List<string> end_gcode)
     {
-      end_gcode = (List<string>) null;
+      end_gcode = null;
       if (IsSavingToSD)
       {
-        end_gcode = new List<string>();
-        end_gcode.Add("M29");
+        end_gcode = new List<string>
+        {
+          "M29"
+        };
         if (!m_oJobImplementation.Value.Done)
         {
-          end_gcode.Add(string.Format("M30 {0}", (object)m_sGcodeFile));
+          end_gcode.Add(string.Format("M30 {0}", m_sGcodeFile));
         }
 
         MyJobImplementation.Stop();
       }
-      m_oJobImplementation.Value = (AbstractJob) null;
+      m_oJobImplementation.Value = null;
       SaveJobState();
     }
 
     public bool Pause(out List<string> pause_gcode, FilamentSpool spool)
     {
-      pause_gcode = (List<string>) null;
+      pause_gcode = null;
       AbstractJob jobImplementation = MyJobImplementation;
       if (jobImplementation == null || jobImplementation.Status == JobStatus.Paused || IsSavingToSD)
       {
@@ -233,17 +235,17 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
         var num2 = 1800f;
         Vector2D cornerPositionBoxTop = m_oParentFirmwareController.MyPrinterProfile.PrinterSizeConstants.BackCornerPositionBoxTop;
         string str;
-        if ((double)m_oParentFirmwareController.CurrentPrinterInfo.extruder.Temperature > 0.0)
+        if (m_oParentFirmwareController.CurrentPrinterInfo.extruder.Temperature > 0.0)
         {
-          m_fRetractionAtPause = !((FilamentSpool) null != spool) || spool.filament_type == FilamentSpool.TypeEnum.NoFilament ? 10f : (float) FilamentProfile.CreateFilamentProfile(spool, (PrinterProfile)m_oParentFirmwareController.MyPrinterProfile).preprocessor.initialPrint.PrimeAmount;
-          str = PrinterCompatibleString.Format("G0 Z{0} F{1} E-{2}", (object) 8f, (object) num1, (object)m_fRetractionAtPause);
+          m_fRetractionAtPause = !(null != spool) || spool.filament_type == FilamentSpool.TypeEnum.NoFilament ? 10f : FilamentProfile.CreateFilamentProfile(spool, (PrinterProfile)m_oParentFirmwareController.MyPrinterProfile).preprocessor.initialPrint.PrimeAmount;
+          str = PrinterCompatibleString.Format("G0 Z{0} F{1} E-{2}", 8f, num1, m_fRetractionAtPause);
         }
         else
         {
           m_fRetractionAtPause = 0.0f;
-          str = PrinterCompatibleString.Format("G0 Z{0} F{1}", (object) 8f, (object) num1);
+          str = PrinterCompatibleString.Format("G0 Z{0} F{1}", 8f, num1);
         }
-        pause_gcode.AddRange((IEnumerable<string>) new string[7]
+        pause_gcode.AddRange(new string[7]
         {
           "G4 S0",
           "M114",
@@ -261,7 +263,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
 
     public JobController.Result Resume(out List<string> resume_gcode, FilamentSpool spool)
     {
-      resume_gcode = (List<string>) null;
+      resume_gcode = null;
       AbstractJob jobImplementation = MyJobImplementation;
       if (jobImplementation == null)
       {
@@ -271,7 +273,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       JobController.Result result = jobImplementation.Resume(out List<string> resume_gcode1, spool);
       if (result == JobController.Result.Success)
       {
-        var num1 = !((FilamentSpool) null != spool) || spool.filament_type == FilamentSpool.TypeEnum.NoFilament ? (int) byte.MaxValue : FilamentProfile.CreateFilamentProfile(spool, (PrinterProfile)m_oParentFirmwareController.MyPrinterProfile).preprocessor.initialPrint.StartingFanValue;
+        var num1 = !(null != spool) || spool.filament_type == FilamentSpool.TypeEnum.NoFilament ? byte.MaxValue : FilamentProfile.CreateFilamentProfile(spool, m_oParentFirmwareController.MyPrinterProfile).preprocessor.initialPrint.StartingFanValue;
         var num2 = 90f;
         resume_gcode = new List<string>()
         {
@@ -281,13 +283,13 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
         if (m_bUpdatedDataReceivedAfterPause)
         {
           resume_gcode.Add("G90");
-          resume_gcode.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2}", (object)m_v3DeExtruderLocationAtPause.pos.x, (object)m_v3DeExtruderLocationAtPause.pos.y, (object) num2));
-          resume_gcode.Add(PrinterCompatibleString.Format("G0 Z{0} F{1}", (object)m_v3DeExtruderLocationAtPause.pos.z, (object) num2));
-          resume_gcode.Add(PrinterCompatibleString.Format("G92 E{0}", (object) (float) ((double)m_v3DeExtruderLocationAtPause.e - (double)m_fRetractionAtPause)));
+          resume_gcode.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F{2}", m_v3DeExtruderLocationAtPause.pos.x, m_v3DeExtruderLocationAtPause.pos.y, num2));
+          resume_gcode.Add(PrinterCompatibleString.Format("G0 Z{0} F{1}", m_v3DeExtruderLocationAtPause.pos.z, num2));
+          resume_gcode.Add(PrinterCompatibleString.Format("G92 E{0}", (object) (float)(m_v3DeExtruderLocationAtPause.e - (double)m_fRetractionAtPause)));
         }
         if (resume_gcode1 != null && resume_gcode1.Count > 0)
         {
-          resume_gcode.AddRange((IEnumerable<string>) resume_gcode1);
+          resume_gcode.AddRange(resume_gcode1);
         }
 
         job_timer.Start();
@@ -395,7 +397,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       {
         if (MyJobImplementation == null)
         {
-          return (JobInfo) null;
+          return null;
         }
 
         JobInfo info = MyJobImplementation.GetInfo();
@@ -405,7 +407,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
         }
 
         var timeRemaining = info.TimeRemaining;
-        if ((double) timeRemaining > 0.0)
+        if (timeRemaining > 0.0)
         {
           timeRemaining += m_lsAdditionalTimeRemaining;
         }
@@ -504,8 +506,8 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       get
       {
         var isRunning = job_timer.IsRunning;
-        var num = (float) (job_timer.ElapsedMilliseconds / 1000L) / 600f;
-        if (isRunning && (double) num < 1.0)
+        var num = job_timer.ElapsedMilliseconds / 1000L / 600f;
+        if (isRunning && num < 1.0)
         {
           return 0.0f;
         }
@@ -527,7 +529,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       {
         if (MyJobImplementation == null)
         {
-          return (JobDetails) null;
+          return null;
         }
 
         return MyJobImplementation.Details;
@@ -668,7 +670,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
     private string GetFilenameForSDCard(string jobname, FilamentSpool filament)
     {
       var str = filament.filament_type == FilamentSpool.TypeEnum.NoFilament || filament.filament_type == FilamentSpool.TypeEnum.OtherOrUnknown ? "gcode" : filament.filament_type.ToString();
-      return string.Format("{0}.{1}", (object) jobname.Replace(" ", "_"), (object) str);
+      return string.Format("{0}.{1}", jobname.Replace(" ", "_"), str);
     }
 
     private void OnReceivedUpdatedPosition(IPublicFirmwareController connection, PrinterInfo info)
@@ -685,7 +687,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
       }
 
       m_olWarnings.Clear();
-      m_olWarnings = (List<MessageType>) null;
+      m_olWarnings = null;
     }
 
     private AbstractJob MyJobImplementation

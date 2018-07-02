@@ -14,20 +14,20 @@ namespace M3D.GUI.Dialogs
 
     public static void Show(PopupMessageBox messagebox, SpoolerConnection spoolerConnection, PrinterObject printer)
     {
-      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(Resources.FeaturesDialogFrame, new PopupMessageBox.XMLButtonCallback(FeaturesDialog.XMLButtonCallback), new ElementStandardDelegate(FeaturesDialog.XMLOnUpdateCallback), new PopupMessageBox.XMLOnShow(FeaturesDialog.XMLOnShow), (object) new FeaturesDialog.ProFeaturesDialogData(spoolerConnection, printer)));
+      messagebox.AddXMLMessageToQueue(new PopupMessageBox.MessageDataXML(Resources.FeaturesDialogFrame, new PopupMessageBox.XMLButtonCallback(FeaturesDialog.XMLButtonCallback), new ElementStandardDelegate(FeaturesDialog.XMLOnUpdateCallback), new PopupMessageBox.XMLOnShow(FeaturesDialog.XMLOnShow), new FeaturesDialog.ProFeaturesDialogData(spoolerConnection, printer)));
     }
 
     private static void XMLOnShow(PopupMessageBox parentFrame, XMLFrame childFrame, GUIHost host, object data)
     {
       var featuresDialogData = data as FeaturesDialog.ProFeaturesDialogData;
-      ((TextWidget) childFrame.FindChildElement("FeaturePanel::Title")).Text = string.Format("{0} Features", (object) featuresDialogData.printer.MyPrinterProfile.ProfileName);
-      ((TextWidget) childFrame.FindChildElement("FeaturePanel::Desc")).Text = string.Format("Here are the {0} features currently available for your printer.", (object) featuresDialogData.printer.MyPrinterProfile.ProfileName);
+      ((TextWidget) childFrame.FindChildElement("FeaturePanel::Title")).Text = string.Format("{0} Features", featuresDialogData.printer.MyPrinterProfile.ProfileName);
+      ((TextWidget) childFrame.FindChildElement("FeaturePanel::Desc")).Text = string.Format("Here are the {0} features currently available for your printer.", featuresDialogData.printer.MyPrinterProfile.ProfileName);
       FeaturesDialog.featurePanel = new FeaturePanel(1004, host, featuresDialogData.spoolerConnection, featuresDialogData.printer)
       {
         Visible = true,
         Enabled = true
       };
-      childFrame.FindChildElement(1003).AddChildElement((Element2D) FeaturesDialog.featurePanel);
+      childFrame.FindChildElement(1003).AddChildElement(FeaturesDialog.featurePanel);
     }
 
     private static void XMLButtonCallback(ButtonWidget button, SpoolerMessage message, PopupMessageBox parentFrame, XMLFrame childFrame, object data)

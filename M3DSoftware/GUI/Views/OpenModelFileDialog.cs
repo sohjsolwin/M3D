@@ -26,7 +26,7 @@ namespace M3D.GUI.Views
         return openFileDialog.FileName;
       }
 
-      return (string) null;
+      return null;
     }
 
     public enum FileType

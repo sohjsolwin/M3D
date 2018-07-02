@@ -15,7 +15,7 @@ namespace M3D.Graphics.Widgets2D
       var flag2 = sq2.contains(sq1);
       if (flag1 & flag2 || !flag1 && !flag2)
       {
-        return (LinkedList<Vector3D>) null;
+        return null;
       }
 
       if (flag1 | flag2)
@@ -33,7 +33,7 @@ namespace M3D.Graphics.Widgets2D
       }
       if (!sq1.intercepts(sq2, out List<Square.SegmentIntersection> segmentIntersections))
       {
-        return (LinkedList<Vector3D>)null;
+        return null;
       }
 
       if (segmentIntersections.Count == 2)
@@ -104,9 +104,9 @@ namespace M3D.Graphics.Widgets2D
 
       public bool contains(BoundrySurface.Square sq)
       {
-        if ((double)min.x <= (double) sq.min.x && (double)min.y <= (double) sq.min.y && (double)max.x >= (double) sq.max.x)
+        if (min.x <= (double)sq.min.x && min.y <= (double)sq.min.y && max.x >= (double)sq.max.x)
         {
-          return (double)max.y >= (double) sq.max.y;
+          return max.y >= (double)sq.max.y;
         }
 
         return false;
@@ -145,11 +145,11 @@ namespace M3D.Graphics.Widgets2D
         var num4 = s.min.y - min.y;
         var num5 = s.max.x - s.min.x;
         var num6 = s.max.y - s.min.y;
-        var num7 = (double) num1 * (double) num4 - (double) num3 * (double) num2;
-        var num8 = (float) ((double) num5 * (double) num2 - (double) num1 * (double) num6);
+        var num7 = num1 * (double)num4 - num3 * (double)num2;
+        var num8 = (float)(num5 * (double)num2 - num1 * (double)num6);
         var num9 = (double) num8;
         var num10 = (float) (num7 / num9);
-        pt = (double) num8 >= 1.40129846432482E-45 || (double) num8 <= -1.40129846432482E-45 ? ((double) num10 >= 1.40129846432482E-45 || (double) num10 <= -1.40129846432482E-45 ? ((double) num10 >= 1.0 || (double) num10 <= 1.0 ? ((double) num10 >= 1.0 || (double) num10 <= 0.0 ? new Vector2D?() : new Vector2D?(new Vector2D(min.x + num1 * num10, min.y + num2 * num10))) : new Vector2D?(new Vector2D(max))) : new Vector2D?(new Vector2D(min))) : new Vector2D?();
+        pt = num8 >= 1.40129846432482E-45 || num8 <= -1.40129846432482E-45 ? num10 >= 1.40129846432482E-45 || num10 <= -1.40129846432482E-45 ? num10 >= 1.0 || num10 <= 1.0 ? num10 >= 1.0 || num10 <= 0.0 ? new Vector2D?() : new Vector2D?(new Vector2D(min.x + num1 * num10, min.y + num2 * num10)) : new Vector2D?(new Vector2D(max)) : new Vector2D?(new Vector2D(min)) : new Vector2D?();
         return pt.HasValue;
       }
     }

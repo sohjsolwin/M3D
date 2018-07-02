@@ -50,7 +50,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
     {
       if (HasError)
       {
-        return "Required: " + (object)error_range.min + "-" + (object)error_range.max;
+        return "Required: " + error_range.min + "-" + error_range.max;
       }
 
       if (!HasWarning)
@@ -58,7 +58,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
         return "";
       }
 
-      return "Suggested: " + (object)warning_range.min + "-" + (object)warning_range.max;
+      return "Suggested: " + warning_range.min + "-" + warning_range.max;
     }
   }
 }

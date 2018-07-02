@@ -35,7 +35,7 @@ namespace M3D.Spooling.Common.Utils
           m_oInternalReader.Close();
           return;
         }
-        if (nextLine.hasE)
+        if (nextLine.HasE)
         {
           fEStartingLocation = nextLine.E;
         }
@@ -49,7 +49,7 @@ namespace M3D.Spooling.Common.Utils
         m_aiGcodeInBuffer[index] = 0;
       }
 
-      m_otFillThread = (Thread) null;
+      m_otFillThread = null;
       m_aoFillThreadSync = new object[8];
       for (var index = 0; index < 8; ++index)
       {
@@ -71,7 +71,7 @@ namespace M3D.Spooling.Common.Utils
       catch (Exception ex)
       {
       }
-      m_otFillThread = (Thread) null;
+      m_otFillThread = null;
       m_oInternalReader.Close();
     }
 
@@ -90,7 +90,7 @@ namespace M3D.Spooling.Common.Utils
       var num2 = 0;
       if (num1 <= num2)
       {
-        return (GCode) null;
+        return null;
       }
 
       GCode gcode = m_agGcodeBuffer[m_iCurPage, currentLineInPage];

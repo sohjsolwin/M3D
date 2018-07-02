@@ -54,7 +54,7 @@ namespace M3D
     {
       if (dictionary.TryGetValue(code, out List<Filament> filamentList))
       {
-        return new List<Filament>((IEnumerable<Filament>)filamentList);
+        return new List<Filament>(filamentList);
       }
 
       return ResolveToGenericFilamentType(code);
@@ -85,8 +85,10 @@ namespace M3D
         {
           if (ResolveToEncodedFilament(toResolve, out Filament filament, out var temperature))
           {
-            filamentList = new List<Filament>();
-            filamentList.Add(filament);
+            filamentList = new List<Filament>
+            {
+              filament
+            };
           }
         }
       }
@@ -95,7 +97,7 @@ namespace M3D
 
     public bool ResolveToEncodedFilament(string toResolve, out Filament filament, out int temperature)
     {
-      filament = (Filament) null;
+      filament = null;
       temperature = -1;
       if (toResolve.Count<char>() != 3)
       {
@@ -131,14 +133,14 @@ namespace M3D
       }
       if (char.IsLetter(toResolve[1]) && nullable1.HasValue)
       {
-        num = ((int) char.ToLower(toResolve[1]) - 97) * 5 + 170;
+        num = (char.ToLower(toResolve[1]) - 97) * 5 + 170;
         FilamentConstants.Temperature.MaxMin maxMin = FilamentConstants.Temperature.MaxMinForFilamentType(nullable1.Value);
-        if ((double) num < (double) maxMin.Min)
+        if (num < (double)maxMin.Min)
         {
           num = (int) maxMin.Min;
         }
 
-        if ((double) num > (double) maxMin.Max)
+        if (num > (double)maxMin.Max)
         {
           num = (int) maxMin.Max;
         }
@@ -180,7 +182,7 @@ namespace M3D
       else
       {
         dictionary.TryGetValue(type.ToString(), out List<Filament> filamentList);
-        foreach (Filament filament in filamentList.FindAll((Predicate<Filament>) (x => x.Type == type)))
+        foreach (Filament filament in filamentList.FindAll(x => x.Type == type))
         {
           stringList.Add(filament.ColorStr);
         }
@@ -192,7 +194,7 @@ namespace M3D
     {
       var values = dictionary.Values as List<Filament>;
       var stringList = new List<string>();
-      foreach (Filament filament in values.FindAll((Predicate<Filament>) (x => x.Color == FilamentConstants.ColorsEnum.Other)))
+      foreach (Filament filament in values.FindAll(x => x.Color == FilamentConstants.ColorsEnum.Other))
       {
         stringList.Add(filament.CodeStr);
       }

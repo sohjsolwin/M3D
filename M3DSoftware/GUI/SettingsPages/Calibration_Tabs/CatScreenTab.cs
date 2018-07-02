@@ -132,12 +132,12 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
     public void Init(GUIHost host)
     {
       MainFrame = CreateMainFrame(host);
-      AddChildElement((Element2D)MainFrame);
+      AddChildElement(MainFrame);
       PrinterBusyFrame = CreatePrinterBusyFrame(host);
-      AddChildElement((Element2D)PrinterBusyFrame);
+      AddChildElement(PrinterBusyFrame);
       Please_Connect_Text = new TextWidget(1)
       {
-        Color = new Color4(byte.MaxValue, (byte)127, (byte)39, byte.MaxValue)
+        Color = new Color4(byte.MaxValue, 127, 39, byte.MaxValue)
       };
       Please_Connect_Text.SetPosition(0, 0);
       Please_Connect_Text.SetSize(400, 200);
@@ -147,10 +147,10 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       Please_Connect_Text.Size = FontSize.Medium;
       Please_Connect_Text.Alignment = QFontAlignment.Centre;
       Please_Connect_Text.VAlignment = TextVerticalAlignment.Middle;
-      AddChildElement((Element2D)Please_Connect_Text);
+      AddChildElement(Please_Connect_Text);
       Calibration_Not_Supported = new TextWidget(1)
       {
-        Color = new Color4(byte.MaxValue, (byte)127, (byte)39, byte.MaxValue)
+        Color = new Color4(byte.MaxValue, 127, 39, byte.MaxValue)
       };
       Calibration_Not_Supported.SetPosition(0, 0);
       Calibration_Not_Supported.SetSize(400, 200);
@@ -160,7 +160,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       Calibration_Not_Supported.Size = FontSize.Medium;
       Calibration_Not_Supported.Alignment = QFontAlignment.Centre;
       Calibration_Not_Supported.VAlignment = TextVerticalAlignment.Middle;
-      AddChildElement((Element2D)Calibration_Not_Supported);
+      AddChildElement(Calibration_Not_Supported);
       Calibration_Not_Supported.Visible = false;
       MainFrame.Visible = false;
       PrinterBusyFrame.Visible = false;
@@ -177,20 +177,20 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       };
       pleasewaittext = new TextWidget(1)
       {
-        Color = new Color4(byte.MaxValue, (byte)127, (byte)39, byte.MaxValue),
+        Color = new Color4(byte.MaxValue, 127, 39, byte.MaxValue),
         Text = "Please wait.\nThe printer is busy perfoming the requested actions.",
         RelativeWidth = 1f,
         Size = FontSize.Medium,
         Alignment = QFontAlignment.Centre
       };
       pleasewaittext.SetPosition(0, -30);
-      xmlFrame.AddChildElement((Element2D)pleasewaittext);
+      xmlFrame.AddChildElement(pleasewaittext);
       var spriteAnimationWidget = new SpriteAnimationWidget(3);
       spriteAnimationWidget.Init(host, "guicontrols", 0.0f, 768f, 767f, 1023f, 6, 2, 12, 200U);
       spriteAnimationWidget.SetSize(128, 108);
       spriteAnimationWidget.CenterVerticallyInParent = true;
       spriteAnimationWidget.CenterHorizontallyInParent = true;
-      xmlFrame.AddChildElement((Element2D) spriteAnimationWidget);
+      xmlFrame.AddChildElement(spriteAnimationWidget);
       Sprite.pixel_perfect = false;
       return xmlFrame;
     }
@@ -222,15 +222,15 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       var selectedPrinter = (IPrinter)spooler_connection.SelectedPrinter;
       if (selectedPrinter != null)
       {
-        ZO_Text.Text = (double) selectedPrinter.Info.calibration.ENTIRE_Z_HEIGHT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.ENTIRE_Z_HEIGHT_OFFSET.ToString();
+        ZO_Text.Text = selectedPrinter.Info.calibration.ENTIRE_Z_HEIGHT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.ENTIRE_Z_HEIGHT_OFFSET.ToString();
         ZO_Text.Text = float.Parse(ZO_Text.Text.ToString()).ToString("F2");
-        FRO_Text.Text = (double) selectedPrinter.Info.calibration.CORNER_HEIGHT_FRONT_RIGHT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.CORNER_HEIGHT_FRONT_RIGHT_OFFSET.ToString();
+        FRO_Text.Text = selectedPrinter.Info.calibration.CORNER_HEIGHT_FRONT_RIGHT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.CORNER_HEIGHT_FRONT_RIGHT_OFFSET.ToString();
         FRO_Text.Text = float.Parse(FRO_Text.Text.ToString()).ToString("F2");
-        FLO_Text.Text = (double) selectedPrinter.Info.calibration.CORNER_HEIGHT_FRONT_LEFT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.CORNER_HEIGHT_FRONT_LEFT_OFFSET.ToString();
+        FLO_Text.Text = selectedPrinter.Info.calibration.CORNER_HEIGHT_FRONT_LEFT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.CORNER_HEIGHT_FRONT_LEFT_OFFSET.ToString();
         FLO_Text.Text = float.Parse(FLO_Text.Text.ToString()).ToString("F2");
-        BRO_Text.Text = (double) selectedPrinter.Info.calibration.CORNER_HEIGHT_BACK_RIGHT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.CORNER_HEIGHT_BACK_RIGHT_OFFSET.ToString();
+        BRO_Text.Text = selectedPrinter.Info.calibration.CORNER_HEIGHT_BACK_RIGHT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.CORNER_HEIGHT_BACK_RIGHT_OFFSET.ToString();
         BRO_Text.Text = float.Parse(BRO_Text.Text.ToString()).ToString("F2");
-        BLO_Text.Text = (double) selectedPrinter.Info.calibration.CORNER_HEIGHT_BACK_LEFT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.CORNER_HEIGHT_BACK_LEFT_OFFSET.ToString();
+        BLO_Text.Text = selectedPrinter.Info.calibration.CORNER_HEIGHT_BACK_LEFT_OFFSET >= 3.0 ? M3DGlobalization.ToLocalString(3f, "F2") : selectedPrinter.Info.calibration.CORNER_HEIGHT_BACK_LEFT_OFFSET.ToString();
         BLO_Text.Text = float.Parse(BLO_Text.Text.ToString()).ToString("F2");
       }
       else
@@ -254,7 +254,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       {
         m_bhasUnsavedChanges = false;
         AsyncCallback callback = !asyncState.releaseLock ? new AsyncCallback(asyncState.printer.ShowLockError) : new AsyncCallback(ReleasePrinterAfterCommand);
-        var num = (int) asyncState.printer.SetOffsetInfo(callback, (object) asyncState.printer, asyncState.offsets);
+        var num = (int) asyncState.printer.SetOffsetInfo(callback, asyncState.printer, asyncState.offsets);
       }
       else
       {
@@ -270,7 +270,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
         return;
       }
 
-      var num = (int) asyncState.ReleaseLock(new AsyncCallback(OnRelease), (object) null);
+      var num = (int) asyncState.ReleaseLock(new AsyncCallback(OnRelease), null);
     }
 
     private void OnRelease(IAsyncCallResult ar)
@@ -305,7 +305,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 102:
           var num1 = float.Parse(ZO_Text.Text) + 0.01f;
-          if ((double) num1 > 3.0)
+          if (num1 > 3.0)
           {
             num1 = 3f;
           }
@@ -315,7 +315,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 103:
           var num2 = float.Parse(ZO_Text.Text) - 0.01f;
-          if ((double) num2 < -3.0)
+          if (num2 < -3.0)
           {
             num2 = -3f;
           }
@@ -325,7 +325,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 104:
           var num3 = float.Parse(BLO_Text.Text) + 0.05f;
-          if ((double) num3 > 3.0)
+          if (num3 > 3.0)
           {
             num3 = 3f;
           }
@@ -335,7 +335,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 105:
           var num4 = float.Parse(BLO_Text.Text) - 0.05f;
-          if ((double) num4 < -3.0)
+          if (num4 < -3.0)
           {
             num4 = -3f;
           }
@@ -345,7 +345,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 106:
           var num5 = float.Parse(BRO_Text.Text) + 0.05f;
-          if ((double) num5 > 3.0)
+          if (num5 > 3.0)
           {
             num5 = 3f;
           }
@@ -355,7 +355,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 107:
           var num6 = float.Parse(BRO_Text.Text) - 0.05f;
-          if ((double) num6 < -3.0)
+          if (num6 < -3.0)
           {
             num6 = -3f;
           }
@@ -365,7 +365,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 108:
           var num7 = float.Parse(FLO_Text.Text) + 0.05f;
-          if ((double) num7 > 3.0)
+          if (num7 > 3.0)
           {
             num7 = 3f;
           }
@@ -375,7 +375,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 109:
           var num8 = float.Parse(FLO_Text.Text) - 0.05f;
-          if ((double) num8 < -3.0)
+          if (num8 < -3.0)
           {
             num8 = -3f;
           }
@@ -385,7 +385,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 110:
           var num9 = float.Parse(FRO_Text.Text) + 0.05f;
-          if ((double) num9 > 3.0)
+          if (num9 > 3.0)
           {
             num9 = 3f;
           }
@@ -395,7 +395,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           break;
         case 111:
           var num10 = float.Parse(FRO_Text.Text) - 0.05f;
-          if ((double) num10 < -3.0)
+          if (num10 < -3.0)
           {
             num10 = -3f;
           }
@@ -459,18 +459,20 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       }
       vector.z = 0.1f + compensationPreprocessor.GetHeightAdjustmentRequired(vector.x, vector.y) + compensationPreprocessor.entire_z_height_offset;
       m_lastProbeLocation = location;
-      var stringList = new List<string>();
-      stringList.Add("M1012");
-      stringList.Add("G90");
+      var stringList = new List<string>
+      {
+        "M1012",
+        "G90"
+      };
       if (bMoveUp)
       {
         stringList.Add("G0 Z2");
       }
 
-      stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F3000", (object) vector.x, (object) vector.y));
+      stringList.Add(PrinterCompatibleString.Format("G0 X{0} Y{1} F3000", vector.x, vector.y));
       stringList.Add(PrinterCompatibleString.Format("G0 Z{0} F100", (object) vector.z));
       stringList.Add("M1011");
-      selectedPrinter.SendCommandAutoLock(false, true, new AsyncCallback(AutoLockCallBack), (object) selectedPrinter, stringList.ToArray());
+      selectedPrinter.SendCommandAutoLock(false, true, new AsyncCallback(AutoLockCallBack), selectedPrinter, stringList.ToArray());
     }
 
     public void AutoLockCallBack(IAsyncCallResult ar)
@@ -521,7 +523,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
           return;
         }
 
-        var num = (int) selectedPrinter.ReleaseLock((AsyncCallback) null, (object) null);
+        var num = (int) selectedPrinter.ReleaseLock(null, null);
       }
     }
 
@@ -529,7 +531,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
     {
       m_ocUnsavedCalibrationValues = GetCalibrationSettingsFromOptions(printer.Info);
       m_bhasUnsavedChanges = false;
-      messagebox.AddMessageToQueue("Your calibration changes were not saved to the printer. Would you like to save them now?", "Yes", "No", (string) null, new PopupMessageBox.OnUserSelectionDel(OnUnsavedChangesCallback), (object) printer);
+      messagebox.AddMessageToQueue("Your calibration changes were not saved to the printer. Would you like to save them now?", "Yes", "No", null, new PopupMessageBox.OnUserSelectionDel(OnUnsavedChangesCallback), printer);
     }
 
     private void OnUnsavedChangesCallback(PopupMessageBox.PopupResult result, MessageType type, PrinterSerialNumber sn, object user_data)
@@ -546,7 +548,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
       }
       else
       {
-        var num = (int) printer.ReleaseLock((AsyncCallback) null, (object) null);
+        var num = (int) printer.ReleaseLock(null, null);
       }
     }
 
@@ -562,7 +564,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
         return;
       }
 
-      var num = (int) printer.AcquireLock(new AsyncCallback(SetBedOffsetsAfterLock), (object) new CatScreenTab.BedInfoCallbackData(printer, new BedOffsets(heightBackLeftOffset, heightBackRightOffset, frontRightOffset, heightFrontLeftOffset, entireZHeightOffset), releaselock));
+      var num = (int) printer.AcquireLock(new AsyncCallback(SetBedOffsetsAfterLock), new CatScreenTab.BedInfoCallbackData(printer, new BedOffsets(heightBackLeftOffset, heightBackRightOffset, frontRightOffset, heightFrontLeftOffset, entireZHeightOffset), releaselock));
     }
 
     private Calibration GetCalibrationSettingsFromOptions(PrinterInfo printerInfo)
@@ -621,7 +623,7 @@ namespace M3D.GUI.SettingsPages.Calibration_Tabs
 
       public override string ToString()
       {
-        return type + "<" + (object)serial + ">";
+        return type + "<" + serial + ">";
       }
     }
 

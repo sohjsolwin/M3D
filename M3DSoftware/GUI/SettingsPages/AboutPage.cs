@@ -17,21 +17,21 @@ namespace M3D.GUI.SettingsPages
 
     public void Init(GUIHost host)
     {
-      var scrollFrame = new ScrollFrame(0, (Element2D) this);
+      var scrollFrame = new ScrollFrame(0, this);
       scrollFrame.Init(host);
       scrollFrame.RelativeWidth = 1f;
       scrollFrame.RelativeHeight = 1f;
-      AddChildElement((Element2D) scrollFrame);
-      var imageWidget = new ImageWidget(0, (Element2D) scrollFrame);
+      AddChildElement(scrollFrame);
+      var imageWidget = new ImageWidget(0, scrollFrame);
       imageWidget.Init(host, "guicontrols", 0.0f, 737f, 128f, 767f, 0.0f, 737f, 128f, 767f, 0.0f, 737f, 128f, 767f);
       imageWidget.Width = 129;
       imageWidget.Height = 31;
       imageWidget.Y = 10;
       imageWidget.X = 10;
       imageWidget.SandBoxing = false;
-      scrollFrame.AddChildElement((Element2D) imageWidget);
+      scrollFrame.AddChildElement(imageWidget);
       var versionText = Version.VersionText;
-      var textWidget = new TextWidget(0, (Element2D)scrollFrame)
+      var textWidget = new TextWidget(0, scrollFrame)
       {
         Text = Locale.GlobalLocale.T("T_AboutText") + versionText,
         Size = FontSize.Medium,
@@ -42,7 +42,7 @@ namespace M3D.GUI.SettingsPages
       textWidget.SetPosition(10, 60);
       textWidget.Height = 300;
       textWidget.RelativeWidth = 0.8f;
-      scrollFrame.AddChildElement((Element2D) textWidget);
+      scrollFrame.AddChildElement(textWidget);
       textWidget.IgnoreMouse = false;
     }
   }

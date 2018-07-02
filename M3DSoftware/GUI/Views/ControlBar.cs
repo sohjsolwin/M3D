@@ -43,7 +43,7 @@ namespace M3D.GUI.Views
     public List<Frame> PopUpDialogList;
 
     public ControlBar(Form1 form1, GUIHost host, SettingsManager settingsManager, PopupMessageBox messagebox, MessagePopUp infobox, SpoolerConnection spooler_connection, ModelLoadingManager model_loading_manager, Updater softwareUpdater)
-      : base(0, (Element2D) null)
+      : base(0, null)
     {
       m_oSpoolerConnection = spooler_connection;
       m_oSettingsManager = settingsManager;
@@ -154,12 +154,12 @@ namespace M3D.GUI.Views
       m_owidgetPrinterButton.SetCallback(new ButtonCallback(MyButtonCallback));
       m_owidgetPrinterButton.Init(host, "guicontrols", 448f, 650f, 525f, 693f, 608f, 650f, 685f, 693f, 768f, 650f, 845f, 693f);
       m_owidgetPrinterButton.ToolTipMessage = host.Locale.T("T_TOOLTIP_MULTIPRINTER");
-      AddChildElement((Element2D)m_owidgetPrinterButton);
-      AddChildElement((Element2D)m_owidgetFilamentButton);
-      AddChildElement((Element2D)m_owidgetAccessoriesButton);
-      AddChildElement((Element2D)m_owidgetOpenmodelButton);
-      AddChildElement((Element2D)m_owidgetSettingsButton);
-      AddChildElement((Element2D)m_owidgetHelpButton);
+      AddChildElement(m_owidgetPrinterButton);
+      AddChildElement(m_owidgetFilamentButton);
+      AddChildElement(m_owidgetAccessoriesButton);
+      AddChildElement(m_owidgetOpenmodelButton);
+      AddChildElement(m_owidgetSettingsButton);
+      AddChildElement(m_owidgetHelpButton);
       loading_frame = new Frame(10);
       loading_frame.SetSize(160, 200);
       loading_frame.CenterHorizontallyInParent = true;
@@ -179,15 +179,15 @@ namespace M3D.GUI.Views
       loading_text.VAlignment = TextVerticalAlignment.Middle;
       loading_text.Alignment = QFontAlignment.Centre;
       loading_text.Text = "Loading....";
-      loading_text.Color = new Color4(byte.MaxValue, (byte) 70, (byte) 0, byte.MaxValue);
-      loading_frame.AddChildElement((Element2D)loading_text);
-      loading_frame.AddChildElement((Element2D)loading_progress);
+      loading_text.Color = new Color4(byte.MaxValue, 70, 0, byte.MaxValue);
+      loading_frame.AddChildElement(loading_text);
+      loading_frame.AddChildElement(loading_progress);
       driversInstalling_frame = new XMLFrame();
-      driversInstalling_frame.Init(host, Resources.driverInstallDetected, (ButtonCallback) null);
+      driversInstalling_frame.Init(host, Resources.driverInstallDetected, null);
       driversInstalling_frame.SetPosition(50, -50);
       driversInstalling_frame.SetSize(330, 48);
       driversInstalling_frame.Visible = false;
-      m_GUIHost.AddControlElement((Element2D)driversInstalling_frame);
+      m_GUIHost.AddControlElement(driversInstalling_frame);
       diagnostics = new TextWidget(7)
       {
         Text = "",
@@ -198,9 +198,9 @@ namespace M3D.GUI.Views
       diagnostics.Alignment = QFontAlignment.Left;
       diagnostics.SetSize(150, 50);
       diagnostics.Visible = true;
-      AddChildElement((Element2D)diagnostics);
-      m_GUIHost.AddControlElement((Element2D) this);
-      m_GUIHost.AddControlElement((Element2D)loading_frame);
+      AddChildElement(diagnostics);
+      m_GUIHost.AddControlElement(this);
+      m_GUIHost.AddControlElement(loading_frame);
       CreatePopUpDialogs(host, messagebox, infobox, spooler_connection, softwareUpdater);
       message_window = infobox;
       Sprite.pixel_perfect = true;
@@ -214,7 +214,7 @@ namespace M3D.GUI.Views
       information.SetCallback(new ButtonCallback(MyButtonCallback));
       information.Init(host, "guicontrols", 448f, 512f, 511f, 575f, 512f, 512f, 575f, 575f, 576f, 512f, 639f, 575f);
       information.ToolTipMessage = host.Locale.T("T_TOOLTIP_INFORMATION");
-      m_GUIHost.AddControlElement((Element2D)information);
+      m_GUIHost.AddControlElement(information);
       Sprite.pixel_perfect = false;
       DisableAccessories();
     }
@@ -254,10 +254,10 @@ namespace M3D.GUI.Views
       m_oMultiPrinterDialog.AutoCenterYOffset = 50;
       m_oMultiPrinterDialog.CenterHorizontallyInParent = true;
       m_oMultiPrinterDialog.CenterVerticallyInParent = true;
-      PopUpDialogList.Insert(0, (Frame)m_oSettingsDialog);
-      PopUpDialogList.Insert(1, (Frame)m_oManageFilamentDialog);
-      PopUpDialogList.Insert(2, (Frame)m_oMultiPrinterDialog);
-      PopUpDialogList.Insert(3, (Frame)m_oAccessoriesDialog);
+      PopUpDialogList.Insert(0, m_oSettingsDialog);
+      PopUpDialogList.Insert(1, m_oManageFilamentDialog);
+      PopUpDialogList.Insert(2, m_oMultiPrinterDialog);
+      PopUpDialogList.Insert(3, m_oAccessoriesDialog);
     }
 
     public override void OnUpdate()
@@ -314,7 +314,7 @@ namespace M3D.GUI.Views
         return;
       }
 
-      m_GUIHost.GlobalChildDialog += (Element2D) popUpDialog;
+      m_GUIHost.GlobalChildDialog += popUpDialog;
       popUpDialog.Visible = true;
     }
 
@@ -327,7 +327,7 @@ namespace M3D.GUI.Views
       }
 
       popUpDialog.Visible = false;
-      m_GUIHost.GlobalChildDialog -= (Element2D) popUpDialog;
+      m_GUIHost.GlobalChildDialog -= popUpDialog;
     }
 
     private bool IsOneOFOurs(Element2D element)

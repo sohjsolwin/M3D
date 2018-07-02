@@ -77,26 +77,26 @@ namespace M3D.Spooling.Common
 
     public static FilamentConstants.Branding GetBrandingFrom(FilamentSpool.TypeEnum type, FilamentConstants.ColorsEnum color)
     {
-      Filament filament = FilamentConstants.ProductList.Find((Predicate<Filament>) (f =>
-      {
-        if (f.Color == color)
-        {
-          return f.Type == type;
-        }
+      Filament filament = FilamentConstants.ProductList.Find(f =>
+     {
+       if (f.Color == color)
+       {
+         return f.Type == type;
+       }
 
-        return false;
-      }));
+       return false;
+     });
       if (filament == null)
       {
-        filament = FilamentConstants.ProductList.Find((Predicate<Filament>) (f =>
-        {
-          if (f.Color == FilamentConstants.ColorsEnum.Other)
-          {
-            return f.Type == type;
-          }
+        filament = FilamentConstants.ProductList.Find(f =>
+       {
+         if (f.Color == FilamentConstants.ColorsEnum.Other)
+         {
+           return f.Type == type;
+         }
 
-          return false;
-        }));
+         return false;
+       });
         if (filament == null)
         {
           return FilamentConstants.Branding.Other;
@@ -170,7 +170,7 @@ namespace M3D.Spooling.Common
           num = 4210752204U;
           break;
         case FilamentConstants.ColorsEnum.NeonBlue:
-          num = (uint) ushort.MaxValue;
+          num = ushort.MaxValue;
           break;
         case FilamentConstants.ColorsEnum.NeonOrange:
           num = 4288610559U;
@@ -333,7 +333,7 @@ namespace M3D.Spooling.Common
           num = 2442236415U;
           break;
         case FilamentConstants.ColorsEnum.ImpactBlack:
-          num = (uint) byte.MaxValue;
+          num = byte.MaxValue;
           break;
         case FilamentConstants.ColorsEnum.ParakeetTouch:
           num = 1558600959U;
@@ -386,10 +386,10 @@ namespace M3D.Spooling.Common
 
     public static void HexToRGB(uint hexColor, out float R, out float G, out float B, out float A)
     {
-      R = (float) (((long) hexColor & -16777216L) >> 24) / (float) byte.MaxValue;
-      G = (float) ((hexColor & 16711680U) >> 16) / (float) byte.MaxValue;
-      B = (float) ((hexColor & 65280U) >> 8) / (float) byte.MaxValue;
-      A = (float) (hexColor & (uint) byte.MaxValue) / (float) byte.MaxValue;
+      R = (((long)hexColor & -16777216L) >> 24) / (float)byte.MaxValue;
+      G = ((hexColor & 16711680U) >> 16) / (float)byte.MaxValue;
+      B = ((hexColor & 65280U) >> 8) / (float)byte.MaxValue;
+      A = (hexColor & (uint)byte.MaxValue) / (float)byte.MaxValue;
     }
 
     public static List<Filament> ProductList
@@ -439,7 +439,7 @@ namespace M3D.Spooling.Common
             maxMin.Min = 200f;
             break;
           default:
-            throw new NotImplementedException("Constants.MaxMinForFilamentType is not implemented for type: " + (object) type);
+            throw new NotImplementedException("Constants.MaxMinForFilamentType is not implemented for type: " + type);
         }
         return maxMin;
       }
@@ -471,7 +471,7 @@ namespace M3D.Spooling.Common
         }
         if (num == 0)
         {
-          throw new NotImplementedException("Constants.MaxMinForFilamentType is not implemented for type: " + (object) type);
+          throw new NotImplementedException("Constants.MaxMinForFilamentType is not implemented for type: " + type);
         }
 
         return num;

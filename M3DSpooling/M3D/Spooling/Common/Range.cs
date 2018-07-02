@@ -19,14 +19,14 @@
 
     public bool Intercepts(out float p, float p1, float p2)
     {
-      if ((double) p2 < (double)min)
+      if (p2 < (double)min)
       {
-        p = (double) p1 >= (double) p2 ? ((double) p1 >= (double)min ? min : p1) : p2;
+        p = p1 >= (double)p2 ? p1 >= (double)min ? min : p1 : p2;
         return true;
       }
-      if ((double) p2 > (double)max)
+      if (p2 > (double)max)
       {
-        p = (double) p1 <= (double) p2 ? ((double) p1 <= (double)max ? max : p1) : p2;
+        p = p1 <= (double)p2 ? p1 <= (double)max ? max : p1 : p2;
         return true;
       }
       p = p2;

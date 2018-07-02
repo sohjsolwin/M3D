@@ -51,7 +51,7 @@ namespace M3D.GUI.Views.Library_View
       RelativeY = 0.11f;
       RelativeWidth = 0.423f;
       RelativeHeight = 0.83f;
-      var imageWidget1 = new ImageWidget(1008, (Element2D) null);
+      var imageWidget1 = new ImageWidget(1008, null);
       imageWidget1.Init(host, "extendedcontrols3", 3f, 288f, 84f, 374f, 3f, 288f, 84f, 374f, 3f, 288f, 84f, 374f);
       imageWidget1.Text = "Remove From List";
       imageWidget1.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
@@ -60,9 +60,9 @@ namespace M3D.GUI.Views.Library_View
       imageWidget1.ImageAreaWidth = 80;
       imageWidget1.SetSize(80, 115);
       imageWidget1.Visible = false;
-      AddChildElement((Element2D) imageWidget1);
+      AddChildElement(imageWidget1);
       imageWidget1.SetPosition(-12, -115);
-      var imageWidget2 = new ImageWidget(1009, (Element2D) null);
+      var imageWidget2 = new ImageWidget(1009, null);
       imageWidget2.Init(host, "extendedcontrols3", 92f, 285f, 173f, 346f, 92f, 285f, 173f, 346f, 92f, 285f, 173f, 346f);
       imageWidget2.Text = "Save";
       imageWidget2.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
@@ -71,10 +71,10 @@ namespace M3D.GUI.Views.Library_View
       imageWidget2.ImageAreaWidth = 81;
       imageWidget2.SetSize(81, 85);
       imageWidget2.Visible = false;
-      AddChildElement((Element2D) imageWidget2);
+      AddChildElement(imageWidget2);
       imageWidget2.SetPosition(-12, -240);
       search_filter = "";
-      var editBoxWidget = new EditBoxWidget(1001, (Element2D) null);
+      var editBoxWidget = new EditBoxWidget(1001, null);
       editBoxWidget.Init(host, "guicontrols", 513f, 0.0f, 608f, 63f);
       editBoxWidget.SetGrowableWidth(40, 16, 64);
       editBoxWidget.Size = FontSize.Large;
@@ -83,15 +83,15 @@ namespace M3D.GUI.Views.Library_View
       editBoxWidget.SetToolTipRegion(0, 48, 0, 60);
       editBoxWidget.ToolTipMessage = host.Locale.T("T_TOOLTIP_SEARCH");
       editBoxWidget.Hint = m_gui_host.Locale.T("T_SEARCH");
-      tabsFrame = new HorizontalLayout(0, (Element2D)null)
+      tabsFrame = new HorizontalLayout(0, null)
       {
         FixedColumnWidth = true,
         BorderWidth = 0,
         BorderHeight = 0,
         RelativeWidth = 1f
       };
-      navigation = new Frame(0, (Element2D) null);
-      navigation_left = new ButtonWidget(1005, (Element2D)null)
+      navigation = new Frame(0, null);
+      navigation_left = new ButtonWidget(1005, null)
       {
         Text = "",
         X = 16,
@@ -101,7 +101,7 @@ namespace M3D.GUI.Views.Library_View
       };
       navigation_left.SetCallback(new ButtonCallback(MyButtonCallback));
       navigation_left.Init(host, "guicontrols", 608f, 0.0f, 639f, 31f, 640f, 0.0f, 671f, 31f, 672f, 0.0f, 703f, 31f, 704f, 0.0f, 735f, 31f);
-      navigation_right = new ButtonWidget(1006, (Element2D)null)
+      navigation_right = new ButtonWidget(1006, null)
       {
         Text = "",
         X = -48,
@@ -115,7 +115,7 @@ namespace M3D.GUI.Views.Library_View
       for (var ID1 = 1032; ID1 <= 1063; ++ID1)
       {
         var index = ID1 - 1032;
-        pagebuttons[index] = new ButtonWidget(ID1, (Element2D)null)
+        pagebuttons[index] = new ButtonWidget(ID1, null)
         {
           Text = "",
           X = 48 + (ID1 - 1032) * 24,
@@ -129,10 +129,10 @@ namespace M3D.GUI.Views.Library_View
         pagebuttons[index].GroupID = 1;
         pagebuttons[index].ClickType = ButtonType.Checkable;
         pagebuttons[index].Visible = false;
-        navigation.AddChildElement((Element2D)pagebuttons[index]);
+        navigation.AddChildElement(pagebuttons[index]);
       }
-      navigation.AddChildElement((Element2D)navigation_left);
-      navigation.AddChildElement((Element2D)navigation_right);
+      navigation.AddChildElement(navigation_left);
+      navigation.AddChildElement(navigation_right);
       LibraryGrid = new GridLayout(1)
       {
         ColumnWidth = 130,
@@ -146,11 +146,11 @@ namespace M3D.GUI.Views.Library_View
         RelativeWidth = 1f,
         BorderHeight = 10
       };
-      verticalLayout.AddChildElement((Element2D) editBoxWidget, 0, 64 + verticalLayout.BorderHeight);
-      verticalLayout.AddChildElement((Element2D)tabsFrame, 1, 64 + verticalLayout.BorderHeight);
-      verticalLayout.AddChildElement((Element2D)navigation, 2, 32 + verticalLayout.BorderHeight);
-      verticalLayout.AddChildElement((Element2D)LibraryGrid, 3, -1);
-      AddChildElement((Element2D) verticalLayout);
+      verticalLayout.AddChildElement(editBoxWidget, 0, 64 + verticalLayout.BorderHeight);
+      verticalLayout.AddChildElement(tabsFrame, 1, 64 + verticalLayout.BorderHeight);
+      verticalLayout.AddChildElement(navigation, 2, 32 + verticalLayout.BorderHeight);
+      verticalLayout.AddChildElement(LibraryGrid, 3, -1);
+      AddChildElement(verticalLayout);
       library_status = new TextWidget(1007)
       {
         Text = m_gui_host.Locale.T("T_NOMODELS"),
@@ -162,11 +162,11 @@ namespace M3D.GUI.Views.Library_View
         Y = 0,
         Color = new Color4(0.9922f, 0.3765f, 0.2471f, 1f)
       };
-      AddChildElement((Element2D)library_status);
+      AddChildElement(library_status);
       recentModelsTab = new RecentModelTab(this, model_loading_manager, infobox, glControl);
-      ButtonWidget buttonWidget = AddTabButton(host, (LibraryViewTab)recentModelsTab, LibraryView.TabButtonStyle.Left, m_gui_host.Locale.T("T_RECENT_MODELS"), 1002);
+      ButtonWidget buttonWidget = AddTabButton(host, recentModelsTab, LibraryView.TabButtonStyle.Left, m_gui_host.Locale.T("T_RECENT_MODELS"), 1002);
       recentPrintsTab = new RecentPrintsTab(this, model_loading_manager);
-      AddTabButton(host, (LibraryViewTab)recentPrintsTab, LibraryView.TabButtonStyle.Right, m_gui_host.Locale.T("T_RECENT_PRINTS"), 1004);
+      AddTabButton(host, recentPrintsTab, LibraryView.TabButtonStyle.Right, m_gui_host.Locale.T("T_RECENT_PRINTS"), 1004);
       var num = 1;
       buttonWidget.SetChecked(num != 0);
       ShowView(true);
@@ -175,7 +175,7 @@ namespace M3D.GUI.Views.Library_View
 
     private ButtonWidget AddTabButton(GUIHost host, LibraryViewTab tabFrame, LibraryView.TabButtonStyle style, string text, int ID)
     {
-      var buttonWidget = new ButtonWidget(ID, (Element2D)null)
+      var buttonWidget = new ButtonWidget(ID, null)
       {
         Text = text,
         TextColor = new Color4(0.71f, 0.71f, 0.71f, 1f),
@@ -187,21 +187,21 @@ namespace M3D.GUI.Views.Library_View
       buttonWidget.DontMove = true;
       buttonWidget.ClickType = ButtonType.Checkable;
       buttonWidget.GroupID = 1;
-      buttonWidget.Data = (object) tabFrame;
+      buttonWidget.Data = tabFrame;
       switch (style)
       {
         case LibraryView.TabButtonStyle.Left:
-          buttonWidget.Init(host, "guicontrols", 513f, 64f, 575f, (float) sbyte.MaxValue, 513f, 128f, 575f, 191f, 513f, 192f, 575f, (float) byte.MaxValue, 513f, 64f, 575f, (float) sbyte.MaxValue);
+          buttonWidget.Init(host, "guicontrols", 513f, 64f, 575f, sbyte.MaxValue, 513f, 128f, 575f, 191f, 513f, 192f, 575f, byte.MaxValue, 513f, 64f, 575f, sbyte.MaxValue);
           break;
         case LibraryView.TabButtonStyle.Middle:
-          buttonWidget.Init(host, "guicontrols", 576f, 64f, 639f, (float) sbyte.MaxValue, 576f, 128f, 639f, 191f, 576f, 192f, 639f, (float) byte.MaxValue, 576f, 64f, 639f, (float) sbyte.MaxValue);
+          buttonWidget.Init(host, "guicontrols", 576f, 64f, 639f, sbyte.MaxValue, 576f, 128f, 639f, 191f, 576f, 192f, 639f, byte.MaxValue, 576f, 64f, 639f, sbyte.MaxValue);
           break;
         case LibraryView.TabButtonStyle.Right:
-          buttonWidget.Init(host, "guicontrols", 640f, 64f, 703f, (float) sbyte.MaxValue, 640f, 128f, 703f, 191f, 640f, 192f, 703f, (float) byte.MaxValue, 640f, 64f, 703f, (float) sbyte.MaxValue);
+          buttonWidget.Init(host, "guicontrols", 640f, 64f, 703f, sbyte.MaxValue, 640f, 128f, 703f, 191f, 640f, 192f, 703f, byte.MaxValue, 640f, 64f, 703f, sbyte.MaxValue);
           break;
       }
       buttonWidget.SetGrowableWidth(16, 16, 48);
-      tabsFrame.AddChildElement((Element2D) buttonWidget);
+      tabsFrame.AddChildElement(buttonWidget);
       return buttonWidget;
     }
 
@@ -375,19 +375,19 @@ namespace M3D.GUI.Views.Library_View
       if (recorddata_to_load != null && currentTab != null)
       {
         currentTab.LoadRecord(recorddata_to_load);
-        recorddata_to_load = (LibraryRecord) null;
+        recorddata_to_load = null;
       }
       if (viewstate == ViewState.ToActive || viewstate == ViewState.ToHidden)
       {
         elapsed = DateTime.Now.Ticks / 10000L - startTime;
-        if (elapsed >= (long)realanimtiontime || (double)X == (double)target_x)
+        if (elapsed >= realanimtiontime || X == (double)target_x)
         {
-          elapsed = (long)realanimtiontime;
+          elapsed = realanimtiontime;
           viewstate = viewstate != ViewState.ToActive ? ViewState.Hidden : ViewState.Active;
         }
-        var num = target_x - (target_x - RelativeX) * (float) (1.0 - (double)elapsed / (double)realanimtiontime);
+        var num = target_x - (target_x - RelativeX) * (float) (1.0 - elapsed / (double)realanimtiontime);
         RelativeX = num;
-        ShowView((double) num < 1.0);
+        ShowView(num < 1.0);
       }
       if (refresh.Value)
       {
@@ -475,12 +475,12 @@ namespace M3D.GUI.Views.Library_View
             var buttonWidget = (ButtonWidget) the_control;
             if (buttonWidget.Data != null && buttonWidget.Data is LibraryRecord)
             {
-              if (currentTab.CanRemoveRecords && buttonWidget.Overlaps((Element2D) childElement2, (int) xparam - buttonWidget.X_Abs, (int) yparam - buttonWidget.Y_Abs))
+              if (currentTab.CanRemoveRecords && buttonWidget.Overlaps(childElement2, (int) xparam - buttonWidget.X_Abs, (int) yparam - buttonWidget.Y_Abs))
               {
                 currentTab.RemoveRecord((LibraryRecord) buttonWidget.Data);
                 refresh.Value = true;
               }
-              else if (currentTab.CanSaveRecords && buttonWidget.Overlaps((Element2D) childElement3, (int) xparam - buttonWidget.X_Abs, (int) yparam - buttonWidget.Y_Abs))
+              else if (currentTab.CanSaveRecords && buttonWidget.Overlaps(childElement3, (int) xparam - buttonWidget.X_Abs, (int) yparam - buttonWidget.Y_Abs))
               {
                 currentTab.SaveRecord((LibraryRecord) buttonWidget.Data);
                 refresh.Value = true;

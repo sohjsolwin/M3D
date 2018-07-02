@@ -35,7 +35,7 @@ namespace M3D.GUI.Views.Printer_View.History
           return;
         }
 
-        PushToHistory((HistoryNode) new AddModelFileHistoryNode(objectID, filename, zipfilename, transform));
+        PushToHistory(new AddModelFileHistoryNode(objectID, filename, zipfilename, transform));
       }
     }
 
@@ -48,7 +48,7 @@ namespace M3D.GUI.Views.Printer_View.History
           return;
         }
 
-        PushToHistory((HistoryNode) new RemoveModelFileHistoryNode(objectID, filename, zipfilename, transform));
+        PushToHistory(new RemoveModelFileHistoryNode(objectID, filename, zipfilename, transform));
       }
     }
 
@@ -61,7 +61,7 @@ namespace M3D.GUI.Views.Printer_View.History
           return;
         }
 
-        PushToHistory((HistoryNode) new SelectObjectHistoryNode(objectID, previousObject));
+        PushToHistory(new SelectObjectHistoryNode(objectID, previousObject));
       }
     }
 
@@ -79,7 +79,7 @@ namespace M3D.GUI.Views.Printer_View.History
           return;
         }
 
-        PushToHistory((HistoryNode) new TransformObjectHistoryNode(objectID, previousTransform, newTransform));
+        PushToHistory(new TransformObjectHistoryNode(objectID, previousTransform, newTransform));
       }
     }
 

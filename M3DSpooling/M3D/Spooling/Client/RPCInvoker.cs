@@ -35,7 +35,7 @@ namespace M3D.Spooling.Client
         method = object_instance.GetType().GetMethod(call.name);
       }
 
-      if (method == (MethodInfo) null)
+      if (method == null)
       {
         throw new MissingMethodException("the method is not in the class");
       }
@@ -78,7 +78,7 @@ namespace M3D.Spooling.Client
 
       public RPC(string name, params object[] param)
       {
-        this = new RPCInvoker.RPC((PrinterSerialNumber) null, Guid.Empty, 0U, name, param);
+        this = new RPCInvoker.RPC(null, Guid.Empty, 0U, name, param);
       }
 
       public RPC(PrinterSerialNumber serialnumber, Guid lockID, uint callID, string name, params object[] param)
@@ -97,12 +97,12 @@ namespace M3D.Spooling.Client
           OmitXmlDeclaration = true
         };
         var stringWriter = new StringWriter();
-        var xmlWriter = XmlWriter.Create((TextWriter) stringWriter, settings);
+        var xmlWriter = XmlWriter.Create(stringWriter, settings);
         var namespaces = new XmlSerializerNamespaces();
         namespaces.Add("", "");
         try
         {
-          RPCInvoker.RPC.ClassSerializer.Serialize(xmlWriter, (object) this, namespaces);
+          RPCInvoker.RPC.ClassSerializer.Serialize(xmlWriter, this, namespaces);
         }
         catch (Exception ex)
         {
@@ -129,9 +129,9 @@ namespace M3D.Spooling.Client
       {
         get
         {
-          if (!(serialnumber != (PrinterSerialNumber) null))
+          if (!(serialnumber != null))
           {
-            return (string) null;
+            return null;
           }
 
           return serialnumber.ToString();

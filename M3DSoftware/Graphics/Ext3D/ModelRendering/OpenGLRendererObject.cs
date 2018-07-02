@@ -51,7 +51,7 @@ namespace M3D.Graphics.Ext3D.ModelRendering
         }
 
         openGLRender.Dispose();
-        openGLRender = (OpenGLRender) null;
+        openGLRender = null;
       }
       catch (Exception ex)
       {
@@ -64,13 +64,13 @@ namespace M3D.Graphics.Ext3D.ModelRendering
       switch (OpenGLRendererObject.openGLRenderMode)
       {
         case OpenGLRendererObject.OpenGLRenderMode.VBOs:
-          openGLRender = (OpenGLRender) new OpenGLRendererVBOs(graphicsModelData);
+          openGLRender = new OpenGLRendererVBOs(graphicsModelData);
           break;
         case OpenGLRendererObject.OpenGLRenderMode.ARBVBOs:
-          openGLRender = (OpenGLRender) new OpenGLRendererARBVBOs(graphicsModelData);
+          openGLRender = new OpenGLRendererARBVBOs(graphicsModelData);
           break;
         default:
-          openGLRender = (OpenGLRender) new OpenGLRendererImmediateMode(graphicsModelData);
+          openGLRender = new OpenGLRendererImmediateMode(graphicsModelData);
           break;
       }
       openGLRender.Create();

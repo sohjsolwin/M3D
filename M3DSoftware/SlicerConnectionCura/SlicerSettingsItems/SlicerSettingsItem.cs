@@ -11,7 +11,7 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public SlicerSettingsItem()
     {
-      GroupToggleSetting = (SlicerSettingsItem) null;
+      GroupToggleSetting = null;
     }
 
     [XmlIgnore]

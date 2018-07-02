@@ -63,16 +63,10 @@ namespace M3D.SlicerConnectionCura.SlicerSettingsItems
 
     public override SlicerSettingsItem Clone()
     {
-      return (SlicerSettingsItem) new SettingsItemStringType(value, isMultiline);
+      return new SettingsItemStringType(value, IsMultiline);
     }
 
-    public bool isMultiline
-    {
-      get
-      {
-        return multiline;
-      }
-    }
+    public bool IsMultiline => multiline;
 
     [XmlAttribute("Text")]
     public string xmlValue

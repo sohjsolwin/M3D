@@ -10,7 +10,7 @@ namespace M3D.Spooling.Common
   public class FilamentSpool
   {
     private static XmlWriterSettings settings = new XmlWriterSettings();
-    private static XmlSerializer __class_serializer = (XmlSerializer) null;
+    private static XmlSerializer __class_serializer = null;
     private XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
     public const uint UndefinedFilamentUID = 0;
     private const float MICRO_SPOOL_LENGTH = 76200f;
@@ -103,11 +103,11 @@ namespace M3D.Spooling.Common
     {
       FilamentSpool.settings.OmitXmlDeclaration = true;
       var stringWriter = new StringWriter();
-      var xmlWriter = XmlWriter.Create((TextWriter) stringWriter, FilamentSpool.settings);
+      var xmlWriter = XmlWriter.Create(stringWriter, FilamentSpool.settings);
       ns.Add("", "");
       try
       {
-        FilamentSpool.ClassSerializer.Serialize(xmlWriter, (object) this, ns);
+        FilamentSpool.ClassSerializer.Serialize(xmlWriter, this, ns);
       }
       catch (Exception ex)
       {
@@ -189,7 +189,7 @@ namespace M3D.Spooling.Common
 
     public bool Equals(FilamentSpool b)
     {
-      if ((object) b == null || filament_type != b.filament_type || ((int)filament_color_code != (int) b.filament_color_code || filament_temperature != b.filament_temperature) || (filament_location != b.filament_location || filament_size != b.filament_size || (double)estimated_filament_length_printed != (double) b.estimated_filament_length_printed))
+      if ((object) b == null || filament_type != b.filament_type || ((int)filament_color_code != (int) b.filament_color_code || filament_temperature != b.filament_temperature) || (filament_location != b.filament_location || filament_size != b.filament_size || estimated_filament_length_printed != (double)b.estimated_filament_length_printed))
       {
         return false;
       }
@@ -199,7 +199,7 @@ namespace M3D.Spooling.Common
 
     public static bool operator ==(FilamentSpool a, FilamentSpool b)
     {
-      if ((object) a == (object) b)
+      if (a == (object)b)
       {
         return true;
       }

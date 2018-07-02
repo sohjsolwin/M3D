@@ -29,7 +29,7 @@ namespace M3D.Spooler.Dialogs
       {
         foreach (FirmwareBoardVersionKVP firmwareVersion in supportPrinterProfile.FirmwareVersions)
         {
-          listBox1.Items.Add((object) string.Format("{0} - {1}", (object) supportPrinterProfile.ToString(), (object) firmwareVersion.ToString()));
+          listBox1.Items.Add(string.Format("{0} - {1}", (object)supportPrinterProfile.ToString(), (object)firmwareVersion.ToString()));
         }
       }
     }
@@ -60,7 +60,7 @@ namespace M3D.Spooler.Dialogs
       versionText = new Label();
       SuspendLayout();
       label1.AutoSize = true;
-      label1.Font = new Font("Arial Narrow", 18f, FontStyle.Regular, GraphicsUnit.Point, (byte) 0);
+      label1.Font = new Font("Arial Narrow", 18f, FontStyle.Regular, GraphicsUnit.Point, 0);
       label1.Location = new Point(10, 9);
       label1.Name = "label1";
       label1.Size = new Size(203, 29);
@@ -100,12 +100,12 @@ namespace M3D.Spooler.Dialogs
       AutoScaleDimensions = new SizeF(7f, 12f);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(415, 244);
-      Controls.Add((Control)versionText);
-      Controls.Add((Control)button1);
-      Controls.Add((Control)listBox1);
-      Controls.Add((Control)label3);
-      Controls.Add((Control)label2);
-      Controls.Add((Control)label1);
+      Controls.Add(versionText);
+      Controls.Add(button1);
+      Controls.Add(listBox1);
+      Controls.Add(label3);
+      Controls.Add(label2);
+      Controls.Add(label1);
       Icon = (Icon) componentResourceManager.GetObject("$this.Icon");
       MaximizeBox = false;
       MinimizeBox = false;

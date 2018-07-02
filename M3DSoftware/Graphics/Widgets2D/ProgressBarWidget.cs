@@ -38,7 +38,7 @@ namespace M3D.Graphics.Widgets2D
     }
 
     public ProgressBarWidget(int ID)
-      : this(ID, (Element2D) null)
+      : this(ID, null)
     {
     }
 
@@ -73,10 +73,10 @@ namespace M3D.Graphics.Widgets2D
       drawable_sprite.Render(host, State.Normal, xAbs, yAbs, width, height);
       Simple2DRenderer simpleRenderer = host.GetSimpleRenderer();
       Simple2DRenderer.Quad quad1;
-      quad1.x0 = (float) (xAbs + left_border);
-      quad1.y0 = (float) (yAbs + top_border);
-      quad1.x1 = (float) xAbs + (float) (width - right_border) * complete;
-      quad1.y1 = (float) (yAbs + height - bottom_border);
+      quad1.x0 = xAbs + left_border;
+      quad1.y0 = yAbs + top_border;
+      quad1.x1 = xAbs + (width - right_border) * complete;
+      quad1.y1 = yAbs + height - bottom_border;
       quad1.color = bar_color;
       Simple2DRenderer.Quad quad2 = quad1;
       simpleRenderer.DrawQuad(quad2);
@@ -99,12 +99,12 @@ namespace M3D.Graphics.Widgets2D
       set
       {
         complete = value;
-        if ((double)complete < 0.0)
+        if (complete < 0.0)
         {
           complete = 0.0f;
         }
 
-        if ((double)complete <= 1.0)
+        if (complete <= 1.0)
         {
           return;
         }

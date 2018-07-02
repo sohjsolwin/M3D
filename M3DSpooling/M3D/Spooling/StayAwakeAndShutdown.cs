@@ -10,7 +10,7 @@ namespace M3D.Spooling
 
     public void StartUp(IntPtr hWnd)
     {
-      implementation = (IStayAwakeAndShutdown) new WinStayAwakeAndShutdown(hWnd);
+      implementation = new WinStayAwakeAndShutdown(hWnd);
     }
 
     public void Shutdown()

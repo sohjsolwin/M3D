@@ -25,8 +25,8 @@ namespace M3D.Graphics
       SetSize(300, 100);
       X = 0;
       Y = 0;
-      BGColor = new Color4(byte.MaxValue, byte.MaxValue, (byte) 225, byte.MaxValue);
-      BorderColor = new Color4((byte) 0, (byte) 0, (byte) 0, byte.MaxValue);
+      BGColor = new Color4(byte.MaxValue, byte.MaxValue, 225, byte.MaxValue);
+      BorderColor = new Color4(0, 0, 0, byte.MaxValue);
       text_information = new TextWidget(0)
       {
         Text = "",
@@ -37,7 +37,7 @@ namespace M3D.Graphics
       text_information.SetPosition(0, 0);
       text_information.SetSize(272, 72);
       text_information.Color = new Color4(0.25f, 0.25f, 0.25f, 1f);
-      AddChildElement((Element2D)text_information);
+      AddChildElement(text_information);
     }
 
     public void SetMessage(string message)
@@ -56,8 +56,8 @@ namespace M3D.Graphics
         num1 = 0.0f;
         num2 = 0.0f;
       }
-      text_information.SetSize((int) ((double) num1 * 1.0), (int) ((double) num2 * 1.7));
-      SetSize((int) ((double) num1 * 1.0), (int) ((double) num2 * 1.7));
+      text_information.SetSize((int)(num1 * 1.0), (int)(num2 * 1.7));
+      SetSize((int)(num1 * 1.0), (int)(num2 * 1.7));
     }
 
     public void Show(int x, int y)
@@ -81,14 +81,14 @@ namespace M3D.Graphics
 
       Cursor current = Cursor.Current;
       var num = 0;
-      if (current != (Cursor) null)
+      if (current != null)
       {
         num = current.Size.Height;
       }
 
       if (y - Height < 0)
       {
-        Y = y + (int) ((double) num * 0.75);
+        Y = y + (int)(num * 0.75);
       }
       else
       {
@@ -110,12 +110,12 @@ namespace M3D.Graphics
       }
 
       var elapsedMilliseconds = (float)mytimer.ElapsedMilliseconds;
-      if ((double) elapsedMilliseconds <= 1000.0)
+      if (elapsedMilliseconds <= 1000.0)
       {
         return;
       }
 
-      if ((double) elapsedMilliseconds > 10000.0)
+      if (elapsedMilliseconds > 10000.0)
       {
         show = false;
         mytimer.Reset();

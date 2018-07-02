@@ -28,7 +28,7 @@ namespace M3D.Spooling.Core.Controllers.PrintJobs
         warnings.Clear();
       }
 
-      return new JobCreateResult((AbstractJob) null, result, warnings);
+      return new JobCreateResult(null, result, warnings);
     }
 
     public string GCodeFilename { get; protected set; }
@@ -96,8 +96,8 @@ label_10:
           }
           catch (Exception ex)
           {
-            ErrorLogger.LogException(string.Format(">> {0}::", (object) preprocessor.Name), ex);
-            throw new AbstractPreprocessedJob.PreprocessorException(string.Format("{0}::{1}", (object) preprocessor.Name, (object) ex.Message));
+            ErrorLogger.LogException(string.Format(">> {0}::", preprocessor.Name), ex);
+            throw new AbstractPreprocessedJob.PreprocessorException(string.Format("{0}::{1}", preprocessor.Name, ex.Message));
           }
         }
       }
@@ -114,11 +114,11 @@ label_10:
       string str;
       if (length > 0)
       {
-        str = name.Substring(0, length) + "_" + (object) number + "_" + processor.Name + "_processed.gcode";
+        str = name.Substring(0, length) + "_" + number + "_" + processor.Name + "_processed.gcode";
       }
       else
       {
-        str = name.Substring(0, name.Length - fileInfo.Extension.Length) + "_" + (object) number + "_" + processor.Name + "_processed.gcode";
+        str = name.Substring(0, name.Length - fileInfo.Extension.Length) + "_" + number + "_" + processor.Name + "_processed.gcode";
       }
 
       var gcodefilename = directoryName + Path.DirectorySeparatorChar.ToString() + str;
@@ -126,7 +126,7 @@ label_10:
       var output_writer = new GCodeFileWriter(gcodefilename);
       if (!processor.ProcessGCode(input_reader, output_writer, printerInfo.calibration, bounds, printerProfile))
       {
-        return (string) null;
+        return null;
       }
 
       input_reader.Close();
@@ -142,7 +142,7 @@ label_10:
         gcodeFileReader = new GCodeFileReader(filename);
         if (!gcodeFileReader.IsOpen)
         {
-          throw new Exception(string.Format("Unable to open file: {0}", (object) filename));
+          throw new Exception(string.Format("Unable to open file: {0}", filename));
         }
       }
       catch (ThreadAbortException ex)
@@ -162,19 +162,19 @@ label_10:
         GCode nextLine;
         while ((nextLine = gcodeFileReader.GetNextLine(false)) != null)
         {
-          if (nextLine.hasG)
+          if (nextLine.HasG)
           {
-            if (nextLine.G == (ushort) 90)
+            if (nextLine.G == 90)
             {
               flag = true;
             }
-            else if (nextLine.G == (ushort) 91)
+            else if (nextLine.G == 91)
             {
               flag = false;
             }
-            else if (((nextLine.G == (ushort) 0 ? 1 : (nextLine.G == (ushort) 1 ? 1 : 0)) & (flag ? 1 : 0)) != 0)
+            else if (((nextLine.G == 0 ? 1 : (nextLine.G == 1 ? 1 : 0)) & (flag ? 1 : 0)) != 0)
             {
-              if (nextLine.hasE)
+              if (nextLine.HasE)
               {
                 if (flag)
                 {
@@ -185,43 +185,43 @@ label_10:
                   EstimatedFilamentUsed += nextLine.E;
                 }
               }
-              if (nextLine.hasZ)
+              if (nextLine.HasZ)
               {
                 p.z = nextLine.Z;
-                if ((double) nextLine.Z < (double)Details.bounds.min.z)
+                if (nextLine.Z < (double)Details.bounds.min.z)
                 {
                   Details.bounds.min.z = nextLine.Z;
                 }
 
-                if ((double) nextLine.Z > (double)Details.bounds.max.z)
+                if (nextLine.Z > (double)Details.bounds.max.z)
                 {
                   Details.bounds.max.z = nextLine.Z;
                 }
               }
               if (boundsCheckXy)
               {
-                if (nextLine.hasX)
+                if (nextLine.HasX)
                 {
                   p.x = nextLine.X;
-                  if ((double) nextLine.X < (double)Details.bounds.min.x)
+                  if (nextLine.X < (double)Details.bounds.min.x)
                   {
                     Details.bounds.min.x = nextLine.X;
                   }
 
-                  if ((double) nextLine.X > (double)Details.bounds.max.x)
+                  if (nextLine.X > (double)Details.bounds.max.x)
                   {
                     Details.bounds.max.x = nextLine.X;
                   }
                 }
-                if (nextLine.hasY)
+                if (nextLine.HasY)
                 {
                   p.y = nextLine.Y;
-                  if ((double) nextLine.Y < (double)Details.bounds.min.y)
+                  if (nextLine.Y < (double)Details.bounds.min.y)
                   {
                     Details.bounds.min.y = nextLine.Y;
                   }
 
-                  if ((double) nextLine.Y > (double)Details.bounds.max.y)
+                  if (nextLine.Y > (double)Details.bounds.max.y)
                   {
                     Details.bounds.max.y = nextLine.Y;
                   }
@@ -244,7 +244,7 @@ label_10:
           }
         }
         gcodeFileReader.Close();
-        if (Details.jobParams.filament_type == FilamentSpool.TypeEnum.ABS && ((double)Details.bounds.max.x - (double)Details.bounds.min.x > (double) printerProfile.PrinterSizeConstants.ABSWarningDim || (double)Details.bounds.max.y - (double)Details.bounds.min.y > (double) printerProfile.PrinterSizeConstants.ABSWarningDim || (double)Details.bounds.max.z - (double)Details.bounds.min.z > (double) printerProfile.PrinterSizeConstants.ABSWarningDim))
+        if (Details.jobParams.filament_type == FilamentSpool.TypeEnum.ABS && (Details.bounds.max.x - (double)Details.bounds.min.x > printerProfile.PrinterSizeConstants.ABSWarningDim || Details.bounds.max.y - (double)Details.bounds.min.y > printerProfile.PrinterSizeConstants.ABSWarningDim || Details.bounds.max.z - (double)Details.bounds.min.z > printerProfile.PrinterSizeConstants.ABSWarningDim))
         {
           return AbstractPreprocessedJob.PrintJobWarning.Warning_ABS_Size;
         }

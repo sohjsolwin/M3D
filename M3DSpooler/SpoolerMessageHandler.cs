@@ -170,7 +170,7 @@ namespace M3D.Spooler
       if (!desc.printer.HasLock)
       {
         desc.hadlockbeforecall = false;
-        var num = (int) desc.printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) desc);
+        var num = (int) desc.printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), desc);
       }
       else
       {
@@ -185,39 +185,39 @@ namespace M3D.Spooler
         switch (desc.task)
         {
           case AfterLockTask.DoFirmwareUpdate:
-            var num1 = (int) desc.printer.DoFirmwareUpdate(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc);
+            var num1 = (int) desc.printer.DoFirmwareUpdate(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc);
             break;
           case AfterLockTask.CalibrateBedLocationG30:
             if ("Pro" == desc.printer.Info.ProfileName)
             {
-              var num2 = (int) desc.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc, "M104 S150", "G28", "G30");
+              var num2 = (int) desc.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc, "M104 S150", "G28", "G30");
               break;
             }
-            var num3 = (int) desc.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc, "M104 S150", "G30");
+            var num3 = (int) desc.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc, "M104 S150", "G30");
             break;
           case AfterLockTask.CalibrateGantryG32:
-            var num4 = (int) desc.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc, "M104 S150", "G32");
+            var num4 = (int) desc.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc, "M104 S150", "G32");
             break;
           case AfterLockTask.ReleaseLock:
-            var num5 = (int) desc.printer.ReleaseLock(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) null);
+            var num5 = (int) desc.printer.ReleaseLock(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), null);
             break;
           case AfterLockTask.AbortPrint:
-            var num6 = (int) desc.printer.AbortPrint(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc);
+            var num6 = (int) desc.printer.AbortPrint(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc);
             break;
           case AfterLockTask.ClearWarning:
-            var num7 = (int) desc.printer.ClearCurrentWarning(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc);
+            var num7 = (int) desc.printer.ClearCurrentWarning(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc);
             break;
           case AfterLockTask.CheckGantryClips:
-            var num8 = (int) desc.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc, "M583");
+            var num8 = (int) desc.printer.SendManualGCode(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc, "M583");
             break;
           case AfterLockTask.RecoverFromPowerOutage:
-            var num9 = (int) desc.printer.RecoveryPrintFromPowerFailure(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc, false);
+            var num9 = (int) desc.printer.RecoveryPrintFromPowerFailure(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc, false);
             break;
           case AfterLockTask.RecoverFromPowerOutageG28:
-            var num10 = (int) desc.printer.RecoveryPrintFromPowerFailure(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc, true);
+            var num10 = (int) desc.printer.RecoveryPrintFromPowerFailure(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc, true);
             break;
           case AfterLockTask.ClearPowerRecoveryFault:
-            var num11 = (int) desc.printer.ClearPowerRecoveryFault(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) handlerTaskDesc);
+            var num11 = (int) desc.printer.ClearPowerRecoveryFault(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), handlerTaskDesc);
             break;
         }
       }
@@ -253,7 +253,7 @@ namespace M3D.Spooler
             break;
           }
 
-          var num2 = (int) desc.printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), (object) new HandlerTaskDesc(desc.previous_task, desc.handler, desc.printer)
+          var num2 = (int) desc.printer.AcquireLock(new M3D.Spooling.Client.AsyncCallback(DoTaskAsyncCallback), new HandlerTaskDesc(desc.previous_task, desc.handler, desc.printer)
           {
             attempts = (desc.attempts + 1),
             hadlockbeforecall = false

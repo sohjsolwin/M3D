@@ -51,7 +51,7 @@ namespace M3D.Slicer.General
           return mCurrentSettingsStack.Peek();
         }
 
-        return (SmartSlicerSettingsBase) null;
+        return null;
       }
     }
 

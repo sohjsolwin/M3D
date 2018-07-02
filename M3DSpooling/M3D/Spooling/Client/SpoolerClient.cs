@@ -57,9 +57,9 @@ namespace M3D.Spooling.Client
         Value = false
       };
       connected_printers = new List<Printer>();
-      connectedSpoolerInfo = new ThreadSafeVariable<SpoolerInfo>((SpoolerInfo) null);
+      connectedSpoolerInfo = new ThreadSafeVariable<SpoolerInfo>(null);
       message_queue = new ConcurrentQueue<RPCInvoker.RPC>();
-      message_thread = (Thread) null;
+      message_thread = null;
       queue_lock = new object();
       isprinting_lock = new object();
     }
@@ -84,12 +84,12 @@ namespace M3D.Spooling.Client
 
     public IEnumerator<Printer> GetEnumerator()
     {
-      return (IEnumerator<Printer>)connected_printers.GetEnumerator();
+      return connected_printers.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator)GetEnumerator();
+      return GetEnumerator();
     }
 
     public void Lock(SpoolerClient.Del d)
@@ -114,15 +114,15 @@ namespace M3D.Spooling.Client
         spoolerConnection.XMLProcessor = new OnReceiveXMLFromSpooler(ProcessXMLFromServer);
         spoolerConnection.StartUp(42345);
         MyDebugLogger.Add("SpoolerClient::StartSession", "Socket Client Initialized", DebugLogger.LogType.Secondary);
-        spooler_connection = (ISpoolerConnection) spoolerConnection;
+        spooler_connection = spoolerConnection;
         spoolerResult = InitialConnect();
-        Trace.WriteLine(string.Format("SpoolerClient2.StartSession Completed {0}", (object) spoolerResult));
+        Trace.WriteLine(string.Format("SpoolerClient2.StartSession Completed {0}", spoolerResult));
         MyDebugLogger.Add("SpoolerClient::StartSession", "Connected to Spooler", DebugLogger.LogType.Secondary);
       }
       catch (Exception ex)
       {
         ErrorLogger.LogException("Exception in SpoolerClient2.StartSession " + ex.Message, ex);
-        spooler_connection = (ISpoolerConnection) null;
+        spooler_connection = null;
         CloseSession();
       }
       if (spooler_connection != null)
@@ -139,8 +139,8 @@ namespace M3D.Spooling.Client
       MyDebugLogger.Add("SpoolerClient::CloseSession", "Closing Session", DebugLogger.LogType.Secondary);
       threadsAborted.Value = true;
       MyDebugLogger.Add("SpoolerClient::CloseSession", "Stopping Threads", DebugLogger.LogType.Secondary);
-      processing_thread = (Thread) null;
-      message_thread = (Thread) null;
+      processing_thread = null;
+      message_thread = null;
       if (spooler_connection != null)
       {
         spooler_connection.ShutdownConnection();
@@ -156,7 +156,7 @@ namespace M3D.Spooling.Client
         new_connected_printers.Clear();
       }
 
-      spooler_connection = (ISpoolerConnection) null;
+      spooler_connection = null;
       MyDebugLogger.Add("SpoolerClient::CloseSession", "Data Cleared", DebugLogger.LogType.Secondary);
     }
 
@@ -538,7 +538,7 @@ namespace M3D.Spooling.Client
 
     private void ProcessDeviceInstallDetected(string xmlmessage)
     {
-      var xmlReader = XmlReader.Create((TextReader) new StringReader(xmlmessage));
+      var xmlReader = XmlReader.Create(new StringReader(xmlmessage));
       if (!xmlReader.Read() || !xmlReader.HasAttributes)
       {
         return;
@@ -560,7 +560,7 @@ namespace M3D.Spooling.Client
       {
         if (HasNewPrinterList.Value)
         {
-          connected_printers = new List<PrinterInfo>((IEnumerable<PrinterInfo>)new_connected_printers);
+          connected_printers = new List<PrinterInfo>(new_connected_printers);
           HasNewPrinterList.Value = false;
           flag = true;
         }
@@ -631,10 +631,7 @@ namespace M3D.Spooling.Client
               this.connected_printers.Add(new_printer);
             }
 
-            if (OnGotNewPrinter != null)
-            {
-              OnGotNewPrinter(new_printer);
-            }
+            OnGotNewPrinter?.Invoke(new_printer);
           }
         }
       }
@@ -686,11 +683,10 @@ namespace M3D.Spooling.Client
           xmlDocument.LoadXml(message);
           foreach (XmlNode xmlNode in xmlDocument.SelectSingleNode("SocketBroadcast"))
           {
-            if (xmlNode is XmlElement)
+            if (xmlNode is XmlElement xmlElement)
             {
-              var xmlElement = (XmlElement) xmlNode;
               var stringWriter = new StringWriter();
-              xmlElement.WriteTo((XmlWriter) new XmlTextWriter((TextWriter) stringWriter)
+              xmlElement.WriteTo(new XmlTextWriter((TextWriter)stringWriter)
               {
                 Formatting = Formatting.Indented
               });
@@ -704,10 +700,7 @@ namespace M3D.Spooling.Client
                   flag2 = true;
                   serial_number = printerInfo.MySerialNumber;
                 }
-                if (OnProcessFromServer != null)
-                {
-                  OnProcessFromServer();
-                }
+                OnProcessFromServer?.Invoke();
               }
               else if (xmlElement.Name == "SpoolerInfo")
               {
@@ -752,19 +745,19 @@ namespace M3D.Spooling.Client
       lock (new_printer_list_sync)
       {
         HasNewPrinterList.Value = true;
-        new_connected_printers = new List<PrinterInfo>((IEnumerable<PrinterInfo>) printerInfoList);
+        new_connected_printers = new List<PrinterInfo>(printerInfoList);
       }
     }
 
     public PrinterProfile GetPrinterProfile(string name)
     {
-      IEnumerable<PrinterProfile> source = ConnectedSpoolerInfo.PrinterProfileList.Where<PrinterProfile>((Func<PrinterProfile, bool>) (p => p.ProfileName == name));
+      IEnumerable<PrinterProfile> source = ConnectedSpoolerInfo.PrinterProfileList.Where<PrinterProfile>(p => p.ProfileName == name);
       if (source.Count<PrinterProfile>() > 0)
       {
         return new PrinterProfile(source.First<PrinterProfile>());
       }
 
-      return (PrinterProfile) null;
+      return null;
     }
 
     public SpoolerResult SendSpoolerMessageRPC(string function_name, params object[] options)

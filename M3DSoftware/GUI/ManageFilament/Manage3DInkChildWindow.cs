@@ -30,7 +30,7 @@ namespace M3D.GUI.ManageFilament
 
     protected void CreateManageFilamentFrame(string mainText, string subText, bool cancelButton, bool yesNoButton, bool createProgressBar, bool createFinishButton, bool createBack, bool createNext)
     {
-      CreateManageFilamentFrame(mainText, FontSize.Medium, new Color4(0.35f, 0.35f, 0.35f, 1f), subText, FontSize.Medium, new Color4(0.35f, 0.35f, 0.35f, 1f), cancelButton, yesNoButton, createProgressBar, createFinishButton, createBack, createNext, new Color4((byte) 246, (byte) 246, (byte) 246, byte.MaxValue), new Color4((byte) 220, (byte) 220, (byte) 220, byte.MaxValue));
+      CreateManageFilamentFrame(mainText, FontSize.Medium, new Color4(0.35f, 0.35f, 0.35f, 1f), subText, FontSize.Medium, new Color4(0.35f, 0.35f, 0.35f, 1f), cancelButton, yesNoButton, createProgressBar, createFinishButton, createBack, createNext, new Color4(246, 246, 246, byte.MaxValue), new Color4(220, 220, 220, byte.MaxValue));
     }
 
     protected void CreateManageFilamentFrame(string mainText, FontSize mainTextSize, Color4 mainTextColor, string subText, FontSize subTextSize, Color4 subTextColor, bool cancelButton, bool yesNoButton, bool createProgressBar, bool createFinishButton, bool createBack, bool createNext, Color4 middleFrameColor, Color4 middleFrameBorderColor)
@@ -48,7 +48,7 @@ namespace M3D.GUI.ManageFilament
         Alignment = QFontAlignment.Centre
       };
       textWidget1.SetPosition(0, 50);
-      AddChildElement((Element2D) textWidget1);
+      AddChildElement(textWidget1);
       var frame = new Frame(2);
       frame.SetPosition(0, 100);
       frame.RelativeWidth = 1f;
@@ -64,7 +64,7 @@ namespace M3D.GUI.ManageFilament
         Alignment = QFontAlignment.Centre
       };
       textWidget2.SetPosition(0, 75);
-      frame.AddChildElement((Element2D) textWidget2);
+      frame.AddChildElement(textWidget2);
       if (createProgressBar)
       {
         var progressBarWidget = new ProgressBarWidget(4);
@@ -74,14 +74,14 @@ namespace M3D.GUI.ManageFilament
         progressBarWidget.SetSize(375, 24);
         progressBarWidget.RelativeWidth = 0.7f;
         progressBarWidget.PercentComplete = 0.5f;
-        progressBarWidget.BarColor = new Color4((byte) 37, (byte) 170, (byte) 225, byte.MaxValue);
-        frame.AddChildElement((Element2D) progressBarWidget);
+        progressBarWidget.BarColor = new Color4(37, 170, 225, byte.MaxValue);
+        frame.AddChildElement(progressBarWidget);
       }
-      AddChildElement((Element2D) frame);
+      AddChildElement(frame);
       if (yesNoButton)
       {
         var buttonWidget1 = new ButtonWidget(5);
-        buttonWidget1.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        buttonWidget1.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget1.Size = FontSize.Medium;
         buttonWidget1.Text = "Yes";
         buttonWidget1.SetGrowableWidth(4, 4, 32);
@@ -89,9 +89,9 @@ namespace M3D.GUI.ManageFilament
         buttonWidget1.SetSize(110, 40);
         buttonWidget1.SetPosition(110, -75);
         buttonWidget1.SetCallback(new ButtonCallback(MyButtonCallback));
-        frame.AddChildElement((Element2D) buttonWidget1);
+        frame.AddChildElement(buttonWidget1);
         var buttonWidget2 = new ButtonWidget(6);
-        buttonWidget2.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        buttonWidget2.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget2.Size = FontSize.Medium;
         buttonWidget2.Text = "No";
         buttonWidget2.SetGrowableWidth(4, 4, 32);
@@ -99,12 +99,12 @@ namespace M3D.GUI.ManageFilament
         buttonWidget2.SetSize(110, 40);
         buttonWidget2.SetPosition(-220, -75);
         buttonWidget2.SetCallback(new ButtonCallback(MyButtonCallback));
-        frame.AddChildElement((Element2D) buttonWidget2);
+        frame.AddChildElement(buttonWidget2);
       }
       if (createBack)
       {
         var buttonWidget = new ButtonWidget(7);
-        buttonWidget.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        buttonWidget.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget.Size = FontSize.Medium;
         buttonWidget.Text = "Back";
         buttonWidget.SetGrowableWidth(4, 4, 32);
@@ -114,12 +114,12 @@ namespace M3D.GUI.ManageFilament
         buttonWidget.RelativeX = 0.025f;
         buttonWidget.RelativeY = -1000f;
         buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
-        AddChildElement((Element2D) buttonWidget);
+        AddChildElement(buttonWidget);
       }
       if (createNext)
       {
         var buttonWidget = new ButtonWidget(8);
-        buttonWidget.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        buttonWidget.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget.Size = FontSize.Medium;
         buttonWidget.Text = "Next";
         buttonWidget.SetGrowableWidth(4, 4, 32);
@@ -129,12 +129,12 @@ namespace M3D.GUI.ManageFilament
         buttonWidget.RelativeX = 0.8f;
         buttonWidget.RelativeY = -1000f;
         buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
-        AddChildElement((Element2D) buttonWidget);
+        AddChildElement(buttonWidget);
       }
       if (cancelButton)
       {
         var buttonWidget = new ButtonWidget(9);
-        buttonWidget.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+        buttonWidget.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
         buttonWidget.Size = FontSize.Medium;
         buttonWidget.Text = "Cancel";
         buttonWidget.SetGrowableWidth(4, 4, 32);
@@ -144,7 +144,7 @@ namespace M3D.GUI.ManageFilament
         buttonWidget.RelativeX = 0.025f;
         buttonWidget.RelativeY = -1000f;
         buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
-        AddChildElement((Element2D) buttonWidget);
+        AddChildElement(buttonWidget);
       }
       if (!createFinishButton)
       {
@@ -152,7 +152,7 @@ namespace M3D.GUI.ManageFilament
       }
 
       var buttonWidget3 = new ButtonWidget(10);
-      buttonWidget3.Init(Host, "guicontrols", 896f, 192f, 959f, (float) byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
+      buttonWidget3.Init(Host, "guicontrols", 896f, 192f, 959f, byte.MaxValue, 896f, 256f, 959f, 319f, 896f, 320f, 959f, 383f, 960f, 128f, 1023f, 191f);
       buttonWidget3.Size = FontSize.Medium;
       buttonWidget3.Text = "Finish";
       buttonWidget3.SetGrowableWidth(4, 4, 32);
@@ -162,7 +162,7 @@ namespace M3D.GUI.ManageFilament
       buttonWidget3.RelativeX = 0.8f;
       buttonWidget3.RelativeY = -1000f;
       buttonWidget3.SetCallback(new ButtonCallback(MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget3);
+      AddChildElement(buttonWidget3);
     }
 
     public GUIHost Host

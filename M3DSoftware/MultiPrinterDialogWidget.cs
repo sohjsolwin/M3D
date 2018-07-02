@@ -32,7 +32,7 @@ namespace M3D
     public int window_height;
 
     public MultiPrinterDialogWidget(int ID, GUIHost host, SettingsManager main_controller, PopupMessageBox messagebox, SpoolerConnection spooler_connection)
-      : base(ID, (Element2D) null)
+      : base(ID, null)
     {
       this.main_controller = main_controller;
       this.messagebox = messagebox;
@@ -54,7 +54,7 @@ namespace M3D
       textWidget.Alignment = QFontAlignment.Left;
       textWidget.Size = FontSize.Large;
       textWidget.Color = new Color4(0.5f, 0.5f, 0.5f, 1f);
-      AddChildElement((Element2D) textWidget);
+      AddChildElement(textWidget);
       var buttonWidget = new ButtonWidget(1000)
       {
         X = -40,
@@ -69,9 +69,9 @@ namespace M3D
       buttonWidget.Init(host, "guicontrols", 704f, 320f, 735f, 351f, 736f, 320f, 767f, 351f, 704f, 352f, 735f, 383f);
       buttonWidget.DontMove = true;
       buttonWidget.SetCallback(new ButtonCallback(MyButtonCallback));
-      AddChildElement((Element2D) buttonWidget);
-      navigation = new Frame(0, (Element2D) null);
-      navigation_left = new ButtonWidget(1005, (Element2D)null)
+      AddChildElement(buttonWidget);
+      navigation = new Frame(0, null);
+      navigation_left = new ButtonWidget(1005, null)
       {
         Text = "",
         X = 16,
@@ -81,7 +81,7 @@ namespace M3D
       };
       navigation_left.SetCallback(new ButtonCallback(MyButtonCallback));
       navigation_left.Init(host, "guicontrols", 608f, 0.0f, 639f, 31f, 640f, 0.0f, 671f, 31f, 672f, 0.0f, 703f, 31f, 704f, 0.0f, 735f, 31f);
-      navigation_right = new ButtonWidget(1006, (Element2D)null)
+      navigation_right = new ButtonWidget(1006, null)
       {
         Text = "",
         X = -48,
@@ -95,7 +95,7 @@ namespace M3D
       for (var ID = 1032; ID < 1062; ++ID)
       {
         var index = ID - 1032;
-        pagebuttons[index] = new ButtonWidget(ID, (Element2D)null)
+        pagebuttons[index] = new ButtonWidget(ID, null)
         {
           Text = "",
           X = 48 + (ID - 1032) * 24,
@@ -109,15 +109,15 @@ namespace M3D
         pagebuttons[index].GroupID = 1;
         pagebuttons[index].ClickType = ButtonType.Checkable;
         pagebuttons[index].Visible = false;
-        navigation.AddChildElement((Element2D)pagebuttons[index]);
+        navigation.AddChildElement(pagebuttons[index]);
       }
-      navigation.AddChildElement((Element2D)navigation_left);
-      navigation.AddChildElement((Element2D)navigation_right);
+      navigation.AddChildElement(navigation_left);
+      navigation.AddChildElement(navigation_right);
       navigation.RelativeWidth = 0.95f;
       navigation.Height = 32;
       navigation.SetPosition(0, -50);
       navigation.CenterHorizontallyInParent = true;
-      AddChildElement((Element2D)navigation);
+      AddChildElement(navigation);
       PrinterGrid = new GridLayout(1)
       {
         ColumnWidth = 130,
@@ -129,7 +129,7 @@ namespace M3D
       };
       PrinterGrid.SetPosition(0, 48);
       PrinterGrid.CenterHorizontallyInParent = true;
-      AddChildElement((Element2D)PrinterGrid);
+      AddChildElement(PrinterGrid);
       Sprite.pixel_perfect = false;
       Visible = false;
     }
@@ -151,15 +151,15 @@ namespace M3D
       var num = 0;
       foreach (PrinterInfo printer in printer_list)
       {
-        var buttonWidget1 = new ButtonWidget(1064 + num, (Element2D) null);
+        var buttonWidget1 = new ButtonWidget(1064 + num, null);
         ImageResourceMapping.PixelCoordinate pixelCoordinate = ImageResourceMapping.PrinterColorPosition(printer.serial_number.ToString());
-        buttonWidget1.Init(host, "extendedcontrols", (float) pixelCoordinate.u0, (float) pixelCoordinate.v0, (float) pixelCoordinate.u1, (float) pixelCoordinate.v1, (float) pixelCoordinate.u0, (float) pixelCoordinate.v0, (float) pixelCoordinate.u1, (float) pixelCoordinate.v1, (float) pixelCoordinate.u0, (float) pixelCoordinate.v0, (float) pixelCoordinate.u1, (float) pixelCoordinate.v1);
+        buttonWidget1.Init(host, "extendedcontrols", pixelCoordinate.u0, pixelCoordinate.v0, pixelCoordinate.u1, pixelCoordinate.v1, pixelCoordinate.u0, pixelCoordinate.v0, pixelCoordinate.u1, pixelCoordinate.v1, pixelCoordinate.u0, pixelCoordinate.v0, pixelCoordinate.u1, pixelCoordinate.v1);
         buttonWidget1.DontMove = true;
         buttonWidget1.Text = GetPrinterLabelText(printer);
         buttonWidget1.Color = new Color4(0.0f, 0.5f, 1f, 1f);
         buttonWidget1.Size = FontSize.Small;
         buttonWidget1.VAlignment = TextVerticalAlignment.Bottom;
-        buttonWidget1.Data = (object) printer;
+        buttonWidget1.Data = printer;
         buttonWidget1.SetCallback(new ButtonCallback(MyButtonCallback));
         buttonWidget1.ToolTipMessage = " " + printer.Status.ToString();
         ButtonWidget buttonWidget2 = buttonWidget1;
@@ -168,7 +168,7 @@ namespace M3D
         buttonWidget3.ToolTipMessage = buttonWidget3.ToolTipMessage + "\n Has Valid Z: " + (printer.extruder.Z_Valid ? "yes" : "no") + " ";
         ButtonWidget buttonWidget4 = buttonWidget1;
         buttonWidget4.ToolTipMessage = buttonWidget4.ToolTipMessage + "\n Has Valid Calibration: " + (printer.calibration.Calibration_Valid ? "yes" : "no") + " ";
-        PrinterGrid.AddChildElement((Element2D) buttonWidget1);
+        PrinterGrid.AddChildElement(buttonWidget1);
         ++num;
       }
     }
@@ -286,7 +286,7 @@ namespace M3D
         var data = (PrinterInfo) button.Data;
         if (selectedPrinter != null && selectedPrinter.Info.serial_number != data.serial_number && (selectedPrinter.MarkedAsBusy && selectedPrinter.PrinterState != PrinterObject.State.IsPrinting))
         {
-          messagebox.AddMessageToQueue("Warning: Switching printers will cause the current running action to stop.", PopupMessageBox.MessageBoxButtons.OKCANCEL, new PopupMessageBox.OnUserSelectionDel(OnUserSelection), (object) data);
+          messagebox.AddMessageToQueue("Warning: Switching printers will cause the current running action to stop.", PopupMessageBox.MessageBoxButtons.OKCANCEL, new PopupMessageBox.OnUserSelectionDel(OnUserSelection), data);
         }
         else
         {
@@ -336,7 +336,7 @@ namespace M3D
         return;
       }
 
-      host.GlobalChildDialog -= (Element2D) this;
+      host.GlobalChildDialog -= (this);
     }
 
     private enum SettingsButtons

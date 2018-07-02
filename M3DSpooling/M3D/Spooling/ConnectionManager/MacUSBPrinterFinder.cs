@@ -32,7 +32,7 @@ namespace M3D.Spooling.ConnectionManager
           ErrorLogger.LogErrorMsg("Error in USB: " + ex.Message);
         }
       }
-      return new List<string>((IEnumerable<string>)com_ports);
+      return new List<string>(com_ports);
     }
 
     [DllImport("MacUSB.so", CallingConvention = CallingConvention.Cdecl)]
@@ -41,7 +41,7 @@ namespace M3D.Spooling.ConnectionManager
     public bool refreshComPorts(out List<string> comPorts)
     {
       var buffer = new StringBuilder(BUFFER_LENGTH);
-      comPorts = (List<string>) null;
+      comPorts = null;
       MacUSBPrinterFinder.RefType refType;
       do
       {
@@ -60,7 +60,7 @@ namespace M3D.Spooling.ConnectionManager
       }
       while (refType != MacUSBPrinterFinder.RefType.Success);
       string[] strArray = buffer.ToString().Split(new char[1]{ '\n' }, StringSplitOptions.RemoveEmptyEntries);
-      comPorts = new List<string>((IEnumerable<string>) strArray);
+      comPorts = new List<string>(strArray);
       return true;
     }
 

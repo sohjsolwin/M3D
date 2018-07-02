@@ -111,7 +111,7 @@ namespace M3D.Spooling.Core.Controllers
           var textWriter = (TextWriter) new StreamWriter(str);
           var namespaces = new XmlSerializerNamespaces();
           namespaces.Add(string.Empty, string.Empty);
-          PersistantData.ClassSerializer.Serialize(textWriter, (object)PersistantDetails, namespaces);
+          PersistantData.ClassSerializer.Serialize(textWriter, PersistantDetails, namespaces);
           textWriter.Close();
           FileUtils.GrantAccess(str);
         }
