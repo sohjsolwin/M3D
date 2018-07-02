@@ -8,9 +8,9 @@ While this version of the software should work with your printer with no more tr
 
 While I have spoken to M3D and have received permission to share this, there are 3 things that need to be made clear regarding the use or modification of this source:
 
-  # We (M3D) support open modification for personal use and not commercial endeavor or financial benefit
-  # You must accept as-is. This software is not officially supported in this context
-  # You must accept consequences of using open software and any impacts it may have on your printer
+1. M3D supports open modification for personal use and not commercial endeavor or financial benefit
+1. You must accept as-is. This software is not officially supported in this context
+1. You must accept consequences of using open software and any impacts it may have on your printer
 
 Now that that's out of the way...
 
