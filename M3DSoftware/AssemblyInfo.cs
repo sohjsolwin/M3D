@@ -15,4 +15,3 @@ using System.Security.Permissions;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: InternalsVisibleTo("M3D.SlicerConnectionCura.SlicerSettingsItems.XMLSetting")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
