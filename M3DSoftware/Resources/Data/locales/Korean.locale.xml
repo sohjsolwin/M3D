@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Locale language="Korean" font="Batang">
+	<characterset></characterset>
+	<T key="T_RECENT_MODELS" text="최근 모델" />
+	<T key="T_MY_LIBRARY" text="내 라이브러리" />
+	<T key="T_ONLINE_LIBRARY" text="온라인 라이브러리" />
+	<T key="T_SETTINGS" text="설정" />
+	<T key="T_DRAG_FILE_INTO_PRINTER" text="프린터에 파일을 드래그" />
+	<T key="T_LANGUAGES" text="언어" />
+	<T key="T_SEARCH" text="검색" />
+</Locale>

@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Locale language="English" font="NotoSans-Regular" file="NotoSans-Regular.ttf">
+  <characterset></characterset>
+  <T key="T_Software_Name" text="M3D User Software" />
+  <T key="T_OK" text="OK" />
+  <T key="T_Cancel" text="Cancel" />
+  <T key="T_Yes" text="Yes" />
+  <T key="T_No" text="No" />
+  <T key="T_Flexible" text="Flexible" />
+  <T key="T_Hard" text="Hard" />
+  <T key="T_Edit" text="Edit" />
+  <T key="T_Save" text="Save" />
+  <T key="T_Reset" text="Reset" />
+  <T key="T_Print" text="Print" />
+  <T key="T_PrintToFile" text="Print to file" />
+  <T key="T_Type" text="Type" />
+  <T key="T_Color" text="Color" />
+  <T key="T_Temperature" text="Temperature (C)" />
+  <T key="T_DoNotShowAgain" text="Do not show this message again." />
+  <T key="T_DoNotShowAgainSavePref" text="Save my preference and don't ask again." />
+  <T key="T_Pro" text="Pro" />
+  <T key="T_Micro" text="Micro" />
+  <T key="T_MM" text="MM" />
+  <T key="T_Inches" text="Inches" />
+  <T key="T_Units" text="Units" />
+  
+  <T key="T_3DINK" text="        3D Ink" />
+  <T key="T_OPENFILE" text="       Open Model" />
+  <T key="T_RECENT_MODELS" text="Recent Models" />
+  <T key="T_RECENT_PRINTS" text="Recent Prints" />
+  <T key="T_MY_LIBRARY" text="My Library" />
+  <T key="T_ONLINE_LIBRARY" text="Online Library" />
+  <T key="T_SETTINGS" text="Settings" />
+  <T key="T_DRAG_FILE_INTO_PRINTER" text="Drag your file into printer" />
+  <T key="T_LANGUAGES" text="Languages" />
+  <T key="T_SEARCH" text="Search" />
+  <T key="T_NOMODELS" text="No models to display" />
+  <T key="T_FIRMWARE_UPDATE_REQUIRED" text="Your printer's firmware must be updated before you can continue." />
+  <T key="T_FIRMWARE_UPDATE_COMPLETE" text="Your printer has been updated. You're ready to go." />
+  <T key="T_TOOLTIP_3DINK" text=" Select this for filament options " />
+  <T key="T_TOOLTIP_HELP" text=" Visit the M3D Support Website " />
+  <T key="T_TOOLTIP_SETTINGS" text=" All printer, appearance...etc settings are accessed here " />
+  <T key="T_TOOLTIP_ADVANCEDSETTINGSWARNING" text=" Only modify these settings if you're an experienced user " />
+  <T key="T_TOOLTIP_OPENFILE" text=" Opens a model for printing " />
+  <T key="T_TOOLTIP_MULTIPRINTER" text=" Multi-printer options " />
+  <T key="T_TOOLTIP_INFORMATION" text=" Shows printing process status messages " />
+  <T key="T_TOOLTIP_RESETVIEW" text=" Resets the view to the front \n of the printer " />
+  <T key="T_TOOLTIP_PRINT" text=" Sends the object \n to the printer " />
+  <T key="T_TOOLTIP_CENTERMODEL" text=" Centers the model within \n the printer " />
+  <T key="T_CYCLE_POWER" text="Please cycle power on the printer by disconnecting and then reconnecting it to power." />
+
+  <T key="T_TOOLTIP_BACKTOLIBRARY" text=" Returns the view to the object library " />
+
+  <T key="T_TOOLTIP_TRANSLATE" text=" For moving the object \n on the floor of the printer " />
+  <T key="T_TOOLTIP_SCALE" text=" For resizing the object " />
+  <T key="T_TOOLTIP_ROTATE" text=" For rotating the object " />
+
+  <T key="T_TOOLTIP_DUPLICATE" text=" Duplicates the selected object" />
+  <T key="T_TOOLTIP_REMOVE" text=" Removes the selected object " />
+  <T key="T_TOOLTIP_UNDO" text=" Undo " />
+  <T key="T_TOOLTIP_REDO" text=" Redo " />
+  <T key="T_TOOLTIP_MODELLIST" text=" Displays list of objects " />
+  <T key="T_TOOLTIP_SAVE" text=" Save successful print " />
+
+  <T key="T_TOOLTIP_SEARCH" text=" Search the library for objects " />
+
+  <T key="T_TOOLTIP_devtools_button" text=" Dev Tools " />
+
+  <T key="T_PRINTQUALITY_LABEL" text="Print Quality:" />
+  <T key="T_PRINTQUALITY_PREV" text=" Previous Print Quality " />
+  <T key="T_PRINTQUALITY_NEXT" text=" Next Print Quality " />
+  <T key="T_PRINTQUALITY1" text=" High Quality " />
+  <T key="T_PRINTQUALITY2" text=" Medium Quality " />
+  <T key="T_PRINTQUALITY3" text=" Fast Print " />
+  <T key="T_PRINTQUALITY4" text=" Very Fast Print " />
+  <T key="T_PRINTQUALITY5" text=" Expert - 50 Microns " />
+  <T key="T_PRINTQUALITY6" text=" Very High Quality " />
+  <T key="T_PRINTQUALITY7" text="Custom Quality" />
+
+  <T key="T_FILLDENSITY_LABEL" text="Fill Density:" />
+  <T key="T_FILLDENSITY_PREV" text=" Previous Fill Density " />
+  <T key="T_FILLDENSITY_NEXT" text=" Next Fill Density " />
+  <T key="T_FILLDENSITY1" text=" Extra High (Slower) " />
+  <T key="T_FILLDENSITY2" text=" High " />
+  <T key="T_FILLDENSITY3" text=" Medium (Fast) " />
+  <T key="T_FILLDENSITY4" text=" Low (Faster) " />
+  <T key="T_FILLDENSITY5" text=" Hollow Thick Walls (Very Fast) " />
+  <T key="T_FILLDENSITY6" text=" Hollow Thin Walls (Extremely Fast) " />
+  <T key="T_FILLDENSITY7" text=" Solid (Slowest) " />
+  <T key="T_FILLDENSITY8" text="Custom Infill" />
+
+  <T key="T_SelectOptionBelow" text="Please select an option below" />
+
+  <T key="T_UnableToConnectToSpooler" text="Unable to connect to the print spooler. Please make sure the print spooler has started." />
+  <T key="T_DetectingPrinter" text="Detecting Printer" />
+  <T key="T_PrinterConnected" text="The new printer is ready." />
+  <T key="T_JobComplete" text="Finished printing" />
+  <T key="T_JobCanceled" text="Cancelled job" />
+  <T key="T_JobStarted" text="Print job started" />
+  <T key="T_ClearBed" text="Please clean the nozzle and make sure that the print bed is clear. We wouldn't want any accidents. Be careful. The nozzle can be very hot." />
+  <T key="T_FirmwareUpdateFailed" text="Failed to update firmware." />
+  <T key="T_FirmwareUpdateComplete" text="Your printer has been updated. You're ready to go." />
+  <T key="T_ResetPrinterConnection" text="Unable to connect to the printer. Try resetting or reconnecting your printer." />
+  <T key="T_FirmwareErrorCyclePower" text="Unable to connect to the printer. Try resetting or reconnecting your printer." />
+  <T key="T_RawData" text="Raw Serial Data" />
+  <T key="T_PrinterNotConnected" text="Sorry. Please make sure that the 3D printer has been connected." />
+  <T key="T_BedLocationMustBeCalibrated" text="The Z location of your printer has been lost. Please clear the print bed. \n\nCalibrate bed location now?" />
+  <T key="T_GantryCalibrationInvalid" text="Sorry. There is a problem with your factory gantry values. You will not be able to print until you calibrate your printer. \n\nCalibrate gantry now?" />
+  <T key="T_BedOrientationMustBeCalibrated" text="Sorry. There is a problem with your factory gantry values. You will not be able to print until you calibrate your printer. \n\nCalibrate gantry now?" />
+  <T key="T_MicroMotionControllerFailed" text="Sorry. There seems to be a problem with your Micro-motion chip." />
+  <T key="T_InvalidZ" text="Sorry. Your printer has lost calibration. This can happen if the printer loses power either during a print or soon after a print has completed. You can not safely print with the printer in this state." />
+  <T key="T_Death" text="Sorry. Something seriously wrong has happened." />
+  <T key="T_ModelOutOfPrintableBounds" text="Sorry. Your model cannot be printed because it is out of the printable bounds of the printer." />
+  <T key="T_PrinterTimeout" text="System has been inactive for too long, heater and motors have been turned off" />
+  <T key="T_WarningFirmwareToNew" text="Warning. The firmware on the printer is newer than your current software. Please get the latest M3D Software." />
+  <T key="T_WarningABSPrintLarge" text="Warning. Large ABS prints may fail. Do you want to continue printing?" />
+  <T key="T_IncompatibleSpooler" text="The software you are running is using a different version of the M3D Print Spooler interface. You may need to reinstall your software." />
+  <T key="T_UnexpectedDisconnect" text="Your 3D printer was disconnected unexpectedly." />
+  <T key="T_CantStartJobPrinterBusy" text="Sorry. Can't start new print job because the printer is busy printing something else." />
+  <T key="T_BacklashOutOfRange" text="Your printer has invalid backlash values." />
+  <T key="T_CheckGantryClips" text="Please make sure that your gantry clips have been removed." />
+  <T key="T_RPCError" text="A message sent to print spooler was invalid." />
+  <T key="T_SinglePointCalibrationNotSupported" text="Sorry, but single-point calibration is not currently supported on this printer" />
+  <T key="T_MultiPointCalibrationNotSupported" text="Sorry, but five-point calibration is not currently supported on this printer" />
+  <T key="T_SDPrint_Incompatible_Filament"  text="Unable to start saved print because the 3D ink used doesn't match what's currently in the printer." />
+  <T key="T_PowerOutageRecovery"  text="Power outage recovery in progress." />
+
+  <T key="T_Failed_PrinterDoesNotHaveLock" text="Sorry. Unable to send command to the printer. Please try again." />
+  <T key="T_Failed_PrinterAlreadyLocked" text="Sorry. The printer is being controlled by another process." />
+  <T key="T_Failed_PreviousCommandNotCompleted" text="Sorry. Unable to send command because the previous command has not yet completed." />
+  <T key="T_Failed_NotInFirmware" text="Sorry. Unable to send the command because the printer is not in firmware mode." />
+  <T key="T_CommandInterruptedByM0" text="The command was interrupted by another user or process." />
+  <T key="T_Failed_PrinterNotPaused" text="Sorry, but your request failed because the printer was not paused." />
+  <T key="T_Failed_PrinterNotPrinting" text="Sorry, but your request failed because the printer was not printing." />
+  <T key="T_Failed_ThePrinterIsPrintingOrPaused" text="Sorry, but your request failed because the printer has been paused or is printing" />
+  <T key="T_Failed_Default" text="Unable to send command to the printer" />
+  <T key="T_Failed_ErrorSendingToPrinter" text="There was an error sending data to the printer. Please try again." />
+  <T key="T_Failed_CannotPauseWhileSavingToPrinter" text="Unable to pause the job while it's saving to the printer." />
+  
+  <T key="T_Settings" text="Settings" />
+  <T key="T_SettingsTab_UserInterfaceOptions" text="  User Interface\n  Options" />
+  <T key="T_SettingsTab_Calibration" text="  Calibration" />
+  <T key="T_SettingsTab_ExpertControls" text="  Expert Controls" />
+  <T key="T_SettingsTab_FilamentOptions" text="  Filament Options" />
+  <T key="T_SettingsTab_About" text="  About" />
+
+  <T key="T_FilamentOptions_Advanced" text="Advanced Settings" />
+  <T key="T_FilamentOptions_CustomTemperatures" text="Custom Temperatures" />
+
+  <T key="T_FilamentAdvanced_FilamentTracking" text="Filament Tracking" />
+  <T key="T_FilamentAdvanced_CleanNozzle" text="Clean Nozzle After Insert" />
+
+  <T key="T_FilamentProfiles_Title" text="Custom Filament Profiles" />
+  <T key="T_FilamentProfiles_AddProfile" text="Add Profile" />
+  <T key="T_FilamentProfiles_RemoveProfile" text="Remove Profile" />
+  <T key="T_FilamentProfiles_AddProfileHint" text=" Adds a new filament temperature profile. " />
+  <T key="T_FilamentProfiles_RemoveProfileHint" text=" Removes an existing filament temperature profile. " />
+  <T key="T_FilamentProfiles_InfoText" text="Filament Profiles allow you to set the temperature for a particular filament/color combination. This is for advanced users only and we recommend using the default settings that have been tested by M3D. Not doing so can damage your printer." />
+  
+  <T key="T_AboutText" text="M3D Software\n\nThis software is intended for use with M3D 3D printer models and is licensed in accordance with the agreement displayed at time of installation.  This agreement can additionally be accessed at any time via the M3D website &quot;Terms of Use&quot; link.\n\nThis software is not open source, but it may use components that are.  See the documentation in the program folder for license information on open source products incorporated in this software.\n\nCopyright 2014-2017 M3D LLC\n\n\nVersion: " />
+
+  <T key="T_ManualControlsWarning" text="Warning: These controls should only be used by expert users or with help from M3D technical support." />
+  <T key="T_FilamentProfilesWarning" text="Warning. Changing these filament profiles can cause damage to your printer and is for advanced users only." />
+
+  <T key="T_FileAssociationsDialog_Text" text="Would you like to make M3D the default program for opening 3D model files?" />
+  <T key="T_ProfileMismatchDialog_Title" text="Printer type mismatch" />
+  <T key="T_ProfileMismatchDialog_Message" text="The collection that you are loading was formatted for the {0}, but you are now loading it on a {1}.\n\nWould you like to load it anyway?" />
+
+  <T key="T_LoadModelDialog_Title" text="Loading" />
+  <T key="T_LoadModelDialog_Reading" text="Reading File" />
+  <T key="T_LoadModelDialog_Processing" text="Processing File" />
+
+  <T key="T_RemoveModelDialog_Text" text="You already have a 3D model loaded. Would you like to replace the current 3D model or use both?" />
+  <T key="T_RemoveModelDialog_Remove" text="Remove Model" />
+  <T key="T_RemoveModelDialog_Continue" text="Continue with Both" />
+
+  <T key="T_PrinterDriverInstall" text="Printer Driver Install Detected" />
+
+  <T key="T_WARNING_LargeScaleUsedMaybeCorrupt" text="A large scale values has been applied to this model. This model may be corrupted and the print may fail." />
+  <T key="T_WARNING_ModelToSmall" text="Your model is smaller than the initial layer height and may not print correctly. Do you want to try to print it anyway?" />
+
+  <T key="T_PrinterViewError_NoPrinter" text="Sorry, but a printer has not been connected." />
+  <T key="T_PrinterViewError_AlreadyPrinting" text="Sorry, but the printer is already printing." />
+  <T key="T_PrinterViewError_Calibrating" text="Sorry, but the printer is calibrating." />
+  <T key="T_PrinterViewError_NoModel" text="Sorry. Please load a model before printing." />
+  <T key="T_PrinterViewError_NotCalibrated" text="Sorry. The printer needs to be calibrated." />
+  <T key="T_PrinterViewError_No3DInk" text="Sorry. Please load 3D Ink before printing." />
+  <T key="T_PrinterViewError_OutofBounds" text="Sorry. Your model cannot be printed because it is outside of the printable bounds of the printer." />
+
+  <T key="T_PrintDialog_PrintWillBeginShortly" text="Your print will begin shortly. Please clean the nozzle and make sure that the print bed is clear to prevent accidents. Be careful. The nozzle may be very hot." />
+  <T key="T_PrintDialog_AutoStartingIn" text="Auto starting in" />
+  <T key="T_PrintDialog_StartNow" text="Start Now" />
+  <T key="T_PrintDialog_EstimatedTime" text="Estimated Time" />
+  <T key="T_PrintDialog_EstimatedFilament" text="Estimated Filament" />
+  <T key="T_PrintDialog_PreparingModel" text="Your model is being prepared. Please wait." />
+  <T key="T_PrintDialog_SlicingWarning" text="Your print will begin shortly. Please clean the nozzle and make sure that the print bed is clear to prevent accidents. Be careful. The nozzle may be very hot." />
+  <T key="T_PrintDialog_SlicingPleaseWait" text="Please wait while the model is prepared for the printer." />
+
+  <T key="T_PrintDialog_LowFilament" text="Running low on filament. \n\nWould you like to purchase more?" />
+  <T key="T_PrintDialog_LowFilamentContinue" text="Lack of filament may cause print failure. \n\nWould you like to continue printing?" />
+
+  <T key="T_PrintDialog_UseSupportMaterial" text="Use support material" />
+  <T key="T_PrintDialog_SupportToTheFloor" text="To the print surface only" />
+  <T key="T_PrintDialog_UseModelOnModelSupport" text="Everywhere" />
+  <T key="T_PrintDialog_UseWaveBonding" text="Use wave bonding" />
+  <T key="T_PrintDialog_UseRaft" text="Use raft" />
+  <T key="T_PrintDialog_VerifyBed" text="Verify bed level (Recommended)" />
+  <T key="T_PrintDialog_VerifyBedNotRec" text="Re-probe bed (Experimental)" />
+  <T key="T_PrintDialog_EnableSkirt" text="Enable skirt (Recommended)" />
+  <T key="T_PrintDialog_CleanNozzle" text="Note: Please make sure nozzle is clean before starting print" />
+  <T key="T_PrintDialog_HeatedBed" text="Use Heated Bed" />
+
+  <T key="T_SoftwareUpdateOptions" text="Software Update Options" />
+  <T key="T_WhenNewerSoftwareAvailable" text="When newer software is available:" />
+  <T key="T_NewUpdateDownloaded" text="A new update has been downloaded." />
+  <T key="T_InstallNow" text="Install Now" />
+  <T key="T_DownloadUpdate" text="Download Update" />
+  <T key="T_ModelLoadingOptions" text="Model Loading Options" />
+  <T key="T_AllowMultipleModels" text="Allow multiple models to be loaded." />
+  <T key="T_AskToRemoveCurrentModel" text="Ask to remove current model when loading a new model." />
+  <T key="T_AutoDetectModelUnits" text="Auto-detect units used (mm, inches, microns)." />
+  <T key="T_UpdateOptions_Tooltip" text=" What to do when a new update is available " />
+
+  <T key="T_PrinterColor" text="Printer Color" />
+  <T key="T_PrinterColor_Tooltip" text=" The color of the printer in the software " />
+  <T key="T_ModelColor" text="Model Color" />
+  <T key="T_ModelColor_Tooltip" text=" The color of your models " />
+  <T key="T_NewIconsColor" text="New Icons Color" />
+  <T key="T_NewIconsColor_Tooltip" text=" The color of new icons in your model library " />
+  <T key="T_RenderingMode" text="Rendering Mode:" />
+  <T key="T_RenderingMode_Tooltip" text=" Video card graphics acceleration " />
+
+  <T key="T_Updater_UpdateAvailable" text="An update is available for download." />
+  <T key="T_Updater_UpdateDownloaded" text="A new update has been downloaded." />
+  <T key="T_Updater_Downloading" text="An update is now downloading." />
+  <T key="T_Updater_UpToDate" text="Your software is up-to-date." />
+
+  <T key="T_UpdateOp_DownloadInstall" text="Download And Install" />
+  <T key="T_UpdateOp_DownloadNoInstall" text="Download, Don't Install" />
+  <T key="T_UpdateOp_TakeNoAction" text="Take No Action" />
+  
+  <T key="T_MyDefaultPrinter" text="My Default Printer" />
+  
+  <T key="T_InchesDetected" text="The model was detected to be in inches and was converted to work in this software." />
+  <T key="T_MicronsDetected" text="The model was detected to be in microns and was converted to work in this software." />
+
+  <T key="T_ACCESSORIES" text=" Accessories" />
+  <T key="T_TOOLTIP_ACCESSORIES" text=" Shows options accessories attached to this printer " />
+  <T key="T_AccessoriesTab_Nozzle" text="  Nozzle" />
+
+</Locale>

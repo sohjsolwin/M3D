@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Locale language="Spanish" font="Times New Roman">
+	<characterset></characterset>
+	<T key="T_RECENT_MODELS" text="Modelos recientes" />
+	<T key="T_MY_LIBRARY" text="Mi Biblioteca" />
+	<T key="T_ONLINE_LIBRARY" text="Biblioteca en línea" />
+	<T key="T_SETTINGS" text="Configuración" />
+	<T key="T_DRAG_FILE_INTO_PRINTER" text="Arrastre el archivo a la impresora" />
+	<T key="T_LANGUAGES" text="Idiomas" />
+	<T key="T_SEARCH" text="búsqueda" />
+
+  <T key="T_SinglePointCalibrationNotSupported" text="Sorry, but single-point calibration is not currently supported on this printer" />
+  <T key="T_MultiPointCalibrationNotSupported" text="Sorry, but five-point calibration is not currently supported on this printer" />
+</Locale>
