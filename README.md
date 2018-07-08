@@ -20,6 +20,15 @@ Welcome to the comminuty "fork" of the M3D software and spooler. This is a "bran
 
 Currently, there are very few changes to this source after the initial decompile. Necessary asjutments were made so that the decompile would build and run through Visual Studio 2017, and then some auto-cleanup was performed so that the code was a bit better style-wise. There's still a long way to go, and numerous items we can work on. 
 
+## Getting Started
+
+In order to run and build, you might need some files from the official [M3D release](https://support.printm3d.com/053573-M3D-Pro-Downloads). 
+* Download the 1.8.3 version from the other downloads section and install. 
+* Pull the Resources directory out of the install directory and place it in the build directory of your source (typically bin/Debug). 
+  * You specifically may need the CuraEngine and Drivers folders. The other folders and files *should* be generated automatically upon build. 
+  
+ *Note:* This has been tested building on a Windows 10 computer via Visual Studio 2017 Community edition. If should work on other machines, and technically it should build with MonoDevelop or any other Mono-capable IDE. 
+
 ## License
 
 This fork is free for personal use and modification. It may not be sold. Use of the software, source, and any compiled binaries is done so at your own risk. Use of this software, properly or improperly, may break your printer. You accept full responsibility and liablity of any damages that may result should you choose to use this software. 
